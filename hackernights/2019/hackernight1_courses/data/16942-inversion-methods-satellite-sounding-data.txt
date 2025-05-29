@@ -1,0 +1,1656 @@
+Inversion_methods
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+Inversion methods for satellite sounding data
+April 1991
+
+By J. R. Eyre
+
+Table of contents
+
+1 . Basic ideas
+
+1.1 The radiative transfer equation for emission to space
+
+1.3 Integration over frequency
+
+1.4 Weighting functions
+
+1.5 Characteristics of weighting functions
+
+1.6 The forward and inverse problems
+
+1.7 A vector–matrix representation
+
+1.8 Linearity
+
+2 . Temperature profile inversion methods
+
+2.1 Some simple solutions and their problems
+
+2.2 The estimation problem and the role of constraints
+
+2.3 Practical solutions
+
+3 . Constituent profile inversion
+
+4 . Clouds
+
+5 . Satellite sounding data in numerical weather prediction
+
+1. BASIC IDEAS
+
+1.1  The radiative transfer equation for emission to space
+
+The monochromatic radiation intensity at frequency emitted along a vertical path at the top of the atmosphere
+
+and incident at a satellite-borne instrument is given by:
+
+(1)
+
+where
+
+ is the emission from the earth's surface at height ,
+
+ is the vertical transmittance from height  to space,
+
+ is the vertical temperature profile,
+
+and  is the corresponding Planck function profile.
+
+ν
+
+�
+ν
+
+�
+0( )ντν � 0( ) � ν
+
+� �( ){ }
+dτν �( )
+
+d�----------------d� ,� 0
+∞
+
+∫+=
+
+�
+0( )ν � 0
+
+τν �( ) �� �( )
+� ν
+
+� �( ){ }
+
+
+
+Inversion methods for satellite sounding data
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Here we have neglected molecular scattering in and out of the beam - a good approximation in the infrared and
+
+microwave regions. We have also assumed, for the moment, that no cloud is present and we shall return to the cloud
+
+problem later. If the earth's surface reflects radiation significantly, then we acquire a third term in (1) representing
+
+radiation emitted downwards by the atmosphere and reflected back in the direction of the satellite. For simplicity
+
+we have ignored this term, which is equivalent to assuming that the surface is black (often a good approximation
+
+in the infrared).  Reflection of solar radiation by the surface may usually be neglected also.
+
+Equation (1) may also be used to represent radiation emitted along a slant (non-vertical) path if the transmittance
+
+is computed appropriately. Making the approximation of a plane-parallel atmosphere, for a viewing path through
+
+the atmosphere at angle  to the vertical, then
+
+, (2a)
+
+where , , are respectively the vertical profiles of atmospheric density, absorbing gas mixing ratio
+
+and absorption coefficient.
+
+It is often more convenient to choose pressure as the vertical coordinate. Then, using the hydrostatic approximation
+
+( ), we obtain
+
+(2b)
+
+1.3  Integration over frequency
+
+Real satellite instruments sense radiation over a range of frequency rather than monochromatic radiation, and it is
+
+usually necessary to perform an integration over frequency to obtain radiances of adequate accuracy as “seen” by
+
+the satellite instrument, i.e.
+
+, (2)
+
+where is the relative response of the instrument to radiation at frequency . This complicates the calculations
+
+involved in the interpretation of the data, but does not change the basic nature of the inversion problem.
+
+Therefore, for this discussion, we shall ignore it and work only with the monochromatic equations.
+
+1.4  Weighting functions
+
+Equation (1) may be written as
+
+. (3)
+
+is called a WEIGHTING FUNCTION; it weights the Planck function in the atmospheric
+
+component of the emitted radiation. It specifies the layer from which the radiation emitted to space originates,
+
+and hence it determines the region of the atmosphere which can be sensed from space at this frequency. Fig. 1
+
+shows the transmittance profiles and corresponding weighting functions at two frequencies for which the
+
+atmospheric absorption is different. Since the weighting function is the derivative of the transmittance profile, it
+
+θ
+
+τν � θ,( ) θ � ν � ′( ) � � ′( ) ρ � ′( ) d��
+∞
+
+∫sec–
+ 
+ 
+ 
+
+exp=
+
+ρ �( ) � �( ) � ν �( )
+
+d� 	 ρ d�–=
+
+τν � θ,( ) θ � ν � ′( ) �
+� ′( ) d� ′ 	⁄
+0
+
+�
+∫sec–
+
+ 
+ 
+ 
+
+.exp=
+
+� � ν
+�
+
+ν dν∫ �
+ν dν∫
+
+------------------------=
+
+�
+ν ν
+
+�
+ν
+
+�
+0( )ντν � 0( ) � ν
+
+� �( ){ }  ν �( ) d ��
+0
+
+∞
+∫+=
+
+ ν �( ) dτν �( ) d�⁄=
+
+
+
+Inversion methods for satellite sounding data
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+will peak higher in the atmosphere for the frequency at which the absorption is stronger. In this way, a carefully
+
+selected family of frequencies can be chosen to sense radiation from different layers in the atmosphere.
+
+Figure  1. Idealised transmittance profiles and weighting functions at two frequencies with different absorption
+
+coefficients. Vertical coordinate: scale height = – loge(pressure).
+
+To understand qualitatively why the weighting functions take this form, we can consider the emission to space from
+
+air parcels of unit volume at different heights in the atmosphere. The radiation emitted to space is determined by
+
+three factors:
+
+(a) the temperature of the air parcel, i.e. the variable we hope to measure,
+
+(b) the number of molecules of emitting gas, which is determined by the atmospheric density (and also
+
+by the mixing ratio of the absorbing constituent, although for the principal gases used in
+
+temperature sounding—carbon dioxide and oxygen—the mixing ratio can be assumed constant and
+
+known),
+
+(c) the transmittance of the atmosphere from the air parcel to space.
+
+This is illustrated in Fig. 2 for three air parcels at different heights. For the lowest parcel, the atmospheric density
+
+is high and so the amount of radiation emitted is high, but almost all is absorbed by the atmosphere above it and
+
+very little reaches space. For the highest parcel, the transmittance to space is high, but comparatively little radiation
+
+
+
+Inversion methods for satellite sounding data
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+is emitted because atmospheric density decreases exponentially with height. These two conflicting effects combine
+
+in such a way that, at some intermediate height, the contribution of a parcel to the radiation reaching space is a
+
+maximum. The variation of the radiance to space as a function of height is shown by the curve on the right of Fig.
+
+2 . Most of the radiation to space originates in a layer around the peak of this function (which is actually the product
+
+of the weighting function and the Planck function profile, i.e. the integrand in equation (3)). From knowledge of
+
+the atmosphere's composition and spectroscopic parameters we can calculate where in the atmosphere this layer
+
+will be. Then the intensity of the radiation can be interpreted in terms of the mean temperature of the layer. Using
+
+radiation at different frequencies for which the absorption strength is different, we can build a family of weighting
+
+functions, which provide information on the mean temperatures of many such layers, thus leading to the idea that
+
+we might be able to RETRIEVE information on the atmospheric temperature profile from a set of multi-frequency
+
+measurements.1
+
+Figure 2. Left—illustrating the attenuation of upwelling radiation emitted from three heights in the atmosphere.
+
+Right—the corresponding vertical profile of the contribution to the emission to space.
+
+1.5  Characteristics of weighting functions
+
+At this point, two aspects of the problem are worthy of note. Firstly, the weighting functions are broad (i.e. several
+
+1.  We note in passing that ground-based measurements of downwelling atmospheric radiation do not have associated with them weighting
+functions of the same form.  Here, the atmospheric density and transmittance from air parcel to instrument both decrease with height, and so
+(for an absorber mixing ratio which is constant with height) the largest contribution to the measured radiance is always from close to the
+instrument, whatever the frequency.
+
+
+
+Inversion methods for satellite sounding data
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+kilometres). This means that the satellite instrument can sense the mean properties of broad layers very well, but
+
+it is only able to sense the characteristics of single levels or narrow layers insofar as they are correlated with the
+
+properties of the broad layers. The width of the weighting functions severely limits the capability of satellite
+
+sounders to detect atmospheric structure which has relatively small scale in the vertical. The finite width of the
+
+weighting functions is a fundamental feature of passive remote sensing techniques. However, the precise width is
+
+determined by technological considerations, as explained below.
+
+Secondly, for most instruments, the family of weighting functions are highly overlapping. One consequence of this
+
+is that, although the instrument may make measurements at N separate frequencies, we obtain fewer than pieces
+
+of independent information.  The implications of this in the inversion problem are discussed below.
+
+�
+
+
+
+Inversion methods for satellite sounding data
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  3. TOVS normalised weighting functions (from Smith et al. 1979).
+
+Figure 3 illustrates the weighting functions for the present operational sounding system—the TIROS-N Operation-
+
+al Vertical Sounder (TOVS) which consists of 3 instruments: the High-resolution Infrared Radiation Sounder
+
+(HIRS/2), the Microwave Sounding Unit (MSU) and the Stratospheric Sounding Unit (SSU). For further informa-
+
+tion on TOVS, see Smith et al. (1979) or Schwalb (1978).
+
+For the microwave channels, the spectral responses at the individual measurement frequencies (usually called
+
+“channels”) are much narrower than the widths of the atmospheric absorption lines. Therefore the weighting func-
+
+
+
+Inversion methods for satellite sounding data
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+tions are close to their monochromatic limit. However, it is possible to improve the vertical resolution of the mi-
+
+crowave sounder by adding more channels. This will be done for the Advanced Microwave Sounding Unit
+
+(AMSU) which, along with HIRS, will constitute the Advanced TOVS on the next generation of polar orbiting sat-
+
+ellites (from about 1994).  The weighting functions for AMSU are illustrated in Fig. 4 .
+
+Figure  4. AMSU normalised weighting functions.
+
+For the infrared channels the position is very different: HIRS is a filter radiometer and its channels have spectral
+
+widths typically hundreds of times greater than the atmospheric absorption lines. Therefore they average together
+
+
+
+Inversion methods for satellite sounding data
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+frequencies for which the absorption strengths are very different. This has the effect of broadening the weighting
+
+functions considerably. By using instruments of much higher spectral resolution, such as interferometers or grating
+
+spectrometers, it is possible to achieve spectral resolutions closer to the widths of the atmospheric absorption lines.
+
+In this way instruments with several thousand channels and much sharper weighting functions can be built. Fig. 5
+
+illustrates the weighting functions from such an instrument. Similar instruments are planned for satellite missions
+
+in the late 1990s.
+
+Figure 5. A selection of weighting functions for several bands of the interferometer proposed for the Atmospheric
+
+InfraRed Sounder (AIRS) instrument.
+
+1.6  The forward and inverse problems
+
+The instrument makes measurements of radiance in a number of channels . For each channel, we can write a
+
+radiative transfer equation:
+
+(4)
+
+This equation expresses the FORWARD PROBLEM for the channel, i.e. given the state of the atmosphere, the so-
+
+lution of this equation tells us the radiance incident at the satellite in this channel. However, when presented with
+
+satellite measurements, we are faced with the INVERSE PROBLEM: given the measurements, what is the state
+
+of the atmosphere (in terms of its vertical profiles of temperature and constituents). Let us concentrate on the tem-
+
+perature profile inversion problem and return to the constituent problem later.
+
+ν�
+
+� � � 0( ) � τ � � 0( ) ��� � �( ){ } �� �( ) d � .�
+0
+
+∞
+∫+=
+
+
+
+Inversion methods for satellite sounding data
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+Since we have a limited number of channels , we can see immediately that the inversion of equation
+
+(4) is ILL-POSED or UNDER-CONSTRAINED. This is because we are trying to retrieve , a continuous
+
+function of height (which, in general, requires an infinite number of parameters to represent it fully), from a finite
+
+number of measurements. This means that there exists an infinite number of profiles which satisfy the meas-
+
+urements. Our problem is to find one which is reasonable and, if possible, to find the profile which is best or most
+
+reasonable in some sense.
+
+In addition, the measurements always contain some error or “noise”. This further increases the ill-posed nature of
+
+the problem, and we must find a method of solution which does not amplify the noise to an unacceptable degree.
+
+1.7  A vector–matrix representation
+
+At this point, it is convenient to change from the notation of continuous profiles and integrals, as in equation (4),
+
+to discrete profiles and the notation of vectors and matrices. We consider the atmosphere to be composed of many
+
+thin layers (numbered, from the top, ) with mean temperature and Planck function
+
+. Let the transmittance from the bottom of layer to space be denoted . Then equation (4) be-
+
+comes
+
+or (5)
+
+.
+
+To solve this equation for , it is convenient to find a transformation of which is independent of (i.e. of fre-
+
+quency). For channels which are very close together in frequency, we can use the Planck function at a central fre-
+
+quency. However, this is rarely an adequately accurate approximation. One solution is to specify a reference
+
+frequency for the Planck function and “adjust” all the measured radiances to it. Alternatively, we can convert ra-
+
+diances to some other quantity, such as equivalent black body temperature, which is independent of frequency.
+
+These are technical details on which we need not dwell; it is only necessary to appreciate that it is relatively
+
+straightforward to find a channel-independent form of  so that we may write
+
+. (6)
+
+We can also “absorb” the surface term as the th term in the summation by setting and .
+
+Then
+
+. (1a)
+
+If we now represent the radiance in all channels by a vector and the Planck function profile by a vector ,
+
+equation (6) may be written for all channels simultaneously as
+
+. (7)
+
+�
+1
+
+�
+→=( ) � �( )
+
+� �( )
+
+�
+1 � 1–( )→= ���
+
+��� � ��� ���{ }= � τ� �
+
+� � � 0( )� τ� � 0( ) ��� � τ� � 1– τ � �–( )�
+1=
+
+�
+1–
+
+∑+=
+
+� � � 0( )� τ� � 0( ) ��� � �� ��
+1=
+
+�
+1–
+
+∑+=
+
+� � �
+
+�
+
+� � � 0( )� τ � � 0( ) � � �� ��
+1=
+
+�
+1–
+
+∑+=
+
+� � � � 0= �� � τ� � 0( )=
+
+� � � � �� ��
+1=
+
+�
+∑=
+
+� �
+
+R K B⋅=
+
+
+
+Inversion methods for satellite sounding data
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+is a matrix containing discrete weighting function elements . Thus, our measurements are a vector
+
+(elements ), our unknowns are a vector (elements ), and is a matrix of size
+
+. Our problem is to invert equation (7) to find . Then the temperature profile is obtained directly as a
+
+known function of .
+
+1.8  Linearity
+
+It is usually important to appreciate the degree of LINEARITY of any given inverse problem. By this we mean the
+
+degree to which we can separate out the knowns and unknowns of the problem into a linear equation. For example,
+
+in the case of equation (7), it represents a linear problem if is independent of . If is a function of , we
+
+have a nonlinear problem. In the temperature retrieval problem, consists of differences between transmittances
+
+to space from the top and bottom of the layer (see equation (5)). The transmittances, when expressed in pressure
+
+co-ordinates (see equation (2b)), are strong functions of the mixing ratio and pressure of the absorbing gas and its
+
+spectroscopic parameters, but the latter are only weakly temperature dependent. Therefore, the problem is almost
+
+linear. This means that we can calculate a reasonable approximation to without accurate prior knowledge of
+
+the unknown . It also means that the weighting functions for a given channel are almost independent of the at-
+
+mospheric conditions.
+
+The near linear nature of the temperature inversion problem has allowed the development of appropriate inversion
+
+methods based on linear theory. Nevertheless, the nonlinearities are significant and must be considered carefully
+
+when accurate results are required.
+
+An excellent discussion of linear inversion theory applicable to a wide range of geophysical problems is given by
+
+Menke (1984).
+
+2. TEMPERATURE PROFILE INVERSION METHODS
+
+2.1  Some simple solutions and their problems
+
+We noted above that the problem of retrieving a continuous profile from a finite set of measurements (inverting
+
+equation (4)) is ill-posed. With the discrete formulation of equation (7), if , then the problem is still ill-posed
+
+because the number of unknowns exceeds the number of simultaneous equations represented by this single matrix
+
+equation. We can make the problem WELL-POSED by reducing the number of layers over which the profile is
+
+specified or by expanding the profile in terms of the coefficients of a restricted set of BASIS FUNCTIONS:
+
+, (8)
+
+where  is a matrix of basis functions (size ) and  is vector of coefficients (length ).  Then
+
+, (9)
+
+where  has dimensions .  If , then  is square and equation (9) may be inverted directly:
+
+, (10)
+
+where -1 denotes matrix inverse. Substitution into equation (8) then gives the solution for . However, this
+
+solution is found to be unsatisfactory (see Rodgers, 1976), because the problem is usually ILL-CONDITIONED.
+
+By this, we mean that the elements of tend to have large magnitudes (positive and negative) leading to an
+
+K �� � R� � �, 1 �→= B � � �, 1 �→= K� �× B
+B
+
+K B K B
+K
+
+K
+B
+
+� �>
+
+B Φ b⋅=
+
+Φ � × b 
+
+R K Φ b⋅ ⋅ A b⋅= =
+
+A
+� ×  �= A
+
+b A 1– R⋅=
+
+B
+
+A 1–
+
+
+
+Inversion methods for satellite sounding data
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+amplification of small errors in into large errors in . This arises because the weighting functions are broad
+
+and overlapping—we do not have independent pieces of information. We have found one of the family of
+
+profiles which are mathematically consistent with the measurements, but usually one which is far from the true
+
+profile.
+
+It is possible to improve on this by restricting the number of basis functions to . Now we have an
+
+OVER-CONSTRAINED problem—the number of equations exceeds the number of unknowns and we may seek
+
+a solution which is a least-squares fit to the measurements, i.e. we minimize
+
+(11)
+
+with respect to all the elements of .  The solution is then
+
+, (12)
+
+where T denotes matrix transpose.
+
+This least-squares solution tends to be better than the exact solution represented by equation (10) but is still usually
+
+unsatisfactory. For a successful method, the basis functions must be carefully chosen and well suited to the types
+
+of profiles which are found in the atmosphere. For example, simple functions of height such as polynomials are
+
+not suitable. Also, it is often found that the solution over-fits the measurements (see Rodgers, 1976, for more dis-
+
+cussion).
+
+2.2  The estimation problem and the role of constraints
+
+From our appreciation of the ill-posed nature of the problem and experience with simple solutions, we are forced
+
+to the conclusion that we need information additional to the measurements in order to CONSTRAIN the profile
+
+and to choose a reasonable profile from the infinite number of mathematically possible profiles. Fortunately, for
+
+problems of interest in atmospheric remote sensing, additional information is available.
+
+In seeking a method of solution, we accept from the start that we cannot find the “true” profile exactly - the ill-posed
+
+nature of the problem and the noise in the measurements preclude this. We must look instead for an ESTIMATE
+
+of the true profile which is acceptably accurate or the best estimate in some  statistical sense.
+
+We may look towards probability theory or statistical techniques to tell us how to combine our radiation measure-
+
+ments with other information in order to select from all the possible profiles the best one. In this case, it is the other
+
+(“prior” or “background”) information which provides the constraints on the solution. There are many of these
+
+methods in the literature.  They are all interrelated, and some are examined below.
+
+Alternatively, we may take an empirical approach and look for an ad hoc method which finds a solution to the prob-
+
+lem—one of many, but one which is found through experience to be acceptable. There are a number of such meth-
+
+ods in the literature and we shall look at one in section 2.3 (e). These methods do not address the estimation
+
+problem directly. They use a variety of constraints which are not always obvious. These can take the form of limits
+
+on the smoothness of the profile or the requirement that it is composed of a linear combination of some basis func-
+
+tions.
+
+It is interesting to note that all the characteristics of the satellite sounding inversion problem are also characteristics
+
+of the data analysis problem for numerical weather prediction (NWP). The two are mathematically equivalent; in
+
+general they are both estimation problems which are ill-posed without the use of prior constraints.
+
+R B�
+
+ �<
+
+� � ��� ����
+1=
+
+�
+∑–
+
+ 
+ 
+  2
+
+� 1=
+
+�
+∑
+
+A
+
+b AT A⋅( )
+1–
+
+AT R⋅ ⋅=
+
+
+
+Inversion methods for satellite sounding data
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+2.3  Practical solutions
+
+2.3 (a)  The maximum probability solution. It is often useful to think of our knowledge of a variable in terms
+
+of a probability density function (PDF): let express the probability that a scalar variable has a value . If
+
+we know the estimates of have mean value and errors which, statistically, are normally distributed (Gaussian)
+
+with standard derivation , then we can say that x has a probability described by a PDF,
+
+. (13)
+
+When considering a vector variable , the equivalent equation is:
+
+, (14)
+
+where B is the error covariance about the mean value xo.
+
+A very powerful tool in probability theory is BAYES THEOREM, which helps us to manipulate the probabilities
+
+of two states or events occurring together. Let us consider two states, and . The probability that and will
+
+occur together is called their JOINT PROBABILITY and is denoted . The probability that x will occur
+
+when y occurs is called the CONDITIONAL PROBABILITY of given , and it is denoted . It is evident
+
+that the two are related by
+
+, (15)
+
+i.e. that the probability of and occurring together is the probability that occurs when occurs multiplied
+
+by the probability that  occurs.
+
+We can also interchange  and :
+
+. (16)
+
+Combining (15) and (16):
+
+. (17)
+
+This is Bayes theorem.
+
+How is this theory relevant to our problem? Let x represent some aspect of the atmospheric state such as the vertical
+temperature profile (or perhaps some function of it such as the Planck function profile, or a vector containing in-
+
+formation on the temperature profile and other atmospheric variables—in this way the theory we develop is more
+
+generally applicable than that introduced in Section 1). Let be a vector of measurements, such as satellite
+
+sounding data expressed as radiances, brightness temperatures, etc. Our purpose is to find the most probable value
+
+of  given the measurements , i.e. to maximize the conditional probability of  given :
+
+. (18)
+
+We apply Bayes theorem in the form,
+
+P �( ) �
+� � 0
+σ
+
+P �( ) α 1
+2
+---
+� � 0–( )2
+
+σ2
+---------------------–exp
+
+x
+
+P x( ) α 1
+2
+--- x x0–( )
+
+T– B 1– x x0–( )⋅ ⋅exp
+
+�  �  
+P �! ,( )
+
+�  P �" ( )
+
+P �# ,( ) P �" ( )P  ( )=
+
+�  �  
+ 
+�  
+
+P �# ,( ) P  $�( )P �( )=
+
+P �" ( ) P  %�( )P �( ) P  ( )⁄=
+
+ym
+
+x ym x ym
+
+P x ym( ) maximum=
+
+
+
+Inversion methods for satellite sounding data
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+. (19)
+
+Here we have taken P(ym), the prior probability of making a measurement ym to be constant (over the range of val-
+ues allowed by the instrument).
+
+is the probability that we shall make a measurement when the atmospheric state is . Let us represent
+
+the forward problem by the general expression . 2 If the measurements were error free, then would
+
+be a delta function peaking at . However, the measurements will contain errors which we shall assume
+
+are Gaussian with covariance . Then the PDF becomes (cf. equation (14))
+
+. (20)
+
+contains our information on prior to making any measurement. This information may come from a number
+
+of sources. For example, we may use a forecast profile from a numerical weather prediction model (along with
+
+some estimate of its probable error characteristics) or we may have climatological information such as the clima-
+
+tological mean profile and its covariance about the mean. We shall call such data BACKGROUND INFORMA-
+
+TION and denote it by a background profile and its error covariance . Then, for normally distributed
+
+background errors, the prior probability of the profile having a value x is given by (cf. equation (14)):
+
+. (21)
+
+It is more convenient to maximize the logarithm of (19) rather than (19) itself; substituting from (20) and (21) and
+
+taking the natural log gives
+
+. (22)
+
+2.3 (b)  The inversion problem as a variational problem. It is useful to identify the scalar quantity,
+
+, with a COST FUNCTION which has to be minimized:
+
+. (2a)
+
+Now we see that the mathematical problem is equivalent to that which arises in variational NWP data assimilation
+
+(e.g. see Lorenc 1988). The quadratic nature of the cost function arises because we have assumed a Gaussian form
+
+for the measurement and background errors.
+
+In the extensive literature on satellite sounding inversions, it is unusual to find the problem addressed in this way,
+
+i.e. as a variational problem. However, it is helpful to do so, as it makes clear the link with literature on similar
+
+variational problems, including that of NWP data assimilation. Moreover, once the general (nonlinear) inversion
+
+problem is posed in this way, most of the solutions which appear in literature, some of which are outlined below,
+
+can be seen as various levels of approximation to the optimal solution.
+
+The optimal solution, i.e. the most probable profile, is found by minimizing equation (2a) or by solving its gradient
+
+2.  Note that equations (4)–(7) are particular (simplified) ways of expressing the forward problem; here we retain a completely general form.
+
+P x ym( ) α P ym x( )P x( )
+
+P ym x( ) ym x
+y x{ } P ym x( )
+
+ym y x{ }=
+Y
+
+P ym x( ) α 1
+2
+--- ym y x{ }–( )
+
+T
+Y 1– ym y x{ }–( )⋅ ⋅–exp
+
+P x( ) x
+
+xb B
+
+P x( ) α 1
+2
+--- x xb–( )
+
+T
+B 1– x xb–( )⋅ ⋅–exp
+
+P x ym( ){ }ln 1
+2
+--- x xb–( )
+
+T
+B 1– x xb–( ) 1
+
+2
+--- ym y x{ }–( )
+
+T
+Y 1– ym y x{ }–( ) constant+⋅ ⋅–⋅ ⋅–=
+
+P x ym( ){ } constant+ln–
+
+� x( ) 1
+2
+--- x xb–( )
+
+T
+B 1– x xb–( ) 1
+
+2
+--- ym y x{ }–( )
+
+T
+Y 1– ym y x{ }–( )⋅ ⋅–⋅ ⋅–=
+
+
+
+Inversion methods for satellite sounding data
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+equation:  if  represents the gradient of  with respect to , then
+
+, (23)
+
+where  is a matrix containing the derivatives, . 3
+
+In general, this problem is not trivial—there is no general analytic solution to this equation. However, many tech-
+
+niques exist for solving it numerically for problems of interest. Here we shall consider only the linear case, i.e.
+
+when
+
+. (24)
+
+Integrating  gives
+
+. (25)
+
+Substituting from (25) and (24) into (23) gives
+
+. (26)
+
+Matrix manipulation yields an equivalent equation which is often computationally more efficient (i.e. it involves
+
+the inversion of smaller matrices):
+
+. (27)
+
+Our inversion therefore takes the following form: we have a background or “first-guess” profile from which we
+
+calculate the corresponding radiances using a radiative transfer model. We also calculate its derivatives
+
+(i.e. the weighting functions). With estimates of the error covariance of measurements, , and of the background
+
+profile, , we can solve equation (27) for  using measurements .
+
+It is useful to note that (27) has the form:
+
+. (28)
+
+In the case described here , but the same general form of equation with different
+
+expressions for appears in most inversion schemes. It expresses how differences between measured radiances
+
+and calculated radiances (i.e. calculated from the background profile) “map” into differences between retrieved
+
+profile and background profile through the INVERSE MATRIX, . Note that the optimal form of above is
+
+identical to that obtained in the optimal interpolation technique for NWP data assimilation (see Lorenc 1981),
+
+showing again the close correspondence between the two problems.
+
+2.3 (c)  The minimum variance solution . Another statistical approach to the estimation problem is to seek the
+
+solution which minimizes the mean-square difference between the retrieved and true profiles when averaged over
+
+a large number of cases. Let us assume that the forward problem is linear, i.e. that the true radiances may
+
+3. We use the notation because, for the linear temperature retrieval problem, the derivatives of the radiances with respect to the profile ele-
+ments are the weighting functions, cf. equation (7).
+
+J′ x( ) � x( ) x
+
+J′ x( ) B 1– x xb–( ) K x( )T Y ym y x{ }–( )⋅ ⋅–⋅ 0= =
+
+K x( ) dy x{ } dx⁄
+
+K
+
+K x( ) K xb( ) K a constant,= =
+
+dy x{ } dx⁄ K=
+
+y x{ } y xb{ } K x xb–( )⋅+=
+
+x xb B 1– KT Y 1– K⋅ ⋅+( )
+1–
+
+KT Y 1– ym y xb{ }–( )⋅ ⋅ ⋅+=
+
+x xb B KT K B KT Y+⋅ ⋅( )
+1–
+
+ym y xb{ }–( )⋅ ⋅ ⋅+=
+
+xb
+
+y xb{ } K
+Y
+
+B x ym
+
+x xb– W ym y xb{ }–( )⋅=
+
+&
+B KT K B KT Y+⋅ ⋅( )
+
+1–
+⋅ ⋅=
+
+W
+
+W W
+
+y xt{ }
+
+
+
+Inversion methods for satellite sounding data
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 15
+
+be calculated from the true profile  by (cf. equation (25)):
+
+. (29)
+
+The measured radiances are the true radiances plus measurement error :
+
+, (30)
+
+and so
+
+. (31)
+
+We minimize the mean-square departure of  from  over a large number of cases :
+
+. (32)
+
+If we seek a solution of the general linear form of equation (28), then by substituting (31) into (28), and (28) into
+
+(32), differentiating with respect to all elements of , and then solving for , we find
+
+, (33)
+
+where
+
+, (2a)
+
+and
+
+, (2b)
+
+i.e.  and  are the background and measurement error covariances.
+
+We note that the minimum variance solution is equivalent to the maximum probability solution in the linear case
+
+when the error characteristics of both background profile and measurements are Gaussian.
+
+2.3 (d)  Linear regression . It is possible to tackle the inverse problem without any knowledge of the radiative
+
+transfer physics if we have a large set of measurement pairs of satellite radiances with atmospheric profiles
+
+(e.g. from radiosondes) closely matched in time and space. We can then look for the coefficients of a linear
+
+combination of the radiances which best predict the atmospheric profiles in a least-squares sense. We write a pre-
+
+dictive equation
+
+, (34)
+
+xt
+
+y xt{ } y xb{ } K xt xb–( )⋅+=
+
+εm
+
+ym y xt{ } εm+=
+
+ym y xb{ }– K xt xb–( ) εm+⋅=
+
+x xt
+�
+
+1�-----   x x
+t–( )
+
+T
+x xt–( )⋅
+
+'
+∑ minimum=
+
+W W
+
+W B KT K B KT Y+⋅ ⋅( )
+1–
+
+⋅ ⋅=
+
+� 1�-----   x
+b xt–( ) xb xt–( )
+
+T
+⋅
+
+'
+∑=
+
+Y
+1�-----   ε
+
+m( ) εm( )
+T
+
+⋅
+
+'
+∑=
+
+B Y
+
+�
+ym
+
+xm
+
+x xm– W ym ym–( )⋅=
+
+
+
+Inversion methods for satellite sounding data
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+where and are the mean vectors of our large sample (usually called the dependent sample). Then we find
+
+the value of  for which
+
+, (35)
+
+. (36)
+
+Differentiating with respect to all elements of , and solving for , gives
+
+. (37)
+
+This is a purely statistical method. Alternatively, the technique may be used in a “physical-statistical” manner by
+
+starting from a set of N representative profiles, calculating from them theoretically the corresponding radiances
+
+and regressing the two sets of data as in equation (37) (taking care to allow for the measurement error in the
+
+radiances).
+
+If the radiative transfer equation is linear, it may be written as
+
+. (38)
+
+Substituting (38) into (37) and assuming the measurement errors  are uncorrelated with the profiles, we obtain
+
+. (39)
+
+This shows that, in the linear limit, linear regression methods are mathematically equivalent to the minimum vari-
+
+ance solution described in section 2.3 (c), where the background profile and its error covariance are the mean and
+
+covariance of the dependent set.
+
+2.3 (e)  Physical iterative methods . The statistical approaches presented above are mainly linear. Some are
+
+not well-suited to handling nonlinear problems and those which are do so at the expense of considerable computa-
+
+tion. Physical methods (which use ad hoc mathematical rather than statistical constraints) are more flexible in this
+
+respect. However, they do not attempt to be “optimal” (in the sense in which the statistical methods are) and, if
+
+not used with care, can converge on a solution which, although it fits the measurements, is not meteorologically
+
+realistic.
+
+We present here the physical, iterative method due to Smith (1970, 1985) adapted slightly to conform with the no-
+
+tation used above. At the th step of the iteration, we have an estimate of the profile from which we calculate
+
+radiances . The profile is then updated according to the difference between the measured and calculated ra-
+
+diances:
+
+xm ym
+
+W
+
+x xm–( )
+T
+
+x xm–( )
+
+'
+∑ minimum=
+
+x xm– W ym ym–( )⋅–[ ]
+T
+
+x xm– W ym ym–( )⋅–[ ]
+
+'
+∑ minimum=
+
+W W
+
+W xm xm–( ) ym ym–( )
+T
+
+⋅
+
+'
+∑ ym ym–( ) ym ym–( )
+
+T
+⋅
+
+'
+∑⋅=
+
+ym  xm{ }– ym ym– K xm xm–( ) εm+⋅= =
+
+εm
+
+W C KT K C KT E+⋅ ⋅( )
+1–
+
+⋅ ⋅=
+
+( x)
+y x)( )
+
+
+
+Inversion methods for satellite sounding data
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 17
+
+. (40)
+
+are empirical weights which could take a number of forms. Smith uses the weighting functions themselves
+
+as weights and finds that this gives a stable convergence. The iteration is started from a first-guess profile, such as
+
+a forecast profile.
+
+It is also possible to construct hybrid methods in which a statistical regression inversion is used as a first-guess for
+
+a physical iterative method, or in which a physical method provides the linearization point for a linear statistical
+
+retrieval. With care, a method which is physical and iterative can also be made statistically optimal - see Rodgers
+
+(1976) or Eyre (1989).
+
+3. CONSTITUENT PROFILE INVERSION
+
+Satellite measurements at frequencies in absorption bands of atmospheric constituents with variable concentration
+
+(such as water vapour and ozone) can be used to estimate the profiles of these constituents. The principles of the
+
+methods are generally the same as those presented above, but certain aspects of the problem make constituent pro-
+
+file inversion more difficult than that of temperature.
+
+Firstly, the problem is more nonlinear for constituents. This is because they enter the radiative transfer equation
+
+through the mixing ratio profile in the exponent of equation (2a). It is not possible to separate the radiative transfer
+
+equation into the product of a simple constituent function and one which is constituent-independent. The conse-
+
+quence is that methods which make assumptions of linearity are less accurate. We can still define a “temperature
+
+weighting function” for a constituent-sounding channel as the derivative of the transmittance profile, but this
+
+weighting function will vary considerably; its peak will move up in height as the mixing ratio increases.
+
+The second main problem is that, in certain circumstances, the radiances are insensitive to changes in the mixing
+
+ratio. To illustrate this, consider the limit of an isothermal atmosphere at temperature . Then, any mixing ratio
+
+profile will result in the same radiances to space (i.e. ). In practice, we find this problem in the retrieval of
+
+low-level water vapour; because the temperature of the water vapour is close to that of the surface, infrared radi-
+
+ances are relatively insensitive to changes in low-level water vapour. This is not the case for microwave measure-
+
+ments over the sea, where the low emissivity of the sea surface provides an apparently cold background against
+
+which changes in low-level water vapour can be detected.
+
+Simple linear regression methods have been used operationally for water vapour profile inversion, but nonlinear
+
+methods are potentially superior. For more details, see Smith (1985). In recent years, increasing use has been made
+
+of SIMULTANEOUS methods, in which the atmospheric profile vector x contains both temperature and water va-
+pour profiles (and possibly also other variables which affect the radiative transfer such as surface emissivity and
+
+cloud parameters).  See Smith et al. (1985) or Eyre (1989).
+
+4. CLOUDS
+
+Clouds create a major problem for temperature retrieval. Not only do they have considerable effects on infrared
+
+radiances, but they make the inversion problem highly nonlinear; they cause the weighting functions to change
+
+abruptly at the cloud top and thus make them strong functions of cloud-top pressure and amount. Moreover, opaque
+
+� �) 1+ � �)
+& � �  *�m  +� ){ }�–( )� 1=
+
+�
+∑
+
+& � �� 1=
+
+�
+∑
+
+------------------------------------------------------+=
+
+& � �
+
+�
+� ν �{ }
+
+
+
+Inversion methods for satellite sounding data
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+clouds preclude the sensing of information from below the cloud.
+
+The first approach to the problem is technological, i.e. to sound the atmosphere at frequencies for which clouds are
+
+(almost) transparent, such as in the microwave region. There is a tendency for increasing reliance on microwave
+
+radiometers as technology in this region advances. However, the infrared has a number of advantages - narrower
+
+weighting functions in the troposphere, less variable surface emissivity/reflectivity and higher spatial resolution.
+
+For these reasons, a combination of complementary infrared and microwave instruments is likely to be preferred
+
+for the foreseeable future.
+
+The second approach is to screen the data carefully for cloud “contamination” and to use only data from cloud-free
+
+areas. Many algorithms have been devised to do this (e.g. see McMillin and Dean, 1982). Unfortunately, most of
+
+the interesting weather occurs in cloudy areas and so this is only a partial solution. For partly cloudy areas, so-
+
+called “cloud-clearing” algorithms have been devised. These estimate from the “cloudy” radiances the radiances
+
+which would have been observed if there had been no cloud. Many of these methods are based on the adjacent field
+
+of view or “N'' method originated by Smith (1968). We make the assumption that two adjacent fields-of-view of
+
+an instrument (labelled 1 and 2) contain the same temperature and humidity profile and a single layer of cloud with
+
+the same cloud-top height, but with different fractional cloud coverages, and , respectively. Then we may
+
+write the following equations for the radiances emitted to space in each field of view:
+
+(41)
+
+where and are the radiances for cloud-free and completely overcast conditions, respectively. These
+
+equations may be solved simultaneously to give
+
+, (42)
+
+where . Alternatively, we may write
+
+. (43)
+
+If an estimate of the clear radiance can be obtained for one channel, then can be found through (43). Then,
+
+since is independent of channel, the clear radiance is obtained for all other channels using (42). The method
+
+fails if , which includes the (common) case of completely overcast conditions in both fields-of-view.
+
+The third approach to the problem is to perform an inversion directly from the cloudy radiances, by estimating the
+
+parameters describing the cloud conditions either simultaneously or iteratively along with the temperature profile
+
+(and other atmospheric parameters). Physical methods which take this approach have been devised (e.g. Huang
+
+and Smith, 1986; Susskind et al., 1984) and a nonlinear variational method has been demonstrated by Eyre (1989).
+
+5. SATELLITE SOUNDING DATA IN NUMERICAL WEATHER PREDICTION
+
+In recent years it has become increasingly difficult to show that temperature/humidity profiles retrieved from sat-
+
+ellite sounding data have a positive impact within operational NWP data assimilation systems, particularly in areas
+
+where other observation types are available. This problem has arisen partly because NWP systems have improved
+
+�
+1
+
+�
+2
+
+�
+1 1
+
+�
+1–( )
+� c �
+
+1
+
+� o ,+=
+�
+
+2 1
+�
+
+2–( )
+� c �
+
+2
+
+� o ,+=
+� c � o
+
+� c � 1 � * � 2–
+1
+� *–
+
+----------------------------=
+
+� * �
+1
+
+�
+2⁄=
+
+� * � c � 1–� c �
+2–
+
+-------------------=
+
+� *
+� *
+�
+
+1
+
+�
+2=
+
+
+
+Inversion methods for satellite sounding data
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 19
+
+to a point at which great care is required in the treatment of any observation type; appropriate quality control is
+
+necessary and the error characteristics of each data type must be taken into account. However, there are additional
+
+problems with satellite sounding data.
+
+As discussed in section 1.5, the intrinsic vertical resolution of the satellite sounding system is low, both in relation
+
+to other temperature sounding observations (i.e. radiosondes) and to the vertical resolutions of modern NWP mod-
+
+els. Because of this the background and constraint information used in the inversion affects the retrieved profile
+
+considerably. In practice low-order vertical structures in the retrieval are obtained mainly from the radiance infor-
+
+mation, but high-order structures come largely from the background information. Consequently, considerable care
+
+must be taken to avoid components of the retrieved profile which are not derived from the radiance data, but are
+
+artefacts of the inversion method, contaminating an otherwise good NWP analysis. Another symptom of the same
+
+problem is that retrieved profiles have systematic error structures of a very subtle and specific nature (see Eyre
+
+1987). It is difficult for many analysis systems to suppress the harmful effects of these error characteristics without
+
+simultaneously losing the real information contained in the radiance data.
+
+Recent developments in NWP data assimilation seek to solve these problems by making more direct use within the
+
+NWP system of radiance observations themselves, rather than retrieved temperature profiles. The French Direction
+
+de la Météorologie (Durand 1986) and the UK Meteorological Office (Eyre and Lorenc 1989) both run operational
+
+TOVS processing and assimilation systems based on these ideas. At ECMWF, systems for both one- and three-
+
+dimensional variational analysis of TOVS radiances are being developed, based on the theory presented in section
+
+2.3 (b) (see Eyre 1990, Pailleux 1990).
+
+REFERENCES
+
+Durand Y., 1986. The use of satellite data in the French high resolution analysis. Report of the Workshop on “High
+resolution analysis”; ECMWF, Reading; 24-26 June 1985; ECMWF Report, pp. 89-217.
+
+Eyre J.R., 1987. On systematic errors in satellite sounding products and their climatological mean values. Q. J.
+R. Meteorol. Soc., 113, 279-292.
+
+Eyre J. R., 1989: Inversion of cloudy TOVS radiances by non-linear optimal estimation. Q. J. R. Meteorol. Soc.,
+115, 1001-1037.
+
+Eyre J.R., 1990. Progress on direct use of satellite sounding radiances in numerical weather prediction. Preprints
+WMO International Symposium on “Assimilation of Observations in Meteorology and Oceanography”; Clermont-
+Ferrand, France; 9-13 July 1990; WMO Report, pp. 117-121.
+
+Eyre J.R. and Lorenc A.C., 1989. Direct use of satellite sounding data in numerical weather prediction. Meteorol.
+Mag., 118, 13-16.
+
+Huang H.-L. A. and Smith W. L., 1986: An extension of the simultaneous TOVS retrieval algorithm the inclusion
+of cloud. Tech. Proc. 3rd Int. TOVS Study Conf., Madison, Wisconsin; 13-19 August 1986; Ed.: W. P. Menzel;
+Report of CIMSS, University of Wisconsin-Madison; pp. 118-131.
+
+Lorenc A.C., 1981. A global three-dimensional multivariate statistical interpolation scheme. Mon. Wea. Rev., 109,
+701-721.
+
+Lorenc A.C., 1988.  Optimal nonlinear objective analysis.  Q.J.R. Meteorol. Soc., 114, 205-240.
+
+McMillin L. M. and Dean C., 1982: Evaluation of a new operational technique for producing clear radiances. J.
+Appl. Meteor., 12, 1005-1014.
+
+Menke W., 1984:  Geophysical data analysis:  discrete inverse theory.  Academic Press.
+
+Pailleux J., 1990. A global variational assimilation scheme and its application for using TOVS radiances. Preprints
+
+
+
+Inversion methods for satellite sounding data
+
+20 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+WMO Int. Symp. on “Assimilation of Observations in Meteorology and Oceanography”; Clermont-Ferrand,
+France; 9-13 July 1990; WMO Report, pp. 325-328.
+
+Rodgers C.D., 1976: Retrieval of atmospheric temperature and composition from remote measurements of thermal
+radiation.  Rev. Geophys. Space Phys., 14, 609-624.
+
+Schwalb A., 1978.  The TIROS-N/NOAA A-G satellite series.  NOAA Tech. Mem. NESS 95.
+
+Smith W.L., 1968. An improved method for calculating tropospheric temperature and moisture from satellite ra-
+diometer measurements.  Mon. Wea. Rev., 96, 387-396.
+
+Smith W. L., 1970: Iterative solution of the radiative transfer equation for the temperature and absorbing gas profile
+of an atmosphere.  Appl. Opt., 9, 1993-1999.
+
+Smith W. L., 1985:  Handbook of Applied Meteorology (Ed. D. Houghton).  Chapter 10:  Satellites.
+
+Smith W.L., Woolf H.M., Hayden C.M. and Schreiner A.J., 1985. The simultaneous retrieval export package. Tech.
+Proc. 2nd. Int. TOVS Study Conf.; Igls, Austria; 18-22 February 1985; Ed.: W.P. Menzel; Report of CIMSS, Uni-
+versity of Wisconsin-Madison; pp. 224-253.
+
+Smith W.L., Woolf H.M., Hayden C.M., Wark D.Q. and McMillin L.M., 1979. The TIROS-N Operational Vertical
+Sounder.  Bull. Am. Meteorol. Soc., 60, 1177-1187.
+
+Susskind J., Rosenfield J., Reuter D. and Chahine M. T., 1984: Remote sensing of weather and climate parameters
+from HIRS2/MSU on TIROS-N.  J. Geophys. Res., 89, 4677-4697.

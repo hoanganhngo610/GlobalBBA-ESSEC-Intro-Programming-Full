@@ -1,0 +1,716 @@
+Sensitivity
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+Sensitivity of general circulation model
+performance to convective parametrization
+March 1997
+
+By D. Gregory
+
+Table of contents
+
+1 . Introduction
+
+2 . The importance of shallow convection
+
+3 . Sensitivity of climate simulations to the parametrization of deep convection
+
+3.1 Mean distribution of precipitation
+
+3.2 Sensitivity of simulated variability
+
+3.3 Impact of differing precipitation distributions
+
+4 . Summary
+
+REFERENCES
+
+1. INTRODUCTION
+
+The paper attempts to describe the sensitivity of aspects of global circulation model (GCM) performance to con-
+
+vective parametrization. This is a difficult task for a number of reasons. Firstly we have to define what is meant by
+
+"performance". From a numerical weather forecasting perspective a model must produces a good estimate of the
+
+three-dimensional structure and evolution of synoptic-scale weather systems. On climate time scales the model
+
+should capture a realistic mean distribution of thermodynamic variables (including cloud cover), wind and surface
+
+precipitation. For coupled ocean–atmosphere modelling the surface fluxes of heat and water vapour need to be cor-
+
+rectly simulated. Also the simulated variability of the atmosphere (from diurnal through to the intraseasonal and
+
+interannual time scale) needs to be well captured. Convective parametrization has a large influence upon all these
+
+areas and it is difficult to make definitive statements covering each area in such a short paper.
+
+Secondly, however, it is difficult to make definitive statements concerning the impact of convection schemes alone
+
+as other parametrizations (for example the boundary-layer scheme), together with the methods used to simulated
+
+resolved motions, also have a impact upon the ability of atmospheric models to simulated the features of the general
+
+circulation referred to above. Even if identical convection schemes were used in two GCMs in which other proc-
+
+esses were represented in a substantially different manner, it would not be certain that the distribution of precipi-
+
+tation simulated, together with other features of the mean climate, would be similar. However, as will be illustrated
+
+below, some features of GCM simulations appear well correlated with certain convective processes.
+
+This paper will be limited to illustrating areas where simulations of the global circulation are known to be sensitive
+
+to the representation of convection, emphasing the mean climate and variability of the tropics. Reference will be
+
+mainly made to recent studies using the climate version of the UK Meterological Office (UKMO) Unified Model
+
+
+
+Sensitivity of general circulation model performance to convective parametrization
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(UM) (described briefly by Gregory and Morris (1996) and having a horizontal resolution of 2.5 x 3.75o latitude–
+
+longitude and 19 levels) and the T63 31-level configuration of a recent version of the ECMWF model (CY14R3).
+
+Other studies will also be referred to but only a summary of relevant results is provided; the reader is referred to
+
+the original material for greater details.
+
+2. THE IMPORTANCE OF SHALLOW CONVECTION
+
+When convection on a global scale is discussed it is often deep convection in the tropics that receives the greatest
+
+attention. Much recent work on the development of improved representations of convection for use in GCMs has
+
+concentrated upon this area. However, shallow convection also plays an important role in global circulation, and
+
+global simulations are sensitive to the manner in which it is parametrized. Although several mass-flux parametri-
+
+zations represent shallow convection (Tiedtke 1989; Gregory and Rowntree 1990), comparatively less attention
+
+has been given to considering the effects of such processes.
+
+To illustrate this sensitivity, Fig. 1 shows a latitude–height cross-section of zonal-mean omega for July 1987 from
+
+two 40-day integrations carried out using the ECMWF model, one with shallow convection parametrized by a
+
+mass-flux scheme, the second with no parametrization of shallow convection, together with the estimate of zonal-
+
+mean omega from the ECMWF ReAnalysis (ERA). With shallow convection neglected, the maximum intensity
+
+of the ascending branch of the Hadley circulation in the tropics is reduced and its lateral extent broadened. Other
+
+consequences of neglecting shallow-convective processes are a moistening of the boundary layer in the tropics and
+
+subtropics, drying of the free troposphere, a reduction in surface evaporation and large increases in boundary-layer
+
+cloud in the tropics and subtropics. These changes come about as shallow convection plays a crucial role in ven-
+
+tilating the boundary layer in the trade-wind regions, removing moisture from the boundary layer into the free trop-
+
+osphere. With the removal of shallow convection and a drier free troposphere in the descending branches of the
+
+Hadley circulation, cooling by infrared radiation is reduced, causing the intensity of the divergent circulation of the
+
+equatorial regions to reduce.
+
+
+
+Sensitivity of general circulation model performance to convective parametrization
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+Figure  1. Height–latitude cross-sections of zonal-mean omega (mPa/s) for July 1987 from T63/L31 simulations
+
+of the ECMWF model (CY14R3) starting on 20 June 1987 (a) with shallow convection included into the
+
+convection scheme, (b) shallow convection switched off in the convection scheme and (c) from the ECMWF
+
+ReAnalysis.
+
+A key parameter in a parametrization of shallow convection is the amount of saturated air which is transported
+
+through the inversion. Fig. 2 (from Tiedtke 1989) shows single-column simulations based upon ASTEX data in
+
+which the amount of mass transported through the inversion by convection (as measured by the parameter - the
+
+fraction of mass within convection in the last buoyant layer that is allowed to ascend into the inversion layer) is
+
+varied. Large changes in the intensity of the hydrolapse and temperature inversion are seen as is varied, with
+
+the boundary layer becoming moister and the inversion stronger when less of the updraught is detrained into the
+
+inversion layer. This is a consequence of less cloud water being available to cool and moisten the inversion layer
+
+by evaporation, balancing the warming and drying effects of large-scale subsidence. Note that removal shallow
+
+convection results in a very intense inversion and hydrolapse. Detailed observational studies of this processes are
+
+not available and current parametrizations are adjusted to achieve a realistic tropical circulation. However Large
+
+Eddy Simulation (LES) models are now able to capture many features of shallow convection and analysis of such
+
+detailed models across a variety of situations may be valuable for refining this area.
+
+β
+
+β
+
+
+
+Sensitivity of general circulation model performance to convective parametrization
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  2. Single-column model simulations for ASTEX illustrating impact of the variation of the fraction of
+
+updraught mass flux in the last buoyant layer allowed to penetrate the inversion ( ) upon boundary layer and
+
+inversion structure.
+
+3. SENSITIVITY OF CLIMATE SIMULATIONS TO THE PARAMETRIZATION OF DEEP CONVEC-
+TION
+
+3.1  Mean distribution of precipitation
+
+Several authors have recognised that different convection schemes can have a tendency to produce different spatial
+
+patterns of precipitation, especially in the tropics. For example Hess et al. (1993) compared aqua-planet simula-
+
+tions using a T42 version of the NCAR Community Climate Model (CCM1) using a moist convective adjustment
+
+scheme and Kuo type scheme, which uses moisture convergence to determine the location and intensity of convec-
+
+tion. They found that the Kuo scheme produced a double maximum of precipitation straddling the equator, with
+
+precipitation maxima at 10oN/S, while using the moist convective adjustment scheme gave a single maximum of
+
+precipitation on the equator. Several other studies have indicated a similar sensitivity. Plots of mean December/
+
+January/February (DJF) precipitation for 1979–1988 from the Atmospheric Model Intercomparison Project (AMIP
+
+β
+
+
+
+Sensitivity of general circulation model performance to convective parametrization
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+- Gates (1992)) presented by Slingo et al. (1996) show that, in the majority of GCMs using some form of moisture
+
+convergence to estimate the location and intensity of deep convection, a double ITCZ structure develops over the
+
+west Pacific.
+
+Figure  3. December/January/February precipitation from three-year simulations of the UKMO Unified Model
+
+(using climatological SSTs) with a mass-flux convection scheme (a) without and (b) with downdraughts.
+
+Recent studies with the climate version of the UKMO Unified Model have also suggested that, apart from refer-
+
+ences to moisture convergence made by a convection scheme, several other factors also influence the distribution
+
+of precipitation. Fig. 3 shows the impact of including the effects of convective-scale downdraught processes into
+
+the convection scheme of Gregory and Rowntree (1990) upon the distribution of simulated precipitation during
+
+DJF (3-year mean). In the Pacific a strong ITCZ north of the equator is weakened with the introduction of down-
+
+draughts, with a shift of precipitation into the south Pacific Convergence Zone (SPCZ) and a reduced double max-
+
+imum in precipitation straddling the equator in the Indian Ocean and west Pacific, in better agreement with
+
+observations. Monsoon circulations over the tropical continents are also intensified with the introduction of con-
+
+vective downdraughts, leading to improved rainfall amounts over tropical land masses. It should be noted that the
+
+convection scheme used (Gregory and Rowntree 1990) only uses instability to determine the location of convection
+
+and its intensity, i.e. no reference is made to the presence of moisture convergence as in the Kuo scheme.
+
+Downgradient momentum transports can also affect the mean climatology of precipitation simulated by a GCM.
+
+Fig. 4 shows DJF precipitation from two annual cycle simulations performed with the UKMO Unified Model (In-
+
+ness and Gregory 1996), one in which the vertical transport of horizontal momentum is neglected (10-year mean),
+
+
+
+Sensitivity of general circulation model performance to convective parametrization
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+the second in which it is included (3-year mean) using the scheme described by Gregory et al. (1996). Inclusion
+
+of momentum transports leads to a reduction in precipitation rates in the SPCZ and increased rainfall in the ITCZ
+
+north of the equator in the Pacific. A greater tendency to form a split ITCZ is noted in both the Indian Ocean and
+
+west Pacific. It is should be noted that the convection scheme used in these simulations contains the downdraught
+
+parametrization discussed above, indicating the large sensitivity to details of the convection scheme that the proc-
+
+esses determining the distribution of precipitation have.
+
+Figure  4. December/January/February precipitation for simulations of the UKMO Unified Model (using
+
+climatological SSTs) (a) without convective momentum  transports (10-year mean) and (b) with convective
+
+momentum transports (3-year mean).
+
+The reasons for this large model sensitivity is not well established. Hess et al. (1993) suggested that the ability of
+
+a model to represent transient synoptic waves played a role in organising the precipitation maximum off the equa-
+
+tor. They found that in simulations using a Kuo type convection scheme, convergence due to transient eddies was
+
+a maximum off the equator. When a moist convective adjustment scheme was used, synoptic eddies were not well
+
+simulated. However, Inness and Gregory (1996) show that inclusion of convective momentum transports leads to
+
+a reduction of transient activity in the central Pacific, together with a greater tendency to splitting the ITCZ, perhaps
+
+suggesting that variability has less of a role in organising such precipitation patterns. However, there may be a
+
+strong link between the ability of a model to simulate the distribution of tropical precipitation accurately and its
+
+ability to simulate observed variability on a variety of time scales.
+
+
+
+Sensitivity of general circulation model performance to convective parametrization
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+As commented upon above, there is a similarity in the tropical precipitation pattern in the UKMO Unified Model
+
+when either downdraught processes are neglected or downgradient convective momentum transports included. In
+
+both cases the band of precipitation located near the Philippines is excessive compared with observations and is
+
+associated with a depression track due to the model’s attempt to simulated tropical depressions that tend to move
+
+in a manner similar to tropical cyclones, although being of much weaker intensity due to the coarse resolution of
+
+the model. Downdraughts have a tendency to cool and dry the convective subcloud layer, which may inhibit the
+
+formation of tropical depressions within the model by delaying the growth of intense convection. Hence, neglect
+
+of such processes may enhance the synoptic variability within the model and, where this occurs, enhance precipi-
+
+tation amounts.
+
+Analysis of the simulations with and without convective momentum transports (Gregory et al. 1996) indicates that
+
+the inclusion of momentum transports decreases the vertical shear in the west Pacific north of the equator, a situa-
+
+tion which may favour the formation of tropical depressions. Indeed, as commented upon later (figure 6a), synoptic
+
+variability increases in vicinity of the Philippines when convective momentum transports are included together
+
+with mean precipitation. These "observations" of model sensitivity may suggest that the pattern of mean precipi-
+
+tation simulated by a GCM may be closely tied to a models ability to simulate accurately tropical variability. Fur-
+
+ther comments will be made regarding this subject in the next section.
+
+3.2  Sensitivity of simulated variability
+
+Recent studies of GCM simulations have demonstrated that simulated variability in the tropics on a wide range of
+
+time scales is sensitive to the convection scheme employed. Slingo et al. (1994) presents results from perpetual
+
+January simulations of the UGAMP GCM (based upon a version of the ECMWF model) using both a Kuo and
+
+Betts–Miller scheme. They found that the Betts–Miller scheme gave a more realistic distribution of precipitation,
+
+with a maximum on the equator over the west Pacific anda narrow ITCZ, while the Kuo scheme gave a very much
+
+weaker ITCZ, with precipitation being broadly distributed over the tropical oceans. Associated with this, it was
+
+found that higher levels of variability were found in the tropics using the Betts–Miller scheme from time scales
+
+ranging from those associated with synoptic-scale systems (2–6 days) to intraseasonal periods (30–70 days).
+
+This contrasting behaviour was attributed by Slingo et al. (1994) to the different ways the two schemes operated.
+
+For the Kuo scheme used in their study, the only criterion for convection to occur if the profile is conditionally un-
+
+stable is that moisture convergence is present. In the tropics and subtropics this condition is almost always satisfied
+
+due to surface evaporation, and so the Kuo scheme continually acts, giving low instantaneous precipitation rates.
+
+With the Betts–Miller scheme, for deep convection to occur the integrated moisture within a column of the atmos-
+
+phere has to be sufficient to support precipitation. This leads to a delay in the onset of precipitation events and a
+
+more intermittent response of the convection. Slingo et al. (1994) commented that, if the Kuo scheme was prevent-
+
+ed from operating until the water in the column exceeds a critical value (as in the BMRC GCM—McAvaney et al.
+
+(1991)), then as the fraction of the moisture convergence precipitated by convection increases with relative humid-
+
+ity, spurious rainfall in the subtropics would be eliminated and more intense rainfall events generated in the deep
+
+tropics.  This may lead to a better mean climate and simulation of variability.
+
+However the link between closure and simulation of variability is complicated. Fig. 5 compares the variance of
+
+850 mb relative vorticity for DJF 1987/88 from a simulation using a recent version of the ECMWF model (at T63
+
+resolution) with that estimated from the ECMWF ReAnalysis data (ERA - at T106 resolution). The ECMWF mod-
+
+
+
+Sensitivity of general circulation model performance to convective parametrization
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+el uses a mass-flux convection scheme (Tiedtke 1989) in which the mass flux at cloud base is linked to moisture
+
+convergence below cloud base. Also, the growth of the mass flux in the vertical in the lower half of the troposphere
+
+is linked to the moisture convergence into the column of the atmosphere. Hence, the location of convective activity
+
+and its intensity are strongly linked to the presence of moisture convergence. However, unlike the Kuo scheme
+
+used by Slingo et al. (1996), the location of deep convection is determined by moisture convergence due to atmos-
+
+pheric motion being greater than surface evaporation rather than that the sum of convergence and surface evapora-
+
+tion implying a moistening of a column of the model. Although errors can be seen in the spatial patterns of
+
+variability within the tropics in the model simulation (for example in the west Pacific, associated with errors in the
+
+mean distribution of precipitation - a strong ITCZ north of the equator in the Pacific and weak SPCZ) the level of
+
+variability within the ITCZ is comparable to that from the reanalysis (for example, in the southern Indian Ocean).
+
+This contrasts from results presented by Nordeng (1994) which suggested that an earlier version of the ECMWF
+
+model (T63/19 levels) with the same convection scheme underestimated tropical variability, especially in the west
+
+Pacific. However, many other parts of the mode’ls dynamics and physical parametrizations have changed since this
+
+study, indicating that the level of variability simulated is not a function of the convection scheme alone.
+
+Figure  5. Mean variance of 850 mb relative vorticity for December/January/February 1987/88 for the tropics
+
+from (a) ECMWF ReAnalysis and( b) a 120-day T63/L31 simulation (from 1 Nov 1987) using version CY14R4
+
+of the ECMWF model.
+
+Simulated variability is also affected by the parametrization of convective momentum transports. Inness and Gre-
+
+goy (1996) show that inclusion of such transports into the UKMO Unified Model changes not only the mean pre-
+
+cipitation pattern (as shown in Fig. 4 above) but also the simulated variability from synoptic to intraseasonal time
+
+scale. Fig. 6 shows the variance of outgoing long-wave radiation on synoptic (2–10 days) and intraseasonal (25–
+
+70 days) time scales for the tropics (annual means) from two 3-year simulations, one without convective momen-
+
+tum transports, the other with them included. Synoptic variability is generally reduced along the ITCZ of the cen-
+
+tral and eastern Pacific and Atlantic oceans although, as noted earlier, it is increased in the west Pacific near the
+
+Philippines.
+
+
+
+Sensitivity of general circulation model performance to convective parametrization
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+A similar sensitivity to convective momentum transports is seen in the ECMWF model, with simulated variability
+
+across the Pacific reducing when convective momentum transports are included into the model. However, near the
+
+Philippines, variability is increased in DJF. As noted earlier, this is associated with greater precipitation in both
+
+models in this region, indicating a link between variability and mean precipitation. This presence of a strong band
+
+of precipitation north of the equator in this region is not supported by observations and may suggest that counter-
+
+gradient transports associated with organised convective systems, not accounted for in the current momentum-
+
+transport parametrization, may play a role in regulating the formation of tropical depressions in this region. How-
+
+ever, the impact of convective-scale downdraught processes discussed previously suggests that interactions be-
+
+tween convection and the subcloud layer and ocean surface may also be important.
+
+Fig. 6 also shows a weakening of the intraseasonal oscillation simulated by the Unified Model when convective
+
+momentum transports are included. Inness and Gregory (1994) also note that the neglect of downdraught processes
+
+weakens the strength of the intraseasonal oscillation. This is correlated with a stronger ITCZ north of the equator,
+
+weaker SPCZ and a greater tendency to split the ITCZ in DJF, bringing the model into poorer agreement with ob-
+
+servations and an increased easterly bias in the seasonal cycle of the upper level flow of the tropics. Slingo et al.
+
+(1996), in a study of the ability of 15 different GCMs to simulate intraseasonal variability, note that those with a
+
+realistic distribution of precipitation with respect to SST in the Pacific and a unbiased seasonal cycle in tropical
+
+upper-level winds (associated with the latitudinal movement of convection) tended to give a strong signal at intra-
+
+seasonal time scales in tropical wind fields. The results from the UKMO model referred to here would corroborate
+
+this observation, indicating a link between the correct simulation of the mean climate and its seasonal variation
+
+with atmospheric variability.
+
+3.3  Impact of differing precipitation distributions
+
+It is important to ask whether such errors in precipitation patterns play a significant role in causing model system-
+
+atic error in global circulation. A poor distribution of surface precipitation will affect surface fluxes and so impact
+
+upon the ability of coupled atmosphere–ocean models to simulated climate. However, the study of Ferranti et al.
+
+(1994) carried out using an earlier version of the ECMWF model (T42/19 levels) suggests that differences in the
+
+structure of convective activity in the Pacific is of more direct importance to the accurate simulation of atmospheric
+
+flow in the tropics and mid latitudes. This study considers the response of model systematic error to idealised sea
+
+surface temperature anomalies. The mean DJF precipitation distribution simulated by this earlier version of the
+
+ECMWF model showed a split ITCZ structure over the west and central Pacific, with a minimum of precipitation
+
+on the equator (Fig. 7 (a)), contrasting with observations which suggest a maximum on the equator. Increasing the
+
+SSTs in the vicinity of the equator by 2 K between 110oE and 150oE increased precipitation locally on the equator
+
+up to 16 mm/day (Fig. 7 (b)). Associated with this response is a strengthening of the upper-level westerly flow in
+
+the upper troposphere of the central and west Pacific, reducing an easterly bias in the control simulation (Fig. 8 ).
+
+
+
+Sensitivity of general circulation model performance to convective parametrization
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  6. Annual-mean variance of outgoing long-wave radiation (3-year mean) for time periods (a) and (b)
+
+between 2 and 10 days, and (c) and (d) 25 and 70 days, for simulations of the UKMO Unified Model (a) and (c)
+
+without and (b) and (d) with convective momentum transports.
+
+
+
+Sensitivity of general circulation model performance to convective parametrization
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+Figure 7. (a) December/January/February average precipitation using climatological SSTs (from an ensemble of
+
+5 simulations) using a T63/L19 version of the ECMWF model, and (b) December/January/February precipitation
+
+response to an Indonesian SST anomaly (described in text).
+
+The presence of westerly winds in the east Pacific is important for the interaction of the tropics and mid latitudes,
+
+with Rossby waves propagating northwards into the north Atlantic sector leading the to "PNA" pattern associated
+
+with blocking activity over Europe. Comparing the Tibaldi blocking index (Tibaldi and Molenti 1990) for the con-
+
+trol and Pacific SST anomaly simulations (averaged over an ensemble of 6 simulations started 1 day apart) with
+
+that estimated from model analyses shows more realistic blocking occurrence in both Pacific and Atlantic when
+
+convection is forced to occur over the equator in the west Pacific. Similar sensitivity has been noted in an experi-
+
+ment of similar design with the climate version of the UKMO Unified Model (R. Stratton, personal communica-
+
+tion) and leading one to speculate that a convection schemes that produce a precipitation pattern with a maximum
+
+on the equator of the west Pacific might lead to a better simulation by a GCM of the interaction between the tropics
+
+and mid latitudes.
+
+
+
+Sensitivity of general circulation model performance to convective parametrization
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 8. (a) December/January/February zonal-mean cross-section of systematic error in zonal-mean wind from
+
+an ensemble of five 120-day simulations using climatological SSTs, and (b) December/January/February zonal-
+
+mean cross-section of the response of zonal wind to an Indonesian SST anomaly.
+
+4. SUMMARY
+
+This paper has attempted to review the impact of convection upon the ability of convection to simulate accurately
+
+aspects of the general circulation. As stated in the introduction, it has not attempted to be comprehensive but has
+
+concentrated upon the circulation and variability of the tropics, although possible consequences of errors there for
+
+mid-latitude circulations have been briefly commented upon. It is clear that details of the methods used to para-
+
+metrize both deep and shallow convection have a large impact upon GCM performance. However, the exact details
+
+of such sensitivity are somewhat contradictory at times, with different models showing different sensitivities.
+
+Mechanisms to account for these sensitivities are not understood, being difficult to evaluate within the context of
+
+a fully interactive global model. However, similarities between the sensitivity of the UKMO Unified Model and a
+
+recent version of the ECMWF model to processes such as convective momentum transports has been noted.
+
+Summarising those points with which there is some agreement between various studies;
+
+1) Shallow convective parametrizations plays a key role in the maintenance of the Hadley circulation
+
+in GCMs and the global hydrological cycle.
+
+2) Convection schemes that use moisture convergence to determine the location and intensity of deep
+
+convection have a detrimental impact upon the mean distribution of tropical precipitation, tending
+
+to split the ITCZ in the west Pacific, which may lead to large errors in the simulated circulation of
+
+the tropics and mid latitudes. However, other factors, such as the neglect of convective
+
+downdraughts and the inclusion of momentum transports in GCMs, may lead to similar errors.
+
+
+
+Sensitivity of general circulation model performance to convective parametrization
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+3) Various convection schemes have impact upon the variability of the tropical atmosphere, although it
+
+is too simplistic to conclude that moisture-convergence type schemes produce weaker levels of
+
+variability. However, it is clear that the ability of a GCM to capture details of atmospheric
+
+variability accurately is an important test of a parametrization scheme. Sensitivity studies presented
+
+above also tend to suggest that the simulation of a correct distribution of precipitation may be
+
+coupled with a model’s ability to provide a realistic simulation of atmospheric variability.
+
+4) Down-gradient transport of horizontal momentum in the vertical by convection reduces model wind
+
+errors in the tropics and also (generally) tropical variability on a broad range of time scales.
+
+However, in certain regions errors in the precipitation distribution are enhanced by such processes,
+
+perhaps indicating the need to consider counter-gradient momentum transports associated with
+
+organised convection in some regions (for example the west Pacific).
+
+REFERENCES
+
+Ferranti, L., Molteni, F. and Palmer, T.N. (1994) Impact of localised tropical and extratropical SST anomalies in
+
+ensembles of seasonal GCM integrations, QJR. Meteorol. Soc. 120, 1613-1646
+
+Gates, W.L. (1992) AMIP : The Atmospheric Model Intercomparison Project, Bull. Am. Meteorol. Soc. 73, 1962-
+1970
+
+Gregory, D. and Morris, D. (1996) The sensitivity of climate simulations to the specification of mixed phase clouds,
+
+Clim. Dyn. 12, 641-651
+
+Gregory, D. and Rowntree, P.R. (1990) A mass flux convection scheme with representation of cloud ensemble char-
+
+acteristics and stability dependent closure, Mon. Wea. Rev. 118, 1483-1506
+
+Gregory, D., Kershaw, R. and Inness, P.M. (1996) Parametrization of momentum transports by convection II : Tests
+
+in single column and general circulation models, accepted for publication in QJR. Meteorol. Soc.
+
+Hess, P.G., Battisti, D.S. and Rasch, P.J. (1993) The maintenance of the intertropical convergence zones and large-
+
+scale tropical circulation on a water covered earth, J. Atmos. Sci. 50, 691-713
+
+Inness, P.M. and Gregory, D. (1994) Simulation of the Indian monsoon and tropical intraseasonal variability by a
+
+general circulation model, Climate Research Technical Note No. 52, Hadley Centre, Meteorological Office, Lon-
+
+don Road, Bracknell, Berks, United Kingdom
+
+Inness, P.M. and Gregory, D. (1996) Aspects of the intraseasonal oscillation simulated by the Hadley Centre at-
+
+mospheric model, submitted to Clim. Dyn.
+
+McAvaney, B.J., Fraser, J.R., Hart, T.L., Rikus, L.J., Bourke, W.P., Naughton, M.J., and Mullenmeister, P. (1991)
+
+Circulation statistics from a non-dirurnal seasonal simulation with the BMRC atmospheric GCM : R21L19, BMRC
+
+Research Report No.29, Beaureau of Meteorology Research Centre, Melbourne, Australia
+
+Nordeng, T.E. (1994) Extended versions of the convection parametrization scheme at ECMWF and their impact
+
+upon the mean climate and transient activity of the model in the tropics, Research Department Technical Memo-
+
+randum No. 206, ECMWF, Shinfield Park, Reading, Berks, United Kingdom
+
+Slingo, J.M., Blackburn, M., Betts, A., Brugge, R., Hoskins, B.J., Miller, M.J., Steenman-Clark, L. and Thurburn,
+
+J. (1994) Mean climate and transience in the tropics of the UGAMP GCM : Sensitivity to convective parametriza-
+
+tion, QJR. Meteorol. Soc., 120, 881-922
+
+Slingo, J.M., Sperber, K.R., Boyle, J.S., Ceron, J.-P., Dix, M., Dugas, B., Ebisuzaki, W., Fyfe, J., Gregory, D., Guer-
+
+
+
+Sensitivity of general circulation model performance to convective parametrization
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+emy, J.-F., Hack, J., Harzallah, A., Inness, P., Kitoh, A., Lau, W.K.-M., McAvaney, B., Madden, R., Matthews, A.,
+
+Palmer, T.N., Park, C.-K., Randall, D. and Renno, N. (1996) Intraseasonal oscillations in 15 atmospheric general
+
+circulation models : results from an AMIP diagnostic subproject, Clim. Dyn. 12, 325-357
+
+Tiedtke, M. (1989) A comprehensive mass flux scheme for cumulus parametrization in large-scale models, Mon.
+
+Wea. Rev. 117, 1779-1800
+
+Tibaldi, S. and Molenti, F. (1990)  On the operational predictability of blocking, Tellus 42A, 343-365

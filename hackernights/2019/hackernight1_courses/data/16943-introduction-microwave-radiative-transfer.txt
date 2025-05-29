@@ -1,0 +1,2545 @@
+Microwave_rad
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+Introduction to microwave radiative transfer
+May 2002
+
+By Peter Bauer
+
+European Centre for Medium-Range Weather Forecasts
+
+Abstract
+
+The following text gives a brief overview of microwave radiative transfer in atmospheres covering the principles of radiative
+transfer in an absorbing and scattering atmosphere including surface reflection and emission. A few approaches for radiative
+transfer modelling are presented. Models for atmospheric absorption, particle absorption and scattering as well as surface
+emission are introduced. Please note that the reference frequency range was chosen to be 1-200 GHz which covers all current
+spaceborne microwave radiometer channels in operation for tropospheric remote sensing. As a description of current
+microwave radiative transfer problems, the COST-712 Project 1 report is recommended.
+
+Table of contents
+
+1 . Radiative transfer
+
+1.1 Emission
+
+1.2 Scattering
+
+1.3 Polarization
+
+1.4 Boundaries
+
+1.5 Antenna patterns
+
+2 . Radiative transfer models
+
+2.1 Principles
+
+2.2 Emission
+
+2.3 Scattering—doubling/adding
+
+2.4 Scattering—Approximations
+
+2.5 Scattering—Others
+
+3 . Atmospheric absorption
+
+4 . Surface emission/reflection
+
+4.1 Ocean
+
+4.2 Land
+
+5 . Hydrometeors
+
+5.1 Permittivity
+
+5.2 Cloud absorption and scattering
+
+5.3 Precipitation
+
+
+
+Introduction to microwave radiative transfer
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+6 . Fast models
+
+7 . Outstanding issues
+
+REFERENCES
+
+1. RADIATIVE TRANSFER
+
+The radiative transfer equation can be expressed as the differential change of radiance  along path :
+
+(1)
+
+In vertical coordinates, and including slant paths, the path coordinate is modified to optical depth
+
+with zenith angle . denotes the volume extinction coefficient
+
+comprising absorption and scattering by all relevant media in the atmosphere. All optical quantities are frequency
+
+dependent, thus the subscript ‘ ’ will be omitted hereafter. Including source terms (1) translates to:
+
+(2)
+
+denotes the azimuth angle so that the angular dependence may be combined to , . The
+
+source term covers contributions from scattering (hydrometeors) and emission (oxygen, water vapour, dry air, hy-
+
+drometeors):
+
+(3)
+
+Scattering of radiance is expressed in terms of a normalized scattering phase function:
+
+(4)
+
+describing the distribution of incident radiance ( ) to observation direction ( ). denotes
+
+the single scattering albedo and provides a measure for the fraction of scattered radiation while  is the
+
+fraction of absorbed / emitted radiation.  is the blackbody equivalent radiance according to temperature.
+
+The differential form of the radiative transfer equation can be integrated from the surface ( ) to the top of
+
+the atmosphere, :
+
+�
+ν �
+
+d
+�
+
+ν
+�
+
+ν
+�
+
+extd �–=
+
+dδ µ⁄
+�
+
+extd � µ⁄= θ cos 1– µ=
+�
+
+ext
+
+�
+abs
+
+�
+sct+=
+
+ν
+
+µd
+�
+
+δ µ φ,;( )
+dδ
+
+---------------------------
+�
+
+δ µ; φ,( ) � δ µ; φ,( )–= (upward)
+
+µ– d
+�
+
+δ µ– φ,;( )
+dδ
+
+------------------------------
+�
+
+δ µ–; φ,( ) � δ µ–; φ,( )–= (downward).
+
+φ Ω µ φ,( )= dΩ dµdφ=
+
+� δ µ; φ,( ) ω0
+4π
+------
+
+�
+δ µ′; φ′,( ) � µ φ µ′ φ′,;,( )dµ′dφ′ 1 ω0–( ) ���( )+
+
+1–
+
+1
+
+∫
+0
+
+2π
+
+∫=
+
+1
+4π
+------ � µ φ µ′ φ′,;,( )dµ′dφ′
+
+1–
+
+1
+
+∫
+0
+
+2π
+
+∫ 1=
+
+µ′ φ′, µ φ, ω0
+�
+
+sct
+
+�
+ext⁄=
+
+1 ω0–( )
+
+���( )
+δ δ*=
+
+δ 0=
+
+
+
+Introduction to microwave radiative transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+(5)
+
+with total atmospheric transmission:
+
+(6)
+
+and surface emissivity, , which is a function of temperature, roughness, foam coverage, and salinity in the case
+
+of sea water and a function of temperature, moisture, soil type, vegetation, and roughness (among others) for land
+
+surfaces.
+
+1.1  Emission
+
+In the case of a purely absorbing medium, . Neglecting the azimuth angle dependence (6) becomes:
+
+(7)
+
+The term  defines the atmospheric transmission from level  to the top of the atmosphere, i.e.:
+
+(8)
+
+which by insertion into (7) (neglecting surface contributions) provides the basic radiative transfer equation for ver-
+
+tical atmospheric sounding (note the exchange of the integration limits):
+
+(9)
+
+In the microwave spectrum and in cloudfree areas, optical depth is mainly a function of atmospheric temperature
+
+(50–60 GHz, 118 GHz) and water vapour (22 GHz, 183 GHz) due to line absorption; however, continuum contri-
+
+butions by dry air and water vapour increase slowly with frequency and are non-negligible though difficult to pa-
+
+rameterize.
+
+The term is called the ‘weighting function’ since it provides weights of the contribution of
+
+to . Thus only as much radiance from a certain layer can reach the top of the atmosphere as
+
+is transmitted through the overlying layers. Typically, the weighting functions have ‘Gaussian’ shapes with a max-
+
+imum at the level where has a maximum gradient. This level defines the layer to which a sounding has a maxi-
+
+�
+δ 0 µ φ,;=( ) ε0 ��� 0( )τ δ* µ φ,;( ) +=
+
+� δ′ µ φ,;( ) δ′ µ⁄–[ ]exp δ′ µ⁄ +d
+δ*
+
+0
+
+∫+
+
+1 ε0–( )τ δ
+* µ φ,;( ) � δ′ µ φ,;( ) δ* δ′–( ) µ⁄–[ ]exp δ′ µ⁄d
+
+0
+
+δ*
+
+∫+
+
+τ δ* µ φ,;( ) δ′ µ⁄–[ ] δ′ µ⁄dexp
+δ*
+
+0
+
+∫=
+
+ε0
+
+ω0 0=
+
+�
+δ 0 µ,=( ) ε0 ��� 0( )τ δ* µ,( ) ��� δ′( )[ ] δ′ µ⁄–[ ] dδ′ µ⁄exp
+
+δ*
+
+0
+
+∫+=
+
+1 ε0–( )τ δ
+* µ,( ) �	� δ′( )[ ] δ* δ– ′( ) µ⁄–[ ] dδ′ µ⁄exp
+
+δ*
+
+0
+
+∫+
+
+δ′ µ⁄–[ ]exp δ′
+
+τ δ µ,( ) δ µ⁄–[ ], ∂τ δ µ,( )∂δ
+--------------------exp
+
+1
+µ
+---τ δ µ,( )–= =
+
+�
+δ 0 µ,=( ) �	� δ′( )[ ]∂τ δ′ µ,( )∂δ---------------------- dδ′
+
+0
+
+δ*
+
+∫=
+
+∂τ δ µ,( ) ∂δ⁄
+��� δ( )[ ] 
+ δ 0 µ,=( )
+
+τ
+
+
+
+Introduction to microwave radiative transfer
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+mum sensitivity; however the width of the weighting function indicates that the sounding level is not discrete but
+
+rather blurred and depends on the local conditions to be retrieved.
+
+For remote sensing applications, it is important to notice that the integrand in (9) comprises two profile variables,
+
+i.e. and . An inversion of (9) is more accurate for temperature profile retrievals near or at oxygen
+
+absorption lines because there, absorption is a function of temperature as is . Since oxygen is a well
+
+mixed gas in the troposphere, absorption does not depend on gas concentration but only temperature.
+
+In the case of water vapour profile retrievals, is a function of water vapour content while is a
+
+function of temperature. Thus, both absorber density and temperature profiles are convolved and cause less accu-
+
+rate retrievals of e.g. water vapour contents at specific altitudes. Here, a combination of temperature profile retriev-
+
+als at, say 50–60 GHz, and water vapour profile retrievals at 183 GHz are of advantage. In terms of water vapour
+
+content (e.g. mixing ratio), the integrand in (9) may be expressed as:
+
+. (10)
+
+Here, and are known so that (10) is as complex as for temperature sounding but expressed in terms
+
+of the desired quantity.
+
+Of some importance is the way the integration in (9) is carried out. Considering a single layer, it may be assumed
+
+(1) that with layer average temperature , or (2) that changes linearly within the layer, i.e.,
+
+with being the temperature at the top of the layer (where ) and
+
+ being the lapse rate. Then:
+
+(11)
+
+Depending on the optical depth of the layer, the difference between the two options may be several K. At micro-
+
+wave wavelengths, this becomes important in clouds and precipitation but may be neglected in optically thin cloud-
+
+free atmospheres.
+
+1.2  Scattering
+
+In the microwave part of the electromagnetic spectrum, the dependence of scattered radiation on azimuth angle can
+
+be neglected in most cases because multiple scattering of diffuse radiation is much less anisotropic than that of e.g.
+
+solar radiation. In this case, the phase function in (4) becomes:
+
+(12)
+
+and (2) reduces to:
+
+(13)
+
+A rather accurate approximation to the phase function in (12) is given by the Henyey–Greenstein function which
+
+is only applicable in scalar radiative transfer:
+
+� δ( ) τ δ µ,( )
+��� δ( )[ ]
+
+τ δ µ,( ) �	� δ( )[ ]
+
+��� δ( )[ ]∂τ δ µ,( )∂δ-------------------- dδ �����( )[ ]
+∂τ
+∂δ
+------ ∂δ
+
+∂ �-------
+∂ �
+∂�------- d�=
+
+∂τ ∂δ⁄ ∂δ ∂ �⁄
+
+�	�( ) const= � �
+�	� δ( )[ ] �	� 0[ ] � 1δ+= � 0 δ 0=
+� 1 ∆ � ∆δ⁄=
+
+��� δ′( )[ ]∂τ δ′ µ,( )∂δ---------------------- dδ′
+0
+
+δ
+
+∫ ���( ) 1 δ µ⁄–( )exp–[ ] : const��� 0( ) � 1µ τ �	� 0( ) � 1 µ δ+( )+[ ]–+ : linear
+
+
+=
+
+� µ µ′,( ) 1
+2π
+------ � µ φ µ′ φ′,;,( ) dφ
+
+0
+
+2π
+
+∫=
+
+µd
+�
+
+δ µ±,( )
+dδ
+
+-------------------------±
+�
+
+δ µ±,( )
+ω0
+2
+
+------
+�
+
+δ µ′,( )� µ µ′,±( ) dµ′ 1 ω0–( )�	�( )–
+1–
+
+1
+
+∫–=
+
+
+
+Introduction to microwave radiative transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+(14)
+
+ denotes the asymmetry parameter which represents the angle-averaged phase function, :
+
+(15)
+
+This parameter is >0 / <0 if more radiation is scattered in forward/backward than backward/forward direction. For
+
+Rayleigh scattering .
+
+1.3  Polarization
+
+Another important source of information is polarization, because surfaces polarize incoming unpolarized radiation
+
+by reflection and particles polarize by scattering. In both cases, a strong dependence of illumination vs. observation
+
+geometry exists, and the degree and angular distribution of the polarized radiation is determined by surface reflec-
+
+tivity and roughness, and particle scattering efficiency and shape. Polarization calculations require the expansion
+
+of radiances into vertically and horizontally polarized components which are elements of the Stokes vector
+
+:
+
+(16)
+
+The (v, h) are defined by a plane between the incoming and scattered/reflected radiation beams. ‘v’ represents the
+
+vertical component and ‘h’ the parallel component to this plane. Angle defines the orientation of the vector
+
+with respect to the ‘h’-direction while stands for the ellipticity of the polarization. The sign of describes the
+
+sense of rotation, i.e., the sign of the phase ( ) difference between and . Elliptically polarized radiation rep-
+
+resents the most general definition form for polarized radiation with special cases of unpolarized, linearly polar-
+
+ized, and circularly polarized radiation: thus , ; , ; and ,
+
+, respectively.
+
+The consequence for the radiative transfer equation (13) is that all radiance terms become (Stokes) vectors, scat-
+
+tering and extinction coefficients become matrices, while the scattering phase function also becomes a matrix:
+
+(17)
+
+is the Stokes vector representation of the scalar intensity, is still scalar because blackbody emission is unpo-
+
+larized ( ), denotes the scattering matrix (Mueller matrix), and has also become a
+
+matrix determining the amount of scattering per component. The latter expansion is only required if scatter-
+
+ing by non-spherical particles is included, otherwise  remains a scalar.
+
+� µ φ µ′ φ′,;,( ) 1 
+2–
+
+1  2 2  Θcos–+( )3 2⁄
+------------------------------------------------------=
+
+θcos µµ′ 1 µ2–( )
+1 2⁄
+
+1 µ′2–( )
+1 2⁄
+
+φ φ′–( )cos+±=
+
+  1 1,–[ ]∈
+
+ 1
+2
+--- � Θcos( ) Θ Θcosdcos
+
+1–
+
+1
+
+∫ Θcos= =
+
+ 0=
+
+L 
+������, , ,( )=
+
+
+ 
+ h 
+ v+=
+� 
+ h 
+ v–=
+� 
+ 2α( ) 2β( )sincos=
+� 
+ 2β( )sin=
+
+β L
+α α
+
+Φ 
+ h 
+ v
+
+
+ h 
+ v= β 0= 
+ h 
+ v= Φh Φv= 
+ h 
+ v⁄ 1=
+Φh Φv π 2⁄±=
+
+µdL δ µ±,( )
+dδ
+
+-------------------------± L δ µ±,( )
+ω0
+2
+
+------ I δ µ′,( )M µ µ′,±( ) dµ′ 1 ω0–( )B T( )–
+1–
+
+1
+
+∫–=
+
+L B
+B � 0 0 0, , ,( )= M 4 4× ω0
+
+4 4×
+ω0
+
+
+
+Introduction to microwave radiative transfer
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Since scattering is always described in the local scattering geometry (as is the polarization), i.e., in reference to the
+
+plane determined by the incoming and scattered radiation beams with a particle at the center, a coordinate trans-
+
+formation has to be carried out before and after the scattering event with respect to ( ):
+
+(18)
+
+ represents a rotation matrix:
+
+(19)
+
+The most general form of the scattering matrix  is:
+
+(20)
+
+which can be reduced to a more simple form for spherical particles:
+
+(21)
+
+Other simplifications apply for particles with less general symmetry than spheres.
+
+1.4  Boundaries
+
+Downwelling radiation from space is commonly approximated by (2.7 K) for all incidence angles. Surfaces can
+
+be treated as reflectors which are specular for e.g. a calm water surface. In that case, the Fresnel equations apply
+
+which translate to a reflection matrix:
+
+(22)
+
+µ φ µ′ φ′,;,
+
+M µ φ µ′ φ′,;,( ) F � 2 π–( )P Θcos( )F � 1( )=
+
+F
+
+F �( )
+1 0 0 0
+
+0 2 �cos 2 �sin– 0
+0 2 �sin 2 �cos 0
+0 0 0 1
+
+=
+
+P
+
+P Θcos( )
+
+�
+2
+�
+
+3
+�
+
+4
+�
+
+1+ + +
+
+2
+----------------------------------------------------
+
+�
+2
+�
+
+3–
+�
+
+4
+�
+
+1–+
+
+2
+--------------------------------------------------- � 23 � 41+ � 23– � 41–
+
+�
+2
+
+�
+3
+
+�
+4–
+�
+
+1–+
+
+2
+---------------------------------------------------
+
+�
+2
+
+�
+3–
+�
+
+4–
+�
+
+1+
+
+2
+--------------------------------------------------- � 23 � 41– � 23– � 41+
+
+� 24 � 31+ � 24 � 31– � 21 � 34– �– 21 � 34+
+� 24 � 31+ � 24 � 31– � 21 � 34+ � 21 � 34–
+
+=
+
+P Θcos( )
+
+�
+2
+
+�
+1+
+
+2
+-----------------------
+
+�
+2
+
+�
+1–
+
+2
+---------------------- 0 0
+
+�
+2
+
+�
+1–
+
+2
+----------------------
+
+�
+2
+
+�
+1+
+
+2
+----------------------- 0 0
+
+0 0 � 21 � 21–
+0 0 � 21 � 21
+
+=
+
+�
+
+R0 µ µ′,( )
+
+�
+v
+
+2 �
+h
+
+2+( ) 2⁄ � v 2 � h 2–( ) 2⁄ 0 0
+�
+
+v
+2 �
+
+h
+2–( ) 2⁄ � v 2 � h 2+( ) 2⁄ 0 0
+
+0 0 Re � v � h*( ) I– m � v � h*( )
+0 0 Im � v � h*( ) Re � v � h*( )
+
+=
+
+
+
+Introduction to microwave radiative transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+with reflection coefficients for a medium with complex permittivity :
+
+(23)
+
+Surface transmissivity is neglected in most cases assuming a penetration depth of zero so that
+
+becomes a matrix in (5). Most natural surfaces, however, are rough so that—at least theoretically—
+
+bistatic reflection coefficients have to be calculated giving the fraction of scattered radiation for any incidence and
+
+scattering angle combination. Another approximation to surface reflection is represented by a Lambertian reflector
+
+for which the distribution of reflected radiation is isotropic over all angles.
+
+1.5  Antenna patterns
+
+Microwave antennas on current satellites represent a compromise between desired spatial resolution at the surface
+
+and affordable antenna size. Since measurements at all frequencies are usually obtained with the same antenna,
+
+spatial resolution varies with frequency. Spatial resolution of the instantaneous field of view, IFOV, can roughly be
+
+estimated from (here at nadir):
+
+(24)
+
+with satellite altitude , antenna diameter , an antenna efficiency factor (e.g. = 1.5) and wavelength . This
+
+increases for inclined observation geometry and distorts circular antenna patterns to ellipsoids. Since the antenna
+
+size is more or less of the dimension of several wavelengths, diffraction is important and leads to interference pat-
+
+terns. Most antennas have very efficient main lobes but side lobe effects are mostly non-negligible over scenes with
+
+strong horizontal gradients of radiance emission / scattering (near coastlines and over clouds and precipitation). An
+
+idealization of the antenna imaging is represented by the approximation of the main lobe by a Gauss function with
+
+a halfwidth according to the nominal 3 dB beamwidth given in technical documents (e.g. 40 km x 60 km for the
+
+SSM/I 19.35 GHz channel). Thus a spatially inhomogeneous radiance field has to be integrated over the radiometer
+
+field of view with the antenna pattern :
+
+(25)
+
+The angle represents the effective field of view (EFOV) in coordinates of zenith and azimuth angles and is the
+
+instantaneous field of view including its distortion by the scanning motion of the antenna.
+
+ε ε′ iε″–=
+
+�
+h µ( ) � µ–( )
+
+2 � 2+
+� µ+( )
+
+2 � 2+
+---------------------------------=
+
+�
+v µ( )
+
+ε′µ �–( )
+2 ε″µ �–( )2+
+
+ε′µ �+( )
+2 ε″µ �+( )2+
+
+----------------------------------------------------------=
+
+�
+1
+
+2
+------- ε′ µ– 1–( )2 ε″2+[ ]
+
+1 2⁄
+ε′ µ– 1–( )2+{ }=
+
+� 1
+2
+
+------- ε′ µ– 1–( )2 ε″2+[ ]
+1 2⁄
+
+ε′ µ– 1–( )2–{ }=
+
+�
+p ε′λ 2πε″( )⁄=
+
+ε0 1 R–=
+
+
+���� � µ 0=( ) !
+"
+
+λ�-----------=
+" �
+
+! λ
+
+#
+θ φ,( )
+
+L̂ δ 0 θ φ, ,=( )
+L δ 0 µ θ′ φ′,;,=( )
+
+#
+θ′ φ′,( ) θ′sin θ′d φ′d
+
+Ω
+∫
+
+#
+θ′ φ′,( ) θ′sin θ′d φ′d
+
+Ω
+∫
+
+----------------------------------------------------------------------------------------------------=
+
+Ω
+
+
+
+Introduction to microwave radiative transfer
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+2. RADIATIVE TRANSFER MODELS
+
+2.1  Principles
+
+The major problem for radiative transfer modeling is the solution of (3) with (5) because layer interaction can not
+
+be solved analytically in the case of scattering. Here, simplifications and numerical approaches are required. So far,
+
+the radiative transfer equation was expressed by scalar radiances or Stokes vectors in dependence of e.g. zenith an-
+
+gle. Depending on the application and the required accuracy (in particular when multiple scattering is included),
+
+even plane-parallel radiative transfer—which assumes constant medium properties in horizontal directions - re-
+
+quires the integration of scattered radiances from the upper and lower half-space into the observation direction.
+
+This already appeared in (3).
+
+The angle dimension is treated in the same way as the elements of the Stokes vector or the Mueller matrix so that
+
+the dimension of the vectors / matrices does not change. Then:
+
+(26)
+
+This aims already at the numerical integration of incoming and scattered radiances into the observation direction
+
+by a simple matrix-vector multiplication. To replace the integration by a summation, the Gaussian quadrature for-
+
+mula provides an accurate means for integration in the interval of [-1, 1]:
+
+(27)
+
+At microwave wavelengths, usually less than 16 discrete angles provide enough accuracy, at infrared / visible wave-
+
+length a higher number is required to resolve the stronger anisotropy of the radiance fields.
+
+As mentioned above, the azimuthal dependence is mostly neglected due to the lesser degree of anisotropy. If in-
+
+cluded, it involves a separation of angle dependencies for the phase function and intensities:
+
+(28)
+
+where the  denote the associated Legendre polynominals and:
+
+L
+L̂ µ1( )
+
+…
+L̂ µ$( )
+
+L̂ µ( )
+
+
+ µ( )
+� µ( )
+� µ( )
+� µ( )
+
+= =
+
+P µ µ′,( )
+P µ1 µ1,( ) … P µ$ µ1,( )
+
+… … …
+P µ1 µ$,( ) … P µ$ µ$,( )
+
+=
+
+%
+µ( ) µ !'&
+
+%
+µ &( )& (–=
+
+(
+∑≈d
+
+1–
+
+1
+
+∫
+
+� µ φ µ′ φ′,;,( ) ω̃) � )( µ( ) � )( µ′( ) φ′ φ–( )cos) (=
+
+*
+∑
+
+( 0=
+
+*
+∑=
+
+�
+δ µ φ, ,( )
+
+� ( δ µ,( ) φ′ φ–( )cos
+( 0=
+
+*
+∑=
+
+� )(
+
+
+
+Introduction to microwave radiative transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+(29)
+
+Eqs. (2) and (3) would be formulated for each mode and summed according to (28) after integration in the -
+
+dimension.
+
+The equations for the differential radiative transfer have to be formulated for discrete layers assuming that the op-
+
+tical properties do not change through the layer (following the structure of the input data or other checks). Most of
+
+the time the layer temperature is taken to be the average between the bounding levels; however, for optically thick
+
+media this assumption produces uncertainties (see below).
+
+The basic formulation originates from the interaction principle, i.e., the linear superposition of contributions from
+
+adjacent layers:
+
+(30)
+
+where '+' and '–' denote the upwelling and downwelling radiances, respectively, and , , and denote the trans-
+
+mission, reflection, and emission operators. At bottom and top of the atmosphere, and at
+
+the surface ,  is taken from (22) while .
+
+2.2  Emission
+
+In the case of pure emission all reflection matrices are zero so that (neglecting polarization at this point):
+
+(31)
+
+with:
+
+(32)
+
+For optically thin layers . This can be further simplified if only one zenith angle is
+
+used, so that if only the first two elements of the Stokes vector are needed (e.g. to include polarization introduced
+
+by surface reflection) (31) has only two elements. This is the form used in current numerical prediction models.
+
+2.3  Scattering—doubling/adding
+
+In the case of scattering atmospheres, the reflection and transmission matrices include terms of the scattering phase
+
+ω̃)( 2 δ0 (,–( )ω̃),+.-
+–( )!
+
++/-+( )!
+--------------------, + - … 0 0 - 0≤ ≤, , ,= =
+
+δ0 (,
+1 - 0=
+0 otherwise
+
+
+
+
+=
+
+
+ ( µ
+
+L1
+– T-L0
+
+– R-
+�
+
+1
++ S–+ +=
+
+L0
++ T+L1
+
++ R+
+�
+
+0
+– S++ +=
+
+T R S�
+0
+– δ 0=( ) � 2.7K( )=
+
+T– 0= R– S+ ε0 �	� 0 µ1,( ) 0 0 0 … �	� 0 µ $,( ) 0 0 0, , ,;;, , ,[ ]=
+
+L1
+– T–L0
+
+– S–+=
+
+L0
++ T+L1
+
++ S++=
+
+T±
+∆δ µ±⁄ 1( )exp … 0
+
+0 … 0
+0 … ∆δ µ±⁄ $( )exp
+
+=
+
+S±
+1 ∆δ µ±⁄ 1( )exp–[ ] ���( )
+
+…
+1 ∆δ µ±⁄ $( )exp–[ ] ���( )
+
+=
+
+1 ∆δ µ±⁄ 1( ) ∆δ µ±⁄ 1≈exp–
+
+
+
+Introduction to microwave radiative transfer
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+function. The numerical procedure called ‘doubling / adding’ treats the multiple scattering in layers and the inte-
+
+gration of radiances throughout the atmosphere along the following line:
+
+1) Starting point is a layer with constant optical properties in the atmosphere (say the upmost layer).
+
+This layer has to be divided into sublayers for which single scattering can be assumed. This is
+
+usually the case for optical depths . For a sublayer initial reflection and transmission
+
+matrices are calculated:
+
+(33)
+
+where the are the weighting coefficients of the Gauss quadrature as in (27). The notation of
+
+represents the phase function at discrete angles where the first sign stands for the direction of the
+
+incoming radiance and the second for the scattered radiance. Positive signs refer to the lower half
+
+space while negative signs refer to the upper half space. The initial operators are independent of
+
+viewing direction so that an exchange of viewing direction has no effect. The source term vectors
+
+remain as in (32). There are various initializations available which produce less different results in
+
+the microwave region than at shorter wavelengths.
+
+2) If two adjacent layers are added (or doubled in the case of their optical properties being identical)
+
+the exiting radiances at top and bottom are:
+
+(34)
+
+and those at the layer interface are:
+
+(35)
+
+ and  can also be formulated using combined layer operators:
+
+(36)
+
+By inserting (35) in (34) and rearrangement, the combined operators from (36) can be obtained
+
+from:
+
+10 5–<
+
+R
+ω0
+2
+
+------M 1– P+–A∆δ=
+
+T E M 1– ∆δ–
+ω0
+2
+
+------M 1– P++A∆δ+=
+
+M
+µ1 … 0
+0 … 0
+0 … µ$
+
+A,
+! 1 … 0
+0 … 0
+0 … ! $
+
+= =
+
+! 1 P
+±±
+
+µ1
+
+L2
+– T12L1
+
+– R21
+�
+
+2
++ S12+ +=
+
+L0
++ T10L1
+
++ R01
+�
+
+0
+– S10+ +=
+
+L1
+– T01L0
+
+– R10
+�
+
+1
++ S01+ +=
+
+L1
++ T21L2
+
++ R12
+�
+
+1
+– S10+ +=
+
+L2
+– L0
+
++
+
+L2
+– T02L0
+
+– R20
+�
+
+2
++ S02+ +=
+
+L0
++ T20L2
+
++ R02
+�
+
+0
+– S20+ +=
+
+
+
+Introduction to microwave radiative transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+(37)
+
+and
+
+(38)
+
+The factors  can be interpreted as a multiple reflection / scattering factor.
+
+3) This is carried out successively until the full layer operators are calculated. The sublayer combined
+
+operators are computed for optical depths which double the optical depth of the previous layers
+
+(starting with the initial layer with ), thus this procedure is called ‘Doubling’. All layers
+
+of the atmosphere can be treated in the same fashion. As mentioned above, for optically thick media
+
+the assumption of an average temperature throughout the doubling process produces errors. For a
+
+temperature that changes linearly with optical depth, the adaptation of with
+
+actual optical depth  at each doubling step gives much better results.
+
+4) Layers with different optical properties for which the doubling procedure was carried out
+
+previously are then combined using the same formulae thus this step is called ‘Adding’.
+
+2.4  Scattering—Approximations
+
+2.4 (a)  Eddington approximation. The Eddington approximation to radiative transfer represents an example
+
+for an approximative method. The approximation lies in the development of the radiance vector and phase function
+
+to the first order so that only one angle (i.e. the observation angle) is needed and the anisotropic radiance field is
+
+decomposed into an isotropic and anisotropic component, respectively:
+
+(39)
+
+so that the source function translates to:
+
+(40)
+
+for azimuthally averaged fields. is the asymmetry parameter representing an average scattering angle calculated
+
+from the phase function averaged over the full hemisphere.
+
+If these quantities are inserted into (3), two mixed equations are obtained:
+
+R20 R21 T12Γ
+–R10T21+=
+
+T02 T12Γ
+–T01=
+
+S02 S12 T12Γ
+– S01 R10S21+( )+=
+
+Γ– E R10R12–[ ]
+1– R10R12( )
+
+1
+1 0=
+
+∞
+
+∑= =
+
+R02 R01 T10Γ
++R12T01+=
+
+T20 T10Γ
++T21=
+
+S20 S10 T10Γ
++ S21 R12S01+( )+=
+
+Γ+ E R12R10–[ ]
+1– R12R10( )
+
+1
+1 0=
+
+∞
+
+∑= =
+
+Γ±
+
+∆δ 10 5–<
+
+�	�( ) � 0 � 1δ′+=
+δ′
+
+�
+δ µ,( )
+
+�
+0 δ( ) µ
+
+�
+1 δ( )+=
+
+� θcos( ) 1 3  θcos–=
+
+� δ µ,( ) 1 ω0 δ( )–[ ] �	� δ( )[ ] ω0 δ( ) � 0 δ( )  δ( )µ� 1 δ( )+[ ]+=
+
+
+
+
+
+Introduction to microwave radiative transfer
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(41)
+
+The second derivative of e.g.  provides:
+
+(42)
+
+(43)
+
+with the general solution:
+
+(44)
+
+Again, a linear dependence of temperature with optical depth is assumed.
+
+The coefficients are to be obtained from the boundary conditions, i.e., space background radiation, surface
+
+emission and reflection as well as with the requirement of flux continuity at the layer boundaries:
+
+(45)
+
+(46)
+
+where and i denotes the i-th layer interface between j-th and (j + 1)-th layer.
+
+The Delta-approximation modifies , , and as a consequence of the approximation of the fractional forward
+
+peak of the phase function by a delta-function:
+
+(47)
+
+which has proven to significantly improve the treatment of radiative transfer in two-stream-type models in strongly
+
+scattering media. Another modification can be introduced to adapt this model to three-dimensional problems. In
+
+that case the upward and downward directed radiances are calculated along the slant path of satellite observations
+
+providing a first order approximation to three-dimensional radiative transfer. For media with significant scattering,
+
+however, large contributions to the observation originate from outside this beam, i.e., from a larger volume than
+
+represented by a single path, so that the accuracy of this approach has limitations.
+
+2.4 (b)  Two-stream approximation. In the two-stream approximation, (27) is only applied for , i.e.,
+
+at  or . Then (2) is written:
+
+d
+�
+
+0 δ( )
+dδ
+
+------------------ 1 ω0 δ( )  δ( )–[ ] � 1 δ( )–=
+d
+�
+
+1 δ( )
+dδ
+
+------------------ 3 1 ω0 δ( )–[ ]
+�
+
+0 δ( ) �	� δ( )[ ]–{ }–=
+�
+
+0
+
+d2
+�
+
+0 δ( )
+
+dδ2
+-------------------- Λ2 δ( )
+
+�
+0 δ( ) �	� δ( )[ ]–{ }=
+
+Λ2 δ( ) 3 1 ω0 δ( )–[ ] 1 ω0 δ( )  δ( )–[ ]=
+
+�
+0 δ( ) � + Λδ( ) � – Λδ–( ) ��� 0[ ] � 1dδ+ +exp+exp=
+
+� ±
+
+�
+0
+
+∂
+�
+
+0"
+∂δ
+
+----------– 
+ 
+
+δ 0=
+2.7=
+
+�
+0
+
+∂
+�
+
+0"
+∂δ
+
+----------+ 
+ 
+
+δ δ*=
+ε�	�( ) 1 ε–( ) � 0
+
+∂
+�
+
+0"
+∂δ
+
+----------– 
+ 
+
+δ δ*=
++=
+
+�
+0
+
+∂
+�
+
+0"
+∂δ
+
+----------+ 
+  &
+
+δ δ 2=
+�
+
+0
+
+∂
+�
+
+0"
+∂δ
+
+----------+ 
+  & 1+
+
+δ δ 2==
+
+"
+1.5 1 ω0 –( )=
+
+�
+ω0 
+
+ ′ 
+1 +------------- ω′0,
+
+1 –( )2ω0
+1 – 2ω0
+
+-------------------------- δ′, 1 – 2ω0( )δ= = =
+
+- 1±=
+µ 1 3⁄± 0.57735±= = θ 54.7°±=
+
+
+
+Introduction to microwave radiative transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+(48)
+
+where . Again, a system of differential equations can be set up and solved by use of boundary con-
+
+ditions.
+
+2.5  Scattering—Others
+
+There are other ways to approach the multiple scattering problem such as the Discrete Ordinate Method, the Suc-
+
+cessive Order of Scattering Method or Monte Carlo techniques. The latter are widely used for the simulation of
+
+microwave radiative transfer in three-dimensional rainclouds where significant scattering occurs and represent the
+
+most accurate even though most computationally expensive methods. Some efficiency is gained if the scattering
+
+paths of photons are treated in the backward direction. Then, only those photons actually reaching the radiometer
+
+(here taken as the starting point of the calculation) are used. That way the total number of required photons to rep-
+
+resent three-dimensional radiance fields is optimized.
+
+An interesting approach is the Successive Order of Scattering technique because it allows the estimation of the or-
+
+der of multiple scattering required to accurately determine the radiance fields. Here, the radiative transfer equation
+
+is calculated for each scattering order individually. These terms have to be eventually added to obtain the total dif-
+
+fuse radiance:
+
+(49)
+
+In the case of visible (or radar) radiative transfer modeling, a direct, forward propagated radiance has to be taken
+
+into account. The recursive formulae for the radiances (here for a finite layer with optical depth and in upward
+
+direction) and source terms are:
+
+with for and for . The term represents the internal emission
+
+source which is only considered once (for calculations in the visible wavelength range, this would be replaced by
+
+the solar source term). With no incident radiances, .
+
+Assuming that temperature and single scattering albedo are constant in the layer, the first and subsequent order ra-
+
+diances can be expressed as:
+
+(50)
+
+Thus, by applying the summation in (49) with :
+
+µd
+�
+
+δ µ±,( )
+dδ
+
+-------------------------±
+�
+
+δ µ±,( )=
+
+ω0 1 3–( ) � δ µ1±,( ) ω0 3 � δ µ1+−,( )––
+1 ω0–( )�	�( )–
+
+3 1 –( ) 2⁄=
+
+�
+δ µ±,( )
+
+� 1 δ µ±,( )1 0=
+
+$
+∑≥
+
+δ
+
+� $ δ 0 µ,=( ) � $ δ′ µ,( ) δ µ⁄–( )exp δ′ µ⁄d
+δ
+
+0
+
+∫=
+
+� $ δ′ µ,( ) ω0
+2
+
+------
+� $ 1– δ′ µ′,( ) � µ µ′,( ) µ′ δ1 $ 1 ω0–( ) �	�( )+d
+
+1–
+
+1
+
+∫=
+
+δ$ ( 1= 4 -= δ$ ( 0= 4 -≠ 1 ω0–( )�	�( )
+�
+
+0 0=
+
+�
+1 δ 0 µ,=( ) 1 ω0–( ) ���( ) 1 δ µ⁄–( )exp–[ ]=
+
+� $ δ 0 µ,=( ) � 1 δ 0 µ,=( )ω0 1 δ µ⁄–( )exp–[ ]
+$ 1–=
+
+ω0 η⁄ ω0 1 δ µ⁄–( )exp–[ ]=
+
+
+
+Introduction to microwave radiative transfer
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(51)
+
+The choice of summation limit has to ensure convergence of (49), that is the summation on the right hand side
+
+of (51) has to be accurate within predefined error limits. This is the case, for example, if ,
+
+ : , or if ,  : , choosing an error limit of 0.1 K.
+
+3. ATMOSPHERIC ABSORPTION
+
+At microwave wavelengths, the main atmospheric absorbers are oxygen ( ), through rotational line absorption
+
+between 50–60 GHz as well as 118 GHz; water vapour ( ), through rotational line absorption at 22.235 GHz
+
+and 183.31 GHz; and continuum absorption by water vapour and dry air. Between 1–200 GHz, stratospheric con-
+
+tributions are less important so that the total atmospheric absorption can be computed from profiles of temperature,
+
+pressure, and humidity. Models for the simulation of atmospheric absorption are based on laboratory and field
+
+measurements under various environmental conditions and have to cover the line intensity, width, and overlap for
+
+line absorption as a function of temperature, pressure, and humidity. There are several databases of these measure-
+
+ments available as well as so-called ‘line-by-line’ models which include contributions from all known absorption
+
+lines at the desired frequency. As an example, the Millimeter Propagation Model (MPM) computes local absorp-
+
+tion, (in km-1), in terms of a complex atmospheric refractive index at frequency in GHz:
+
+(52)
+
+The above mentioned contributions are summed up in the imaginary part, over all absorption lines (in the
+
+case of MPM, 44 oxygen and 30 water vapour lines).
+
+The largest unknown in this frequency range is the water vapour continuum which is rather a correction of a line
+
+absorption model. Since these fits are aimed at high accuracy at frequencies near the absorption lines, there may
+
+be larger uncertainties in the window regions where the continuum contribution dominates. Another problem is the
+
+compatibility of laboratory and field measurements when synthesized in unified models due to representativity of
+
+measurements and technical constraints.
+
+4. SURFACE EMISSION/REFLECTION
+
+4.1  Ocean
+
+For a flat sea surface, the emission and reflection could be calculated from the permittivity of water as in (56) and
+
+from the Fresnel equations (22) and (23). Surface roughness in the case of non-zero windspeeds as well as foam
+
+generation contribute significantly to the modification of the equations. These are treated in different ways. For
+
+large gravity waves, the waves are approximated by probability distributions of facet orientations with respect to
+
+the viewing angle. For each facet, the Fresnel equations are applied. The distributions depend on wind speed and
+
+direction. Facet contributions are integrated to yield the total emission / reflection. Two-scale models also account
+
+for capillary waves and small gravity waves which are superimposed on the large gravity waves. Both components
+
+are treated independently where the latter maybe obtained from perturbation theory. Important is the choice of the
+
+cut-off frequency to distinguish between the two states. Foam contributions mainly increase ocean emissivity and
+
+are parameterized by their fractional coverage and the permittivity of the foam itself. Salinity plays only a role at
+
+�
+δ 0 µ,=( )
+
+�
+1 δ 0 µ,=( )
+1 ω0η–
+
+-------------------------------
+�
+
+1 δ 0 µ,=( )
+ω0η( )
+
+$
+1–
+
+ω0η 1–
+---------------------------≈=
+
+4
+δ µ⁄–( ) =0.9exp
+
+ω0 0.3= 4 2= δ µ⁄–( )exp 0.3= ω0 0.9= 4 13=
+
+O2
+H2O
+
+�
+a - a - ′a i - ″a–= ν
+
+- a - 0 - ′ ν( ) i - ″ ν( )+ +=�
+a 0.04197ν - ″ ν( )=
+
+- ″ ν( )
+
+
+
+Introduction to microwave radiative transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 15
+
+frequencies below 5 GHz. Depending on the requirements of the atmospheric component of the radiative transfer
+
+model, either zenith angle dependent emissivities (as in (23)) or bistatic reflection coefficients have to be calculat-
+
+ed:
+
+(53)
+
+The and represent the co- and cross-polarization contributions with respect to polarizations and :
+
+(54)
+
+(55)
+
+where denotes the wavenumber, is the phase vector, is the scattered elctric field
+
+with polarization state , and , are the standard deviations of facet slopes orthogonal and parallel to wind
+
+direction. The latter are obtained from the above mentioned slope distributions as a function of surface stress. Im-
+
+portant to notice is that multiple reflection and shadowing of facets at larger roughnesses may be significant.
+
+4.2  Land
+
+Over land surfaces, the main contributions to be accounted for are those from soil, vegetation and snow. The radi-
+
+ative transfer can be treated by regarding the land surface as a discrete boundary using the definition of bistatic
+
+reflection coefficients as in (53). Depending on penetration depth and targeted media, a full radiative transfer model
+
+with a layered structure, as already introduced for the atmosphere, is used. Vegetation, soil, or snow are then treated
+
+in layers of constant optical properties and methods such as the adding / doubling technique carry out the vertical
+
+and angular integration. Important, however, is the applicability of the far-field approximation in scattering media
+
+such as snow or vegetation. Here, radiative transfer theory for dense media are superior.
+
+The determination of the optical properties at microwave wavelengths of soil, snow, and vegetation is difficult be-
+
+cause the number of contributing parameters is much higher. For soil, mainly soil water content and texture as well
+
+as roughness drive its permittivity. For snow, permittivity is rather accurately known but snow depth, water content,
+
+and grain sizes are problematic. In the microwave spectral region, vegetation water content and vegetation coverage
+
+are of importance. Scattering by branches and leaves is small but generally non-negligible.
+
+5. HYDROMETEORS
+
+5.1  Permittivity
+
+For conducting materials the complex permittivity, , determines the effect of an external dielectric
+
+field on the internal distribution of charges (over time). It is connected to the complex refractive index of that ma-
+
+terial, , through thus , . Away from the relaxation fre-
+
+quency and for a medium in which friction effects dominate its polarizabilitythe Debye–equations apply:
+
+ε0 1
+1
+
+4πµ
+---------- γ 0 � µ φ µ′ φ′,;,;( ) dΩ
+
+0
+
+π 2⁄
+
+∫
+0
+
+2π
+
+∫–=
+
+γ 0 �( ) γ 0
+�( ) �
+
+�
+
+γ 0 � µ φ µ′ φ′,;,;( ) γ 0 �5� µ φ µ′ φ′,;,;( ) γ 0
+�
+� µ φ µ′ φ′,;,;( )+=
+
+γ 0
+� µ φ µ′ φ′,;,;( ) γ 0 �'� µ φ µ′ φ′,;,;( ) γ 0 �
+
+� µ φ µ′ φ′,;,;( )+=
+
+γ 0 �
+� µ φ µ′ φ′,;,;( )
+
+� �6�,798( )2
+2 ��:4σ; σ<
+
+----------------------------- 1
+
+2 � 2
+----------
+
+��:2
+σ ;2
+-------
+
+�>=2
+σ<2
+-------+
+
+ 
+ 
+ 
+
+–exp=
+
+�
+1 λ⁄= Q ��:?�>=@��A,( )= �,798
+
+�
+� σ; σ <
+
+ε ε′ iε″+=
+
+- - ′ i - ″–= - 2 ε= ε′ - ′2 - ″2–= ε″ 2 - ′ - ″=
+
+
+
+Introduction to microwave radiative transfer
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(56)
+
+with and frequency , and where denotes the effective relaxation time, the static permittivity
+
+( ), the high-frequency permittivity ( ), the permittivity in vacuum and the ionic conductiv-
+
+ity, respectively. The main effect of is the dispersion of the phase delay induced on an electromagnetic wave
+
+passing through a medium, while  represents the loss of energy.
+
+The available models for the permittivities of water and ice present parameterizations of the above equations with
+
+respect to the dependence of their ingredients on temperature and frequency. Another influence is the effect of sol-
+
+uble materials such as salt as expressed by the second term in (56) for which is only important at frequencies
+
+below 5 GHz.
+
+5.2  Cloud absorption and scattering
+
+The parameterization of the microwave properties of water and ice clouds is based upon two major assumptions:
+
+(1) maximum particle size is well below the wavelength thus the Rayleigh approximation to particle scattering and
+
+absorption applies and the shape of the size distribution has negligible effects on the derived properties; (2) scat-
+
+tering is negligible thus clouds are treated as pure emitters and transmission, , depends only on cloud absorption,
+
+thus  with absorption coefficient , layer depth , and zenith angle .
+
+For a monodisperse particle distribution, the liquid water content, , is calculated from:
+
+(57)
+
+where denotes water density, particle radius, and total particle number obtained from particle number
+
+density, :
+
+(58)
+
+The absorption and scattering coefficients, are obtained from the integration of particle absorption and
+
+scattering cross sections, , over the same distribution:
+
+(59)
+
+If the Rayleigh approximation holds the cross sections are given by:
+
+(60)
+
+which are the first terms of the series expansion used in Mie calculations. denotes the size parame-
+
+terwith wavelength , speed of light in vacuum , and frequency .
+
+After some manipulation, (60) for the absorption coefficient is simplified to:
+
+ε′ ε∞
+εs ε∞–
+
+1 ω2τe
+2+
+
+--------------------- ε″,+
+εs ε∞–( )ωτe
+1 ω2τe
+
+2+
+------------------------------ σ
+
+ωε0
+---------+= =
+
+ω 2πν= ν τe εs
+ν 0→ ε∞ ν ∞→ ε0 σ
+
+ε′
+ε″
+
+ε″
+
+τ
+τ βa∆� cos 1– Θ–( )exp= βa ∆� Θ
+
+�
+
+� ρw43---π
+� ′3 4 � ′( ) d � ′
+
+0
+
+∞
+
+∫ ρw
+4
+3
+---π � 3 0= =
+
+ρw
+� 0
+
+4 �( )
+
+0 4 � ′( ) d � ′
+0
+
+∞
+
+∫=
+
+�
+abs sct,
+
+� abs sct,
+
+�
+abs sct, π � abs sct, � ′( ) � ′2 4 � ′( ) d � ′
+
+0
+
+∞
+
+∫ π � 2 0B� abs sct, �( ) 3 �ρw4 �------------ � abs sct,= = =
+
+� abs 4 C Im -
+2 1–
+
+- 2 2+
+----------------- � sct,– 83--- C
+
+4 - 2 1–
+- 2 2+
+-----------------
+
+2
+= =
+
+C 2π � λ⁄=
+λ D ν⁄= D ν
+
+
+
+Introduction to microwave radiative transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 17
+
+(61)
+
+with  m2kg-1GHz-1.
+
+With , (61) is transferred to:
+
+(62)
+
+and m2kg-1GHz-1, which holds for both water and ice. Thus (62) requires liquid- or ice-water
+
+contents, frequency and temperature as predictors, as well as one of the above models, for the complex permittivity
+
+of water and ice as a function of frequency and temperature.
+
+5.3  Precipitation
+
+For precipitation, scattering can only be neglected at very low frequencies and rainrates. Eq. (59) can not be ap-
+
+proximated so that scattering and extinction coefficients as well as the phase matrix elements have to be integrated
+
+over the size spectrum with cross sections computed by Mie routines for spherical particles. Usually, precipitation
+
+size distributions are given in terms of diameter, , rather than radius and with exponential size distributions:
+
+(63)
+
+with diameters and intercepts . The index 'x' may refer to rain (r) or snow / graupel / hail (s,g,h) particles.
+
+The slope, , is a function of water/ice content, , and particle density, , (both in g m-3):
+
+(64)
+
+The input parameters for radiative transfer computations, i.e., extinction coefficient , single scattering albedo
+
+, asymmetry parameter , and backscattering coefficient  integrated over size spectra, are given by:
+
+(65)
+
+with backscattering, scattering and extinction cross sections , and , average scattering angle ,
+
+and temperature  (which determines particle permittivity at frequency ).
+
+The summation of these parameters over hydrometeor types to obtain cloud layer properties follows:
+
+�
+abs E Im -
+
+2 1–
+
+- 2 2+
+-----------------
+
+ 
+ 
+ 
+
+–=
+
+E 0.06283813=
+- 2 ε=
+
+�
+abs � � νε″
+
+ε′ 2+( )2 ε″2+
+-----------------------------------=
+
+� 0.18851441=
+
+� :
+
+0F:G�H:( ) 0 0 :( ) Λ :I�H:–( )exp=
+
+�H: 0 0 :( )
+Λ : � : ρ :
+
+Λ : πρ :J0 0 :( )� :----------------------- 
+ =
+
+�
+ext
+
+ω0 
+�
+
+bs
+
+�
+ext ω0 
+
+�
+bs �( ), , , π4--- � ext
+
+� sct
+� ext----------
+
+θcos
+� sct------------ � bs �K:L�,( ) 0M�?:( ) �H:
+
+2, , , �H:d
+0
+
+∞
+
+∫=
+
+P̂ �( ) π
+4βs
+-------- P �H:?�,( ) 0N�H:( ) �H:2 �H:d
+
+0
+
+∞
+
+∫=
+
+� bs � sct � ext θcos
+� ν
+
+
+
+Introduction to microwave radiative transfer
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(66)
+
+where  represent rain, snow, graupel, and hail.
+
+6. FAST MODELS
+
+Fast radiative transfer models are needed once large data volumes are to be treated, e.g. in numerical prediction.The
+
+RTTOV-package is a widely used optimized radiative transfer modeling software for cloudfree and cloud-covere-
+
+datmospheres applicable to all operational infrared and microwave sensor channel frequencies. There are certain
+
+ways to make models fast which—apart from efficient programming—can be summarized as follows:
+
+• As least as possible layers and frequencies / wavelengths are taken. The latter implies that
+
+simulations representing satellite observations are monochromatic, i.e., a radiometer channel
+
+corresponds to a single wavelength (the filter function would be a delta-function). In the case of
+
+RTTOV, (7) is numerically evaluated in cloudfree situations as:
+
+(67)
+
+It is assumed that the effective layer temperature is the average of the temperatures at the layer
+
+boundaries which also implies that the integration of the source function is given by .
+
+denotes the layer transmittance while denotes the transmittance from the i-th layer to space
+
+and  denotes the transmittance from the i-th layer to the surface and back to space.
+
+• The radiative transfer is treated with the assumption of a plane-parallel atmosphere. Horizontal
+
+inhomogeneity is not included and pixels are treated independently. This assumption holds for
+
+atmospheres without or with only weak scattering and where the input fields have similar
+
+resolutions as the satellite observations to be simulated.
+
+• The dependence of radiances on azimuth angle is neglected which is almost always true for
+
+microwaves.
+
+• Scattering by hydrometeors is neglected thus cases where scattering is likely to occur are screened
+
+and not used. If treatment of scattering is desired, then methods based on the two-stream or
+
+Eddington approximation provide good results for wavelengths below 100 GHz.
+
+• Atmospheric absorption is parameterized with as least predictors as possible. This is of less severity
+
+at microwave wavelengths than e.g. in the infrared spectral region because mostly continuum and
+
+rotational absorption by a small variety of gas molecules has to be modeled. The parameterizations
+
+therefore depend on the targeted frequencies, i.e., depend on the instrument to be simulated. In the
+
+RTTOV-package, layer optical depth is parameterized for each nominal channel centre frequency as
+
+the difference of the layer-to-space optical depths of adjacent layers:
+
+�
+ext � q,( )
+
+�
+ext � � &,( ) O,&
+
+∑ � � 
+"
+
+, , ,= =
+
+ω0 � q,( )
+ω0
+�
+
+ext � � &,( )&∑ �
+ext � � &,( )&∑
+
+-------------------------------------------=
+
+P� q,( )  ω0
+�
+
+ext � � &,( )&∑
+ω0
+�
+
+ext � � &,( )&∑
+-----------------------------------------------=
+
+�
+bs � q,( )
+
+�
+bs
+
+�
+ext � � &,( )&∑ �
+
+ext � � &,( )&∑
+--------------------------------------------=
+
+� � 
+"
+
+, , ,( )
+
+�
+τsεs ��� s( ) 12--- ��1Q��1 1–+[ ] τ1 1– τ1– 1 εs–( ) τ1
+
+* τ1 1–*–( )+[ ]
+& 1=
+
+*
+∑+=
+
+���( ) 1 τ &–( )
+τ & τ1
+
+τ1*
+
+
+
+Introduction to microwave radiative transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 19
+
+(68)
+
+The predictors contain linearizing functions of , and profiles of p, T, and q as well as
+
+their departures from reference profiles obtained from representative soundings.
+
+• Surface reflection / emission is parameterized so that non-specular effects are included but not
+
+explicitly treated in form of bistatic reflection. Over land surfaces the number of free variables is
+
+kept small. The inclusion of non-specular reflection may be represented by usage of an effective
+
+reflection angle. This modifies (67) in the sense that .
+
+• Cloud contributions are excluded avoiding the problem of the treatment of clear and cloudy
+
+contributions to total radiances even though non-precipitating clouds do not scatter at most
+
+microwave wavelengths in use. However, the use of (67) with a linear superposition of cloud
+
+covered and cloudfree grid portions by:
+
+(69)
+
+and the implementation of (62) by does not increase the computational
+
+effort significantly.
+
+• If clouds or even precipitation is included, particles are assumed to be spherical and homogeneous
+
+with parameterized size distributions.
+
+• If scattering is included and multi-stream models are employed, the number of required discrete
+
+angles is kept small.
+
+• Polarization is assumed to be only introduced by surface reflection / emission even though also
+
+spherical particles polarize incoming unpolarized radiation.
+
+Thus the numerically worst case is to use a three-dimensional fully polarized Monte-Carlo model for the treatment
+
+of precipitating clouds at a large number of wavelengths accounting for the antenna patterns of imaging radiome-
+
+ters.
+
+7. OUTSTANDING ISSUES
+
+In numerical prediction the accuracy and computation speed of radiative transfer simulations is of utmost impor-
+
+tance:
+
+• Sensors have to provide continuous data and need to be well calibrated (w.r.t. the model). Accuracy
+
+requirements depend somewhat on which parameters the sensor is most sensitive to.
+
+• Radiative transfer models in use avoid scattering calculation and polarization is only included by
+
+surface reflection which allows the separate calculation of ‘v’ and ‘h’ contributions.
+
+• Radiative transfer models only account for one zenith angle (= observation direction) and treat
+
+pixels independently (which are decorrelated by thinning).
+
+• Surface emissivity models therefore have to correct radiation streams in zenith direction by effects
+
+from off-zenith directions.
+
+• Even though atmospheric absorption is comparably simple, parameterizations of absorption avoid
+
+integration over large spectral intervals necessary for line-by-line calculations.
+
+Near-future developments in numerical prediction should include:
+
+• Inclusion of clouds for which scattering effects are negligible including fractional cloud cover
+
+effects.
+
+δ 1 δ1 1–– RS1 ! 1 &, T 1 &,& 1=
+9
+
+∑=
+
+T R, θcos
+
+τ*log τ secθ* θsec⁄log=
+
+�
+1 U–( ) � clr U � cld+=
+
+τ &
+cld τ &
+
+clr βa∆ � 1 µ⁄–( )exp=
+
+
+
+Introduction to microwave radiative transfer
+
+20 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+• Better modeling of land surface emissivities because microwave data sensitive to surfaces are not
+
+used over land.
+
+• Code unification for general radiance data assimilation which is open for current and future sensors.
+
+Most major problems are solved in microwave radiative transfer of which some still require refinement involving
+
+considerable computational effort. The largest uncertainties arise from unknown input parameters such as cloud
+
+particle size distributions, profiles, shapes, and composition as well as surface emission. Here, mainly land surfaces
+
+are difficult because a vast amount of free parameters influence the signal on sub-pixel scales.
+
+REFERENCES
+
+Bohren, C.F. and D. R. Huffman, 1983: Absorption and scattering of light by small particles. John Wiley and Sons,
+
+New York, pp. 530.
+
+Brussaard, G. and P.A. Watson, 1995: Atmospheric modeling and millimetre wave propagation. Chapman and Hall,
+
+London, pp. 329.
+
+Chandrasekhar, S., 1960: Radiative transfer. Dover Publications, New York, pp. 391.
+
+COST-712, 1999: Radiative transfer models for microwave radiometry. Final Report Project 1, C. Maetzler (Ed.),
+
+pp. 174.
+
+Liou, K.-N., 1980: An introduction to atmospheric radiation. Academic Press, New York, pp. 392.
+
+Schanda, E., 1986: Physical fundamentals of remote sensing. Springer, Berlin, pp. 187.
+
+Ulaby, F.T., R.K. Moore, and A.K. Fung, 1981: Microwave remote sensing, active and passive. Vol. I: Fundamen-
+
+tals and Radiometry. Artech House, Norwood, pp. 456.
+
+Ulaby, F.T., R.K. Moore, and A.K. Fung, 1981: Microwave remote sensing, active and passive. Vol. II: Radar re-
+
+mote sensing and surface scattering and emission theory. Artech House, Norwood, pp. 1064.
+
+Ulaby, F.T., R.K. Moore, and A.K. Fung, 1981: Microwave remote sensing, active and passive. Vol. III: From the-
+
+ory to applications. Artech House, Norwood, pp. 2162.
+
+Van De Hulst, H.C., 1957: Light scattering by small particles. John Wiley and Sons, New York, pp. 470.

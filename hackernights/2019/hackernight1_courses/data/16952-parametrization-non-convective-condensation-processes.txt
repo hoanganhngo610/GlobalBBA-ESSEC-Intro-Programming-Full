@@ -1,0 +1,811 @@
+Nonconvective
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+Parametrization of non-convective condensation
+processes
+May 1987
+
+By M. Tiedtke
+
+European Centre for Medium-Range Weather Forecasts
+
+Table of contents
+
+1 . Thermodynamics of moist air
+
+2 . Cloud physical processes
+
+2.1 Condensation of water vapour
+
+2.2 Release of precipitation
+
+3 . Parametrization of non-convective condensation and precipitation processes in numerical models
+
+3.1 Scheme without cloud stage
+
+3.2 A cloud parameterization scheme
+
+REFERENCES
+
+1. THERMODYNAMICS OF MOIST AIR
+
+A brief review of the general thermodynamics of moist air is given here.
+
+Air can be considered as a mixture of ideal gases. The equation of state is
+
+(1)
+
+where  is pressure,  is density,  is absolute temperature and  is the gas constant
+
+(2)
+
+and are the heat capacities at constant pressure and at constant volume, respectively. Equation (1) is also
+
+valid for moist air, provided that the actual temperature is replaced by the virtual temperature
+
+(3)
+
+The virtual temperature  is given by
+
+(4)
+
+where and is the ratio of the gas constants for dry air, and for water vapour
+
+. is the specific humidity ( is the density of water vapour and is the
+
+density of moist air). The equation of state for moist air is valid since it is assumed that water vapour also behaves
+
+� ρ���=
+� ρ � �
+
+� ��� ���–=
+��� ���
+
+� ρ��� v=
+� v
+
+� v � 1 η 	+( )=
+η 1
+
+ε
+--- 1– 0.608= = ε
+
+ε �
+� v⁄ 0.622= = 	 	 ρvap ρ⁄= ρvap ρ
+
+
+
+Parametrization of non-convective condensation processes
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+as an ideal gas
+
+(5)
+
+where the subscript ‘vap’ refers to water vapour.
+
+The first law of thermodynamics is
+
+(6)
+
+is the specific entropy, is the specific internal energy ( ), is the specific enthalpy ( ),
+
+is the heating rate by external sources and  is the specific volume ( )
+
+From (6) we get
+
+(7)
+
+For dry adiabatic processes, i.e. at , the potential temperature ? is conserved
+
+(8)
+
+The specific entropy can be expressed in terms of potential temperature as
+
+(9)
+
+The dry adiabatic lapse rate is
+
+(10)
+
+where  is the gravity of the earth
+
+If the exchange of heat through condensation processes is considered, the thermodynamic equation (6) becomes
+
+(11)
+
+where  is the latent heat and  is the saturation mixing ratio.
+
+The Clausius–Clapeyron equation gives the slopes of the curves for the saturation water vapour pressure (Fig.
+
+1 ).
+
+(12)
+
+�
+vap ρvap � vap �=
+
+d �
+d �------
+
+
+�----
+
+1
+�----
+
+d �
+d �------
+
+�
+�----
+
+d �
+d �------+
+
+���
+�-----
+
+d �
+d �-------
+
+�
+�----
+
+d �
+d �------+= = =
+
+1
+�----
+
+d �
+d �-------
+
+�
+�----
+
+d�
+d �------–
+
+���
+�-----
+
+d �
+d �-------
+
+� �----d
+�� �------–= =
+
+� � � �����= � � �����= 
+� � 1
+
+ρ
+---=
+
+� ����� � � const+ln+ln=
+� ��� � � � const+ln–ln=
+
+d �
+d �------ 0=
+
+dθ
+d �------ 0 θ, �
+
+�
+0�------  
+�����
+
+⁄
+= =
+
+� ��� θ const+ln=
+
+d �
+d�------- ����-----–=
+
+�
+
+��� d �
+d �-------
+
+d � sat �( )
+d �--------------------
+
+����---------d
+�
+
+d �------–+
+
+
+=
+
+� � sat
+� sat
+
+d � sat
+d �----------- ���� vap � water–( )---------------------------------------=
+
+
+
+Parametrization of non-convective condensation processes
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+where and are the specific volumes for water vapour and for water, respectively. Integration of equation
+
+(12) gives (assuming that ,  and ) the Tetens formula (Murray (1967)
+
+(13)
+
+where
+
+Figure 1. Phase diagram for water is the plane. The inset shows the vapour–ice equilibrium (lower curve)
+
+and the vapour–liquid equilibrium (upper curve) at subfreezing temperatures.
+
+2. CLOUD PHYSICAL PROCESSES
+
+As was done for the thermodynamics, a short summary of the principles of cloud physics shall be given here.
+
+There are essentially two kinds of process associated with clouds that must be considered in numerical models: the
+
+formation of clouds and the release of precipitation. The formation of clouds is due to condensation processes, i.e.
+
+a change of phase from water vapour to water droplets or to ice crystals and vice versa. Precipitation, on the other
+
+hand, is released by transformation of small cloud droplets into larger rain drops Fig. 2 .
+
+� vap � water
+� const= � water � vap« � vap � v ��� sat⁄=
+
+� sat � 0sat  �!� 0–� "–--------------exp=
+
+� 0sat 6.1078 mb=
+ 17.27=
+� 0 273.16 K=
+" 35.86 K=
+
+� �,( )
+
+
+
+Parametrization of non-convective condensation processes
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  2. Schematic diagram on condensation and precipitation processes
+
+2.1  Condensation of water vapour
+
+We consider here the chemical equilibrium of liquid water and of water vapour. Measurements show that, for the
+
+case of pure liquid water and of pure water vapour, the equilibrium saturation vapour pressure over convex surfaces
+
+is higher than over plane surfaces according to
+
+(14)
+
+where is the saturation vapour pressure of a droplet of radius , and is the saturation vapour pressure over
+
+a plane surface. The fraction  increases with decreasing droplet radius, as shown in Table 1.
+
+Thus a pure droplet of radius needs 12.8% supersaturation in order to be in equilibrium with the sur-
+
+rounding water vapour. Since newly formed droplets are necessarily very small, large amounts of supersaturation
+
+are needed to start the condensation of water vapour in pure air.
+
+In the atmosphere, however, relative humidities above 101% are rarely observed. The reason is that various kinds
+
+of small particles that serve as condensation nuclei are always present in the atmosphere. Due to the hygroscopic
+
+effect of these particles, a smaller equilibrium vapour pressure is needed for the very small droplets. We can, there-
+
+fore, always assume that condensation takes place whenever the relative humidity exceeds 100%.
+
+The droplets generated by condensation processes are very small. The size spectrum of cloud droplets in the pres-
+
+ence of condensation nuclei ranges from 0.1 um to 10 pum. Fig. 3 shows droplet spectra of various kinds of clouds.
+
+As can be seen, non-precipitating clouds as Sc and Cu have a rather narrow distribution. This distribution can be
+
+explained by droplet growth due to condensation, which is large for the smallest droplets and decreases for the larg-
+
+er droplets, thus leading to a narrow spectrum.
+
+TABLE 1. FRACTION FOR DIFFERENT SIZES OF DROPLETS AT
+
+1.128 1.012 1.0012 1.0001
+
+��# � ∞  �---exp=
+
+��# � � ∞
+��#$� ∞⁄
+
+��#$� ∞⁄ 0° C
+� µm( ) 10 2– 10 1– 1 10
+��#$� ∞⁄
+
+10 2– µm
+
+
+
+Parametrization of non-convective condensation processes
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+Figure  3. The mean droplet-size distributions of various cloud types. (From Diem (1948).)
+
+2.2  Release of precipitation
+
+The water droplets formed by condensation of water vapour are very small compared to raindrops in drizzle and in
+
+rain, which have a size of 50–100 and 1000 , respectively. Therefore, processes other than condensation
+
+must be present to form rain drops. The two processes that are believed to be the most efficient in producing rain
+
+drops are coalescence and the Bergeron process.
+
+Coalescence occurs when water droplets are moving with different fall speeds due to their different sizes. By col-
+lision and fusion the larger droplets increase in size. The growth rate of a collector droplet may be prescribed as
+
+(15)
+
+where is the droplet diameter, is the fall velocity of the collector relative to the small droplets, is the
+
+density of the droplet and is the cloud water content. is the efficiency of collection. The efficiency of coales-
+
+cence depends on the size spectra of the droplets and is more efficient for a broader spectrum. Coalescence becomes
+
+efficient only if droplets with radii larger than 10 are present. Coalescence results in a significant broadening
+
+of the spectrum of the cloud droplets. However, large rain drops are produced only in clouds of large vertical extents
+
+(depths of several km) which enables falling drops to collect enough small droplets. The coalescence process can,
+
+therefore, release precipitation in deep water clouds. This precipitation process is important in low latitudes, where
+
+deep clouds of high water content are present, but it is not very efficient at higher latitudes.
+
+Bergeron Process. The most efficient process of precipitation at higher latitudes is associated with the formation
+of ice particles at temperatures below about . Generally, ice particles form by freezing of supercooled water
+
+droplets on various freezing nuclei. Freezing nuclei play a similar role to that of condensation nuclei for the con-
+
+densation process. They initiate freezing at temperatures of around . Ice particles that are already formed
+
+grow very fast by collecting supercooled droplets because the equilibrium vapour pressure over ice is lower than
+
+µm µm
+
+d%
+d �--------
+
+&('
+2ρwater
+----------------- )=
+
+% ) ρwater' &
+
+µm
+
+15° C–
+
+15° C–
+
+
+
+Parametrization of non-convective condensation processes
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+over water (see Fig. 1 ). The possibility that precipitation is initiated by the formation of ice crystals at low temper-
+
+atures was first mentioned by Bergeron (1935).
+
+Spectra of rain drops. Spectra of rain-drop sizes observed in the atmosphere are often described analytically. An
+analytical distribution that is often referred to is that derived by Marshall and Palmer (1948) from observational
+
+data
+
+where  is the number of raindrops per unit volume of air, and  and  are empirical parameters.
+
+3. PARAMETRIZATION OF NON-CONVECTIVE CONDENSATION AND PRECIPITATION PROCESS-
+ES IN NUMERICAL MODELS
+
+In this paragraph we consider clouds associated with the large-scale flow as resolved in numerical models. Typical
+
+examples of this cloud type are the clouds associated with fronts. As for other processes, condensation processes
+
+and precipitation processes can only be parametrized by means of the large-scale variables given at the model's grid
+
+points, which are available at very coarse resolution of, say, about 100 km in the horizontal and 1 km in the vertical,
+
+and in time intervals of 10 min. The most important parameters are humidity, temperature and vertical motion. The
+
+vertical velocity determines the condensation rate and, therefore, the supply of liquid water content. Temperature
+
+also controls the liquid water content, because the maximum amount of vapour is a function of temperature. The
+
+temperature distribution in a cloud is also important for the type of precipitation—rain or snow—as mentioned be-
+
+fore.
+
+The parametrization of cloud processes must be kept very simple, since the numerical integrations must be carried
+
+out in a reasonable time. Two simple parametrization schemes that are used in numerical models are described here.
+
+In the first scheme, only condensation of water vapour is considered while clouds are not parametrized. This
+
+scheme is frequently used in numerical models. In the second scheme, the cloud water is predicted and the release
+
+of precipitation is parametrized in a simple way.
+
+3.1  Scheme without cloud stage
+
+In this scheme the cloud stage is skipped and it is, therefore, assumed that all the condensed water vapour is imme-
+
+diately converted into precipitation. This scheme is easily implemented in a numerical model. We consider the
+
+model equations for the large-scale values of temperature and moisture which, in the case of a grid-point model,
+
+prescribe the time changes of the temperature  and specif humidity  at the grid points.
+
+(16)
+
+The terms and include all the adiabatic and diabatic processes, except for the condensation of water
+
+vapour. The condensation rate  is the rate at which the saturation mixing ratio  changes in saturated air.
+
+* *
+0 λ%–[ ]exp=
+
+* *
+0 λ
+
+� �
+
+∂ �
+∂ �------- +,�( ) ����----- -+=
+
+∂ �
+∂ �----- +,�( ) -–=
+
++.�( ) +.�( )
+- � sat
+
+- d � sat
+d �-----------=
+
+
+
+Parametrization of non-convective condensation processes
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+In numerical models the condensation rate is generally determined diagnostically. Therefore, preliminary values
+
+ and  are first predicted by neglecting the effects of condensation
+
+(17)
+
+If the air is found to be supersaturated
+
+and are adjusted to their saturation values, which are then the final values and at time step
+
+(18)
+
+?These corrections follow from
+
+where the saturation value  is that for the corrected temperature which is approximated as
+
+The condensation rate  is therefore given as
+
+(19)
+
+As the assumption is made that all the condensated water vapour immediately falls out as rain, the precipitation
+
+rate is (units : )
+
+where  is the density of water.
+
+� * � *
+
+� * �0/ 1– 2∆ �1+,�( )+=
+� * � / 1– 2∆ �1+,�( )+=
+
+� * � sat � *( )>
+� * � * � / 1+ � / 1+2 1+
+
+� / 1+ � * ����-----
+� * � sat � *( )–
+
+1 ����-----
+d � sat � *( )
+
+d �-----------------------+
+---------------------------------------+=
+
+� / 1+ � * �
+* � sat � *( )–
+
+1 ����-----
+d � sat � *( )
+
+d �-----------------------+
+---------------------------------------+=
+
+∆ � ����-----∆ � ∆ �,– � sat � /
+1+( ) � *–= =
+
+� sat
+
+� sat � / 1+( ) � sat � *( ) d � satd �----------- �
+*( )∆ �+≅
+
+-
+
+- 1
+2∆ �---------
+� * � sat � *( )–
+1 �� �-----
+
+d � sat
+d �-----------+
+
+-------------------------------=
+
+mH2Osec
+1–
+
+3 1
+ρwater
+-------------- - ρ zd
+
+0
+
+∞
+
+∫=
+
+ρwater
+
+
+
+Parametrization of non-convective condensation processes
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+3.2  A cloud parameterization scheme
+
+Most numerical models consider the condensation processes as described before. The cloud phase is skipped by
+
+assuming that the condensed water vapour falls immediately out as precipitation. Although the release of latent heat
+
+seems the most important process for the large-scale flow, the formation of clouds and the release of precipitation
+
+may also be important as they are a part of the hydrological cycle. Consequently there have been several attempts
+
+to parametrize clouds and precipitation processes, notable schemes are those by Kessler (1969) and Ogura and
+
+Takahashi (1971). Kessler's scheme is designed for warm clouds, since it considers the release of precipitation to
+
+be mainly due to coalescence, whereas Ogura and Takehashi designed their scheme for cumulus clouds. The
+
+scheme described here takes into account the two main processes important for the release of precipitation—coa-
+
+lescence and the Bergeron process. This scheme has recently been proposed by Okland while staying at the EC-
+
+MWF. The advantage of this scheme it that it is rather inexpensive for computer calculations and that it takes the
+
+main precipitation processes into account. As the scheme considers cloud water as a further variable, the prognostic
+
+equations are, therefore
+
+and are the mixing ratios for water vapour and cloud water, respectively. and are the evaporation
+
+rates of cloud water and rain water and is the rate of release of precipitation due to conversion from cloud
+
+water to rain water.
+
+The parametrization of condensation is done in the same way as described before, and the evaporation of cloud
+
+water  due to increase of the saturation mixing ratio is similarly calculated.
+
+The release of precipitation is parametrized as follows. Two types of precipitating clouds are considered.
+
+(a) Clouds with low temperatures at cloud top: with . For this cloud type it
+
+is assumed that the total liquid cloud water is immediately released as precipitation.
+
+(b) Clouds with temperatures at top above : but with a high cloud water content
+
+, with , where
+
+It is further assumed that cloud water in excess of this critical value is instantaneously removed as precipitation.
+
+Besides the condensation processes and precipitation processes, the following processes are also considered:
+
+(a) Evaporation of rain
+
+(b) Collection of cloud water in non precipitating cloud layers by precipitation from above l
+
+These processes are parameterized follows Kessler (1969).
+
+∂ �
+∂ �------- +,�( ) ����----- -
+
+&
+cld–
+
+&
+rain–( )+=
+
+∂ �
+∂ �----- +,�( ) -
+
+&
+cld–
+
+&
+rain–( )–=
+
+∂ � cld
+∂ �----------- +,� cld( ) -
+
+&
+cld–
+
+&
+rain–+=
+
+∂
+3
+
+∂ �-------
+1
+
+ρwater
+-------------- 4 rain & rain–( )5
+
+∞
+
+∫=
+
+� � cld & cld & rain
+4 rain
+
+-&
+cld
+
+� top � crit< � crit 15° K–∼
+
+� crit � top � crit>6
+cld
+
+6
+crit>
+
+6
+crit 2 mmH2O∼
+
+6
+cld
+
+1
+ρwater
+-------------- � cldρ zd
+
+base
+
+top
+
+∫=
+
+&
+rain
+
+4 rain( )coll
+
+
+
+Parametrization of non-convective condensation processes
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+where , ,  and are constants.
+
+REFERENCES
+
+Arakawa, A. and W.H. Schubert, 1974: Interaction of a cumulus cloud ensemble with the large-scale environment,
+
+Part I. J.Atmos.Sci. 31, 674-701.
+
+Bates, J.R., 1977: Parameterization of convective processes, ECMWF Seminar Proc., 160-229.
+
+Bergeron, T., 1935: On the physics of cloud and precipitation. Proc. 5th Assembly UGGI Lisbon, Vol. 2.
+
+Betts, A.K., 1974: Further comments on a comparison of the equivalent potential temeprature and the static energy,
+
+J.Atmos.Sci., 31, 1713-1715.
+
+Cho, H.R., 1975: Cumulus cloud population and its parameterization. Pure and Applied Geophysics, 113, 831-849.
+
+Diem, M., 1948: Mesungen der Grow von Wolkenelementen, II. Met. Rdsch 1, 261 .
+
+Kessler, E., 1969: On the distribution and continuity of water substance in atmospheric circulation. Met. Monogr.,
+
+Vol 10, No. 32, Amer.Met.Soc., Boston, Mass.
+
+Kuo, H.L., 1965: On formation and intensification of tropical cyclones through latent heat release by cumulus con-
+
+vection. J.Atmos.Sci., 22, 40-63.
+
+Kuo, H.L., 1974: Further studies of the parameterization of the influence of cumulus convection on a large-scale
+
+flow. J.Atmos.Sci., 31, 1232-1240.
+
+Kurihara, Y., 1973: A scheme of moist convective adjustment. Mon.Wea.Rev., 101, 547-553.
+
+Manabe, S., F. Smagorinsky and R.F. Strickler, 1965: Simulated climatology of a general circulation model with a
+
+hydrological cycle. Mon.Wea.Rev., 93, No. 12, pp. 769-798.
+
+Marshall, J.S., and W. Mck Palmer, 1948: The distribution of raindroplet spectra and large droplets by condensation
+
+in cumulus clouds. Quart.J.Met.Soc., 100, 23-38.
+
+Murray, F.W., 1967: On the computation of saturation vapour pressure. J.Appl.Meteor. 6, 203-204.
+
+Ogura, Y., and T. Takahashi, 1971: Numerical simulation of the life cycle of a thunderstorm cell. Mon.Wea.Rev.,
+
+99, 859-911.
+
+Ooyama, K., 1971: A theory on parameterization of cumulus convection, J.Met.Soc., Japan, 49, 744-756.
+
+Sundquist, H., 1977: Atmospheric condensation and modelling its non-convective regime. ECMWF - Seminar
+
+Proc., 91-159.
+
+&
+rain - 1 � sat �–( )�87=
+4 rain( )coll - 2 � cld 3:9=
+
+- 1 - 2  "
+
+
+
+Parametrization of non-convective condensation processes
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+
+
+Parametrization of non-convective condensation processes
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11

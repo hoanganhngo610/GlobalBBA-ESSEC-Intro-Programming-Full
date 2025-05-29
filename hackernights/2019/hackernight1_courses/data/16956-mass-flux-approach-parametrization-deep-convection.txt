@@ -1,0 +1,1294 @@
+Conv_mass_flux
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+The mass-flux approach to the parametrization
+of deep convection
+March 1997
+
+By D. Gregory
+
+Table of contents
+
+1 . Introduction
+
+2 . The need for parametrization.
+
+3 . Mass-flux theory of convection
+
+4 . Evaluation of mass-flux theory
+
+5 . Practical application of mass-flux theory
+
+5.1 Estimation of cloud properties
+
+5.2 Issues in the formulation of bulk mass-flux schemes
+
+5.3 Performance of "cloud ensemble" and "bulk schemes"
+
+5.4 Representation of downdraughts
+
+5.5 Estimation of cloud base mass flux
+
+6 . Evaluation of convection schemes using cloud resolving models
+
+7 . Concluding comments
+
+REFERENCES
+
+1. INTRODUCTION
+
+Although the principles of the mass-flux approach to convection were formulated in the 1970s and formed the basis
+
+for the well known "Arakawa–Schubert" scheme (Arakawa and Schubert 1974) it has only been recently that such
+
+schemes have been used in many GCMs due to their expense compared to simpler schemes (moist convective ad-
+
+justment and Kuo-type schemes). The approach has a stronger physical basis than these earlier methods and pro-
+
+vides an understanding of how convection affects the large-scale atmosphere. It also allows more physically based
+
+microphysical treatments to be employed and vertical transports of tracers by convection to be estimated, of im-
+
+portance when considering the impact that aerosols have upon climate.
+
+This paper will outline the mass-flux approach to the parametrization of convection, concentrating "bulk" type
+
+schemes such as those used in the ECMWF forecast model (Tiedtke 1989) and the UK Met. Office Unified Model
+
+(Gregory and Rowntree 1990). Important issues relating to this approach are discussed by reference to the Tiedtke
+
+scheme at ECMWF, although reference is made to other schemes as appropriate. Only brief comments are made
+
+concerning the more complex "spectral" cloud model approach, of which the Arakawa–Schubert scheme is the
+
+best known example.
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+2. THE NEED FOR PARAMETRIZATION.
+
+Within large-scale models of the atmosphere the horizontal length scale on which the convection exists is below
+
+the resolution used, and so the effects of such clouds must be parametrized in terms of the large-scale flow. Ex-
+
+pressing the temperature structure of the atmosphere in terms of a large-scale mean and an unresolved eddy con-
+
+tribution,
+
+(1)
+
+the thermodynamic equation of the large-scale flow may be written as,
+
+(2)
+
+where is the radiative heating rate and is termed the apparent convective heat source (Yanai et al. 1973).
+
+The left-hand side contains large-scale terms only, while the right-hand side of Eq. (2) represents the impact of ra-
+
+diation and small-scale motions upon the large-scale flow. Convection is seen to affect the large-scale flow through
+
+condensational heating and the vertical transport of heat. A similar treatment is applicable to the moisture equation
+
+leading to the definition of , the apparent moisture sink due to convection and also the horizontal momentum
+
+equation, defining , the impact of convection upon horizontal momentum.
+
+3. MASS-FLUX THEORY OF CONVECTION
+
+The mass-flux approach was first formulated by Ooyama (1971). It is assumed within some area A, taken to be
+
+the grid point of a numerical model, that a fraction is covered by cloud. Hence the area average of is given by
+
+(3)
+
+where  is the value of  within cloudy air,  that within the environment of the cloud.
+
+It is normally assumed that  and so,
+
+(4)
+
+Table 1:
+
+Error in
+due to Eq. (4)
+
+Error in
+due to Eq. (4)
+
+Temperature
+
+0.1 300 K 301 K < 0.1% 10%
+
+0.5 300 K 301 K  0.2% 50%
+
+Mixing ratio
+
+0.1 15 g/kg 17 g/kg 1.3%
+
+0.5 15 g/kg 17 g/kg 6.5%
+
+φ φ φ′+=
+
+∂θ
+∂ �------ ∇ vθ⋅
+
+∂ ωθ( )
+∂�---------------+ +
+
+���
+��� Π----------
+
+∂ ω′θ′( )
+∂�-------------------
+
+�
+R–+
+
+�
+1
+�
+
+R–= =
+
+�
+R
+
+�
+1
+
+�
+2�
+
+3
+
+σ φ
+
+φ σφc 1 σ–( )φe+=
+
+φc φ ϕe
+
+σ 1«
+
+φ φe=
+
+σ φe φc φ
+e �
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+Table 1 provides an indication of the magnitude of the error in the environmental temperature and mixing ratio
+
+through the use of Eq. (4), together with the impact upon estimation of parcel buoyancy, evaluated as,
+
+(5)
+
+Absolute errors are generally small even when is large, which may be the case when the grid size is reduced to
+
+that found in meso-scale models (on the order of 10–20 km). Thus, the theoretical formulation developed below
+
+is fairly accurate. However, errors in buoyancy (a temperature difference) are much larger. As buoyancy is the
+
+main driving force for convection this may lead to errors in the estimation of the intensity of convection.
+
+Consider now the eddy flux divergent contribution to .  From Eq. (1) it can be written that
+
+(6)
+
+Using Eq. (3) to expand the first term of the r.h.s. of Eq. (6) and in the second term, after rearrangement Eq. (6)
+
+can be written as
+
+(7)
+
+Using Eq. (4), and assuming the vertical velocity in the environment is much smaller than that within cloudy air so
+
+that motions are only weakly correlated with thermodynamic variables, the second term on the r.h.s. of Eq. (7) can
+
+be neglected.  The vertical eddy flux due to convective motions is then written approximately as
+
+(8)
+
+Hence from Eq. (2)  can be expressed as,
+
+(9)
+
+The latent-heating term associated with the cloud environment is usually interpreted as the evaporation of cloud
+
+condensate and precipitation detrained from the cloud into clear air leading to a cooling of the cloud environment.
+
+From Eq. (9) it is seen that has been expressed in terms of cloud and large-scale variables. The latter are avail-
+
+able from the grid-point fields of the numerical model while the former are usually obtained from the use of a model
+
+of a convective cloud, typically a one-dimensional steady-state entraining-plume model of the cloud.
+
+Following the analysis of Gregory and Miller (1989), consider the thermodynamic and continuity equation aver-
+
+aged over an individual cloud (denoted by the subscript i);
+
+(10)
+
+(11)
+
+where the subscript b refers to the value of a variable on the cloud boundary. These equations are too complex to
+
+� θc θe–
+θe
+
+----------------=
+
+σ
+
+�
+1
+
+ω′θ′ ωθ ωθ–=
+
+ω
+
+ω′θ′ σ ωθ
+c
+
+ωcθ–[ ] 1 σ–( ) ωθe ωeθ–[ ]+=
+
+ω′θ′ σ ωθ
+c
+
+ωcθ–[ ]=
+
+�
+1
+
+�
+1 1 σ–( )
+
+��� e
+�	� Π----------- σ
+
+�
+� c
+�	� Π-----------
+
+∂
+∂�------ σ ωθ
+
+c
+ωcθ–( ){ }–+=
+
+�
+1
+
+∂
+∂ �----- σiθ i
+
+c( ) θbi
+∂σi
+∂ �--------– σi
+
+∂ � θ
+∂�----------   i
+
+c ∂
+∂�------ σiωθ i
+
+c
+( ) ωθ( )bi
+
+∂σi
+∂�--------–+ + σi
+
+��� c
+��� Π-----------=
+
+σi
+∂ �
+∂�------   i
+
+c ∂
+∂�------ σiω i
+
+c( ) ωbi
+∂ωc
+
+∂�---------–+ 0=
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+use in a scheme and it is usual to approximate the horizontal advection across the cloud boundary, the fluxes across
+
+the cloud boundary as it varies with height and the horizontal growth of the cloud with time by entrainment and
+
+detrainment fluxes;
+
+(12)
+
+(13)
+
+where is the entrainment rate (the rate at which air is included into the cloud through its sides to balance the
+
+increase of vertical mass flux in the cloud with height), and the detrainment rate (the rate at which air leaves the
+
+cloud as the cloud vertical mass flux decreases with height).  These are  defined as
+
+(14)
+
+These equations are for one cloud only, whereas in the area under consideration it is assumed that there are many
+
+clouds.  Summing over all cloud within the ensemble, Eqs. (12) and (13) can be written as,
+
+(15)
+
+(16)
+
+where and , the summation being carried out over all clouds. The summation on the l.h.s
+
+of Eq. (15) is over all clouds which are undergoing terminal detrainment. It has also been assumed that the whole
+
+ensemble is in a steady state, and so remaining time dependent terms can be neglected.
+
+Substitution of Eqs. (15) and (16) into Eq. (9) gives, after rearrangement,
+
+(17)
+
+A similar analysis can be applied to the moisture equation to obtain and the horizontal momentum equation to
+
+give .
+
+Convection modifies the large-scale atmosphere through;
+
+(a) compensating subsidence—motion in the clear environment surrounding the cloud compensating
+
+motion within the cloud (a consequence of mass continuity),
+
+(b) detrainment of cloudy air into the environment,
+
+(c) the evaporation of cloud condensate and precipitation within the environment—either through
+
+detrainment or below cloud base as precipitation falls to the surface. This later term is closely tied
+
+∂
+∂ �----- σiθ i
+
+c( )  iθ– � iθc ∂∂�------ σiωθ i
+c
+
+( )++ σi
+�
+� c
+��� Π-----------=
+
+ i � i ∂∂�------ σiω i
+c( )+ +–
+
+∂σi
+∂ �--------–=
+
+
+�
+
+ i ∂∂�------ σiω i
+c( )
+
+∂σi
+∂ �-------- if
+
+∂
+∂�------ σiω i
+
+c( )
+∂σi
+∂ �-------- 0<––+=
+
+� i ∂∂�------ σiω i
+c( )
+
+∂σi
+∂ �-------- if
+
+∂
+∂�------ σiω i
+
+c( )
+∂σi
+∂ �-------- 0>––+=
+
+ θ– � iθc ∂∂�------ σωθ
+c
+
+( )+
+det
+∑+ σ
+
+��� c
+�	� Π-----------=
+
+– � ∂∂�------ σω
+c( )+ + 0=
+
+ ���∑= � ����∑=
+
+�
+1 σωc ∂θ∂�------ � i θ i
+
+c θ–( ) 1 σ–( )
+��� e
+�	� Π-----------+det∑+=
+
+�
+2�
+
+3
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+to microphysical processes and, because of the fall-out of precipitation, is not uniquely related to
+
+the mass-flux and condensation profiles within the convection.
+
+4. EVALUATION OF MASS-FLUX THEORY
+
+Several authors have attempted to diagnose the magnitude of the terms in Eq. (17) using observations (e.g Yanai
+
+et al. 1973). However this method relies on using simple cloud models, identical to those used in parametrization
+
+schemes, to estimate in-cloud variables. The technique is essentially using a convective parametrization in a diag-
+
+nostic mode. More recently diagnostics from cloud-resolving models have helped to understand the mass-flux ap-
+
+proach (e.g. Gregory and Miller 1989). Fig. 1 from the latter study (a simulation of convection during phase 3 of
+
+GATE) compares the vertical structure of with that of compensating subsidence and the evaporation of con-
+
+densate within the cloud environment. Compensating subsidence is seen to follow closely in the vertical, ex-
+
+ceeding it at most levels. This excess of heating is compensated by the evaporation term. The detrainment of
+
+cloudy air plays only a secondary role for deep convection, although it is of greater importance in shallow convec-
+
+tion (see Soong and Ogura 1980). These results agree with studies using observational data, for example that of
+
+Yanai et al. (1973) using data from the west Pacific.
+
+Figure  1. Profile of compensating subsidence (dot-dash), evaporation of cloud and precipitation (dotted), their
+
+sum (solid) and net Q1 (dashed) for convection in a phase III GATE easterly wave (From Gregory and Miller
+
+1989).
+
+However for , Gregory and Miller (1989) suggest that a combination of compensating subsidence and the evap-
+
+oration of condensate within the cloud environment is not a good approximation (Fig. 2 ), drying at 800 mb being
+
+overestimated by this approximation and underestimated below this level. This is a consequence of several factors.
+
+Firstly above 800 mb detrainment plays a much larger role in the moisture budget than for temperature (see also
+
+the recent study by Guichard et al. (1996)). As the air detrained from convection is saturated, its mixing ratio is
+
+usually further away from the environmental value than is the case for temperature, and so detrainment has a much
+
+larger impact in the moisture budget than in the corresponding heat budget. This was also noted in earlier obser-
+
+vational studies. In the lowest 200 mb of the domain the difference is partially caused by the inability of the coarse-
+
+resolution model to simulate shallow convection, but also by the fact that "entrainment" into the lower part of the
+
+cloud dries the domain. This is due to the environment around the base of the convection being wetter than the
+
+�
+1 �
+
+1
+
+�
+2
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+average across the domain, implying that the large-scale average value of mixing ratio is a poor representation of
+
+air flowing into convection near cloud base. This effect is not usually accounted for in parametrization schemes.
+
+In general the moisture errors found in GCMs in convective regions are larger than those for temperature, partially
+
+a consequence of poor formulation of the entrainment and detrainment processes for moisture used in current
+
+schemes.
+
+Figure  2. Profile of compensating subsidence (dot-dash), evaporation of cloud and precipitation (dotted), their
+
+sum (solid) and net Q2 (dash) for convection in a phase III GATE easterly wave (From Gregory and Miller 1989).
+
+Cloud resolving models allow the contribution of updraughts and downdraughts to the net convective heating and
+
+drying to be determined. Fig. 3 shows due to updraughts and downdraughts for the GATE simulation of Gre-
+
+gory and Miller (1989). The heating due to updraughts is twice , the excess heating being compensated by the
+
+cooling due to the evaporation of precipitation with downdraughts. Such a large contribution to the net heating
+
+implies that it is important to include downdraught processes in convective parametrizations. Similar conclusions
+
+have also been reached from observational studies (e.g. Betts 1973).
+
+�
+1 �
+
+1
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+Figure  3. Contribution of updraughts (solid) and downdraughts (dashed) to Q1 for convection in a phase III
+
+GATE easterly wave (From Gregory and Miller 1989).
+
+5. PRACTICAL APPLICATION OF MASS-FLUX THEORY
+
+Application of the above theory in a numerical model is a two-stage process. Firstly a cloud model must be used
+
+to estimate the vertical distribution of the cloudy quantities, and secondly the magnitude of the mass flux at the base
+
+of the cloud must be determined, usually by some reference to the large-scale structure and forcing (the closure
+
+problem).
+
+5.1  Estimation of cloud properties
+
+Two approaches are commonly to estimate the quantities required to implement the mass-flux theory as a para-
+
+metrization scheme. The first approach uses a spectral cloud ensemble, in which several different cloud models
+
+are used to represent differing cloud types within a grid box of a GCM. In the second approach, the bulk cloud-
+
+model method, a single cloud model is used to represent an ensemble of clouds. The strengths and weaknesses of
+
+each approach are discussed below.
+
+5.1 (a)  Spectral cloud ensemble approach. This technique was first introduced by Arakawa and Schubert
+
+(1974). They assumed that within a grid box of a GCM a spectrum of different height clouds existed. Each cloud
+
+is characterised by a different entrainment rate, and so a different cloud top height (Fig. 4 ). Clouds with large
+
+entrainment rates terminate lower in the atmosphere (cloud 1), while those with lower entrainment rates follow a
+
+more undiluted ascent, and so terminate in the upper troposphere (cloud 3). In theory, the number of different cloud
+
+types within the distribution is arbitrary with clouds allowed to terminate at any level in the atmosphere, but in prac-
+
+tice the number of cloud types is limited by the number of vertical levels in the model, one cloud type detraining
+
+at each model layer.
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 4. Schematic of spectral cloud ensemble approach. Curves 1,2 and 3 represent ascent of air in clouds with
+
+differing entrainment rates.
+
+The cloud-base mass flux must be estimated for each cloud type (the "closure problem"), determining how much
+
+that cloud type contributes to the ensemble mean. The original version of the Arakawa–Schubert scheme required
+
+an iterative solution to solve for the distribution of mass flux associated with each cloud type, but in recent years
+
+the scheme has undergone some modification (e.g. Moorthi and Suarez 1992) in order to reduce its complexity and
+
+increase its robustness, while still retaining the spectral cloud-ensemble approach.
+
+5.1 (b)  Bulk cloud model approach. Because of the complexity (and hence the computational expense) of the
+
+spectral cloud-ensemble approach, several schemes have been developed using the simpler bulk-cloud model ap-
+
+proach suggested by Yanai et al. (1973). In this method, only one cloud model is used to represent an ensemble of
+
+clouds within a grid box, the cloud properties predicted being averages over the cloud ensemble whose members
+
+have ascents ranging from cloud type 1 to cloud type 3 (Fig. 5 ). Both the mass-flux scheme of Tiedtke (1989) used
+
+in the ECMWF model, and the UK Meteorological Office scheme (Gregory and Rowntree 1990), use this ap-
+
+proach. The approach has also been used in meso-scale models (e.g. Fritsch and Chappel 1980) where, due to
+
+smaller grid sizes, it is reasonable to assume that only one cloud type exists within a grid box. The method is cheap-
+
+er and simpler to implement, and both of these schemes have the additional advantage over the Arakawa–Schubert
+
+scheme that they are able to represent convection that is not rooted in the planetary boundary layer (for example as
+
+seen in mid-latitude warm fronts).
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+Figure  5. Schematic of bulk-cloud approach.  Mean curve represents the ascent of air in the "bulk" cloud
+
+representing a mean over an ensemble of ascents ranging from ascent 1 through 3.
+
+5.2  Issues in the formulation of bulk mass-flux schemes
+
+Here discussion of the mass-flux approach is focused upon issues relating to the bulk cloud-model approach. The
+
+Tiedtke scheme, used in the ECMWF model, is used to illustrate issues which must be addresses in designing such
+
+a scheme.
+
+5.2 (a)  Determination of cloud type. In the spectral cloud model approach, several cloud types with differing
+
+lateral mixing rates and cloud-top heights are present within each grid box, the "closure method" determines the
+
+fraction of the total mass flux associated with each cloud. Thus, in theory, the method is able to distinguish the
+
+type of convection in a variety of regimes. In the tropics the ensemble would be dominated by deep convection,
+
+while in the subtropical trade-wind regions shallow convective cloud would dominate the ensemble. When using
+
+a bulk scheme, only one cloud type is present in each grid box of a model and so some a priori decision must be
+
+made as to the type of convection present, allowing the lateral mixing properties and the estimation of cloud-base
+
+mass flux to be varied depending upon whether the convection is dominated by deep or shallow convection. For
+
+example, shallow convection is smaller and more turbulent that deep convection and so will have a higher entrain-
+
+ment rate than deep convection.
+
+Such "switching" is usually done on the basis of an aspect of the large-scale environment in which the convection
+
+is growing. For example, observations show that deep convection is often collocated with regions of moisture con-
+
+vergence, while shallow convection is found to occur under low-level inversions caused by large-scale subsidence,
+
+where the moisture supply to the planetary boundary layer is dominated by evaporation from the surface. Thus in
+
+the Tiedtke scheme used at ECMWF, if the large-scale convergence of moisture into a column is larger than the
+
+surface evaporation then convection is deemed to be deep and a low entrainment rate set for the purpose of estimat-
+
+ing the ascent of a parcel, and hence its in-cloud properties. If the converse is so, then higher entrainment rates are
+
+set appropriate to shallow convection (being four times larger than those used for deep convection).
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+5.2 (b)  Formulation of entrainment and detrainment. A further issue with the bulk approach is the specifica-
+
+tion of entrainment and detrainment rates. Simulations made by GCMs show a large degree of sensitivity to these
+
+quantities (see paper on "Sensitivity of GCM performance to convective parametrization” and Yao and DelGeno
+
+(1989)). Cloud-top height is very sensitive to the magnitude of the entrainment rate. With only one plume present
+
+the entrainment rate must be set so as to allow the maximum cloud-top height to be correctly estimated. Also, ac-
+
+count has to be taken of those clouds which, in reality, detrain at levels lower than this height. This is usually done
+
+by including a background detrainment rate in addition to that which occurs at the top of the plume. For the Tiedtke
+
+scheme in cases of deep convection, entrainment is applied below the level of the maxima in large-scale vertical
+
+velocity, while a fixed (so-called "mixing") detrainment rate is applied throughout the cloud depth. The depth and
+
+magnitude of the terminal detrainment near cloud top is estimated by the decrease in parcel kinetic energy caused
+
+by the overshoot of a parcel above its neutral buoyancy level. This ad hoc approach matches the shape of the mass-
+
+flux profile with that of the grid-scale motion, generally a feature observed in deep convective regions. In the case
+
+of shallow convection the entrainment and mixing detrainment rates are equal and constant with height, implying
+
+a constant mass flux above cloud base until the parcel becomes negatively buoyant.
+
+In recent years the validity of the entraining/detraining plume cloud model widely used in mass-flux schemes has
+
+been questioned. Raymond and Blyth (1986) studying cumulus clouds suggested that mixing across the cloud
+
+boundary occurs episodically rather than continually, with parcels of air that become negatively buoyant on mixing
+
+descending to their level of neutral buoyancy before leaving the cloud. Schemes discussed by Kain and Fritsch
+
+(1990) and Emanuel (1991) have incorporated simplified versions of this model into convection schemes for use
+
+with meso-scale and climate models. Nordeng (1994) has also suggested a revised specification of entrainment
+
+rates for the ECMWF convection scheme for use within the frame work of the entrainment/detraining plume ap-
+
+proach, with entrainment rates linked to the buoyancy of the parcel.
+
+5.3  Performance of "cloud ensemble" and "bulk schemes"
+
+Although the bulk cloud model approach is simpler than the Arakawa–Schubert scheme, it performs well in both
+
+climate and NWP applications. Fig. 6 shows December/January/February precipitation averaged over the 10 years
+
+of the AMIP decade (1979–1988) (Slingo et al. 1996) simulated by a version of the ECMWF model (T42, 19 levels)
+
+using a version of the Tiedtke scheme and the GLA model ( , 11 levels) which employs a version of the
+
+Arakawa–Schubert scheme. An observed climatology derived from satellite observations (Spencer 1993), estimat-
+
+ed from microwave sounding unit (MSU) data) is also shown. Differences to the climatology are seen but both
+
+models give a reasonable estimate of the distribution of precipitation. The ECMWF simulation has stronger pre-
+
+cipitation over the west Pacific and the Pacific ITCZ, but underestimates rainfall in the SPCZ. The GLA model
+
+overemphasises the SPCZ and underestimates the rainfall north of the equator in the Pacific.
+
+4° 5°×
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+Figure  6. Comparison of DJF precipitation averaged over the AMIP decade (1979–1988) simulated by the
+
+ECMWF (T42, 19 levels) and GLA (4 x 5 degrees, 11 levels) GCMs  together with a climatogy from Spencer
+
+(1993) derived from MSU data (adapted from Slingo et al. (1996)).
+
+5.4  Representation of downdraughts
+
+As discussed above, downdraughts play a large role in the convective heat budget. In parametrizations these are
+
+usually modelled by an inverted entraining plume starting near the level of minimum equivalent potential temper-
+
+ature in the mid troposphere. The magnitude of the downdraught mass flux has to be determined. Some schemes
+
+estimate the activity of the downdraught from empirical relationships between observed precipitation efficiency
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+and the vertical shear of the horizontal wind (Fritsch and Chappel 1980). In the Tiedtke scheme a simpler approach
+
+is used, the initial mass flux at the top of the plume being set to a third of the of the updraught mass flux at cloud
+
+base. As air descends it is cooled by the evaporation, maintaining negative buoyancy, and finally detrains into the
+
+subcloud layer which it tends to cool and dry. One weakness with current schemes is that they often assume that
+
+evaporation of precipitation within the downdraught maintains saturation, whereas observations suggest that they
+
+remain unsaturated (Betts 1973).  This may cause errors in the subcloud-layer budgets of heat and moisture.
+
+5.5  Estimation of cloud base mass flux
+
+For mass-flux parametrization schemes, the closure problem is essentially the need to estimate the convective mass
+
+flux at the base of the cloud. This determines the magnitude of the convective heat release while the cloud model,
+
+and associated cloud microphysical parametrization used, determines how this heat is distributed in the vertical.
+
+No exact theory exists for the closure problem and several different methods have been used. Howeve, it is possible
+
+to broadly classify these various closures into "dynamical" and "adjustment" types.
+
+5.5 (a)  Dynamical closure. "Dynamical" closures relate the cloud-base mass flux to the large-scale forcing
+
+and atmospheric structure, usually making some assumption regarding the "quasi-equilibrium" of the convecting
+
+atmosphere. The closure of the Arakawa and Schubert (1974) scheme is of this type, relating convective activity
+
+to large-scale forcing throughout the depth of the convecting layer. The Tiedtke (1989) scheme estimates cloud-
+
+base mass flux from an equilibrium assumption on either moisture (for deep convection) or moist static energy (for
+
+shallow convection) integrated over the subcloud layer. Such a closure relates to the ideas of boundary-layer quasi-
+
+equilibrium put forward by Raymond (1995) .
+
+Integrating over the subcloud layer, and assuming that there is a balance between convection and other processes
+
+(surface fluxes, turbulence, large-scale motion), then
+
+(18)
+
+where , , and are the updraught and downdraught mass flux and mixing ratios, is the forcing
+
+due to surface fluxes, turbulence and large-scale motion and is the height of cloud base. Quantities with the
+
+subscript refer to their values at cloud base. As the downdraught mass flux is related to the updraught mass flux
+
+at cloud base, Eq. (18) can be rearranged to give an estimate for the cloud-base mass flux.
+
+5.5 (b)  Adjustment closure. In schemes which use an "adjustment" closure, the cloud-base mass flux is calcu-
+
+lated from relaxing the large-scale atmosphere back to an equilibrium structure. The Fritsch and Chappel (1980)
+
+scheme provides an example of this type of closure, where the cloud-base mass flux is calculated from the reduction
+
+of Convective Available Potential Energy (CAPE) over a time scale .
+
+CAPE is defined as
+
+(19)
+
+(ignoring virtual effects for simplicity).
+
+Assuming steady state clouds, the rate of change of CAPE with time due to convective activity is given by
+
+���
+b
+
+u � �
+b
+
+u �–( ) ���
+b
+
+d � �
+b
+
+d �–( )+ ρ �����d
+0
+
+�
+b
+
+∫=
+
+� u � d � u � d ���
+� b
+
+� b
+
+τ
+
+CAPE θc θ–( ) �dρ�-------
+cloud
+∫=
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+(20)
+
+Approximating by a subsidence term, and assuming that convection reduces CAPE to zero over a timescale
+
+, the cloud-base mass flux is given by,
+
+(21)
+
+where  is the mass flux i.e.  is the mass flux normalised by its value at cloud base.
+
+The time scale for adjustment is resolution dependent due to the magnitude of the resolved vertical velocity on
+
+small horizontal scales increasing as resolution decreases (Nordeng 1994). If a quasi-equilibrium is assumed to
+
+exist then moistening due to large-scale ascent is approximately balanced by compensating subsidence implying
+
+that
+
+(22)
+
+In general, the resolved magnitude of the vertical velocity roughly doubles as the horizontal grid length is halved,
+
+implying that the time scale for adjustment must decrease as resolution increases.
+
+6. EVALUATION OF CONVECTION SCHEMES USING CLOUD RESOLVING MODELS
+
+It has already been shown that the bulk mass-flux approach to convective parametrization is able to provide a broad-
+
+ly comparable distribution of global precipitation to that obtained through the use of more complex scheme (Fig.
+
+6 ). The development of cloud-resolving models with the ability to capture accurately features of convective clouds
+
+allows more detailed evaluation of the realism of the representation of convection afforded by the mass-flux ap-
+
+proach. Quantities such as updraught and downdraught mass flux are poorly specified by observations but are read-
+
+ily diagnosed from cloud-resolving models, providing a powerful tool to evaluate the assumptions used to generate
+
+these key quantities.
+
+Here mass fluxes estimated from the Tiedtke convection scheme in a single-column version of the ECMWF fore-
+
+cast model are compared with those estimated by cloud-resolving models (CRMs) for three different cases;
+
+(a) tropical convection during GATE. Constant cooling and moistening tendencies representing the
+
+effects of large-scale ascent are provided to the model and surface fluxes and sensible and latent
+
+heat (12 and 145 W m-2) respectively are held constant
+
+(b) convection in a cold-air out break forced by surface fluxes only (sensible- and latent-heat fluxes of
+
+123 and 492 W m-2, respectively)
+
+(c) shallow convection during BOMEX (based upon a case study of Holland and Rasmusson (1973))
+
+Further details of cases (a) and (b) are presented in Kershaw et al. (1997) and Gregory et al. (1997), while the
+
+BOMEX case is discussed by Siebesma and Holtslag (1996). The convection scheme is as used in CY14R3 of the
+
+ECMWF model. The closure of the scheme differs from that described above in that only updraught fluxes of mois-
+
+ture out of the boundary layer are considered to balance the forcing in the subcloud layer. This does not affect the
+
+average properties of convection over the 10 hour period of experiments (a) and (b), the convection scheme being
+
+in balance with the forcing supplied to the model. However the evolution of the convective heating is changed and
+
+∂CAPE
+∂ �-------------------   conv �
+
+∂θ
+∂ �------   conv
+
+�d
+ρ�-------∫– ρ
+
+�
+1
+�d
+
+ρ�-------∫–= =
+
+�
+1
+
+τ
+
+�
+B
+
+CAPE
+τ
+
+---------------- 1
+
+η �( )∂θ∂�------
+�d
+
+ρ�-------∫
+------------------------------=
+
+�
+B �( ) η �( )
+
+�
+c ρ �=
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+this will be illustrated for the GATE case.  Case (c) is unaffected by this change as no downdraughts form.
+
+For the GATE case (Fig. 7 : 10 hour average), the depth of the updraught is overestimated implying that the en-
+
+trainment rates specified may be too low. Updraught mass flux is underestimated by 25% in the lowest 4 km, par-
+
+tially compensated by too weak a downdraught compared with that diagnosed from the CRM. The decrease in
+
+mass flux above 5 km is reasonably captured by the detrainment rate specified. The evolution of precipitation for
+
+this case is shown in Fig. 8 , where the impact of including the downdraughts into the estimation of cloud-base
+
+mass flux is illustrated (Fig. 8 (b)). Without downdraughts (Fig. 8 (a)) the convective response becomes intermit-
+
+tent, the amount of precipitation released in individual convective events being much larger than the moisture sup-
+
+ply to the model. Between periods of intense deep convection shallow convection occurs, contributing to the large
+
+mass flux at cloud base seen in Fig. 7 .
+
+Figure  7. Comparison of convective mass fluxes for updraught and downdraughts predicted by the Tiedtke
+
+convection scheme (UD : solid/DD : dot-dash) and diagnosed from a cloud resolving model simulation (UD :
+
+dash/ DD : triple dot-dash) for convection in a GATE easterly wave (10-hour averages).
+
+Such behaviour is caused by updraughts balancing the moisture supply in the subcloud layer, leaving downdraughts
+
+to dry the layer and so stabilise the profile with respect to deep convection. With downdraughts included the re-
+
+sponse of the convection is steady, the precipitation amount being in quasi-equilibrium with the moisture supplied
+
+to the model. The magnitude of updraught mass flux near cloud base is reduced as deep convection occurs through
+
+the entire simulation, although above 2 km the mass-flux structure is similar to that in Fig. 7 .
+
+For the cold-air outbreak case (Fig. 9 : 10 hour average) the moisture convergence into the column is zero, apart
+
+from surface evaporation and the switching described above sets the plume parameters to those appropriate to shal-
+
+low convection even though, from the CRM simulation, it is clear that the convection is deep. With large entrain-
+
+ment rates the depth of convection is underestimated and large detrainment rates cause the mass flux, which is over-
+
+estimated at the base of the cloud, to fall too rapidly with height. This case points out a deficiency in the switching
+
+mechanism used to determine whether convection is deep or shallow. It should be noted that forcing the scheme
+
+to use the deep-convective values for entrainment and detrainment produces an updraught mass-flux profile that is
+
+in better agreement with that of the CRM.
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 15
+
+Figure  8. Evolution of rainfall for simulation of convection in GATE given by the Tiedtke convection scheme
+
+with closured in which (a) downdraughts are neglected and (b) downdraughts are included into the estimation of
+
+cloud base mass flux.  Solid curve : convective precipitation.  Dashed curve : stratiform precipitation.
+
+Figure  9. Comparison of convective mass fluxes for updraught and downdraughts predicted by the Tiedtke
+
+convection scheme (UD : solid/DD : dot-dash) and diagnosed from a cloud resolving model simulation (UD :
+
+dash/ DD : triple dot-dash) for convection in a cold air outbreak (10-hour averages).
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+The BOMEX case (Fig. 10 : average between 12 and 36 hours) is one in which the large-scale motion above a low-
+
+level inversion is downward, and so rightly the convection scheme determines that this is a case of shallow convec-
+
+tion. The CRM simulation suggests that mass flux reduced with height across the cloud layer, implying that de-
+
+trainment rates are larger than entrainment rates. With the Tiedtke scheme the cloud-base mass flux is
+
+underestimated and, due to entrainment and detrainment rates being equal, does not changed with height until the
+
+inversion layer when an additional "terminal" detrainment occurs as the ascending parcels’ vertical kinetic energy
+
+decreases. Increasing entrainment rates by a factor of 2 and detrainment rates by a factor of 3, roughly matching
+
+those diagnosed from the CRM, gives a larger cloud-base mass flux and a profile that better matches that of the
+
+CRM (Fig. 10 : dotted curve). Siebesma and Holtslag (1996) found a similar sensitivity using an earlier version
+
+of the Tiedtke convection scheme. With increased entrainment and detrainment rates the thermodynamic structure
+
+is also closer to that observed during BOMEX.
+
+Figure  10. Comparison of updraught mass flux predicted by the standard Tiedtke convection scheme (solid), a
+
+version with increased entrainment and detrainment rates (dotted) and diagnosed from a cloud-resolving model
+
+simulation (dash) for convection during BOMEX (24-hour averages).
+
+7. CONCLUDING COMMENTS
+
+This paper has outlined the theoretical basis of mass-flux convection schemes and described how this is applied in
+
+practice, concentrating upon a class of parametrizations based around the "bulk" cloud model approach of Yanai
+
+et al. (1973). This method is simpler than the spectral approach, such as in the Arakawa–Schubert scheme, but
+
+gives reasonable estimates of global precipitation patterns in GCMs. This type of scheme depends upon correct a
+
+priori decisions being made as to the dominant nature of convection at a grid point and its internal characteristics.
+
+Using the Tiedtke scheme, the ability of these type of schemes to represent convection in a variety of circumstances
+
+has been commented upon through comparison with cloud-resolving model simulations. This identifies areas
+
+where modification is required, such as the "switching" criteria to distinguish deep and shallow convective cases,
+
+together with the entrainment rates used. Future studies of a variety of convective regimes will be useful to improve
+
+the representation of such processes in parametrizations.
+
+REFERENCES
+
+Arakawa, A. and Schubert W.H. (1974) Interaction of a cumulus cloud ensemble with the large-scale environment.
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 17
+
+Part I, J. Atm. Sci., 31, 674-701
+
+Betts, A.K. (1973) A composite mesoscale cumulonimbus budget, J. Atm. Sci., 30, 597-610
+
+Emanuel, K.A (1991) A scheme for representing cumulus convection in large-scale models, J. Atmos. Sci., 48,
+
+2313-2335
+
+Fritsch, J.M. and Chappel, C.F. (1980) Numerical prediction of convectively driven mesoscale pressure systems.
+
+Part I : Cumulus parametrization, J. Atm. Sci., 37, 1722-1733
+
+Gregory, D. and Miller M.J. (1989) A numerical study of the parametrization of deep tropical convection, QJR.
+
+Meteorol. Soc., 115, 1209-1242
+
+Gregory, D. and Rowntree P.R. (1990) A mass flux convection scheme with representation of cloud ensemble char-
+
+acteristics and stability dependent closure, Mon. Wea. Rev., 118, 1483-1506
+
+Gregory, D., Kershaw, R. and Inness, P.M. (1997) Parametrization of momentum transports by convection II : Tests
+
+in single column and general circulation models, accepted for publication in QJR. Meteorol. Soc.
+
+Guichard, F., Redelsperger,J.-L. and Lafore, J.-P. (1996) The behaviour of a cloud ensemble in response to external
+
+forcings, Q.J.R.M.Soc., 122, 1043-1074
+
+Holland, J.Z. and Rasmusson, E.M. 1973 Measurements of atmospheric mass, energy and momentum budgets
+
+over a 500-kilometer square of tropical ocean, Mon. Wea. Rev., 101, 44-55
+
+Kain, J.S. and Fritsch, J.M. (1990) A one-dimensional entraining/detraining plume model and its application to
+
+convective parametrization, J. Atm. Sci., 47, 2784-2802
+
+Kershaw, R. and Gregory, D. (1997) Parametrization of momentum transports by convection. I: Theory and cloud
+
+modelling results, Accepted for publication in QJR. Meteorol. Soc.
+
+Moorthi, S. and Suarez, M.J. (1992) Relaxed Arakawa-Schubert : a parametrization of moist convection for gen-
+
+eral circulation models, Mon. Wea. Rev., 120, 978-1002
+
+Nordeng, T.E. (1994) Extended versions of the convection parametrization scheme at ECMWF and their impact
+
+upon the mean climate and transient activity of the model in the tropics, Research Department Technical Memo-
+
+randum No. 206, ECMWF, Shinfield Park, Reading, Berks, United Kingdom
+
+Ooyama, K. (1971) A theory on parametrization of cumulus convection, J. Met. Soc. Jap., 49 (Special Issue), 744-
+
+756
+
+Raymond, D.J. (1995) Regulation of moist convection over the west Pacific warm pool, J. Atm. Sci., 52, 3945-
+
+3959
+
+Raymond, D.J. and Blyth, A.M. (1986) A stochastic mixing model for non-precipitating cumulus clouds, J. Atm.
+
+Sci., 43, 2708-2718
+
+Siebesma, A.P. and Holtslag, A.A.M. (1996) Model impacts of entrainment and detrainment rates in shallow cu-
+
+mulus convection, J. Atm. Sci., 53, 2354-2364
+
+Slingo, J.M., Sperber, K.R., Boyle, J.S., Ceron, J.-P., Dix, M., Dugas, B., Ebisuzaki, W., Fyfe, J., Gregory, D., Guer-
+
+emy, J.-F., Hack, J., Harzallah, A., Inness, P., Kitoh, A., Lau, W.K.-M., McAvaney, B., Madden, R., Matthews, A.,
+
+Palmer, T.N., Park, C.-K., Randall, D. and Renno, N. (1996) Intraseasonal oscillations in 15 atmospheric general
+
+circulation models : results from an AMIP diagnostic subproject, Clim. Dyn. 12, 325-357
+
+Soong, S.-T. and Ogura, Y. (1980) Response of trade wind cumuli to large-scale processes, J. Atm. Sci., 37, 2035-
+
+2050
+
+
+
+The mass-flux approach to the parametrization of deep convection
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Spencer, R.W. (1993) Global oceanic precipitation from MSU during 1979-91 and comparison to other climatol-
+
+ogies, J. Clim., 6, 1301-1326
+
+Tiedtke, M. (1989) A comprehensive mass flux scheme for cumulus parametrization in large-scale models, Mon.
+
+Wea. Rev., 117, 1779-1800
+
+Yanai, M., Esbensen, S. and Chu, J-H. (1973) Determination of bulk properties of tropical cloud clusters from
+
+large-scale heat and moisture budgets, J. Atm. Sci., 30, 611-627
+
+Yao, M.-S. and DelGenio, A.D. (1989) Effects of cumulus entrainment and multiple cloud types on a January glo-
+
+bal climate model simulation, J. Clim., 2, 850-863

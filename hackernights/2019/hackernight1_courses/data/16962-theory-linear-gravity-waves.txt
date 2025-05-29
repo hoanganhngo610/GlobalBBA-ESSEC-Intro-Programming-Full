@@ -1,0 +1,585 @@
+Gravity_waves.fm
+
+
+ 
+
+Theory of linear gravity waves
+April 1987
+
+By  Tim Palmer
+
+European Centre for Medium-Range Weather Forecasts
+
+Table of contents
+1 . Simple properties of internal gravity waves
+
+2 . Gravity-wave drag
+
+REFERENCES 
+
+1. SIMPLE PROPERTIES OF INTERNAL GRAVITY WAVES
+In order to prepare for a description of the parametrization of gravity-wave drag, we discuss in this lecture some 
+simple properties of internal gravity waves excited by two-dimensional stably stratified flow over orography.
+
+We suppose that the horizontal scale of these waves is sufficiently small that the Rossby number is , and the 
+equations of motion can be written as
+
+(1)
+
+(2)
+
+with the continuity and thermodynamic equations given by
+
+(3)
+
+(4)
+
+In the following we shall use the Boussinesq approximation (see e. g. Holton, 1979) whereby density is treated as 
+a constant except where it is coupled to gravity in the buoyancy term of the vertical momentum equation. Linearis-
+ing (1)–(4) about a uniform hydrostatic flow  with constant density  and static stability
+
+we have for the perturbation variables
+
+(5)
+
+ 1«
+
+∂u
+∂t------ u
+
+∂u
+∂x------ w
+
+∂u
+∂z------
+
+1
+ρ
+---∂p
+∂x------+ + + 0=
+
+∂w
+∂t------- u
+
+∂w
+∂x------- w
+
+∂w
+∂z-------
+
+1
+ρ
+---∂p
+∂z------ g+ + + + 0=
+
+∂u
+∂x------
+
+1
+ρ
+--- ∂
+∂z----- ρw( )+ 0=
+
+   ∂θ
+∂t------ u
+
+∂θ
+∂x------ w
+
+∂θ
+∂z------+ + 0=
+
+u0 ρ0
+
+N2 g
+d θln 0 z( )
+
+dz---------------------=
+
+∂u′
+∂t-------- u0
+
+∂u′
+∂x--------
+
+1
+ρ0
+-----∂p′
+
+∂x--------+ + 0=
+Meteorological Training Course Lecture Series 
+
+ ECMWF, 2004 1
+
+
+
+Theory of linear gravity waves
+(6)
+
+(7)
+
+(8)
+
+For these wave motions the Mach number is sufficiently small that density fluctuations due to pressure changes are 
+small compared with those due to temperature changes, so we can write
+
+(9)
+
+Using (9), (5)–(8) are four equations in four unknowns. After some straightforward manipulation these can be re-
+duced to one equation
+
+(10)
+
+in the one unknown . We now look for sinusoidal solutions of the general form  which, 
+when substituted into (10), give the dispersion relation
+
+or
+
+, (11)
+
+where  is the intrinsic frequency.
+
+Notice that it is only possible to have vertically propagating wave-like solutions (i.e. with real ) provided that
+
+A simple calculation reveals that downward phase propagation in a frame moving with the fluid, implies upward 
+group velocity (exercise for the student!).
+
+Let us now restrict ourselves to stationary ( ) waves forced by sinusoidal orography with elevation  giv-
+en by
+
+The linearised lower boundary condition is
+
+∂w′
+∂t--------- u0
+
+∂w′
+∂x---------
+
+1
+ρ0
+-----∂p′
+
+∂z--------
+ρ′
+ρ
+-----g–+ + 0=
+
+∂u′
+∂x--------
+
+∂w′
+∂z---------+ 0=
+
+∂θ′
+∂t-------- u0
+
+∂θ′
+∂x-------- w′
+
+∂θ
+∂z------+ + 0=
+
+ρ′
+ρ0
+----- θ′
+
+θ0
+-----=
+
+∂
+∂t---- u0
+
+∂
+∂x-----+ 
+
+ 
+2 ∂2w′
+
+∂x2
+----------- ∂
+
+2w′
+∂z2
+
+-----------+
+ 
+ 
+ 
+
+N2∂
+2w′
+∂x2
+
+-----------+ 0=
+
+w′ i kx mz σt–+( )[ ]exp
+
+σ u0k–( )
+2 k2 m2+( ) N2k2– 0=
+
+σ̂ σ u0k–
+Nk
+
+k2 m2+
+----------------------±= =
+
+σ̂
+
+m
+
+N2 σ̂2 0>≥
+
+σ 0= h x( )
+
+h hm kxsin=
+2 Meteorological Training Course Lecture Series 
+
+ ECMWF, 2004
+
+
+
+Theory of linear gravity waves 
+(12)
+
+Figure  1. The motion produced by uniform flow of a uniformly stratified fluid over sinusoidal topography of 
+small amplitude. The sinuous lines indicate the displacement of isopycnal surfaces whose equilibrium 
+configurations are horizontal, and the straight lines join crests and troughs. (a) For small-wavelength topography, 
+i.e., wave-number , where  is the buoyancy frequency and  is a fluid velocity relative to the ground 
+(a typical value of  for the atmosphere is 1 km). The drawing is for . Note the decay of 
+amplitude with height, showing that energy is trapped near the ground.  and  indicate positions of maximum 
+and minimum pressure perturbation, respectively, i.e., there is suction over crests. When the lower half plane is 
+fluid, this can lead to instability (Kelvin–Helmholtz) when the relative velocity between fluids is great enough for 
+the suction to overcome gravity. (b) The response to large-wavelength topography, i.e,  (the drawing is 
+for ). Now the displacement of isopycnals is uniform with height, but wave crests move upstream 
+with height, i.e. phase lines are tilted as shown. The group velocity relative to the air is along these phase lines, 
+but the group velocity relative to the ground is at right angles, i.e. upward and in the downstream direction. High 
+and low pressures are now at the nodes, so there is a net force on the topography in the direction of flow.
+
+2. GRAVITY-WAVE DRAG
+Let us consider two cases
+
+w z 0= u0
+∂h
+∂x------ u0khm kxcos= =
+
+(b)
+
+k N U⁄> N U
+U N⁄ kU 1.25N=
+
+H L
+
+k N U⁄<
+kU 0.8N=
+Meteorological Training Course Lecture Series 
+
+ ECMWF, 2004 3
+
+
+
+Theory of linear gravity waves
+(i)  (evanescent solutions)—see Fig. 1 (a)
+Solutions periodic in  are of the form
+
+The boundary condition (12), together with a finite amplitude condition ( ), gives
+
+,
+
+where
+
+From the continuity equation,
+
+Hence, these evanescent solutions take the form of a sinusoidal wave field decaying without phase 
+tilt. Notice that the vertical flux of horizontal momentum  for these waves. Here the 
+overbar represents an average along the -direction. If we take  and , then 
+with  these evanescent solutions occur when 
+
+(ii)  (propagating solutions) - see Fig. 1 (b).
+The vertical wavenumber is real and solutions will be of the form 
+
+The constants  and  can be determined firstly by the lower boundary condition (12), and 
+secondly by the condition that energy is propagating upwards. This latter condition implies that the 
+vertical group velocity
+
+is positive i.e. we must take the positive solution
+
+The full solution, then, is
+
+and the horizontally averaged momentum flux
+
+k N u⁄> 0
+x
+
+w′ eikx Ae m z– Be m z+( ){ }real=
+
+B 0=
+
+w′ u0khme
+m z– kxcos=
+
+m k2 Nu0
+----- 
+  2–
+
+1 2⁄
+=
+
+u′ u0hm m  e
+m z– kxsin=
+
+ρ0u′w′ 0=
+x u0 10 m s
+
+1–∼ N 10 s 1–∼
+k 2π L⁄= L 6 km≤
+
+k N u0⁄<
+
+w′ Aei kx mz+( ) Bei kx m– z( )+{ }real=
+
+A B
+
+∂σ
+∂m------- σ 0=
+
+mku0
+m2 k2+
+------------------±=
+
+Aei kx mz+( )
+
+w′ u0khm kx mz+( )cos=
+
+u′ u– 0mhm kx mz+( )cos=
+4 Meteorological Training Course Lecture Series 
+
+ ECMWF, 2004
+
+
+
+Theory of linear gravity waves 
+For long (hydrostatic) waves with  the dispersion relationship simplifies to
+
+and so
+
+(13)
+
+The pressure drag on the orography (per wavelength) is given by
+
+in linearised form. Using the lower boundary condition and the -component of the momentum 
+equation, this can be re-expressed as
+
+so that the drag force per unit length is given by
+
+For the evanescent modes the drag force is zero, for the propagating modes it is not. For these latter modes the mean 
+flow experiences this drag force where the wave activity is dissipative, which can be well above the boundary layer, 
+for example. A prime region for such wave dissipation is in vertical layers where wave breaking due to convective 
+or shear instability is occurring. This can occur because, in the real atmosphere,  is not constant but decreases 
+exponentially with height. In order that the wave momentum flux  be constant, wave amplitudes must in-
+crease as  with height (the whiplash effect).
+
+Using the hydrostatic dispersion relationship
+
+the wave's impact on the local static stability and vertical shear can be written as
+
+ρ0u′w′
+1
+2
+---u0
+
+2ρ0kmhm
+2–=
+
+k2 m2«
+
+m Nu0
+-----=
+
+ρ0u′w′
+1
+2
+---u0ρ0kNhm
+
+2–=
+
+D p′ x h,( )∂h
+∂x------ xd
+
+0
+
+2π k⁄
+
+∫=
+
+ p′ x 0,( )∂h
+∂x------ xd
+
+0
+
+2π k⁄
+
+∫=
+
+x
+
+D ρ0u′w′ z 0= xd
+0
+
+2π k⁄
+
+∫–=
+
+Dk
+2π
+------- ρ0u′w′–=
+
+ρ0
+ρ0u′w′
+
+ρ0
+1–
+
+m Nu0
+-----=
+Meteorological Training Course Lecture Series 
+
+ ECMWF, 2004 5
+
+
+
+Theory of linear gravity waves
+(14)
+
+(15)
+
+where  is the amplitude of the displacement of an isentropic surface,  the wave phase, , and 
+ is the Richardson number. The subscript 'total' refers to the sum of the wave and background flow 
+
+contributions.
+
+We can see from this that, when , then  is reduced to zero at . Convective overturning 
+will occur and wave activity dissipated. Note that, if , then wave dissipation (wave-breaking) of this 
+sort is always likely to occur in the upper atmosphere (with  and , ). 
+Fig. 2  shows an observed momentum flux profile ( Lilly and Kennedy, 1973) which appears to confirm this.
+
+Figure  2. Mean observed profile of momentum flux over the Rocky mountains on 17th February 1970 as 
+measured from aircraft (from Lilly and Kennedy, 1973).
+
+N2total N2 1 Nδhu0
+---------- 
+  φcos+
+
+ 
+ 
+ 
+
+=
+
+ηtotal η 1 Ri
+1 2⁄ Nδh
+
+u0
+---------- 
+  φcos+
+
+ 
+ 
+ 
+
+=
+
+δh φ η ∂U ∂z⁄=
+Ri N2 η2⁄=
+
+δh u0 N⁄= Ntotal ϕ π=
+δh ρ0
+
+1 2⁄ δh0∼
+u0 10 m s
+
+1–= N 10 2–  s 1–= δh 1000 m=
+6 Meteorological Training Course Lecture Series 
+
+ ECMWF, 2004
+
+
+
+Theory of linear gravity waves 
+REFERENCES 
+Holton, J.R., 1979: An introduction to dynamic meteorology. Int.Geophys.Series, Vo1.23. Ac. Press, 391pp.
+
+Lilly D. K. and Kennedy 1973 J. Atmos. Sci, 30, 1135–1152
+Meteorological Training Course Lecture Series 
+
+ ECMWF, 2004 7
+
+
+	Theory of linear gravity waves
+	April 1987
+	By Tim Palmer
+	Table of contents
+	1 . Simple properties of internal gravity waves
+	2 . Gravity-wave drag
+	REFERENCES
+
+	1 . Simple properties of internal gravity waves
+	In order to prepare for a description of the parametrization of gravity-wave drag, we discuss in this lecture some simple properties of internal gravity waves excited by two-dimensional stably stratified flow over orography.
+	We suppose that the horizontal scale of these waves is sufficiently small that the Rossby number is , and the equations of motion can be written as
+	(1)
+	(2)
+	with the continuity and thermodynamic equations given by
+	(3)
+	(4)
+	In the following we shall use the Boussinesq approximation (see e. g. Holton, 1979) whereby density is treated as a constant exc...
+	we have for the perturbation variables
+	(5)
+	(6)
+	(7)
+	(8)
+	For these wave motions the Mach number is sufficiently small that density fluctuations due to pressure changes are small compared with those due to temperature changes, so we can write
+	(9)
+	Using (9), (5)-(8) are four equations in four unknowns. After some straightforward manipulation these can be reduced to one equation
+	(10)
+	in the one unknown . We now look for sinusoidal solutions of the general form which, when substituted into (10), give the dispersion relation
+	or
+	, (11)
+	where is the intrinsic frequency.
+	Notice that it is only possible to have vertically propagating wave-like solutions (i.e. with real ) provided that
+	A simple calculation reveals that downward phase propagation in a frame moving with the fluid, implies upward group velocity (exercise for the student!).
+	Let us now restrict ourselves to stationary () waves forced by sinusoidal orography with elevation given by
+	The linearised lower boundary condition is
+	(12)
+	Figure 1 . The motion produced by uniform flow of a uniformly stratified fluid over sinusoidal topography of small amplitude. Th...
+
+	2 . Gravity-wave drag
+	Let us consider two cases
+	(i) (evanescent solutions)-see Fig. 1 (a)
+	Solutions periodic in are of the form
+	The boundary condition (12), together with a finite amplitude condition (), gives
+	,
+	where
+	From the continuity equation,
+	Hence, these evanescent solutions take the form of a sinusoidal wave field decaying without phase tilt. Notice that the vertical...
+	(ii) (propagating solutions) - see Fig. 1 (b).
+	The vertical wavenumber is real and solutions will be of the form
+	The constants and can be determined firstly by the lower boundary condition (12), and secondly by the condition that energy is propagating upwards. This latter condition implies that the vertical group velocity
+	is positive i.e. we must take the positive solution
+	The full solution, then, is
+	and the horizontally averaged momentum flux
+	For long (hydrostatic) waves with the dispersion relationship simplifies to
+	and so
+	(13)
+	The pressure drag on the orography (per wavelength) is given by
+	in linearised form. Using the lower boundary condition and the -component of the momentum equation, this can be re-expressed as
+	so that the drag force per unit length is given by
+	For the evanescent modes the drag force is zero, for the propagating modes it is not. For these latter modes the mean flow exper...
+	Using the hydrostatic dispersion relationship
+	the wave's impact on the local static stability and vertical shear can be written as
+	(14)
+	(15)
+	where is the amplitude of the displacement of an isentropic surface, the wave phase, , and is the Richardson number. The subscript 'total' refers to the sum of the wave and background flow contributions.
+	We can see from this that, when , then is reduced to zero at . Convective overturning will occur and wave activity dissipated. N...
+	Figure 2 . Mean observed profile of momentum flux over the Rocky mountains on 17th February 1970 as measured from aircraft (from Lilly and Kennedy, 1973).
+	REFERENCES
+	Holton, J.R., 1979: An introduction to dynamic meteorology. Int.Geophys.Series, Vo1.23. Ac. Press, 391pp.
+	Lilly D. K. and Kennedy 1973 J. Atmos. Sci, 30, 1135-1152

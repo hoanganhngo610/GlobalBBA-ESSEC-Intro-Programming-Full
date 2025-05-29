@@ -1,0 +1,9657 @@
+Numerical_methods
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+Numerical methods
+Revised March 2001
+
+By R. W. Riddaway (revised by M. Hortal)
+
+Table of contents
+
+1 . Some introductory ideas
+
+1.1 Introduction
+
+1.2 Classification of PDE's
+
+1.3 Existence and uniqueness
+
+1.4 Discretization
+
+1.5 Convergence, consistency and stability
+
+2 . Finite differences
+
+2.1 Introduction
+
+2.2 The linear advection equation: Analytical solution
+
+2.3 Space discretization: Dispersion and round-off error
+
+2.4 Time discretization: Stability and computational mode
+
+2.5 Stability analysis of various schemes
+
+2.6 Group velocity
+
+2.7 Choosing a scheme
+
+2.8 The two-dimensional advection equation .
+
+3 . The non-linear advection equation
+
+3.1 Introduction
+
+3.2 Preservation of conservation properties
+
+3.3 Aliasing
+
+3.4 Non-linear instability
+
+3.5 A necessary condition for instability
+
+3.6 Control of non-linear instability
+
+4 . Towards the primitive equations
+
+4.1 Introduction
+
+4.2 The one-dimensional gravity-wave equations
+
+4.3 Staggered grids
+
+4.4 The shallow-water equations.
+
+
+
+Numerical methods
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+4.5 Increasing the size of the time step
+
+4.6 Diffusion
+
+5 . The semi-Lagrangian technique
+
+5.1 Introduction
+
+5.2 Stability in one-dimension
+
+5.3 Cubic spline interpolation
+
+5.4 Cubic Lagrang interpolation and shape preservation
+
+5.5 Various quasi-Lagrangian schemes in 2D
+
+5.6 Stability on the shallow water equations
+
+5.7 Computation of the trajectory
+
+5.8 Two-time-level schemes
+
+6 . The spectral method
+
+6.1 Introduction
+
+6.2 The one-dimensional linear advection equation
+
+6.3 The non-linear advection equation
+
+6.4 The one-dimensional gravity wave equations
+
+6.5 Stability of various time stepping schemes
+
+6.6 The spherical harmonics
+
+6.7 The reduced Gaussian grid
+
+6.8 Diffusion in spectral space
+
+6.9 Advantages and disadvantages
+
+6.10 Further reading
+
+7 . The finite-element technique
+
+7.1 Introduction
+
+7.2 Linear advection equation
+
+7.3 Second-order derivatives
+
+7.4 Boundaries, irregular grids and asymmetric algorithms
+
+7.5 Treatment of non-linear terms
+
+7.6 Staggered grids and two-dimensional elements
+
+7.7 Two dimensional elements
+
+7.8 The local spectral technique
+
+7.9 Application for the computation of vertical integrals in the ECMWF model
+
+8 . Solving the algebraic equations
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+8.1 Introduction
+
+8.2 Gauss elimination
+
+8.3 Iterative methods
+
+8.4 Decoupling of the equations
+
+8.5 The Helmholtz equation
+
+REFERENCES
+
+1. SOME INTRODUCTORY IDEAS
+
+1.1  Introduction
+
+The use of numerical models for weather prediction involves the solution of a set of coupled non-linear partial dif-
+
+ferential equations. In general these equations describe three important dynamical processes—advection, adjust-
+
+ment (how the mass and wind fields adjust to one another) and diffusion. In this note we will concentrate upon how
+
+to solve simple linear one-dimensional versions of the equations which describe each of these processes. These can
+
+be conveniently derived ftom the shallow-water equations in which
+
+(a) the earth's rotation is ignored
+
+(b) there is no motion in the -direction
+
+(c) there are no variations in the -direction
+
+The set of equations we are going to consider is then
+
+Linearising the equations about a basic state  constant in space and time gives
+
+where and are the perturbations in the -component of velocity and the height of the free surface. The parts
+
+of these equations describing the three main processes are as follows.
+
+Advection
+
+�
+�
+
+�∂
+∂� ���
+
+∂
+∂�
+
+– � �∂
+∂�
+
+– �
+∂
+∂ � �
+
+∂
+∂�
+
+ 
+ +=
+
+�∂
+∂� ���
+
+∂
+∂�
+
+– � �∂
+∂�
+
+– �
+∂
+∂ � �
+
+∂
+∂�
+
+ 
+ +=
+
+advection adjustment diffusionadjustment
+
+� 0 �,( )
+
+∂ �
+∂ �------ � 0
+
+∂ �
+∂
+�------+ � ∂ �∂�------–
+
+∂
+∂
+�------ � ∂ �
+
+∂
+�------  +=
+
+∂ �
+∂ �------ � 0
+
+∂ �
+∂
+�------+ � ∂ �∂�------–
+
+∂
+∂
+�------ � ∂ �
+
+∂
+�------  +=
+
+� � �
+
+
+
+Numerical methods
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+In general the one-dimensional linearised advection equation can be written as
+
+As well as investigating the linear advection equation, it is necessary to consider the non-linear problem. For this
+
+we use the one-dimensional non-linear advection equation
+
+Adjustment
+
+These are often called the one-dimensional linearised gravity-wave equations.
+
+Diffusion
+
+The general form of the one-dimensional diffusion equation (with constant eddy diffusivity ) is
+
+Many of the ideas and techniques used to solve these simplified equations can be extended to deal with the full
+
+primitive equations.
+
+Finite difference techniques were, historically, the most common approach to solving partial differential equations
+
+(PDE's) in meteorology but, since a number of years now, spectral techniques have become very useful in global
+
+models and local representations such as the finite elements or the local spectral method are becoming increasingly
+
+researched, mainly in connection with the massive parallel-processing machines.
+
+1.2  Classification of PDE's
+
+Most meteorological problems fall into one of three categories—these are referred to as boundary value problems,
+
+initial value problems and eigenvalue problems. In this note we will be mainly concerned with initial value prob-
+
+lems.
+
+∂ �
+∂ �------ � 0
+
+∂ �
+∂
+�------+ 0=
+
+∂ �
+∂ �------ � 0
+
+∂ �
+∂
+�------+ 0=
+
+∂ϕ
+∂ �------ � 0
+
+∂ϕ
+∂
+�------+ 0=
+
+∂ �
+∂ �------ �
+
+∂ �
+∂
+�------+ 0=
+
+∂ �
+∂ �------ �
+
+∂ �
+∂
+�------+ 0=
+
+∂ �
+∂ �------
+
+� ∂ �
+∂
+�------+ 0=
+
+∂ �
+∂ �------
+
+∂
+∂
+�------ � ∂ �
+
+∂
+�------  =
+
+∂ �
+∂ �------
+
+∂
+∂
+�------ � ∂ �
+
+∂
+�------  =
+
+�
+
+∂ϕ
+∂ �------
+
+� ∂2ϕ
+∂
+� 2---------=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+1.2 (a)  Boundary value problems.
+
+The problem is to determine in a certain domain D, where the differential equation governing within D is
+
+, and  on the boundary; here L and B are differential operators.
+
+Typical examples of this type of problem involve the solution of the Helmholtz or  Poisson equations.
+
+1.2 (b)  Initial value problems.
+
+These are propagation problems in which we want to predict the behaviour of a system given the initial conditions.
+
+This is done by solving the differential equation within D where the initial condition is and
+
+the prescribed conditions on the open boundaries are . Problems involving the solution of the advection
+
+equation, gravity wave equations and diffusion equation fall into this category.
+
+1.2 (c)  Eigenvalue problems.
+
+The problem is to determine and such that is satisfied within domain D. Problems of this type
+
+occur in baroclinic instability studies.
+
+An alternative method of classification has been devised for linear second order PDE's of the form
+
+The classification is based on the properties of the characteristics (not discussed here) of the equation. We find that
+
+there are three basic types of equation: hyperbolic, parabolic and elliptic. Hyperbolic and parabolic equations are
+
+initial value problems, whereas an elliptic equation is a boundary value problem.
+
+1.3  Existence and uniqueness
+
+Let us consider an initial value problem for a real function of time only
+
+(1)
+
+where  is a known function of the two variables.
+
+We could be unable to solve explicitly Eq. (1) and therefore we ask ourselves the following questions.
+
+TABLE 1. CHARACTERISTICS OF HYPERBOLIC, PARABOLIC AND ELLIPTIC PDES
+
+Type
+Characteristic
+
+directions
+Condition Example
+
+hyperbolic Real Wave equation
+
+parabolic Imaginary Diffusion equation
+
+elliptic non-existent Poisson equation
+
+ϕ ϕ
+L ϕ( ) 	= B ϕ( ) �=
+
+L ϕ( ) 	 in solution domain D=
+B ϕ( ) � on the boundary=
+
+L ϕ( ) 	= I ϕ( ) �=
+B ϕ( ) �=
+
+λ ϕ L ϕ( ) λϕ=
+
+
+ ∂2ϕ
+∂ξ2
+--------- 2 � ∂
+
+2ϕ
+∂ξ∂η
+------------- � ∂
+
+2ϕ
+∂η2
+--------- 2  ∂ϕ∂ξ------ 2 �
+
+∂ϕ
+∂η
+------ 	 ϕ+ + + + + 0=
+
+� 2 
+ � 0>–
+� 2 
+ �– 0=
+� 2 
+ � 0<–
+
+d�
+d
+�------ 	 � �,( ) � � 0( ); � 0= =
+
+	
+
+
+
+Numerical methods
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+1) How are we to know that the initial value problem (1) actually has a solution?
+
+2) How do we know that there is only one solution  of (1)?
+
+3) Why bother asking the first two questions?
+
+The answer to the third question is that our equation is just an approximation to the physical problem we want to
+
+solve and, therefore, if it has not one and only one solution it cannot be a good representation of the physical proc-
+
+ess; that is, the problem is not well posed. On the other hand, if the problem is well posed we can hope to get by
+
+some means a solution close enough to the real solution even if we are unable to find the exact solution or the exact
+
+solution is not an analytical one. The situation is then exactly the same as in the theory of limits where it is often
+
+possible to prove that a sequence of functions has a limit without our having to know what this limit is, and
+
+we can use any member of the sequence from a place onwards to represent an approximation to the limit.
+
+This suggests the following algorithm for proving the existence of a solution  of (1):
+
+(a) Construct a sequence of functions  that come closer and closer to solving (1);
+
+(b) Show that the sequence of functions  has a limit  on a suitable interval ;
+
+(c) Prove that  is a solution of (1) on this interval.
+
+This is the so called successive approximations or Picard iterates. By this method, it is possible to show the follow-
+
+ing
+
+Picard's Theorem:
+
+Let  and  be continuous in the rectangle R: , . Then the initial-value problem
+
+has a unique solution  on the interval .
+
+Unfortunately, the equations involved in meteorology are not ordinary differential equations but partial differential
+
+equations and the proof of existence and uniqueness of its solution is not as straightforward as applying Picard's
+
+theorem. Nevertheless, the example serves to illustrate the importance or proving an existence and uniqueness the-
+
+orem as a hunting license to go looking for this solution or for a close approximation to it.
+
+For the linear equations we are dealing with in this set of lectures, we can find the general analytic solution to the
+
+equation and, therefore, do not need to prove the existence theorem. But it will still be nice to prove the uniqueness
+
+of it, given a suitable set of initial and boundary conditions. Nevertheless, this falls outside the scope of the course
+
+and we will only hope that such a uniqueness could be proven.
+
+1.4  Discretization
+
+The non-linear equations describing the evolution of the atmosphere do not have analytical solutions even if the
+
+problem is well posed. An analytical function is the most perfect way of representing a given physical field as it
+
+gives us the value of this field in any of the infinite number of points of space and at any instant in time.
+
+If an analytical solution does not exist, we have to resort to numerical techniques to find a certain approximation
+
+to the true solution of the system of equations, that is, we have to use computers. But computers cannot deal with
+
+infinite amounts of numbers, so we have to represent our meteorological fields by a finite number of values. This
+
+is called the discretization process.
+
+As a simple example consider the linear one-dimensional evolutionary problem
+
+� �( )
+
+��� �( )
+
+� �( )
+��� �( )
+��� �( ) � �( ) � 0 ��� 0 α+≤ ≤
+
+� �( )
+
+	 ∂	∂�------
+�
+
+0
+���
+
+0
+
++≤ ≤ � � 0– �≤
+
+d�
+d
+�------ 	 � �,( ) � � 0( ); � 0= =
+
+� �( ) � 0 ��� 0 
++≤ ≤
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+(2)
+
+where H is a linear differential space operator (though the techniques considered can also be applied to non-linear
+
+problems). We will assume that is specified at gridpoints in our domain , and that there are
+
+suitable boundary conditions for . We now want to consider how we can numerically find , given the grid
+
+point values —that is we only consider the space discretization.
+
+The common way of tackling this problem is to simply express the derivatives which occur on the right hand side
+
+of (2) in terms of the differences between the gridpoint values of . This is the finite difference technique, which
+
+will be discussed at length later. Note that when using this technique no assumption is made about how varies
+
+between the grid points.
+
+An alternative approach is to expand in terms of a finite series of linearly independent functions ,
+
+where ,where , so that
+
+(3)
+
+This series is only an exact solution of the original PDE in very special circumstances. Therefore, when (3) is sub-
+
+stituted into (2) there will be a residual
+
+We now want to choose the time derivatives by minimising in some way. One method for doing this
+
+is to use a least square approach—we then have to minimise
+
+with respect to the time derivatives. Carrying this out and rearranging gives:
+
+(4)
+
+This equation could also be derived using the Galerkin method in which we set
+
+where the can be any set of linearly independent test functions. If the expansion functions are used as test func-
+
+tions we get (4). Since the expansion functions are known (3) can be used to provide the expansion coefficients
+
+given the gridpoint values . Also the integrals
+
+ and
+
+in (4) can be calculated exactly for all possible values of and . Therefore, (4) reduces to a set of coupled ordi-
+
+nary differential equations that can be solved for the  given the . The complete solution is then
+
+∂ϕ
+∂ �------ H ϕ( )=
+
+ϕ � 1+( ) 0 � �≤ ≤( )
+ϕ ∂ϕ ∂ �⁄
+
+ϕ �
+
+ϕ
+ϕ
+
+ϕ � 1+( ) ���� �
+1 …
+
+�
+2,=
+
+�
+2
+�
+
+1– �=
+
+ϕ ϕ � �( ) � � �( )���
+1=
+
+�
+2
+
+∑=
+
+�
+
+� dϕ�
+ �---------- ��� ϕ�
+
+� ���( )�∑–�∑=
+
+dϕ �� �⁄ �
+
+� � �
+d∫=
+
+dϕ�
+ �-------- ��� ���
+
+�
+d∫�∑ ϕ�!���
+
+� ���( ) � �;d∫�∑
+�
+
+1 …
+�
+
+2,= =
+
+�
+ψ " �d∫ 0 #; 1 2 …� 1+, ,= =
+
+ψ "
+ϕ �
+
+ϕ �
+
+��� ��� �d∫ ���
+� ���( ) �d∫
+
+� $
+dϕ�� �⁄ ϕ�
+
+
+
+Numerical methods
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+This general approach is often referred to as the Galerkin technique.
+
+For the case where the expansion functions are orthogonal we end up with uncoupled ordinary differential
+
+equations for the rate of change of the expansion coefficients
+
+An example of this kind of approach is the spectral method in which a Fourier series is used. In this case (3) be-
+
+comes
+
+where the are complex Fourier coefficients and .
+
+With spherical geometry, it is natural to use spherical harmonics.
+
+For the spectral method the expansion functions are global. An alternative approach is to use a set of expansion
+
+functions which are only locally non- zero; this is the basis of the finite element method. With this method we still
+
+have a set of nodes (i.e. grid points) with nodal values , but now we assume that the variation in within an
+
+element (i.e. a set of nodes) can be described by a low-order polynomial, with the requirement that there is conti-
+
+nuity in between adjacent elements. The simplest case is to assume a linear variation in across an element
+
+which has only two nodes (the end points); i.e. a linear piecewise fit. Then (3) becomes
+
+where the are the nodal values and the are "hat" functions (sometimes called chapeau functions) as in
+
+Fig. 1 .
+
+The expansion functions are not orthogonal, but they are nearly so; therefore the integrals which occur in (4) can
+
+be easily evaluated. The result of this process is to produce a set of coupled equations from which the time deriv-
+
+ative can be determined.
+
+∂ϕ
+∂ �------
+
+dϕ�
+ �---------- ����∑=
+
+� 1+( )
+
+dϕ �
+d
+�---------- ϕ�!��� � ���( ) � �;d∫�∑
+
+�
+1 …
+
+�
+2,= =
+
+ϕ ϕ � �( ) i 2π
+�
+�----------   �  
+
+ 
+exp� %–=
+
+%
+∑=
+
+ϕ � & � 2⁄=
+
+ϕ � ϕ
+
+ϕ ϕ
+
+ϕ ϕ � �( ) �'� �( )� 1=
+
+(
+1+
+
+∑=
+
+ϕ � �'� �( )
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+Figure  1. Representation of a "hat" function or piecewise linear finite element.
+
+An interesting feature of the Galerkin technique is that if the original equation (2) has a quadratic invariant (e.g.
+
+energy)
+
+then this property is retained when a Galerkin approximation is made for the spatial variations (when finite differ-
+
+ences are used there is no guarantee of this happening). However, note that quadratic invariance is lost when time
+
+stepping is introduced.
+
+The spectral and finite element methods will be dealt with in Sections 6 and 7, but now we will concentrate upon
+
+the finite difference technique.
+
+1.5  Convergence, consistency and stability
+
+(a) Convergence: a discretized solution of a differential equation is said to be convergent if it
+
+approaches the solution of the continuous equation when the discretization becomes finer and finer
+
+(that is the distance between grid points in the finite difference technique becomes smaller, or the
+
+number of basis functions in the spectral or the finite element techniques becomes higher).
+
+We would like to ensure convergence, but this is difficult to do. However there is a theorem which overcomes this
+
+problem, but before it can be stated we need to introduce two more definitions.
+
+(b) Consistency: a discretization technique is consistent with a PDE if the truncation error of the
+
+discretized equation tends to zero as the discretization becomes finer and finer.
+
+Note that consistency means only that the discretized equation is similar to the continuous equation
+
+but this does not guarantee by itself that the corresponding solutions are close to each other
+
+(convergence).
+
+Consistency is easy to test. Suppose is the true solution of the PDE (2) at position and time
+
+. This solution is now substituted into the finite difference equation and Taylor expansions used
+
+to express everything in terms of the behaviour of at position and time . Rearranging the
+
+equation then gives:
+
+∂)
+∂ �------- 0 with )
+
+ϕ2
+
+2
+-----
+
+�
+d
+
+0
+
+*
+∫= =
+
+ϕ̃ �+ � �� +
+ϕ̃
+
+� � � +
+
+
+
+Numerical methods
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+If the truncation error approaches zero as the grid length and time step approach zero, the
+
+scheme is consistent Hereafter consistency will be assumed without comment
+
+(c) Stability: a discretization scheme is stable if their solutions are uniformly bounded functions of the
+
+initial state for any value of small enough, that is if the numerical solution does not go to
+
+infinity as  increases.
+
+There are various techniques for testing stability, three of which will be described later.
+
+The consistency and stability of discretization schemes can be investigated; therefore, we can check if the scheme
+
+is convergent by making use of the following theorem.
+
+The Lax–Richtmeyer Theorem
+
+If a discretization scheme is consistent and stable, then it is convergent (the converse is also true).
+
+2. FINITE DIFFERENCES
+
+2.1  Introduction
+
+Suppose we have an interval which is covered with equally spaced grid points. The gridlength is then
+
+and the grid points are at . Let the value of at be repre-
+
+sented by .
+
+We are now going to derive expressions which can be used to give an approximate value of a derivative at a grid
+
+point in terms of grid-point values. In order to construct a finite difference approximation to the first derivative at
+
+point , we have initially to derive expressions for and in terms of the behaviour of at point . Using
+
+a Taylor expansion gives:
+
+(5)
+
+(6)
+
+Solving (5) and (6) for  gives
+
+Alternatively, subtracting (6) from (5) leaves
+
+(7)
+
+∂ϕ̃
+∂ �------ �
++ �
+
+ϕ( ) �+ )+=
+
+)
+
+∆ ��
+
+� � 1+
+∆
+� � �⁄= � � , 1–( )∆� ,= , 1 2 …� 1+, ,= ϕ � �
+
+ϕ �
+
+, ϕ � 1– ϕ � 1+ ϕ ,
+
+ϕ � 1+ ϕ � � ∆�+( ) ϕ � ϕ � ′∆� ϕ � ′′ ∆
+� 2
+2!
+
+--------- 
+  ϕ′′′� θ1+ ∆
+
+� 3
+3!
+
+--------- 
+ + + += =
+
+ϕ � 1– ϕ � � ∆– �( ) ϕ � ϕ �– ′∆� ϕ � ′′ ∆
+� 2
+2!
+
+--------- 
+  ϕ′′′� θ2+– ∆
+
+� 3
+3!
+
+--------- 
+ += =
+
+ϕ � ′
+
+ϕ � ′ ϕ � 1+ ϕ �–
+∆
+�------------------------ ) );+ ϕ � ′′ ∆
+
+�
+2!
+------- 
+
+ – ϕ′′′� θ1+ ∆
+� 2
+3!
+
+--------- 
+ –= =
+
+ϕ � ′ ϕ � ϕ � 1––
+∆
+�------------------------ ) );+ ϕ � ′′ ∆
+
+�
+2!
+------- 
+
+  ϕ′′′� θ2+ ∆
+� 2
+3!
+
+--------- 
+ –= =
+
+ϕ � ′ ϕ � 1+ ϕ � 1––
+2∆
+�------------------------------ ) );+ ∆
+
+� 2
+3!2
+--------- 
+
+  ϕ′′′� θ1+ ϕ′′′� θ2++( )= =
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+When is omitted, these expressions give the forward, backward and centred finite difference approximations to
+
+the first derivative. The truncation error is given by and the order of the approximation is defined by the lowest
+
+power of in . Therefore the forward and backward schemes are first order and the centred scheme is second
+
+order. The higher the order of the scheme, the greater is the accuracy of the finite difference approximation. All
+
+three schemes are consistent if the derivatives are bounded, because then the error approaches zero when tends
+
+to zero.
+
+A fourth order scheme can be derived by using (5) and (6) with expansions of and . The
+
+result is:
+
+(8)
+
+The usual finite difference approximation to the second derivative, derived from (5) and (6), is
+
+(9)
+
+Finally it is worth introducing the notation that is often used for finite differences:
+
+Using this notation (7) and (9) become
+
+2.2  The linear advection equation: Analytical solution
+
+The one-dimensional linearised advection equation is
+
+(10)
+
+For convenience cyclic boundary conditions will be prescribed for  at  and .
+
+The initial condition for  is
+
+In order to find an analytical solution for the linear advection equation we make use of the technique of separation
+
+of variables:
+
+We look for a solution  of the form
+
+)
+)
+
+∆
+� )
+
+∆
+�
+
+ϕ
+� � 2∆�+( ) ϕ � � 2∆�–( )
+
+ϕ � ′ 4
+3
+---
+
+ϕ � 1+ ϕ � 1––
+2∆
+�------------------------------ 1
+
+3
+---
+
+ϕ � 2+ ϕ � 2––
+4∆
+�------------------------------– O ∆� 4( )+=
+
+ϕ � ″ ϕ � 1+ 2ϕ �– ϕ � 1++
+∆
+� 2---------------------------------------------- O ∆
+
+� 2( )+=
+
+δ�.- ϕ � ϕ �/� 2⁄+ ϕ �0� 2⁄––� ∆�-------------------------------------------=
+
+ϕ � �.- ϕ �/� 2⁄+ ϕ �0� 2⁄–+
+2
+
+--------------------------------------------=
+
+ϕ � ′ δ - ϕ � - δ2 - ϕ � and ϕ � ″ δ -2ϕ �= = =
+
+∂ϕ
+∂ �------ � 0
+
+∂ϕ
+∂
+�------+ 0 ϕ; ϕ � �,( ) � 0; constant= = =
+
+ϕ
+�
+
+0=
+� �
+
+=
+
+ϕ 0 �,( ) ϕ � �,( )=
+ϕ
+
+ϕ
+�
+
+0,( ) 	 �( ) 0 � � with 	 � �+( )≤ ≤ 	 �( )= =
+
+ϕ
+� �,( )
+
+
+
+Numerical methods
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+substituting in the partial differential equation (10) we get
+
+dividing by  we get
+
+the left-hand side is a function of only while the right-hand side is a function of only: therefore, they can be
+
+equal only if both of them are constant
+
+we have two "eigenvalue problems" for the operators  and , whose solutions are
+
+and the solution of the advection equation is
+
+(11)
+
+Therefore we get a function propagating without change of shape along the positive axis with speed (phase
+
+speed).
+
+If we have periodic boundary conditions, has only certain (imaginary) values, if they are sinusoidal with time,
+
+we must have where is the wave number and the frequency. Of course if is to represent a
+
+physical field, this field is the real part of the found solution.
+
+As the advection equation is linear, any linear combination of solutions of the type found is also a solution of the
+
+equation. As all the component waves of a disturbance travel with the same speed there is no dispersion and the
+
+disturbance does not change shape with time.
+
+ϕ
+� �,( ) 1 �( ) 2 �( )=
+
+1 �( )d 2
+d
+�------- � 0 2 �( )d1d�--------+ 0=
+
+1 �( ) 2 �( )
+
+1
+2----
+
+d 2
+d
+�------- � 0 11-----
+
+d1
+d
+�--------–=
+
+� �
+
+1
+1-----
+
+d1
+d
+�-------- λ d1
+
+d
+�-------- λ1= =
+
+1
+2----
+
+d 2
+d
+�------- � 0λ d 2d �-------– � 0λ 2–= =
+
+d d
+�
+
+⁄ d d �⁄
+
+1 1 0 λ�[ ]exp=
+2 2 0 � 0λ �–[ ]exp=
+
+ϕ
+� �,( ) 1 0 2 0 λ� � 0λ �–[ ]exp ϕ0 λ � � 0 �–( )⋅[ ]exp 	 � � 0 �–( )= = =
+
+� � 0
+
+λ
+λ i 3= 3 3 � 0 ω= ϕ
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+Figure  2. Representation of the solution of the analytical linear advection equation.
+
+It is interesting to consider the "energy" defined by
+
+(12)
+
+Multiplying the advection equation by  and integrating with respect to  then gives
+
+Therefore the energy is conserved—as indeed it must be since there is no change in shape of the disturbance.
+
+2.3  Space discretization: Dispersion and round-off error
+
+Let us consider again the one-dimensional linear advection equation
+
+(13)
+
+and represent the space derivative by means of centred finite differences
+
+(14)
+
+To solve this space discretized equation we try a solution of similar form to the continuous equation, namely
+
+(15)
+
+Substituting in the discretized equation (14) we get
+
+(16)
+
+whose solution is
+
+) �( ) 1
+2
+--- ϕ2
+
+�
+d
+
+0
+
+*
+∫=
+
+ϕ
+�
+
+∂)
+∂ �-------
+
+� 0
+2
+----- ∂ϕ
+
+2
+
+∂
+�--------- �
+
+0
+
+*
+∫–
+
+� 0
+2
+----- ϕ2[ ]0
+
+*
+– 0= = =
+
+∂ �
+∂ �------ 4
+
+∂ �
+∂
+�------+ 0=
+
+∂ � �
+∂ �--------- 4
+
+� � 1+ � � 1––
+2∆
+�------------------------------–=
+
+� � �( ) ℜ �65 �( ) i 3�, ∆�( )exp{ }=
+
+d 5
+d
+�-------- i 374 3 ∆
+
+�
+sin
+3 ∆�------------------   5+ 0=
+
+
+
+Numerical methods
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(17)
+
+and therefore the phase speed is
+
+(18)
+
+A dispersion (phase speed dependent on wave number ) is introduced by the space discretization in the sense of
+
+decreasing the computed phase speed compared with the continuous solution.
+
+The phase speed becomes 0 when  (wavelength )
+
+The group velocity (at which energy is carried) is
+
+ in the continuous equation
+
+ in the discretized equation
+
+which reaches a value of  (propagation in the wrong direction) for the shortest waves .
+
+It is illuminating to see how accurately a finite difference approximation represents the derivative of a known func-
+
+tion. Suppose , where is the wavenumber and is the wavelength. Substi-
+
+tuting  into (7) gives (dropping the  and ignoring ).
+
+Therefore, the finite difference approximation is equal to the exact value multiplied by a correction factor . If the
+
+wavelength consists of  grid lengths we have , and the correction factor becomes
+
+Similar calculation for the fourth order scheme shows that
+
+Plotting against for these schemes (see Fig. 4 later on) shows that about 10 grid lengths are required to de-
+
+scribe accurately the behaviour of one wave and the shortest waves are badly mistreated. The plots also show that
+
+the fourth-order scheme is more accurate than the second-order scheme. This can be illustrated by examining the
+
+behaviour of  for the large wavelengths (  large,  small). Using series expansions we find that
+
+5 5 0 i 384 * �( )exp=
+
+4 * 4 3 ∆
+�
+
+sin
+3 ∆�------------------ 	93( )= =
+
+3
+
+3 ∆� π= λ 2∆�=
+
+4 g d 384( )d 3---------------- 4= =
+
+4;:* d 3<4
+*( )
+
+d 3------------------ 4 3 ∆
+�
+
+( )cos= =
+
+4– 3 ∆� π=
+
+ϕ
+�
+
+( ) ℜ � i 3 �( )exp{ }= 3 2π �⁄= �
+ϕ ℜ � )
+
+ϕ � ′ i 3
+�
+
+∆
+�
+
++( )[ ] i 3 � ∆�–( )[ ]exp–( )exp
+2∆
+�--------------------------------------------------------------------------------------------- i 3
+
+�
+[ ]exp
+
+2∆
+�----------------------- i 3 ∆�[ ] i 3 ∆�–[ ]exp–exp( )= =
+
+i 3 i 3 �[ ] 3 ∆
+�
+
+sin
+3 ∆�------------------  exp=
+
+=
+$ 3 2π $ ∆�⁄=
+
+= >sin
+>----------- >;
+
+2π$------= =
+
+	 4
+3
+---
+
+>sin
+>-----------
+
+1
+3
+--- 2sin
+
+>
+2 >--------------–=
+
+= $
+
+= $ >
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 15
+
+Since the correct value of is unity, this shows that second and fourth-order schemes have second and fourth-
+
+order errors. In general, if  the scheme is said to be th order.
+
+2.4  Time discretization: Stability and computational mode
+
+Finite differences can be used for time derivatives as well as space derivatives—that is we represent time derivatives
+
+in terms of values at discrete time levels. If is the time interval (usually called the time step) then the time levels
+
+are given by with Now the grid-point value of at position at time is denoted by
+
+.
+
+Usually either forward or centred time differences are used:
+
+(i) forward
+
+(ii) centred
+
+Once again, centred differences are more accurate than forward time differences
+
+In order to solve an initial value problem we must cast the PDE in finite difference form. The difference equation
+
+is then manipulated so as to give an algorithm which gives the grid-point value of at time level in terms
+
+of the values at earlier time levels.
+
+As an example consider the advection equation with a forward time difference and backward (upstream) space dif-
+
+ference
+
+This scheme is described as being first order in time and space. Manipulation of the difference equation provides
+
+the following algorithm for solving the equation
+
+(19)
+
+Knowing everywhere at time allows us to calculate the new value at time grid point by grid point;
+
+this is an example of an explicit scheme.
+
+Let’s try a solution of the form
+
+Substituting in (19) we get
+
+second order
+=
+
+1
+> 2
+6
+-----– 1 O > 2( )+= =
+
+fourth order
+=
+
+1
+> 4
+30
+------– 1 O > 4( )+= =
+
+=
+=
+
+1 O > +( )+= ?
+
+∆ �� + ? ∆ �= ? 0 1 …, ,= ϕ � � � +
+ϕ �+
+
+∂ϕ
+∂ �------   �
+
++ ϕ �+ 1+ ϕ �+–
+∆ �------------------------- O ∆
+
+�( )+→
+
+∂ϕ
+∂ �------   �
+
++
+2
+
+ϕ �+ 1+ ϕ �+ 1––
+2∆ �------------------------------- O ∆
+
+� 2( )+→
+
+ϕ ? 1+( )
+
+∂ϕ
+∂ �------ � 0
+
+∂ϕ
+∂
+�------+ 0 ϕ �
+
++ 1+ ϕ �+–
+∆ �------------------------- � 0
+
+ϕ �+ ϕ � 1–
++
+
+–
+
+∆
+�------------------------  +→ 0 � 0 0>( );= =
+
+ϕ �+ 1+ ϕ �+ α ϕ �+ ϕ � 1–
++
+
+–( ) α;–
+� 0∆ �
+∆
+�------------= =
+
+ϕ � ? ? 1+( )
+
+ϕ �+ ϕ0 #@3�, ∆� ω ? ∆ �–( )exp=
+
+
+
+Numerical methods
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+where  (complex number).
+
+If b>0  is exponentially increasing with time (unstable)
+
+if b<0 the solution is damped
+
+if b=0 the solution is neutral (amplitude constant in time)
+
+Also, as we have approximated the operator , we introduce yet another dispersion
+
+Another scheme that arises is
+
+Now we have a set of simultaneous equations which have to be solved for the ; this is an example of an im-
+
+plicit scheme.
+
+Both the above schemes are examples of two-time-level schemes. That is the finite difference equation only uses
+
+information from two time levels. Later we will come across examples of three-time-level schemes.
+
+Just because we can produce an algorithm for solving an equation, it does not follow that its use will provide real-
+
+istic solutions. For example, if we use a forward time difference and centred space difference in the advection equa-
+
+tion we get
+
+This is an explicit two-time-level scheme which is first order in time and second order in space. It appears to be a
+
+suitable algorithm for solving the equation. However it will be shown later that it has the property that the differ-
+
+ence between its exact and numerical solution increases exponentially with time—the scheme is unstable.
+
+The ratio is called the C.F.L. number (after Courant, Freidrichs and Levy), or sometimes just the Courant
+
+number. We will see that it is of great significance when we consider the stability of numerical schemes.
+
+In three-time-level schemes there is an extra complication. Let us consider the (leapfrog) scheme:
+
+and try a solution where the superindex of means exponentiation. If the modulus of
+
+is greater than one, the solution is unstable. If it is smaller than one the solution is damped and if it is one the
+
+solution is neutral. Now substitute into the discretized equation and we get
+
+which has two solutions
+
+# ω �–( )exp α # 3 ∆�( )sin–=
+ω 
+ #A�+=
+
+ϕ �+
+
+�∂
+∂
+
+ϕ �+ 1+ α
+4
+--- ϕ � 1+
+
++ 1+ ϕ � 1–
++ 1+–( )+ ϕ �+ α
+
+4
+--- ϕ � 1+
+
++
+ϕ � 1–
++
+
+–( )–=
+
+ϕ
++ 1+
+
+ϕ �+ 1+ ϕ �+ α
+2
+--- ϕ � 1+
+
++
+ϕ � 1–
++
+
+–( )–=
+
+α
+
+ϕ �+ 1+ ϕ �+ 1– α ϕ � 1+
++
+
+ϕ � 1–
++
+
+–( )–=
+
+ϕ �+ ϕ0λB
++ #A3�, ∆�( )exp= λ
+
+λ
+
+λ2 2 # C λ 1–+ 0;         p α 3 ∆�( )sin–≡=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 17
+
+It is now necessary to show that the scheme under consideration is convergent by making use of the Lax–Richt-
+
+meyer theorem. It can easily be shown that the above schemes are consistent, and so convergence is assured if they
+
+are stable. To do this we have to consider the behaviour of initial errors and examine if they grow exponentially.
+
+However, there are various ways in which this can be done. Here we will consider only three approaches.
+
+(a) The energy method in which the scheme is considered unstable if the "energy" defined earlier
+
+increases with time.
+
+(b) The von Neumann series method in which the behaviour of a single Fourier harmonic is studied; the
+
+stability of all admissible harmonics is a necessary condition for the stability of the scheme.
+
+(c) The matrix method
+
+2.5  Stability analysis of various schemes
+
+2.5 (a)  Methods of stability analysis .
+
+(i) Energy method.
+
+Earlier we found that, for the advection equation with periodic boundary conditions, the energy was con-
+
+served. We now want to study an analogous quantity  given by
+
+As an example of how to apply this method, we will study the stability of (19). The first step is to derive an expres-
+
+sion for . This is done by multiplying (19) by  to give
+
+Substituting for  in the RHS and rearranging
+
+Summing over all gridpoints and using the boundary condition  leaves
+
+Therefore, in order to prevent the energy growing from step to step we require
+
+(a)  which implies
+
+(b)  which implies
+
+λ #DC 1 C 2– ------------>1 physical mode+=
+λ # C 1 C 2––= -------------> 1 computational mode–
+
+∆ - 0 ∆ E 0→;→
+∆ - 0 ∆ E 0→;→
+
+) �( )
+) +
+
+) + 1
+2
+--- ϕ � +( )2∆�� 2=
+
+(
+1+
+
+∑=
+
+ϕ � + 1+( )2 ϕ �+ 1+ ϕ �++( )
+
+ϕ �+ 1+( )2 ϕ �+( )2– α– ϕ �+ 1+ ϕ �++( ) ϕ �+ ϕ � 1–
++
+
+–( )=
+
+ϕ �+ 1+
+
+ϕ �+ 1+( )2 ϕ �+( )2– α ϕ �+( )2 ϕ � 1–
++
+
+( )
+2
+
+–{ }– α 1 α–( ) ϕ �+ ϕ � 1–
++
+
+–( )
+2
+
+–=
+
+ϕ1
++
+
+ϕ ( 1+
++
+
+=
+
+) + 1+ ) +– α 1 α–( ) ϕ �+ ϕ � 1–
++
+
+–( )
+2
+∆
+�
+
+� 2=
+
+(
+1+
+
+∑–=
+
+α 0≥ � 0 0≥
+1 α–( ) 0≥ α
+
+� 0∆ �
+∆
+�------------ 1≤=
+
+
+
+Numerical methods
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+This means that, having chosen the grid length , we will only get a stable solution if the time step is chosen so
+
+that . But note that if we ensure stability by having , the energy is forced to decay from step
+
+to step.
+
+The energy method is a quite general approach for analysing difference schemes and can be used for non-linear
+
+problems with complicated boundary conditions. However for most cases it requires considerable effort and inge-
+
+nuity in order to derive practical stability criteria.
+
+(ii) Fourier series method.
+
+This was introduced by J. von Neumann and, by comparison with the energy method, it is simple to apply and pro-
+
+vides considerable insight into the performance of different schemes.
+
+Once again consider the original advection equation (10). If the initial condition is given by
+
+where  is the number of waves, then we know that the true solution is
+
+(20)
+
+Now consider the finite difference equation. The initial condition is
+
+and, in general, the solution is given by
+
+(21)
+
+where  is a complex quantity which depends upon the finite difference scheme and the wavemunber .
+
+If  we have (22)
+
+Therefore,  gives the fractional change in amplitude/timestep and  provides information about the phase.
+
+Comparing (22) with the analytic solution (20) shows the following.
+
+(a) The stability of the finite difference scheme is assured if  for all
+
+(b) The numerical scheme has introduced a fictitious damping of per time step; if
+
+(no damping) the scheme is said to be neutral.
+
+(c) The phase speed of the numerical solution is given by ; this is usually different from
+
+and so a phase error is introduced. A convenient measure of this is the relative phase speed
+
+.
+
+(d) Since the speed of the disturbance depends upon the wave number there is computational
+
+dispersion; this means that a disturbance made up of a variety of Fourier components will not keep
+
+its shape. In other words the group velocity  is not the same as the phase velocity.
+
+For partial differential equations with constant coefficients, the stability criterion given in (a) is too stringent since
+
+∆
+�
+
+∆ � ∆� � 0⁄≤ 0 α 1≤ ≤
+
+ϕ
+�
+
+0,( ) 	 �( ) 4FB i 3 �[ ] 3;exp 2π�------ �= = =
+
+�
+
+ϕ
+� �,( ) 4FB i 3 � � 0 �–( )[ ]exp=
+
+ϕ �0 4FB i 3 � �[ ]exp=
+
+ϕ �+ λ B( ) + 4FB i 3 � �[ ]exp=
+
+λB 3
+
+λB λ B iθ[ ]exp= ϕ �+ 4FB λB + i 3 � � ? θ3-------+  exp=
+
+λB θ
+
+λB 1≤ 3
+G
+
+λ B= G 1=
+
+� θ 3 ∆ �⁄–=
+� 0H � � 0⁄=
+
+� g ∂ 3 �( ) ∂ 3⁄=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 19
+
+a legitimate exponential growth of a physically realistic solution may be possible. Therefore the stability criterion
+
+should be
+
+which allows an exponential, but not faster, growth of the solution. However, when we know that the true solution
+
+does not grow (as for the advection equation), it is customary to ensure that .
+
+(iii) The matrix method.
+
+Let  be a vector at time ; if we can express  as
+
+ (scheme of two time levels)
+
+where  is called the amplification matrix, the method runs as follows:
+
+Let  be the eigenvectors of  corresponding to the eigenvalues
+
+We project vectors  onto the space defined by these eigenvectors
+
+Therefore we obtain, by repeated multiplication by the amplification matrix
+
+where superindex  stands for the exponential operation.
+
+This solution will be bounded when  for all  and, in this case, the scheme is stable.
+
+This method is equivalent to the von Newman method when the Fourier basis functions are eigenvalues of the am-
+
+plification matrix.
+
+2.5 (b)  Forward time schemes.
+
+(i) Forward time differencing with non-centred space differencing.
+
+This is the scheme introduced in Subsection 2.4 and may conveniently be written as
+
+This is an explicit two-time-level scheme which is first order in space and time. It is called upwind scheme if
+
+and downwind if .
+
+Substituting  into the above algorithm yields
+
+λB 1 O ∆ �( )+≤
+
+λ B 1≤
+
+U + ? ∆ � U + 1+
+U+ 1+ AU +=
+
+A
+
+V B A λB
+
+AVB λB VB=
+
+U
+
+U0 5 0
+B
+VBB∑=
+
+U+ U0
+B
+λB +( )VBB∑=
+
+?( )
+? ∞→ λB 1≤
+
+ϕ �+ 1+ ϕ �+ α ϕ �+ ϕ � 1–
++
+
+–( ) α;–
+� 0∆ �
+∆
+�------------= =
+
+� 0 0>
+� 0 0<
+
+ϕ �+ λB( )+ 4 i 3 � �[ ]exp=
+
+
+
+Numerical methods
+
+20 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Since  is complex we can express it as
+
+Substituting this expression in the above, and equating real and imaginary parts gives two equations for and
+
+ in terms of  and
+
+To study the stability we require an expression for . Squaring and adding then gives
+
+Since we can only satisfy the stability criterion if ; therefore, we require
+
+(upwind) and (CFL limit) (the same result as when the energy method was used). The
+
+scheme is said to be conditionally stable.
+
+To study the damping and phase errors, it is often convenient to think in terms of wavelengths consisting of grid
+
+lengths; we then replace by . It can then be shown that the damping per time step and relative
+
+phase error  can be expressed as
+
+(23)
+
+(24)
+
+The characteristics of a scheme can be conveniently displayed by plotting graphs of and against I for various
+
+choices of . However, to make comparisons between schemes easier, we will only consider values of and
+
+for and 10 with . These are shown in Table 2. Clearly the upstream differencing scheme
+
+reproduces the phase speed very well (though there are phase errors when when and
+
+ when ), but the damping is excessive.
+
+(ii) Forward time differencing with centred space differencing (FTCS).
+
+Using the Fourier series method it is easy to show that
+
+Therefore, always and so the scheme is unstable for all values of and ; the scheme is then said to be
+
+λB 1 α 1 i 3 ∆�–[ ]exp–{ }–=
+=1–α 1 3 ∆� i 3 ∆�sin+( )cos–( )
+
+λB
+
+λ B λB θ i θsin+cos( )=
+
+λ B
+θ α 3 ∆�
+
+λB θcos 1 α 1 3 ∆�cos–( )–=
+λ B θsin α 3 ∆�sin–=
+
+λB
+
+λB 2 1 2κ α 1–( ) 1 3 ∆�cos–( )–=
+
+1 3 ∆ � 0≥cos– λB 1≤ α α 1–( ) 0≤( )
+� 0 0≥ � 0∆ � ∆�⁄ 1≤
+
+$
+3 2π∆� $⁄ G( )H( )
+
+G
+1 2α α 1–( ) 1 >cos–( )+[ ]
+
+1
+2
+--- >; 2π$------= =
+
+H 1
+α >-------
+
+α >sin–
+1 α 1 >cos–( )–---------------------------------------  
+
+ 
+atan–=
+
+G H $
+α
+
+G H
+$ 2 3 4 6, , ,= α 0.5=
+
+α 1: H 1<≠ 0 α 1 2⁄< <H 1> 1 2⁄ α 1< <
+
+ϕ �+ 1+ ϕ �+–
+∆ �------------------------- � 0
+
+ϕ � 1+
++
+
+ϕ � 1–
++
+
+–
+
+2∆
+�------------------------------  + 0=
+
+λB 2 1 α2 3 ∆�sin( )2+=
+
+λB 2 1≥ α 3
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 21
+
+absolutely unstable, although the space discretization is more accurate than in the upwind scheme, which is condi-
+
+tionally stable.
+
+(iii) Implicit Schemes.
+
+Consider what happens when the space derivative is replaced by the average value of the centred space difference
+
+at time levels and . Using forward time differencing and the notation for spatial differences introduced in
+
+Subsection 1.4, we have
+
+Rearranging yields
+
+(25)
+
+This is an implicit two-time-level scheme (the Crank–Nicolson scheme) which is second order in time and second
+
+order in space. Performing a stability analyses in the usual way we find that . Therefore the scheme is
+
+absolutely stable and neutral (no damping), but further analysis shows that there are significant phase errors (see
+
+Table 2).
+
+Note that the problem with using this type of scheme is that we cannot simply express the new value in terms
+
+of known values at previous times. Thus, we have a large number of simultaneous equations which have to be
+
+solved (i.e. a tridiagonal matrix has to be inverted). For simple cases this can be done exactly, but for more com-
+
+plicated problems expensive successive approximation methods have to be used.
+
+This implicit approach can be generalised to
+
+where  and  are weights such that .
+
+There are three special cases which should be highlighted:
+
+(a)  and  gives the absolutely unstable FTCS scheme.
+
+(b)  and  results in the fully forward implicit scheme.
+
+(c) yields the scheme described above in which the derivatives at time levels
+
+and  are equally weighted.
+
+A stability analysis of the general scheme shows that
+
+Therefore there is absolute instability if the present values are weighted more heavily than the future ones
+
+whereas there is absolute stability if more or equal weight is given to the future values
+
+? ? 1+
+
+ϕ �+ 1+ ϕ �+–
+∆ �-------------------------
+
+� 0
+2
+----- δ2 - ϕ �
+
++
+δ2 - ϕ �
+
++ 1++( )+ 0=
+
+ϕ �+ 1+ α
+4
+--- ϕ � 1+
+
++ 1+ ϕ � 1–
++ 1+–( )+ ϕ �+ α
+
+4
+--- ϕ � 1+
+
++
+ϕ � 1–
++
+
+–( )–=
+
+λB 1=
+
+ϕ �+ 1+
+
+ϕ �+ 1+ ϕ �+–
+∆ �------------------------- � 0 β + δ2 - ϕ �
+
++
+β+ 1+ δ2 - ϕ �
+
++ 1++( )+ 0=
+
+β+ β+ 1+ β + β + 1++ 1=
+
+β+ 1= β+ 1+ 0=
+β+ 0= β+ 1+ 1=
+β+ β+ 1+ 1 2⁄= = ?
+
+? 1+
+
+λ 2
+1 α2β+2 3 ∆�sin( )2+
+
+1 α2β + 1+2 3 ∆�sin( )2+
+------------------------------------------------------=
+
+β+ 1/2, β+ 1+ 1/2<>( )
+β+ 1/2, β+ 1+ 1/2≥( )≤( )
+
+
+
+Numerical methods
+
+22 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+2.5 (c)  The leapfrog scheme.
+
+This is probably the most common scheme used for meteorological problems. The "leapfrog" refers to the centred
+
+time difference which is used in conjunction with centred space differences
+
+(26)
+
+This is an explicit three-time-level scheme which is second order in space and time. Using the Fourier series tech-
+
+nique to test stability, we find that
+
+giving
+
+Therefore there are two solutions for which is a consequence of using a three-time-level scheme (in general an
+
+-time-level scheme will have  solutions for  with each solution being referred to as a mode).
+
+It can be shown that for one of the modes as ; this is referred to as the physical mode. The other
+
+mode has no physical significance and is called the computational mode (for this mode  as ).
+
+If we have and so is real. Consequently for both modes and so the scheme is
+
+conditionally stable and neutral. Further analysis shows that for the physical mode
+
+, (27)
+
+whereas for the computational mode the phase speed is in the opposite direction to ( ) and the amplitude
+
+of the mode changes sign every time step. In general, the solution to the finite difference equation will be a com-
+
+bination of the physical and computational modes.
+
+The tables of and against (Table 2) for the physical mode reveal that the phase errors are worse than for the
+
+upstream difference scheme, but the leapfrog scheme has the important property that there is no damping for any
+
+choice of .
+
+The characteristics of the leapfrog scheme can be improved by using a fourth order finite difference scheme for the
+
+space derivative (see Subsection 2.1)—the scheme is then said to have fourth-order advection. Table 2 shows that
+
+this has no effect on the damping (the scheme remains neutral), but it does lead to an improvement in the phase
+
+speed. However the stability condition is now more restrictive since we require .
+
+The leapfrog scheme is very popular because it is simple, second order and neutral; however there are still phase
+
+errors and computational dispersion. Also, the computational mode has to be contended with and the dependent
+
+variable has to be kept at two time levels.
+
+To start the leap-frog scheme it is customary to use a forward time step and, in order to suppress separation of the
+
+solutions at odd and even time steps, it is usual to either
+
+(i) use an occasional forward time step
+
+(ii) use a weak time filter of the type
+
+ϕ �+ 1+ ϕ �+ 1– α ϕ � 1+
++
+
+ϕ � 1–
++
+
+–( )–=
+
+λ2 2iC λ 1–+ 0 C; α 3 ∆�sin–= =
+
+λ iC 1 C 2–±=
+λ� � 1– λ
+
+λ 1→ ∆
+�
+
+∆ � 0→,
+λ 1–→ ∆
+
+�
+∆ � 0→,
+
+α 1≤ C 1≤ 1 C 2– λ 1=
+
+H 1
+α >-------
+
+C–
+1 C 2–
+
+-------------------
+ 
+ 
+ 
+
+;       p=-α > q=2π$---;sinatan–=
+
+� 0 H 1–=
+
+G H $
+
+α
+
+α 0.73≤
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 23
+
+where the tilde denotes the filtered value (  is typically 0.005).
+
+Another variant of the leapfrog scheme is the semi-momentum approximation. For this, the wind field is smoothed
+
+before multiplying by the derivative. Using the notation introduced in Subsection 2.1, the scheme becomes
+
+For constant , this reduces to (26).
+
+2.5 (d)  The Lax–Wendroff scheme.
+
+This is a useful scheme because it is second order in space and time. but (unlike the leapfrog scheme) it is only a
+
+two-time-level scheme and so has no computational mode.
+
+The Lax–Wendroff scheme cannot be constructed by an independent choice of finite difference approximations for
+
+the space and time derivatives. It is derived from a second-order accurate Taylor series expansion
+
+Using the advection equation this becomes
+
+(28)
+
+Replacing the derivatives by second order accurate finite difference approximation gives
+
+(29)
+
+This scheme can be replaced by one in which there are two steps:
+
+(i) provisional values of are calculated using a forward time step with centred space
+
+differencing
+
+(ii) The are calculated from centred space and time differences using the provisional values
+
+The stability analysis shows that
+
+ϕ̃ �+ 1– ϕ �+ 1– 
+ ϕ̃ �+ 2– 2ϕ �+ 1–– ϕ �++( )+=
+
+
+
+δE ϕ E �
+-
+δ - ϕ
+
+-
+–=
+
+�
+
+ϕ
+� � ∆ �+,( ) ϕ � �,( ) ∆ � ∂ϕ∂ �------
+
+∆ � 2
+2
+
+--------∂
+2ϕ
+
+∂ � 2---------+ +=
+
+ϕ
+� � ∆ �+,( ) ϕ � �,( ) � 0– ∆ � ∂ϕ∂�------
+
+� 02∆ � 2
+2
+
+--------------∂
+2ϕ
+
+∂
+� 2---------+ +=
+
+ϕ �+ 1+ ϕ �+ α
+2
+--- ϕ � 1+
+
++
+ϕ � 1–
++
+
+–( )– α
+2
+
+2
+------ ϕ � 1+
+
++
+2ϕ �+– ϕ � 1–
+
++
++( )+=
+
+ϕ � 1 2⁄+
++ 1 2⁄+
+
+ϕ � 1 2⁄+
++ 1 2⁄+ 1
+
+2
+--- ϕ � 1+
+
++
+ϕ �++( ) α
+
+2
+--- ϕ � 1+
+
++
+ϕ �+–( )–=
+
+ϕ �+ 1+
+ϕ � 1 2⁄+
++ 1 2⁄+
+
+ϕ �+ 1+ ϕ �+ α ϕ � 1 2⁄+
++ 1 2⁄+ ϕ � 1 2⁄–
+
++ 1 2⁄+–( )–=
+
+
+
+Numerical methods
+
+24 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(30)
+
+and so the scheme is stable provided . The ratio of the phase speed to the advection velocity is given by:
+
+(31)
+
+Table 3 shows that the characteristics of the Lax–Wendroff scheme fall between those of the upstream differencing
+
+and leapfrog schemes. The characteristics of the scheme can be improved by using fourth order advection.
+
+2.5 (e)  Intuitive look at stability.
+
+If the information for the future time step “comes from” inside the interval used for the computation of the space
+
+derivadive, the scheme is stable. Otherwise it is unstable. The CFL number is the fraction of travelled by an
+
+air parcel during  seconds.
+
+-Downwind scheme (unstable):
+
+Upwind scheme (conditionally stable):
+
+Leapfrog (conditionally stable)
+
+Implicit (unconditionally stable). The interval covers the whole x-axis because we have to solve a coupled system
+
+of equations including all the points:
+
+G
+1 α2 1 α2–( ) 1 >cos–( )2–[ ]
+
+1
+2
+--- >; 2π$------= =
+
+α 1≤
+
+H 1
+α >-------
+
+α >sin–
+1 α2 1 >cos–( )–-----------------------------------------  
+
+ 
+atan––
+
+α ∆
+�
+
+∆ �
+
+j-1 j j+1
+
+x
+
+U0
+
+— interval used for the
+computation of ¶φ/¶x
+
+x: point where the information
+comes from (xj – U0∆t
+
+j-1 j j+1
+
+x
+
+U0
+
+o
+
+x:
+
+o: α 1>
+
+α 1<
+
+j-1 j j+1
+
+x
+
+U0
+
+o
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 25
+
+2.6  Group velocity
+
+For a non-dispersive equation, plane wave solutions have the form , where the phase velocity
+
+is independent of the wave number . However, if there is dispersion the wave solutions have the same form, but
+
+now . Even if the original equation is non-dispersive, a discrete model will introduce dispersion.
+
+In order to understand the effect of dispersion it is necessary to introduce the group velocity  given by
+
+This represents the speed of propagation of the energy of wave number and when there is dispersion we have
+
+ and . For a non dispersive medium .
+
+For the linear advection equation we know that any disturbance should move without change of shape with the ad-
+
+vecting velocity (which is independent of ). However, when the problem is solved numerically we find that
+
+ and dispersion is introduced. For example, the phase velocity from the leapfrog scheme is such that
+
+However the group velocity gives
+
+Therefore, when  we get the following (Table 2).
+
+Note that the two gridlength waves ( ) travel in the wrong direction with speed , whilst the longer waves
+
+move with a speed approaching the advecting velocity.
+
+To illustrate the effect of computational dispersion consider three cases taken from Vichenevetsky and Bowles
+
+(1982). Each integration was carried out with the leapfrog scheme using (hence any effects are mainly
+
+due to the space discretization).
+
+TABLE 2. RATIO OF THE RELATIVE PHASE ERROR AND THE RELATIVE GROUP VELOCITY ERROR FOR
+DIFFERENT WAVELENGTHS.
+
+2 3 4 6 10
+
+0.00 0.43 0.67 0.86 0.92
+
+-1.00 -0.55 0.00 0.59 0.85
+
+j-1 j j+1
+
+x
+
+U0
+
+o
+
+i 3 � � �–( )[ ]exp �
+3
+
+� � 3( )=
+� g
+
+� g ∂∂ 3------ 3 �( )–
+
+3
+� � 3( )= � g � g 3( )= � g �=
+
+� 0 3
+� � 3( )=
+
+H �
+� 0-----
+
+1
+α >-------
+
+α >sin–
+1 α 1 >cos–( )–---------------------------------------  
+
+  >;atan 2π$------= = =
+
+H
+g
+
+� g
+� 0-----
+
+>cos
+1 α >sin( )2–[ ]1 2⁄
+
+-------------------------------------------= =
+
+α 0.5=
+
+H( ) H g( )
+
+$
+H
+H
+
+g
+
+$ 2= � 0
+
+α 0.2=
+
+
+
+Numerical methods
+
+26 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+For the case shown in Fig. 3 (a), the long-wave components move with a group velocity of about ( for
+
+the long waves) whilst the two-gridlength waves travel upstream with speed ; the four gridlength
+
+waves are stationary since . Therefore, during the integration the computational dispersion has
+
+caused a broadening of the disturbance (this is not caused by dissipation because the leapfrog scheme is neutral)
+
+and has generated parasitic short gridlength waves which travel upstream.
+
+The disturbance shown in Fig. 3 (b) is dominated by waves with . Therefore the dominant feature of the in-
+
+tegration is the upstream movement of the wave packets with a group velocity of about ,
+
+Figure  3. llustration of computational dispersion using the leapfrog scheme with . Taken from
+
+Vichenevetsky and Bowles (1982).
+
+In the last case, Fig. 3 (c), the initial disturbance consists of two-gridlength waves superimposed upon a broader-
+
+� 0 H g 0≈
+� g $ 2=( ) �– 0=
+
+� g $ 4=( ) 0=
+
+$ 2=
+� 0–
+
+α 0=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 27
+
+scale feature. Consequently, as in case (a), the two-gridlength waves move upstream, whilst the part of the initial
+
+disturbance composed of the larger wavelengths moves downstream with a group velocity of about .
+
+Numerical schemes should be examined for their computational dispersion. However, in practice the effects of
+
+computational dispersion are obscured because of the dissipation inherent in many numerical schemes or the ex-
+
+plicit diffusion that is introduced to control the two-gridlength waves.
+
+2.7  Choosing a scheme
+
+There is a great variety of finite difference schemes and so it is worth considering what factors should be taken into
+
+account when choosing one.
+
+(a) It is desirable to have high-order truncation errors for the space and time differences. In general
+
+centred differences are more accurate than one-sided differences.
+
+(b) Ideally we would like the phase errors and damping to be small; however, it is usually necessary to
+
+compromise between these two. Plots of and against are a convenient way of examining
+
+these aspects.
+
+(c) The advantage of an explicit scheme is that it is easy to program, but it will only be conditionally
+
+stable and so the choice of time step is limited. Implicit schemes are absolutely stable; however the
+
+price we pay for this is that at every time step a system of simultaneous equations has to be solved.
+
+(d) If the scheme has more than two time levels there will be computational modes and possibly
+
+separation of the solution at odd and even timesteps. Also more fields of the dependent variable
+
+have to be stored than for the a two-time-level scheme.
+
+� 0
+
+G H $
+
+
+
+Numerical methods
+
+28 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  4. Response function ( ) against number of gridlengths per wavelength ( ) for various semi-discrete
+
+versions of the one-dimensional linear advection equation. Note that for the leapfrog scheme is the same as the
+
+correction factor  introduced in Subsection 2.3.
+
+� $
+�
+
+=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 29
+
+Figure  5. Solutions of the linear advection equation using various numerical methods for a Gaussian initial
+
+disturbance and a uniform wind. Full line:- numerical solution; dot-dashed line: exact solution.
+
+
+
+Numerical methods
+
+30 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  0. Continued
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 31
+
+Figure  6. Solutions of the linear advection equation using various numerical methods for the Crowley test . Full
+
+line:- numerical solution; dot-dashed line: exact solution..
+
+
+
+Numerical methods
+
+32 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  0. Continued.
+
+A convenient way of comparing schemes is to consider their behaviour for the longer waves ( large so and$ 3
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 33
+
+small). For each scheme we can derive expressions for and in terms of ; these can then be ex-
+
+panded as power series under the assumption that is small. If the scheme is said to have th
+
+order dissipation, whereas indicates that there are th order phase errors. The higher the order of
+
+accuracy of the amplitude and phase speed the better.
+
+Sometimes it is interesting to examine just the effect of space discretization. Using a single Fourier component, the
+
+semi-discrete finite difference version of the linear advection equation may be expressed as:
+
+where is the response function. For the original PDE, for all and, ideally, our difference scheme
+
+should reproduce this. Fig. 4 shows for second and fourth order space differencing as a function of (this is
+
+the same as the correction factor described in Subsection 2.3); also shown are the values for the spectral and
+
+finite element methods which are discussed later. These results suggest that the standard finite difference approxi-
+
+mations for the advection are inferior to the spectral and finite element representations.
+
+As well as examining the behaviour of schemes theoretically, it is often illuminating to actually solve the equation
+
+numerically using the various techniques. For example Gadd (1978) considered the behaviour of a Gaussian profile
+
+whilst Carpenter (1981) used a step function. Collins (1983) preferred a severe test first introduced by Crowley
+
+(1968). For this the advecting velocity varies with ( with and constant). It is then easy to
+
+show that if then the analytical solution to the advection equation is
+
+The particular functions chosen by Collins are:
+
+along with . It can be shown that the fluid particles will all repeat their relative positions after a
+
+time
+
+Fig. 5 shows the results of using various finite difference schemes to advect a Gaussian shaped disturbance with a
+
+constant wind (also shown are the results of using the semi-Langrangian, spectral and finite-element techniques
+
+discussed later). For these calculations we have used
+
+ (maximum possible time step)
+
+and the integration has continued until the disturbance crosses the domain once. In Fig. 6 are the corresponding
+
+results for the Crowley test in which the initial disturbance was normalised so that it has a maximum value of unity.
+
+Examination of these results gives a clear indication of the characteristics of each of the schemes.
+
+No matter what methods are used to select a finite difference scheme, there will inevitably be an element of com-
+
+promise—the perfect scheme does not exist.
+
+2.8  The two-dimensional advection equation .
+
+Before leaving the advection equation it is worth considering the two-dimensional version
+
+> 2π $⁄= G H $
+> G 1 O > +( )+= ?H 1 O > +( )+= ?
+
+∂ϕ
+∂ �------ i 3 � 0
+
+�
+ϕ–=
+
+� �
+1= 3� $
+
+=
+
+� � � 
+ � �+= 
+ �
+ϕ
+�
+
+0,( ) 	 �( )ln[ ]=
+ϕ
+� �,( ) 	 � 
+ �–( )ln[ ]=
+
+� 0.9 1.6
+�
+�---- 0 �
+
+�
+2
+---- �≤ ≤– 0.7– 1.6
+
+�
+�----
+
+�
+2
+----
+
+� �
+≤ ≤+= =
+
+ϕ
+�
+
+0,( ) �( )ln=
+
+2 2
+�
+
+1.6
+-------
+
+� 0( )
+� � 2⁄( )--------------------ln=
+
+� 1
+10
+------ u0 1.0 ∆
+
+�
+1.0 ∆ � 1
+
+2
+---= = = =
+
+
+
+Numerical methods
+
+34 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+If this is put in finite difference form, the stability of the resulting difference equation can be examined by using
+
+For conditionally stable schemes, the stability criterion usually has the form
+
+where  and .
+
+Let  and , and . We then have
+
+If we maximise  with respect to ,  and we get
+
+Substituting for these in  gives the stability criterion
+
+If  this becomes
+
+The appearance of the is typical when going from one to two-dimensional problems. It means that the stability
+
+criterion is more restrictive than in the one-dimensional cases.
+
+This problem can be overcome by the splitting technique discussed in Subsection 4.5 (a).
+
+TABLE 3. DAMPING/TIME STEP ( ) AND RELATIVE PHASE ERROR ( ) FOR VARIOUS SCHEMES TO SOLVE THE ONE
+DIMENSIONAL LINEAR ADVECTION EQUATION WHEN THE C.F.L. STABILITY CRITERION (
+
+FOR ABSOLUTELY STABLE SCHEMES).
+
+(a) Damping/time step( )
+
+Upstream differencing 0.00 0.50 0.71 0.87 0.95
+
+Crank–Nicholson 1.00 1.00 1.00 1.00 1.00
+
+Lax–Wendroff 0.50 0.76 0.90 0.98 1.00
+
+Gadd 0.13 0.79 0.95 0.99 1.00
+
+Leapfrog 1.00 1.00 1.00 1.00 1.00
+
+4th-order leapfrog 1.00 1.00 1.00 1.00 1.00
+
+∂ϕ
+∂ �------ � 0
+
+∂ϕ
+∂
+�------ I 0∂ϕ∂�------+ + 0=
+
+ϕ
++
+
+ϕ0λ
++ #J3 � $ �+( )[ ]exp=
+
+K
+∆ � � 0 αsin
+
+∆
+�------------------ I 0 βsin
+
+∆�-----------------+ 1≤=
+
+α 3 ∆�= β $ ∆�=
+� 0 � θcos= I 0 � θsin= � � 02 I 02+( )1 2⁄=
+
+K
+α β θ, ,( )
+
+�
+∆ � θ αsincos
+
+∆
+�-------------------------- θ βsinsin
+
+∆�------------------------+=
+K
+
+α β θ
+
+αsin βsin 1 and θtan ∆
+�
+
+∆�-------
+βsin
+αsin
+
+-----------= = =
+
+K
+
+∆ � � 1
+∆
+� 2--------- 1∆ � 2---------+ 
+
+  1 2⁄ 1≤
+
+∆
+�
+
+∆� ∆ L= = ∆ � ∆ L�
+2
+
+------------≤
+
+2
+
+G H
+α 1 2⁄ ×= α 1 2⁄=
+
+G
+2∆
+�
+
+3∆
+�
+
+4∆
+�
+
+6∆
+�
+
+10∆
+�
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 35
+
+3. THE NON-LINEAR ADVECTION EQUATION
+
+3.1  Introduction
+
+An important property of the primitive equations is that the advective terms are non-linear. In this section we will
+
+consider the simple non-linear advection equation
+
+(32)
+
+If initially then the solution is . However, unlike the linear advection, this is an implicit
+
+equation for the dependent variable and the solution no longer consists of the initial disturbance travelling with
+
+speed without change of shape. As it is a non-linear equation, in general it does not have an analytical solution.
+
+Spectral 1.00 1.00 1.00 1.00 1.00
+
+Finite element 1.00 1.00 1.00 1.00 1.00
+
+Semi-Lagrangian
+(p=0, linear interpolation)
+
+0.00 0.50 0.71 0.87 0.95
+
+Semi-Lagrangian
+(p=0, cubic spline)
+
+0.00 0.88 0.97 1.00 1.00
+
+TABLE 2. CONTINUED
+
+(b) Relative phase error ( )
+
+Upstream differencing 1.00 1.00 1.00 1.00 1.00
+
+Crank–Nicholson 0.00 0.41 0.63 0.81 0.93
+
+Lax–Wendroff 0.00 0.58 0.75 0.88 0.95
+
+Gadd 0.00 0.98 1.03 1.04 1.02
+
+Leapfrog 0.00 0.43 0.67 0.86 0.95
+
+4th-order leapfrog 0.00 0.65 0.89 0.99 1.00
+
+Spectral 1.05 1.02 1.01 1.00 1.00
+
+Finite element 0.00 0.87 0.99 1.01 1.00
+
+Semi-Lagrangian
+(p=0, linear interpolation)
+
+1.00 1.00 1.00 1.00 1.00
+
+Semi-Lagrangian
+(p=0, cubic spline)
+
+1.00 1.00 1.00 1.00 1.00
+
+TABLE 3. DAMPING/TIME STEP ( ) AND RELATIVE PHASE ERROR ( ) FOR VARIOUS SCHEMES TO SOLVE THE ONE
+DIMENSIONAL LINEAR ADVECTION EQUATION WHEN THE C.F.L. STABILITY CRITERION (
+
+FOR ABSOLUTELY STABLE SCHEMES).
+
+(a) Damping/time step( )
+
+G H
+α 1 2⁄ ×= α 1 2⁄=
+
+G
+2∆
+�
+
+3∆
+�
+
+4∆
+�
+
+6∆
+�
+
+10∆
+�
+
+H
+2∆
+�
+
+3∆
+�
+
+4∆
+�
+
+6∆
+�
+
+10∆
+�
+
+∂ �
+∂ �------ �
+
+∂ �
+∂
+�------+ 0=
+
+� 	 �( )= � 	 � � �–( )=
+
+�
+
+
+
+Numerical methods
+
+36 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+The properties of finite difference forms of the non-linear advection equation cannot be studied using the tech-
+
+niques introduced earlier for investigating the stability, phase errors and damping of the linear version of the equa-
+
+tion. However we can use the integral properties of the non-linear advection equation to give guidance about
+
+suitable finite difference schemes.
+
+3.2  Preservation of conservation properties
+
+Multiplying (32) by  and integrating over the domain (assuming cyclic boundary conditions), we get
+
+where is the total kinetic energy. Hence is conserved and it would be desirable that the finite difference form
+
+of the equations preserved this property.
+
+Consider the semi-discrete form of the equation in which only the advection term has been discretised. For various
+
+schemes we will examine
+
+and try to find schemes for which  is conserved. The most obvious finite difference scheme is
+
+Multiplying by  and summing over all points gives
+
+Since the terms are not of the form there will not be cancellation of all the terms and so the energy
+
+ is not conserved.
+
+An alternative finite difference scheme can be derived by casting (32) in flux form
+
+and then using
+
+Analysis of this scheme reveals that once again energy is not conserved. However, the scheme
+
+�
+
+∂)
+∂ �------- 0 )
+
+1
+2
+--- � 2 �d
+
+0
+
+*
+∫= =
+
+) )
+
+∂) ′
+∂ �--------- where ) ′
+
+1
+2
+--- � �2∆��∑=
+
+) ′
+
+∂ � �
+∂ �--------- � �
+
+� � 1+ � � 1––
+2∆
+�------------------------------  –=
+
+� �
+
+∂) ′
+∂ �---------
+
+1
+2
+--- � �2 � � 1+ � �2 � � 1––( )�∑–=
+
+M � 1+ M �–( )
+) ′
+
+∂ �
+∂ �------
+
+∂
+∂
+�------ �
+
+2
+
+2
+----- 
+
+ –=
+
+∂ � �
+∂ �---------
+
+1
+2
+---
+� � 1+2 � � 1–2–
+
+2∆
+�------------------------------  –=
+
+� � 1+ � � 1–+
+2
+
+------------------------------- 
+  � � 1+ � � 1––
+
+2∆
+�------------------------------  –=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 37
+
+does conserve energy. Let us multiply both sides by  and add over all the points of our domain, we get:
+
+The terms joined by arrows cancel from consecutive grid-points and therefore the total sum is zero.
+
+This suggests that suitable averaging can produce energy conserving schemes.
+
+3.3  Aliasing
+
+Aliasing occurs when the non-linear interactions in the advection term produce a wave which is too short to be rep-
+
+resented on the grid; this wave is then falsely represented (aliased) as a wave with a larger wavelength.
+
+Suppose we have a discrete mesh with grid points and grid length , giving a domain . The
+
+shortest resolvable wave on this grid has a wavelength of ; therefore the maximum wavenumber
+
+is given by
+
+Now consider how the non-linear product
+
+is represented on our grid. Suppose and are single Fourier components with wave numbers and respec-
+
+tively.
+
+Substitution in (32) gives
+
+and so has contributions from wavenumbers and . Now if the magnitudes of both these new
+
+wavenumbers are less than , can be correctly represented. However, if either or are greater
+
+than , the non-linear product will be misrepresented on the grid.
+
+∂ � �
+∂ �---------
+
+� � 1+ � � � � 1–+ +
+3
+
+------------------------------------------- 
+  � � 1+ � � 1––
+
+2∆
+�------------------------------  –= =
+
+� � ∆�
+
+�∂
+∂ ) ' 1
+
+6
+--- � � 1+2 � � � �2 � � 1+ � �2 � � 1–– � � 1–2 � �–+( )�∑–=
+
+� 1+( ) ∆� � � ∆�=
+λmin 2∆
+
+�
+= $ max
+
+$
+max
+
+�
+λmin
+---------- �
+
+2
+-----= =
+
+M � �( )∂ϕ∂�------=
+
+� ϕ $ 1 $ 2
+
+� �( ) 2π�------ $ 1 �   ϕ
+�
+
+( );sin 2π�------ $ 2�  
+� �;sin , 1–( )∆�= = =
+
+M 2π�------ $ 2 2π�------ $ 1 �  
+2π�------ $ 2 �  cossin=
+
+2π�------ $ 212---
+2π�------ $ 1 $ 2+( ) � 2π�------ $ 1 $ 2–( )�sin+  sin  
+
+ 
+=
+
+M $
+1
+$
+
+2+( )
+$
+
+1
+$
+
+2–( )$
+max
+
+M $
+1
+$
+
+2+
+$
+
+1
+$
+
+2–$
+max
+
+
+
+Numerical methods
+
+38 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Now consider what a wave with wave number will look like on our grid. A little trigonometrical manipu-
+
+lation reveals that
+
+Therefore on the grid it is not possible to distinguish between wave numbers and . This means
+
+that if the non-linear interaction leads to a wave number , then is misrepresented as —hence there is
+
+aliasing
+
+As an example, suppose we have a wave with wavelength , which corresponds to wave number
+
+. Since , this wave number is represented as , giving a wave-
+
+length . This is illustrated below.
+
+Figure  7. Graphical representation of aliasing.
+
+3.4  Non-linear instability
+
+As explained above, when two wave numbers and interact to give which is greater than , the
+
+resulting wave is misrepresented as wave number . Now if is one of the original waves
+
+(  say), then we have
+
+ giving (33)
+
+To get the range of possible values of that can satisfy (33), we insert the maximum and minimum values that
+
+can have.
+
+(i) The maximum value of  is  which gives —that is .
+
+(ii) The minimum values of  is 0 which gives —that is .
+
+Therefore, if one of the waves involved in the non-linear interaction has a wavelength less than (i.e.
+
+), aliasing causes a channeling of energy towards the small wavelengths. The continuous feedback
+
+of energy leads to a catastrophic rise in the kinetic energy of wavelengths to —this process is referred
+
+to as non-linear instability.
+
+Note that even if wavelengths less than are not initially present, non-linear interactions will eventually pro-
+
+duce them.
+
+$N$
+max>
+
+2π�------ $ � �  sin
+2π�------ 2 $ max $–( ) � �sin–=
+
+$ $ * 2 $ max $–=$O$
+max>
+
+$ $ *
+
+λ 4∆
+�
+
+3⁄=$ � λ⁄ 3 � 4⁄= = $N$ max≥ � 2⁄= $ * � 4⁄=
+λ*
+
+� $ *⁄ 4∆�= =
+
+$
+1
+
+$
+2
+
+$
+1
+$
+
+2+( )
+$
+
+max$ * 2 $ max $ 1 $ 2+( )–= $ *$
+2
+
+$
+1 2
+
+$
+max
+
+$
+1
+$
+
+2+( )–= 2
+$
+
+1 2
+$
+
+max
+$
+
+2–=
+
+$
+1
+
+$
+2
+
+$
+2
+
+$
+max
+
+$
+1
+
+$
+max 2⁄= λ1 4∆
+
+�
+=
+
+$
+2
+
+$
+1
+
+$
+max= λ1 2∆
+
+�
+=
+
+4∆
+�
+
+2∆
+�
+
+λ1 4∆
+�
+
+≤ ≤
+2∆
+�
+
+4∆
+�
+
+4∆
+�
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 39
+
+3.5  A necessary condition for instability
+
+Consider the semi-discrete case
+
+(34)
+
+If  everywhere, (34) can be rewritten as
+
+Define the weighted energy as
+
+We then have
+
+The sums of the products are zero if there are cyclic boundary conditions. Therefore
+
+and so  is conserved. This means that if initially the weighted energy is , then at any time  we have
+
+If , then this gives
+
+,
+
+which shows that the solution is bounded even if is rough. Clearly it is necessary for the advecting velocity to
+
+change sign in order to obtain instability. But note that this no longer holds when time stepping is introduced.
+
+3.6  Control of non-linear instability
+
+(a) Eliminate the waves that cause non-linear instability by Fourier analysing the fields, discarding the
+
+wavelengths less than and then reconstituting the field (in fact it is only necessary to discard
+
+wavelengths less than ).
+
+∂ϕ �
+∂ �--------- �
+
+� �( ) ϕ � 1+ ϕ � 1––
+2∆
+�------------------------------  –=
+
+� � �( ) 0>
+
+1
+� �-----
+
+∂ϕ �
+∂ �---------
+
+ϕ � 1+ ϕ � 1––
+2∆
+�------------------------------  –=
+
+) w
+
+) w 1� �-----
+ϕ �2
+2
+-----∑=
+
+∂) w
+∂ �----------- ϕ �
+
+ϕ � 1+ ϕ � 1––
+2∆
+�------------------------------  �∑–=
+
+1
+2∆
+�---------- ϕ � ϕ � 1+ ϕ � ϕ � 1–�∑–�∑  
+
+ 
+–=
+
+∂ ) w
+∂ �----------- 0=
+
+) w ) �
+
+1
+�P�-----
+
+ϕ �2 �( )
+2
+
+-------------�∑ )=
+
+& minimum 1 � �⁄( )=
+
+ϕ �2 �( )�∑
+2
+&------ )=
+
+�
+
+4∆
+�
+
+3∆
+�
+
+
+
+Numerical methods
+
+40 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(b) Use a smoothing operator which reduces the amplitude of the short waves while having little effect
+
+on the meteorologically important waves.
+
+(c) Introduce an explicit diffusion term.
+
+(d) Use a time integration scheme with built-in diffusion (e.g. the Lax–Wendroff scheme).
+
+(e) Introduce smoothing directly into the finite difference scheme in order to preserve integral
+
+constraints such as energy conservation. A classic example of this is the Arakawa scheme for the
+
+non-linear vorticity equation.
+
+(f) Use a Galerkin technique (spectral or finite element). For these, the space discretization conserves
+
+quadratic invariants, though this property cannot be guaranteed when time discretization is
+
+introduced.
+
+(g) Use a semi-Lagrangian scheme for advection.
+
+4. TOWARDS THE PRIMITIVE EQUATIONS
+
+4.1  Introduction
+
+A major problem in numerical weather prediction is to have a proper representation of the geostrophic adjustment
+
+process—this is associated with gravity–inertia waves.
+
+In the early days the adjustment process in numerical forecasts was taken care of by using the geostrophic approx-
+
+imation in the vorticity equation; the effect of this was to eliminate the gravity waves entirely. Later the primitive
+
+equations were used and then the treatment of the gravity–inertia waves became very important.
+
+4.2  The one-dimensional gravity-wave equations
+
+The one-dimensional linearised gravity-wave equations (derived from the shallow-water equations) are
+
+(35)
+
+These equations can be easily manipulated into two separate wave equations for and , hence they form a sys-
+
+tem of hyperbolic equations. Taking the time derivative of the -equation and the -derivative of the -equation
+
+we get, upon elimination of ,
+
+and similarly for
+
+If we seek solutions of the form
+
+(36)
+
+we find that the phase speed of the waves is given by . Therefore, there are two waves travelling in
+
+opposite directions along the -axis.
+
+∂ �
+∂ �------ �
+
+∂ �
+∂ �------+ 0
+
+∂ �
+∂ �------
+
+� ∂ �
+∂
+�------+ 0= =
+
+� �
+� � �
+
+�
+
+∂2 �
+∂ � 2--------- �
+
+� ∂2 �
+∂
+� 2---------+ 0=
+
+�
+
+� � ˆ i 3 � � �–( )[ ] �exp � ˆ i 3 � � �–( )[ ]exp= =
+� � �( )1 2⁄±=�
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 41
+
+We now consider ways of solving these equations using finite difference techniques. It is convenient to divide the
+
+schemes into two categories—explicit and implicit.
+
+4.2 (a)  Explicit schemes.
+
+When (35) is put in finite difference form using centred space and time differences (leapfrog scheme), we have
+
+(37)
+
+(38)
+
+where represents the centred finite difference operator corresponding to the first derivative. The stability of this
+
+scheme is determined by substituting the following into (37) and (38)
+
+and then finding the condition for which  This procedure gives
+
+Proceeding as in Subsection 2.5 when dealing with the leapfrog scheme for advection, it can be shown that there
+
+is linear computational stability provided.
+
+,
+
+and that this scheme is neutral. However, although there is no damping, there are phase errors and computational
+
+dispersion; also there is a computational mode since it is a three-time-level scheme.
+
+When forward time differences are used with centred space differences, we find that
+
+therefore this scheme is absolutely unstable.
+
+4.2 (b)  Implicit schemes.
+
+Consider what happens when the space derivatives are replaced by centred space differences averaged over time
+
+levels  and ; centred differences will be used for the time derivatives.
+
+(39)
+
+� �+ 1+ � �+ 1––
+2∆ �------------------------------- � δ � �
+
++
+–=
+
+�P�+ 1+ �P�+ 1––
+2∆ �-------------------------------
+
+�
+δ � �+–=
+
+δ
+
+� �+ � ˆ λ+ i 3 � �[ ] �Q�+ � ˆ λ+ i 3 � �[ ]exp=exp=
+
+λ 1≤
+
+λ2 2iC λ 1–+ 0 C � � ∆
+�
+
+∆
+�------- 3 ∆�sin–= =
+
+∆ � ∆
+�
+
+� �( )1 2⁄---------------------≤
+
+λ 2 1 � � ∆
+�
+
+∆
+�-------  
+
+2 3 ∆�sin( )2+=
+
+? 1– ? 1+
+
+� �+ 1+ � �+ 1––
+2∆ �------------------------------- �
+
+δ �P�+ 1+ δ �P�+ 1–+
+2
+
+-------------------------------------- 
+ –=
+
+
+
+Numerical methods
+
+42 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(40)
+
+where represents a centred finite difference operator corresponding to the first derivative. Applying to (39) we
+
+find , which is then substituted into (40) to give
+
+(41)
+
+Therefore, since the RHS is known, (41) is an elliptic equation which can be solved for , given suitable
+
+boundary conditions;  can be found in a similar fashion.
+
+It can be shown that this scheme is absolutely stable and so any time step can be used. However, a Helmholtz equa-
+
+tion has to be solved every time step and this can be computationally expensive.
+
+An implicit scheme using forward time differences can be constructed using the Crank–Nicolson approach in
+
+which
+
+(42)
+
+(43)
+
+where and are weights such that ( corresponds to the forward time-
+
+centred space scheme, which is absolutely unstable).
+
+A stability analysis of (42) and (43) shows that there is instability if and absolute stability if
+
+4.3  Staggered grids
+
+We now consider the best way of distributing the variables  and  on the grid.
+
+Initially we might expect that  and  should be held at each grid point.
+
+However careful examination shows that, if centred differences are used, we have two separate subgrids. This
+
+means that the solutions on the subgrids can become decoupled from one another.
+
+Displacing the grid points which carry the variable to the middle between the points we get rid of this problem
+
+as now the centred space derivative uses successive points of the same variable.
+
+This also has the effect of improving the dispersion characteristics of any scheme because the effective grid length
+
+if halved. These ideas can be extended to the two dimensional problem
+
+�Q�+ 1+ �Q�+ 1––
+2∆ �-------------------------------
+
+� δ � �+ 1+ δ � �+ 1–+
+2
+
+-------------------------------------- 
+ –=
+
+δ δ
+δ � �+ 1+
+
+� � ∆ �( )2δ2 �P�+ 1+ �P�+ 1+– = � + 1– � + 1–,( )=
+
+�P�+ 1+
+� �+ 1+
+
+� �+ 1+ � �+ 1––
+2∆ �------------------------------- � β+ δ �Q�
+
++
+β + 1+ δ �Q�
+
++ 1++( )–=
+
+�P�+ 1+ �P�+ 1––
+2∆ �-------------------------------
+
+�
+β+ δ � �+ β + 1+ δ � �
+
++ 1++( )–=
+
+β + β+ 1+ β+ β+ 1++ 1= β+ 1 β+ 1+, 0= =
+
+β + 1/2> β+ 1/2≤
+
+� �
+� �
+
+    x x x x x
+� �, � �, � �, � �, � �,
+
+� �
+
+x o x o x o x o x o
+� � � � � � � � � �
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 43
+
+There are various grids that can be used, they are known as Arakawa A–E grids and are shown below:
+
+As well as space staggering it is often desirable to have time staggering. This is particularly useful for leapfrog
+
+schemes where the most common distribution of variables is known as the Eliassen grid. However grid E is the
+
+same as grid B tilted by 45˚.
+
+There is not a general consensus as to which grid has the best properties although grids A and D are known to be
+
+worst. Grid C was used in the grid-point model of ECMWF.
+
+Figure  8. The arrangement of variables on the Arakawa A–E grids.
+
+4.4  The shallow-water equations.
+
+To make our equations more realistic we should include the advection. Therefore, sticking to the linear one-dimen-
+
+sion case we get
+
+∂ �
+∂ �------ �
+
+∂ �
+∂
+�------+ 0 ∂ I∂ �------ �
+
+∂ �
+∂�------+ 0
+
+∂ �
+∂ �------
+
+� ∂ �
+∂
+�------ ∂ I
+
+∂�------+  + 0= = =
+
+
+
+Numerical methods
+
+44 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(44)
+
+Substituting (36) into (44) gives the dispersion relationship
+
+When the leapfrog scheme is used with centred space differencing, the stability criterion becomes
+
+If , the phase speed of the gravity waves is 313 m/s; now if and the sta-
+
+bility criterion becomes . Note that this criterion is mainly determined by the gravity wave speed.
+
+The stability analysis of the shallow-water equations will be performed in two dimensions using the spectral meth-
+
+od. The point we want to stress here is that the adjustment terms limit the upper size of the time step to, typically,
+
+one third of the one possible for the stable treatment of the advection terns.
+
+4.5  Increasing the size of the time step
+
+We saw in the former section that in an explicity treatment of the shallow water equations representing synoptic
+
+scale features only ( ) the time step for stability is restricted to a value much lower than the typical
+
+time scale of such features, therefore increasing the amount of calculations to be performed much above what
+
+would be desirable.
+
+Several ways of increasing the allowed time step have been devised but only the most successful ones will be re-
+
+vised here.
+
+4.5 (a)  The splitting method.
+
+For the set of equations discussed in Subsection 4.4, there are clearly two different physical mechanisms acting.
+
+Therefore, it may be desirable to treat the advection and gravity parts separately. Marchuk devised the splitting
+
+technique which makes this possible.
+
+The equations are split as follows:
+
+(45)
+
+(46)
+
+The following procedure is then used.
+
+(a) Use standard finite difference techniques to solve (45). If and denote new values after one
+
+time step we have
+
+∂ �
+∂ �------ � 0
+
+∂ �
+∂
+�------ � ∂ �∂�------+ + 0=
+
+∂ �
+∂ �------ � 0
+
+∂ �
+∂
+�------ � ∂ �
+
+∂
+�------+ + 0=
+
+� � 0 � �( )1 2⁄±=
+
+∆ � ∆
+�
+
+� 0 � �( )1 2⁄+
+---------------------------------≤
+
+�
+10 km= ∆
+
+�
+105 m= � 0 100 m/s=
+
+∆ � 4.0 min≤
+
+∆
+�
+
+100 km≈
+
+∂ �
+∂ �------ � 0
+
+∂ �
+∂
+�------+ 0 ∂ �∂ �------ � 0
+
+∂ �
+∂
+�------+ 0 advection= =
+
+∂ �
+∂ �------ �
+
+∂ �
+∂
+�------+ 0 ∂ �∂ �------
+
+� ∂ �
+∂
+�------+ 0 adjustment= =
+
+� * � *
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 45
+
+(b) The new values are now used as the starting point for solving (46)
+
+Substituting for  and  gives
+
+The complete scheme is stable provided . and this will be satisfied if and, therefore, there is sta-
+
+bility if each of the separate steps is stable.
+
+It is possible to exploit the fact that the same time step does not have to be used for each step. For example, the
+
+gravity wave speed is larger than the advection speed and so it appears reasonable to use a large time step for ad-
+
+vection ( say) and a number of smaller time steps for the gravity wave equations ( steps of , with
+
+). The two steps will be stable provided
+
+Typically is about three times larger than and so it is appropriate to use and to take three adjustment
+
+steps to each advection step. This approach has been used effectively by the UK Met. Office—see Gadd (1978).
+
+4.5 (b)  Forward–backward scheme.
+
+Let us consider the adjustment terms of the one-dimensional shallow-water equations as given by (35). The proce-
+
+dure is to solve the second equation by means of a FTSC step and then to use the calculated values of the height
+
+for calculating new values of u using the first equation.
+
+This can be stated as follows:
+
+If we use the von Neumann method for analysing the stability of this scheme we find that
+
+which is twice the time step allowed by the leapfrog method. Furthermore, the scheme is neutral and, although the
+
+second equation looks similar to an implicit scheme, the set of equations is decoupled as in an explicit method and
+
+we don't have to solve a coupled system of simultaneous equations. .
+
+4.5 (c)  Pressure averaging.
+
+A procedure somewhat similar to the forward–backward scheme is the pressure averaging technique. The name
+
+� * λadv �
++ � * λadv �
+
++
+= =
+
+� + 1+ λadj � * �
++ 1+ λadj � *==
+
+� * � *
+
+� + 1+ λ � + and � + 1+ λ � + where λ= λadjλadv= =
+
+λ 1≤ λadj 1≤
+
+∆ � & δ �
+∆ � & δ �=
+
+� 0 ∆
+�
+
+∆
+�------- 1 � δ
+
+�
+∆
+�-------≤ � ∆
+
+�
+& δ �----------- 1≤=
+
+� � 0 & 3=
+
+�Q�+ 1+ �P�+
+�
+2
+----- ∆
+
+�
+∆
+�------- � � 1+
+
++ � � 1–
++
+
+–( ) forward–=
+
+� �+ 1+ � �+ �
+2
+--- ∆
+
+�
+∆
+�------- �Q� 1+
+
++ 1+ �Q� 1–
++ 1+–( ) backward–=
+
+∆ � 2∆
+�
+
+� �( )1 2⁄---------------------≤
+
+
+
+Numerical methods
+
+46 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+comes from the primitive equations using as the vertical co-ordinate, where the adjustment tern for the momen-
+
+tum equations is given by the so-called pressure gradient term. As we are dealing here with the shallow-water equa-
+
+tions, it would be more adequate to call it height or geopotential averaging.
+
+The idea is to take as the height in the wind equation some average of the previous, present and future time values
+
+and using centred time derivatives.
+
+Therefore the momentum equation reads
+
+which reduces to the leapfrog scheme if . If we take we get, from the von Neumann stability anal-
+
+ysis, the condition
+
+,
+
+which is the same as we got for the forward-backward scheme.
+
+4.5 (d)  Semi-implicit scheme.
+
+It was stated in section Subsection 4.2 (b) that an implicit treatment of the gravity wave equation is absolutely stable
+
+for any size of the time step, therefore, we could try such a treatment for the adjustment terms in the shallow water
+
+equations while keeping an explicity formulation of the advection terms.
+
+The disretized equations in two dimensions then read
+
+(47)
+
+where
+
+and and are the centred approximations to the and derivatives, respectively. Upon substitution of
+
+ and  from the first two equations into the third equation we get
+
+where . This is a Helmholtz equation which has to be solved at every time step and, therefore, it
+
+is more expensive than the explicit method. Nevertheless, there are fast Helmholtz solvers which are described in
+
+chapter 8 and a stability analysis, which we will perform in Section 6 using the spectral approach shows that the
+
+time step size is no longer limited by the phase speed of the (fast) gravity waves, but by the speed of the more slow
+
+R
+
+� �+ 1+ � �+ 1––
+2∆ �-------------------------------
+
+�
+2∆
+�---------- 1 2ε–( ) � � 1+
+
++ � � 1–
++
+
+–( ) ε � � 1+
++ 1+ � � 1–
+
++ 1+–( ) � � 1+
++ 1– � � 1–
+
++ 1––( )+[ ]+{ }–=
+
+ε 0= ε 1 4⁄=
+
+∆ � 2∆
+�
+
+� �( )1 2⁄---------------------≤
+
+� �+ 1+ � �+ 1– ∆ �TS �+ ∇ � �+ � ∆
+�
+
+2
+----------– ∇ -U�P�+ 1+ �Q�+ 1–+( )⋅–=
+
+I �+ 1+ I �+ 1– ∆ �TS �+ ∇ I �+ � ∆
+�
+
+2
+----------– ∇VW�P�+ 1+ �Q�+ 1–+( )⋅–=
+
+�P�+ 1+ �Q�+ 1– ∆ �TS �+ ∇ �Q�+
+�
+
+∆ �
+2
+
+-----------– ∇ ∇ �+ 1+ ∇ �+ 1–+( )⋅ ⋅–=
+
+S �+ � �+ , I �+( ) ∇ ∇ - ,∇V( )= =
+
+∇ - ∇V � �
+� �+ 1+ I �+ 1+
+
+∇2 �P�+ 1+ 4 ∆ L( )
+2
+
+� � ∆ �( )2---------------------- �P�
++ 1+– = +X+ 1–,=
+
+∆ L ∆� ∆�= =
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 47
+
+Rossby modes.
+
+Computer tests show that the increased size of the time step overcomes the higher amount of work needed at every
+
+time step, and so the semi-implicit time scheme is faster than the explicit one The advantage is most notable if we
+
+use the spectral technique with spherical harmonics as these are eigenfunctions of the Laplacian operator and,
+
+therefore, the set (47) becomes a decoupled set of equations, one for every spectral component of the height func-
+
+tion.
+
+4.6  Diffusion
+
+The only terms not treated so far from the shallow-water equations in its linearized form are the diffusion terms.
+
+The linear diffusion equation for a function  in one dimension can be written as:
+
+(48)
+
+This is a parabolic equation whose analytical solution, when we use periodic boundary conditions and a single
+
+wave of wave number  as the initial condition can be shown to be
+
+which represents the initial disturbance with an amplitude decaying with time.
+
+We will consider here only three time-stepping schemes combined with centred second-order space differencing
+
+in order to show that, as it was the case with the other terms, an explicit treatment is in general conditionally stable
+
+while an implicit treatment is normally stable.
+
+4.6 (a)  Explicit forward scheme.
+
+(49)
+
+As usual, we consider the behaviour of a single harmonic and assume
+
+Substituting this into (49) gives
+
+For stability we require and this is satisfied for all wavelengths provided . However, though sta-
+
+bility is ensured by using this condition, a value of in the range gives a negative value of ,
+
+which causes the amplitude of the wave to switch sign between successive time steps. This may be avoided by
+
+choosing .
+
+In numerical models, a typical value of the eddy diffusivity is . With the stability
+
+condition is satisfied if . This is sufficiently large for it not to produce any problems. How-
+
+M
+
+∂
+M
+
+∂ �-------
+� ∂2 M
+
+∂
+� 2---------- K 0>;=
+
+3
+M � �,( ) M 0 3 �( ) 3 2 � �–[ ]expsin=
+
+M �+ 1+ M �+–
+∆ �---------------------------
+
+� M � 1+
++
+
+2
+M �+– M � 1–
+
++
++
+
+∆
+�
+
+( )2
+--------------------------------------------------=
+
+M �+ λ+ 4 i 3 � �[ ]exp=
+
+λ 1 4σ 3 ∆
+�
+
+2
+----------sin 
+
+  2 with σ–
+� ∆ �
+∆
+�
+
+( )2
+--------------= =
+
+λ 1≤ σ 1 2⁄≤
+σ 1 4⁄ σ 1 2⁄≤ ≤ λ
+
+σ 1 4⁄≤
+�
+
+105 m2/s= ∆
+�
+
+100 km=
+
+σ 1 4⁄≤ ∆ � 2 106× s≤
+
+
+
+Numerical methods
+
+48 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+ever, this is not the case in the vertical where a typical grid spacing of  leads to .
+
+4.6 (b)  Classical implicit scheme.
+
+In this scheme, the space derivative is evaluated at time level . The scheme then reads:
+
+and the usual stability analysis gives
+
+which has  for all values of  and . Therefore, the scheme is absolutely stable.
+
+4.6 (c)  Crank–Nicholson scheme.
+
+This is a mean between the two former schemes and the space derivative is evaluated at time level by
+
+averaging over time levels  and .
+
+Like the classical implicit method, the Crank–Nicholson scheme is absolutely stable. However, the advantage of
+
+this scheme is that it is second-order accurate in time as opposed to first-order accuracy in time of both the explicit
+
+and the classical implicit methods.
+
+It is interesting to generalize this approach by weighting the present and future values of the right hand side with
+
+weights and , subject to the condition . Some experiments suggest that values of
+
+ give an accurate scheme with which long time steps can be used.
+
+When the eddy diffusivity and the grid spacing vary, the continuous diffusion equation is
+
+and the generalized time stepping just described can be written
+
+where ,  and .
+
+1 km ∆ � 2 s≤
+
+? 1+
+M �+ 1+ M �+–
+
+∆ �---------------------------
+� M � 1+
+
++ 1+ 2 M �+ 1+– M � 1–
++ 1++
+
+∆
+�
+
+( )2
+----------------------------------------------------------+=
+
+λ 1
+
+1 4σ2 3 ∆
+�
+
+2
+----------sin 
+
+  2+
+---------------------------------------------=
+
+λ 1≤ 3 σ
+
+? 1 2⁄+
+? ? 1+
+
+β+ β + 1+ β+ β+ 1++ 1=
+β + 1 4⁄ β+ 1+, 3 4⁄= =
+
+∂
+M
+
+∂ �-------
+∂
+
+∂
+�------ � ∂
+
+M
+∂
+�-------  =
+
+M �+ 1+ M �+–
+∆ �---------------------------
+
+1
+∆
+� �---------
+
+� � 1 2⁄+
+∆
+� � 1 2⁄+--------------------
+
+
+β+ M � 1+
+
++ M �+–( ) β + 1+ M � 1+
++ 1+ M �+ 1+–( )+[ ]=
+
+� � 1 2⁄( )–
+∆
+� � 1 2⁄( )–------------------------ β+
+
+M �+ M � 1–
++
+
+–( ) β+ 1+ M �
++ 1+ M � 1–
+
++ 1+–( )+[ ]
+
+
+
+
+∆
+� � � � 1 2⁄+ � � 1 2⁄––= ∆ � � 1 2⁄+ � � 1+ � �–= ∆ � � 1 2⁄– � � � � 1––=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 49
+
+5. THE SEMI-LAGRANGIAN TECHNIQUE
+
+5.1  Introduction
+
+So far we have taken an Eulerian view and considered what was the evolution in time of a dependent variable at
+
+fixed points in space and in the spectral and finite elements we will consider what is the time evolution of some
+
+coefficients multiplying some basis functions also fixed in space; in other words, we used the partial time derivative
+
+.
+
+A few years ago, several attempts were made to build stable time integration schemes permitting large time steps.
+
+Robert (1981) proposed using the quasi-Lagrangian technique for the treatment of the advective part of the equa-
+
+tions.
+
+Let us consider the one-dimensional advection equation
+
+(50)
+
+where  is the advected property and  is the advection velocity. This equation can be recast in the form
+
+(51)
+
+where the left-hand side stands for the Lagrangian derivative and its meaning is the time evolution of a material
+
+volume and equation (51) could be read as: the property is conserved within an air parcel. The discretization can
+
+be written as
+
+where subindexes A and D indicate the arrival (at time instant ) and departure (at time instant t) points of
+
+the considered air parcel.
+
+If we know the initial distribution of (defined, for example, on a regular array of points) then by tracking the
+
+fluid parcels we end up with information about the distribution of at some later time, but in general the points
+
+where we know the value of will not be uniformly distributed any more and this makes the procedure very dif-
+
+ficult to apply.
+
+The semi-Lagrangian technique overcomes this difficulty by considering the end points as consisting of a regular
+
+mesh and tracking back the origin of each parcel. The simplest method for finding the value of at gridpoint at
+
+time level consists in tracking back the air parcel over one time step to find where it was at time
+
+level . Having located it origin we now find its value by interpolation from the values at the neighbouring grid
+
+points at time level .
+
+If the interpolated value is  we have
+
+(52)
+
+5.2  Stability in one-dimension
+
+Let us consider the linear advection equation
+
+∂ ∂ �⁄
+
+∂
+∂ �----- �
+
+∂
+∂
+�------+   ϕ 0=
+
+ϕ �
+
+dϕ
+d
+�------ 0=
+
+ϕ
+
+ϕY E ∆ E+ ϕ ZE–
+∆ �--------------------------- 0=
+
+� ∆ �+
+
+ϕ
+ϕ
+
+ϕ
+
+ϕ ,
+? 1+ ϕ �+ 1+ say( )
+
+? ϕ
+?
+
+ϕ*
++
+
+ϕ �+ 1+ ϕ*
++
+
+=
+
+
+
+Numerical methods
+
+50 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(53)
+
+The distance travelled during the last interval by an air parcel arriving at point is , therefore it comes
+
+from a point
+
+(54)
+
+If this point lies between grid points and , and we call the fraction of grid length from point
+
+ to point  we have
+
+(55)
+
+and using linear interpolation to find  we get
+
+(56)
+
+(Note that when , and (56) becomes identical to the upstream differencing scheme). We
+
+study the stability using the von Neumann method and, therefore, assume a solution of the form
+
+(57)
+
+substituting we get
+
+(58)
+
+and
+
+. (59)
+
+Therefore  as long as , that is
+
+(60)
+
+the scheme is, therefore, stable if the interpolation points are the two nearest ones to the departure point, but it is
+
+neutral only if  or ,that is to say when no interpolation is needed. We will come to this point later.
+
+We find that heavy damping occurs for the shortest wavelengths (there is complete extinction when and
+
+). but the damping decreases as increases. A strange feature of this scheme (peculiar to the case of con-
+
+stant wind) is that for a given the phase errors and dissipation decrease as increases. This happens because
+
+the departure point can be located precisely using only the wind at the arrival point.
+
+A similar analysis to the above can be carried out for quadratic interpolation. Once again the scheme is absolutely
+
+stable provided is computed by interpolation from the nearest three grid points. This scheme has less damping
+
+than the linear interpolation, but the phase representation is not improved. It is easy to show that when the departure
+
+point is within half a grid length from the grid point (i.e. ), this scheme becomes identical to the Lax–Wen-
+
+droff scheme.
+
+These ideas can be extended to two-dimensional flow. It has been found that bi-quadratic interpolation is absolutely
+
+dϕ
+d
+�------ ∂ϕ∂ �------ 4
+
+∂ϕ
+∂
+�------+≡ 0=
+
+∆ � � � 4 ∆ �
+
+�
+*
+
+� �[4 ∆ �–=
+
+,\C–( ) ,\C– 1–( ) α�
+*
+
+� �^]–
+4 ∆ � C α+( )∆�=
+
+ϕ*
++
+
+ϕ �+ 1+ ϕ*
++
+
+1 α–( )ϕj-p
++
+
+αϕj-p-1
++
+
++= =
+
+C 0= α 4 ∆ � ∆�⁄=
+
+ϕj
++
+
+ϕ0λ
++
+
+i 3 � �[ ]exp=
+
+λ 1 α 1 i 3 ∆�–[ ]exp–( )–{ } iCJ3 ∆�–[ ]exp=
+
+G
+λ≡ 1 2α 1 α–( ) 1 3 ∆�( )cos–{ }–[ ]1 2⁄=
+
+λ 1≤ α 1 α–( ) 0≥
+
+0 α 1≤ ≤
+
+α 0= α 1=
+$ 2=
+
+α 0.5= $
+α C
+
+ϕ*
++
+
+C 0=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 51
+
+stable for constant flow (provided the nine grid points nearest the departure point are used for interpolation) and
+
+that the characteristics of this scheme are superior to those of a bilinear interpolation scheme.
+
+5.3  Cubic spline interpolation
+
+An accurate way of finding the value of at the departure point is to use cubic spline interpolation. The spline
+
+ is defined to be a cubic polynomial within any grid interval, where the coefficients are chosen so that
+
+(i)  at each gridpoint
+
+(ii) the gradient of  is continuous
+
+(iii)  is minimised
+
+It can then be shown that, in the interval , the spline is
+
+(61)
+
+where and are the grid-point values of at and , and and are the corresponding gra-
+
+dients of the splines derived from
+
+(62)
+
+The implementation of this scheme requires two steps:
+
+(a) The derivatives of the splines at each grid point and at time level ( say) are derived from
+
+the set of simultaneous equations defined by (62).
+
+(b) Having found the point from which an air parcel originates, the value of is calculated from
+
+(61) using the values of and at the two neighbouring grid points. If point lies between grid
+
+points and at a distance from point , then (61) gives an expression for
+
+ in terms of , , ,  and . The time stepping algorithm (52) then becomes
+
+(63)
+
+A corresponding expression can obviously be derived for the case when .
+
+Although cubic spline interpolation requires much more computation than a linear interpolation (compare (56) with
+
+(63)), the characteristics of the cubic spline scheme are far superior. Therefore, in choosing a scheme it is necessary
+
+to balance accuracy against computational expense.
+
+Let us now turn to the non-linear advection equation. In this case the advecting velocity, and hence the displacement
+
+ϕK �
+( )
+
+K � �( ) ϕ �=
+K �
+
+( )
+
+d2
+K
+
+d
+� 2⁄( ) �d*∫ � � 1– � � �≤ ≤
+
+K �
+( )
+
+G � 1–
+∆
+� 2-------------
+
+� � �–( )2 � � � 1––( )
+G �
+∆
+� 2---------
+� � � 1––( )2 � � �–( )–=
+
++
+ϕ � 1–
+∆
+� 3------------
+
+� � �–( )2 2 � � � 1––( ) ∆�+{ } ϕ �
+∆
+� 3---------
+� � � 1––( )2 2 � � �–( ) ∆�+{ }+
+
+ϕ � 1– ϕ � ϕ , 1– , G � 1– G �
+
+G � 1– 4 G � G � 1++ +
+6
+
+--------------------------------------------------
+ϕ � 1+ ϕ � 1––
+
+2∆
+�------------------------------=
+
+, ? G �+
+
+G � 1–
++
+
+4
+G �+ G � 1+
+
++
++ +
+
+6
+--------------------------------------------------
+
+ϕ � 1+
++
+
+ϕ � 1–
++
+
+–
+
+2∆
+�------------------------------=
+
+�
+* ϕ*
+
++
+ϕ
+
+G �
+*� ,\C–= � 1– α̂∆� �
+
+ϕ*
++
+
+ϕ � 1–
++
+
+ϕ�+ G � 1–
++ G �+ α̂
+
+ϕ �+ 1+ ϕ�+ α̂ G �+ ∆�– α̂2 G � 1–
++
+
+2
+G �++( )∆� 3 ϕ� 1–
+
++
+ϕ�+–( )+{ }+=
+
+α̂3
+G � 1–
++ G �++( )∆� 2 ϕ� 1–
+
++
+ϕ �+–( )+{ }–
+
+� 0 0<
+
+
+
+Numerical methods
+
+52 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+of every air parcel, is a function of . We can still use the same method and estimate the displacement by
+
+ and, therefore,  and  will depend upon .
+
+A more accurate estimate of the displacement is found by using an advecting velocity from midway between the
+
+departure and arrival points; this could be estimated in many ways. This is the equivalent to the Crank–Nicholson
+
+scheme if we estimate the advecting velocity at time , or to the centred time-differencing schemes if we
+
+use the estimate at time  and the departure point at time .
+
+5.4  Cubic Lagrang interpolation and shape preservation
+
+Cubic spline interpolation is quite expensive and can be unusable in more than one domension. A simpler although
+
+not so accurate interpolation is provided by the cubic Lagrange polynomials defined as follows:
+
+Q(x) is a cubic polynomial covering 4 consecutive gridpoints
+
+Q(xj)=  at each of these four grid-points.
+
+Then Q(x) can be expressed as
+
+where the functions Ci(x) can be computed as
+
+Cubic Hermite interpolation is somewhat similar but the input data are the values and the derivatives at the two
+
+gridpoints surrounding the interpolation point.
+
+Any high order interpolation can produce artificial maxima and minima not present in the original data. Supose we
+
+want to interpolate to point D, by means of a cubic polynomial, the function given at the 4 consecutive grid-points
+
+(j-1), j, (j+1) and (j+2)
+
+As pure advection can not produce new maxima in the advected function, it is convenient to avoid possible over-
+
+shooting in the cubic interpolations. If the interpolation was done by Hermite polynomials, appropriate modifica-
+
+tion of the derivatives at points j and j+1 can lead to the elimination of maxima in the interpolation interval. In the
+
+case of cubic Lagrange polynomials, the technique called quasi-monotone interpolation can be applied: after inter-
+
+polation, the interpolated value is restricted to stay within the interval
+
+�
+Q� � � ∆ �= C α ,
+
+� ∆ � 2⁄+� � ∆ �–
+
+ϕ �
+
+_ �
+( ) 4F" �( )ϕ"" 1=
+
+4
+
+∑=
+
+4F" �( )
+� � B–( )B`"≠
+
+4
+
+∏
+
+� " � B–( )B`"≠
+4
+
+∏
+------------------------------=
+
+x
+
++
+
++
++
+
++
+
+j j+1 j+2j-1 D
+
+x interpolated value
+
+ϕ � ϕ � 1+→
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 53
+
+5.5  Various quasi-Lagrangian schemes in 2D
+
+We will consider here only schemes using centred time differences. The general form of the evolution equation for
+
+a given parameter  can be written
+
+(64)
+
+where  is the linear part of the equation and  the non-linear part.
+
+The left-hand side is the Lagrangian total derivative
+
+5.5 (a)  Method with interpolation (Robert 1982).
+
+The evolution equation is discretized as follows:
+
+is the value of at grid point , is the value of at the point where the particle comes from,
+
+is the value of at the mid-point between and . Superscripts , and refer to time levels. This
+
+method needs the interpolation of  at point  and  at point .
+
+5.5 (b)  Method avoiding one interpolation (Ritchie 1986).
+
+We define point  as the closest grid point to  and  as the mid-point between  and . We can write
+
+where  and  are the components of vector .
+
+The method consists in a semi-Lagrangian treatment of the advection by the wind , the advection by the
+
+residual wind being incorporated into the non-linear part of the right-hand side. This discretization reads:
+
+This method avoids the interpolation at point , and the residual interpolation at the point is very simple due
+
+to the three possible locations shown in Fig. 9 . The damping, on the other hand, is reduced due to the lack of in-
+
+terpolation at the departure point.
+
+ϕ �
+ϕ � 1+
+
++
+
++x
+
+1 � � �, ,( )
+
+∂1
+∂ �------- 5
+
+∂1
+∂
+�------- S ∂1
+
+∂�-------+ +
+� 1 ��1( )+⋅=
+
+� 1⋅ ��1( )
+
+d1
+d
+�-------- ∂1∂ �------- 5
+
+∂1
+∂
+�------- S ∂1
+
+∂�-------+ +≡
+
+1 GE ∆ E+ 1 OE ∆– E–
+2∆ �-----------------------------------
+
+� 1 GE ∆ E+ 1 OE ∆– E+
+2
+
+----------------------------------- ��1 E( ){ }I+⋅=
+
+1 G 1 G 1 O 1 O 1 I
+1 O G � � ∆ �– � ∆ �+
+
+1 E ∆ E– O 1 E G
+
+O′ O I′ O′ G
+
+5 5 * 5 ′ S+ S * S ′+= =
+2 5 *∆ � 2 S *∆ � O′G
+
+5 * S *,( )
+5 ′ S ′,( )
+
+1 GE ∆ E+ 1 O ′E ∆– E–
+2∆ �-----------------------------------
+
+� 1 GE ∆ E+ 1 O ′E ∆– E+
+2
+
+----------------------------------- ��1 E( ){ }I ′ 5 ′∂1∂�-------
+S ′∂1∂�-------+   I ′
+
+E
+–+⋅=
+
+O I′
+
+
+
+Numerical methods
+
+54 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  9. Location of the points where the interpolation is performed for quasi-Lagrangian techniques.
+
+5.5 (c)  Method without any interpolation interpolation .
+
+One supplementary simplification can be achieved by evaluating the non-linear terms by taking the average at time
+
+ between their values at grid points  and .
+
+5.5 (d)  Method used at ECMWF.
+
+Figure  10: 12-point interpolation used in the horizontal at ECMWF
+
+At ECMWF the method of Robert is used with cubic Lagrange polynomials and quasi-monotone limiter. In order
+
+to reduce the cost of the interpolation, the interpolation in longitude at the rows not immediate adjacent to the de-
+
+parture point O is done linearly (singly underlined points in Figure 10). The procedure is as follows and is valid for
+
+a reduced Gaussian grid to be described later. The longitude and latitude of the departure point O is found (see lat-
+
+er). At each of the two rows of grid-points second nearest neighbours to the departure point, linear interpolations
+
+�
+G O′
+
+��1 E( ){ }I ′ 5 ′∂1∂�-------
+S ′∂1∂�-------+   I ′
+
+E
+–
+
+1
+2
+--- ��1 E( )( )
+
+G
+��1 E( )( )O ′+=
+
+5 ′∂1∂�-------
+S ′∂1∂�-------+   G
+
+E
+– 5 ′∂1∂�-------
+
+S ′∂1∂�-------+   O ′
+E
+
+–+
+
+x x x x x x x
+
+xx x x x x x x
+
+xx
+
+xxxxx x
+
+x
+
+x
+
+xxxx
+
+G
+
+O
+
+λ
+
+θ
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 55
+
+are performed to the longitude of the departure point. At the nearest neighboring grid point rows, cubic quasi-mon-
+
+otone interpolations are performed to the same longitude. Finally a quasi-monotone cubic interpolation in latitude
+
+is performed using the 4 interpolated values. In the vertical a similar procedure is followed: at each nearest neigh-
+
+boring level to the departure point a 12-point interpolation is performed and at the second nearest neighbouring
+
+levels a bilinear interpolation is done. Finally a quasi-monotone (or standard, depending of the variable to be inter-
+
+polated) cubic interpolation is done in the vertical direction. A total of 32 points are used then for each three-di-
+
+mensional interpolation.
+
+5.6  Stability on the shallow water equations
+
+We can perform the stability analyses of the three methods, as applied to the shallow water equations, in a form
+
+exactly similar to the way we did it in the Eulerian case. We are not going to follow the procedure again but instead
+
+we present the results on stability and dispersion characteristics of the three schemes.
+
+(a) For the Robert scheme the stability criterion is
+
+as long as the interpolation is done by using the grid point values around the origin point, and the
+
+adjustment terms are treated implicitly.
+
+(b) The Ritchie scheme leads to a stability criterion for the advective part of
+
+which is analogous to the one we obtained with the semi-implicit scheme replacing and by
+
+the residual velocity . This relationship can be shown to be always true, due to the way in
+
+which the residual velocity was defined.
+
+(c) The stability criterion of the fully non-interpolating scheme is completely analogous to the former
+
+one.
+
+The dispersion is given in Fig. 11 as a function of for the analytical slow solution in the one
+
+dimensional case.
+
+	 2∆ � 2 1<
+
+&a5 ′ � S ′+( )∆ � 1≤
+5 O S O
+
+5 ′ S ′,( )
+
+H αnumerical
+αanalytical
+--------------------≡ 2 5 O ∆
+
+�
+∆
+�-------
+
+
+
+Numerical methods
+
+56 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  11. Effect of time integration on the slow wave for various values of the wavelength.
+
+5.7  Computation of the trajectory
+
+The computation of the departure point for a parcel of air arriving at a grid-point G at time can be done by
+
+solving the vector semi-Lagrangian equation defining the velocity of the parcel
+
+� ∆ �+
+
+�
+d
+dr V=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 57
+
+The cedntered discretization of this equation in a three-time-level scheme is
+
+where is the arrival position vector of point G (the grid-point where the parcel arrives at time ),
+
+is the position vector of the departure point O (where the parcel was at time ) and is the velocity vector
+
+at the present time at the middle of the trajectory. In plane geometry the trajectory is asumed to be a straight line
+
+(velocity constant during the interval ). Now, the position of the middle of the trajectory depends
+
+on the position of the departure point, which is what we try to determine with this equation, therefore the equation
+
+is an implicit equation and has to be solved by an iterative method, depicted in Fig. 12
+
+Figure  12: Iterative trajectory computation
+
+In the first iteration, we take the velocity at the arrival point G. Using this velocity we go backwards a distance
+
+to reach point O1, this is the first guess of our departure point. Then we take the point M1 midway between
+
+points G and O1 and interpolate the velocity at the present time to that point. Using that velocity we go back
+
+from G a distance to point O2 and repeat the procedure until it converges. At ECMWF only three iterations
+
+are done and no test of convergence is performed.
+
+In spherical geometry the trajectory is asumed to be an arc of a great circle instead of a straight line, which com-
+
+plicates somewhat the computations but the idea remains the same. Also in spherical geometry one has to take into
+
+account that the interpolated wind components refer to a local frame of reference pointing to the local North and
+
+East and, in order to use the interpolated values at grid point G, they have to be “rotated”.
+
+In order to have an idea about the convergence of the iterative procedure just described, let us apply this procedure
+
+to the computation of the semi-Lagrangian trajectory in one dimension. For the shake of simplicity we will consider
+
+a two-time-level scheme and use the velocities only at the departure point instead of interpolating them at the mid-
+
+dle of the trajectory. At the n’th iteration the departure point  is computed as
+
+rt ∆t+ rE ∆ E––
+2∆ �------------------------------- V
+
+E=
+
+rE ∆ E+ � ∆ �+ rE ∆ E–� ∆ �– VE�
+� ∆ � � ∆ �+→–
+
+x x x x x
+
+x x x x x
+
+x x x x x
+
+x x x x x
+
+x x x x x
+
+G
+
+O1
+
+O2
+
+M1
+
+V0V1
+
+V0
+2V0∆
+
+�
+V1
+
+2V1∆
+�
+
+r+ 1+
+r + 1+ b ∆ �TS +–=
+
+
+
+Numerical methods
+
+58 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Now assume that V varies linearly between grid-points
+
+then
+
+For the iterative procedure to converge, this equation must have a solution of the form
+
+Substituting we get
+
+therefore for convergence we must have
+
+This condition means that the parcels do not overtake eachother during the interval and is much less restrictive
+
+than the CFL stability limit. Also it does not depend on the mesh size.
+
+5.8  Two-time-level schemes
+
+A centered discretization (second order accurate in space and time) of the general semi-Lagrangian equation
+
+using only two time levels is
+
+where R has to be extrapolated in time before being interpolated to the middle point of the trajectory
+
+An alternative second-order accurate scheme can be developed from a Taylor series expansion in the semi-Lagrang-
+
+ian sense arround the departure point of the trajectory
+
+S 
+ � r+ �⇒
+r∂
+
+∂S= =
+
+r + 1+ b 
+ ∆ �– � r+ ∆ �–=
+
+r+ λ+ � λ 1<( );+=
+
+�
+= b 
+ ∆
+
+�
+–
+
+1 � ∆ �+--------------------
+λ= � ∆ �–
+
+∆ � 1�------<
+
+∆ �
+
+�
+d
+dX R=
+
+XY E ∆ E+ X ZE–
+∆ �---------------------------- R %
+
+E ∆ E
+2
+
+------+
+
+=
+
+R
+E ∆ E
+
+2
+------+ 3
+
+2
+---RE 1
+
+2
+---RE ∆ E––≈
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 59
+
+Notice that the time level and the position in the trajectory are consistent as requested in the Lagrangian point of
+
+view. Here subindex AV means some average value along the trajectory.
+
+In the case of the computation of the trajectory, X is the position vector of the parcel of air and this equation is the
+equation of a uniformly accelerated movement with initial velocity and acceleration .
+
+The trajectory can not any more be considered as a straight line in this case and the middle point of the trajectory
+
+is not half way between the arrival and the departure points.
+
+Now, substituting  by  and  by  we get
+
+(65)
+
+and  needs to be evaluated. This is done at ECMWF as
+
+which is not strictly compatible with the Lagrangian point of view because it uses values at time t at the arrival
+
+point of the trajectory and values at time at the departure point of the present trajectory which runs between
+
+times t and . It is therefore only an approximation.
+
+With this choice, Eq. (65) becomes
+
+and the computation of the trajectory
+
+6. THE SPECTRAL METHOD
+
+6.1  Introduction
+
+When using finite difference techniques for evolutionary problems, we only consider grid-point values of the de-
+
+pendent variables; no assumption is made about how the variables behave between grid points. An alternative ap-
+
+proach is to expand the dependent variables in terms of a finite series of smooth orthogonal functions. The problem
+
+is then reduced to solving a set of ordinary differential equations which determine the behaviour in time of the ex-
+
+pansion coefficients.
+
+As an example consider the linear one-dimensional evolutionary problem
+
+XY E ∆ E+ X ZE ∆ � �
+d
+dX
+
+ 
+  Z
+
+E ∆ �( )2
+2
+
+------------- � 2
+2
+
+d
+
+d X
+
+ 
+ 
+ 
+
+Ydc+ +=
+
+ X/  �( ) ZE  2X/  � 2( )Y<c
+
+ X/  �( ) ZE R ZE 8egf7h� � e( )Ydc  R/  �( )Ydc
+
+XY E ∆ E+ X ZE ∆ � R ZE ∆
+�( )2
+2
+
+------------- �
+d
+dR
+
+ 
+  Ydc+ +=
+
+ R/  �( )Ydc
+
+�
+d
+dR
+
+ 
+  Ydc
+
+RY E R ZE ∆ E––
+∆ �----------------------------≈
+
+� ∆ �–� ∆ �+
+
+XY E ∆ E+ X ZE ∆
+�
+
+2
+------ RY E 2RE RE ∆ E––{ } Z+( )+=
+
+rY E ∆ E+ r ZE ∆
+�
+
+2
+------ VY E 2V E VE ∆ E––{ } Z+( )+=
+
+
+
+Numerical methods
+
+60 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(66)
+
+where is a linear differential operator. Expanding in terns of a set of orthogonal functions
+
+ we have
+
+(67)
+
+The are the expansion coefficients whose behaviour we want to determine. We now use the procedure outlined
+
+earlier in Subsection 1.4—that is we minimise the integral of the square of the residual caused by using the approx-
+
+imate solution (67) in the original equation (66) (alternatively we could use the Galerkin method with the expansion
+
+functions as test functions). Since the expansion functions are orthonormal we have
+
+where  is the complex conjugate of . Using this condition we get
+
+(68)
+
+That is, we have a set of ordinary differential equations for the rate of change with time of the expansion coeffi-
+
+cients.
+
+It is now interesting to consider how our choice of expansion functions can greatly simplify the problem
+
+(a) If the expansion functions are eigenfunctions of we have , where the are the
+
+eigenvalues; (68) then becomes
+
+and the equations have become decoupled.
+
+(b) If the original equation is
+
+where is a linear operator, then our problem is simplified by using expansion functions that are
+
+eigenfunctions of  with eigenvalues ; we then have
+
+∂ϕ
+∂ �------ H ϕ( )=
+
+H ϕ
+��� �( ) �, � 1 … � 2,=
+
+ϕ ϕ� �( ) ��� �( )�∑=
+
+ϕ�
+
+���* ��� �d
+0
+
+*
+∫
+
+1 $ �=
+0 $ �≠
+
+
+=
+
+���* ���
+
+dϕ�
+d
+�---------- ϕ�W���* H ���( ) � for all �d
+
+0
+
+*
+∫�∑=
+
+H H ���( ) λ�i���= λ �
+
+dϕ�
+d
+�-------- λ � ϕ�=
+
+L
+∂ϕ
+∂ �------   H ϕ( )=
+
+L
+
+L λ�
+
+λ� dϕ�
+d
+�---------- ϕ �j���* H ���( ) �d
+
+0
+
+*
+∫�∑=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 61
+
+6.2  The one-dimensional linear advection equation
+
+It is convenient to write the advection equation in terms of the longitude and the angular velocity
+
+.
+
+(69)
+
+with boundary conditions: , and initial conditions: . For
+
+any reasonable function  the analytical solution to (69) is
+
+If we are going to use the approach outlined in Subsection 6.1, we must choose suitable expansion functions. The
+
+obvious choice is the finite Fourier series
+
+(70)
+
+because the expansion functions are then eigenfunctions of the differential space operator. Here is the maximum
+
+wave number and the are the complex expansion coefficients. Since we need only be con-
+
+cerned with  for , rather than the full set of expansion coefficients.
+
+We should now use the Galerkin method, but for this simple problem it is sufficient to substitute (70) in (69) and
+
+equate coefficients of the expansion functions. This yields (as does the formal Galerkin method)
+
+(71)
+
+giving  equations for the 's. For this particular case (71) can be integrated exactly to give
+
+(72)
+
+If  is also represented by a truncated Fourier series the complete solution is
+
+which is the same as the exact solution. There is no dispersion due to the space discretization, unlike in the finite
+
+differences method. This fact is due to the space derivatives being computed analytically while they were approx-
+
+imated in the finite difference method.
+
+The expression (72) can be represented graphically as a vector in the complex plane rotating anticlockwise with a
+
+constant angular velocity .
+
+Scalarly multiplying Eq. (70) by each of the basis functions and using the orthogonality property of the Fourier
+
+basis we get at the initial time
+
+(73)
+
+where Am are the normalization factors (which is known as the direct Fourier transform).
+
+λ 2π
+�k�
+
+⁄=
+γ 2π � 0 �⁄=
+
+∂ω
+∂ �------- γ
+
+∂ω
+∂λ
+-------+ 0 ω 2π�------ �= =
+
+ω λ �,( ) ω λ 2πC �,+( ) for integer C= ω λ 0,( ) 	 λ( )=
+	 λ( ) ω λ �,( ) 	 λ γ �–( )=
+
+ω λ �,( ) ω� �( ) i � λ[ ]exp� %–=
+
+%
+∑≈
+
+&
+ω� ω �– �( ) ω�* �( )=
+
+ω� 0 � &≤ ≤
+
+dω�
+d
+�----------- i � γ ω�+ 0 0 � &≤ ≤=
+
+2 & 1+ ω�
+
+ω� �( ) ω� 0( ) i � γ �[ ]exp=
+
+	 λ( )
+
+ω λ �,( ) 
+ � i � λ γ �–( )[ ] where 	 λ( )exp�∑
+
+ � i � λ[ ]exp�∑= =
+
+� γ /2π
+
+ω � 0( ) M � ω λ 0,( ) # � λ–[ ]exp λ
+0
+
+2π
+
+∫=
+
+
+
+Numerical methods
+
+62 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+At any future time we can apply Eq. (70) to get the space distribution of the solution. This is normally known as
+
+inverse Fourier transform.
+
+In the practice the initial conditions can be given in the form of grid-point data ( points with spacing
+
+say). Therefore, we think of the truncated Fourier series as representing an interpolating function which exactly fits
+
+the values of  at the  grid points. Eq. (73) then has to be computed as a discrete sum
+
+(74)
+
+which is known as discrete direct Fourier transform. The corresponding discrete inverse Fourier transform is
+
+(75)
+
+Both of them can be computed with the Fast Fourier Transform (FFT) algorithm. It can be shown that, starting from
+
+the set of , going to the set and returning to we recover exactly the original
+
+values (the transforms are exact) as long as and the points are equally spaced in . This distribution
+
+of points with is known as the linear grid. On the other hand it can be shown also that the product
+
+of two functions can be computed without aliassing by the transform method of transforming both functions to
+
+grid-point space, multiplying together the functions at each grid-point and transforming back the product to Fourier
+
+space, as long as . The distribution of points for which is known as the quadratic grid.
+
+Having derived the initial conditions in terms of the spectral coefficients we must now integrate the ordinary dif-
+
+ferential equations for the expansion coefficients at some future time. Normally this has to be done using a time-
+
+stepping procedure such as the leapfrog scheme, i.e.
+
+This scheme is stable provided for all ; but since the maximum value of is we require
+
+. In terms of the original grid, giving —hence there is stability provided
+
+. This shows that the stability criterion is more restrictive than for conventional explicit finite difference
+
+schemes. However, the spectral scheme has the great advantage that it has only very small phase errors which are
+
+not significant even for two gridlength waves.
+
+Table 1 shows how and vary with when . The results of using the spectral method on the
+
+test problems described in Subsection 2.6 are given in Figs. 5 and 6 . Note the impressive characteristics and results
+
+of the spectral model.
+
+If we start the spectral method from a grid-point distribution and use the value of M which corresponds to the quad-
+
+ratic grid, Eq. (74) gives us a number of degrees of freedom smaller than the original number of degrees of freedom
+
+and therefore upon return to grid-point space by means of Eq. (75) we may not recover the original information.
+
+The resulting “fitted” function displays what is known as spectral ripples. This does not happend with the linear
+
+grid in which the number of degrees of freedom in Fourier space is the same as the number of degrees of freedom
+
+in grid-point space. To illustrate this point Fig. 13 shows a function composed of several abrupt steps and the result
+
+of transforming it to Fourier space and back to grid-point space using a spectral truncation for which the grid-point
+
+distribution corresponds either to the linear or the quadratic grid for that spectral truncation.
+
+� 1+ ∆�
+
+ω � 1+
+
+ω� 0( ) M '� ω λ"( ) # � λ"–[ ]exp" 1=
+
+l
+∑=
+
+ω λ " 0,( ) ω � 0( ) # � λ"[ ]exp� %–=
+
+%
+∑=
+
+ω� 0( ) ω λ " 0,( ) i=1, .....,K; ω� 0( )� 2 & 1+≥ λ� 2 & 1+=
+
+� 3 & 1+≥ � 3 & 1+=
+
+dω �
+d
+�----------- = � becomes ω �+ 1+ ω �+ 1– 2∆ � = �++= =
+
+� γ∆ � 1≤ � � &
+& γ∆ � 1≤ � 2 & ∆�= γ π � 0 & ∆�⁄=
+α 1 π⁄≤
+
+G H $ α 0.5 1 π⁄( )×=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 63
+
+Figure  13: Step functions spectrally fitted using the quadratic and the linear grids
+
+6.3  The non-linear advection equation
+
+(76)
+
+If we again use the truncated Fourier series (70), the right-hand side of (76) becomes
+
+Similarly the left-hand side of (76) is written as
+
+Since the series on either side of (76) are truncated at different wave numbers, there will always be a residual .
+
+Using the Galerkin method (the least squares gives the same result) we now choose the time derivaties subject to
+
+the condition
+
+Unfitted
+function
+
+Fitted with
+quadratic
+grid
+
+Fitted with
+linear grid
+
+∂ω
+∂ �------- ω
+
+∂ω
+∂λ
+-------–=
+
+= = � i � λ[ ] where = �exp� 2 %–=
+2 %
+∑ i � � ′–( )ω� ′� ′ �m%–=
+
+%
+∑–= = ω ��� ′– for � 0≥
+
+∂ω
+∂ �-------
+
+dω�
+d
+�----------- i � λ[ ]exp� %–=
+
+%
+∑=
+
+�
+
+�
+i � λ–[ ]exp
+
+0
+
+2π
+
+∫ dλ 0 for all �=
+
+
+
+Numerical methods
+
+64 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+It can be shown that this yields
+
+(77)
+
+Thus, the Fourier components with wave numbers larger than are simply neglected. This means that there
+
+is no aliasing of small-scale components outside the original truncation and, hence, no non-linear instability.
+
+In practice there are two approaches to the problem of calculating non-linear terms in the context of the spectral
+
+method—using interaction coefficients or the transform method
+
+(a) Interaction coefficients.
+
+An alternative way of expressing (77) is
+
+where the are the interaction coefficients. If there are only a small number of possible waves,
+
+then it is possible to calculate and store the interaction coefficients. However, for most problems
+
+this is not possible and so the transform method is used for calculating the non-linear terns.
+
+(b) Transform method.
+
+Using Fast Fourier Transforms (FFTs) it is easy to move from the spectral representation (spectral
+
+space) to a grid-point representation (physical space). Therefore, the essence of the transform
+
+method is to calculate derivatives in spectral space, but to transform to physical space using FFTs
+
+whenever a product is required. Once all the products have been computed at grid points, the
+
+spectral coefficients of this product field are calculated—that is we use FFTs to return to spectral
+
+space. Now, consider how we apply this to the non-linear advection equation.
+
+Given the we want to compute the spectral coefficients of the non-linear term (i.e. the
+
+ on the right-hand side of (77)). The following three steps are required to do this:
+
+(i) Calculate  and  at grid points  by using the spectral coefficients
+
+(ii) Calculate the advection term at each grid point in physical space
+
+(iii) Return to spectral space by calculating the Fourier coefficients
+
+In practice this procedure has to be employed to calculate the spectral coefficients of the non-linear
+
+term at every time level. As the product of the two functions is computed in grid-point space and
+
+dω�
+d
+�----------- = � & � &≤ ≤–=
+
+= � &
+
+dω�
+d
+�----------- i $ ω B ω� i 3 λ[ ] i $ λ[ ] i � λ–[ ]expexpexp λd∫�∑B∑–=
+
+iωB ω � � Bn���, , where � BF���, ,�∑B∑–
+$ i 3 λ[ ] i $ λ[ ] i � λ–[ ]expexpexp λd∫= =
+
+� BF���, ,
+
+ω � ω∂ω∂λ-------–= �
+ω
+
+G ∂ω
+∂λ
+-------= λ �
+
+ω λ �( ) ω� i � λ �[ ] G λ �( )exp�∑ i
+� ω � i � λ �[ ]exp�∑= =
+
+=
+λ �( ) ω λ �( ) G λ �( )–=
+
+= � 1
+2π
+------
+
+=
+λ �( ) i � λ �–[ ]exp�∑=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 65
+
+not in spectral space, we get aliassing unless the number of grid-points corresponds to the quadratic
+
+grid. Even so, products of more than two functions will still have aliassing.
+
+6.4  The one-dimensional gravity wave equations
+
+Since these equations are linear, they can be dealt with in the same way as the linear advection equation described
+
+in Subsection 6.2. Writing the gravity wave equations in terms of the longitude  gives
+
+where  is the angular velocity . Using
+
+it is found that the Galerkin procedure gives
+
+Therefore, with centred time differences, the time stepping algorithms for the Fourier coefficients are
+
+Therefore, since our original equations were linear, the complete integration can be carried out in spectral space.
+
+6.5  Stability of various time stepping schemes
+
+6.5 (a)  The forward time scheme.
+
+(i) Linear advection equation
+
+Using von Neumann we find
+
+similar to the FTCS scheme and always unstable as .
+
+(ii) Gravity wave equations
+
+λ 2π
+�k�
+
+⁄=
+
+∂ω
+∂ �------- �
+
+∂ �
+∂λ
+------+ 0
+
+∂ �
+∂ �------
+
+� ∂ω
+∂λ
+-------+ 0= =
+
+ω 2π � �⁄
+
+ω λ �,( ) ω� �( ) i � λ[ ] � λ �,( ) �8� �( ) i � λ[ ]exp� %–=
+
+%
+∑=exp� %–=
+
+%
+∑=
+
+dω�
+d
+�----------- i � �.�<�+ 0 d �<�
+
+d
+�---------- i � � ω�+ 0==
+
+ω�+ 1+ ω�+ 1– 2i � ∆ � �.�<�+–=
+�<�+ 1+ �<�+ 1– 2i � ∆ � � ω �+–=
+
+ϕ �+ 1+ ϕ�+–
+∆ �-------------------------- 5 0i
+
+� ϕ�+–=
+
+λ 1 i � 5 0∆ �–=
+
+λ 1>
+
+
+
+Numerical methods
+
+66 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+: always unstable.
+
+6.5 (b) The leapfrog time scheme.
+
+(i) Linear advection equation
+
+: if , but otherwise. Therefore the
+
+scheme is conditionally stable and neutral, but the stability criterion is more restrictive than using
+
+finite differences as already stated in Subsection 6.2.
+
+(ii) Gravity-wave equations
+
+: if , but otherwise, and the
+
+stability condition for the scheme to be neutral is more restrictive than in finite differences.
+
+The leapfrog scheme can be represented graphically as follows:
+
+from which it is clear that if is too large can not stay in the circle and therefore its modulus will
+
+increase unlike in the analytical solution.
+
+6.5 (c) Implicit centred scheme.
+
+� �+ 1+ � �+–
+∆ �-------------------------- � i
+
+� � �+–=
+�<�+ 1+ �<�+–
+
+∆ �--------------------------
+�
+
+i � � �+–=
+
+λ 1 i � � � ∆ � λ 1>→±=
+
+ϕ�+ 1+ ϕ�+ 1––
+2∆ �------------------------------- 5 0i
+
+� ϕ �+–=
+
+λ 1 5 02 � 2 ∆ �( )2– i 5 0 � ∆ �–±= λ 1= 5 0 � ∆ � 1≤ λ 1>
+
+� �+ 1+ � �+ 1––
+2∆ �------------------------------- � i
+
+� �<�+–=
+�<�+ 1+ �<�+ 1––
+
+2∆ �-------------------------------
+�
+
+i � � �+–=
+
+λ 1 � � � 2 ∆ �( )2– i � � � ∆ �–±= λ 1= � � � ∆ � 1≤ λ 1>
+
+ω � �( )
+
+ω� � ∆ �–( )ω� � ∆ �+( )
+
+2∆ � �∂
+∂ω�
+
+∆ � ω� � ∆ �+( )
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 67
+
+(i) Linear advection equation
+
+: always neutral
+
+(ii) Gravity wave equations
+
+: always neutral.
+
+6.5 (d) Shallow water equations.
+
+(i) Explicit scheme
+
+Asume a solution of the form
+
+Substituting we get
+
+ϕ �+ 1+ ϕ�+ 1––
+2∆ �------------------------------- i
+
+� 5 0
+2
+
+------- ϕ�+ 1+ ϕ �+ 1–+( )–=
+
+λ2 1 i � 5 0∆ �–( ) 1 i � 5 0∆ �+( )⁄ λ→ 1= =
+
+� �+ 1+ � �+ 1––
+2∆ �------------------------------- i
+
+� �
+2
+--- �<�+ 1+ �<�+ 1–+( )–=
+
+�<�+ 1+ �<�+ 1––
+2∆ �------------------------------- i
+
+� �
+2
+----- � �+ 1+ � �+ 1–+( )–=
+
+λ2 1 i � ∆ � � �–( ) 1 i � ∆ � � �+( )⁄ λ→ 1= =
+
+          Non-linear equations Linearized version
+
+∂ �
+∂ �------ �
+
+∂ �
+∂
+�------ I ∂ �
+
+∂�------ 	 I–
+∂ϕ
+∂
+�------+ + + 0= ∂ � ′∂ �-------- 5 0
+
+∂ � ′
+∂
+�-------- S 0∂ � ′∂�-------- 	 0 I ′–
+
+∂ϕ′
+∂
+�--------+ + + 0=
+
+∂ I
+∂ �------ �
+
+∂ I
+∂
+�------ I ∂ I
+
+∂�------ 	 �
+∂ϕ
+∂�------+ + + + 0=
+
+∂ I ′
+∂ �-------- 5 0
+
+∂ I ′
+∂
+�-------- S 0∂ I ′∂�-------- 	 0 � ′
+
+∂ϕ′
+∂
+�--------+ + + + 0=
+
+∂ϕ
+∂ �------ �
+
+∂ϕ
+∂
+�------ I ∂ϕ
+
+∂�------ ϕ
+∂ �
+∂
+�------ ∂ I
+
+∂�------+  + + + 0=
+∂ϕ′
+∂ �-------- 5 0
+
+∂ϕ′
+∂
+�-------- S 0∂ϕ′∂�-------- Φ0
+
+∂ � ′
+∂
+�-------- ∂ I ′
+
+∂�--------+  + + + 0=
+
+� ′ � 0 i α � � � ? �+ +( )[ ]exp=
+I ′ I 0 i α � � � ? �+ +( )[ ]exp=
+ϕ′ ϕ0 i α
+
+� � � ? �+ +( )[ ]exp=
+
+� 0 iα∆
+�[ ] iα∆ �–[ ]exp–exp
+
+2∆ �-------------------------------------------------------------- i
+� 5 0 � 0 i ? S 0 � 0 	 0 I 0– i � ϕ0+ + + 0=
+
+I 0 iα∆
+�[ ] iα∆ �–[ ]exp–exp
+
+2∆ �-------------------------------------------------------------- i
+� 5 0 I 0 i ? S 0 I 0 	 0 � 0 i ? ϕ0+ + + + 0=
+
+ϕ0
+iα∆ �[ ] iα∆ �–[ ]exp–exp
+
+2∆ �-------------------------------------------------------------- i
+� 5 0ϕ0 i ? S 0ϕ0 iΦ0 � � 0 ? I 0+( )+ + + 0=
+
+
+
+Numerical methods
+
+68 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+i.e.
+
+where
+
+Projecting  on the eigenvectors  of matrix , for which
+
+i.e.
+
+We obtain three vector equations
+
+the most restrictive of the three is when
+
+which gives the stability condition that
+
+The values for the atmosphere of these quantities are ; ;
+
+. For a model representing waves down to a wavelength of ~380 km,
+
+which gives for  a value of ~4 min
+
+(ii) Semi-implicit scheme
+
+� 0 1∆ �------ α∆
+�( )sin � 5 0 � 0 ? S 0 � 0 i 	 0 I 0 � ϕ0+ + + + 0=
+
+I 0 1∆ �------ α∆
+�( )sin � 5 0 I 0 ? S 0 I 0 i	 0– � 0 ? ϕ0+ + + 0=
+
+ϕ0
+1
+
+∆ �------ α∆
+�( )sin � 5 0ϕ0 ? S 0ϕ0 Φ0 � � 0 ? I 0+( )+ + + 0=
+
+1
+∆ �------ α∆
+
+�( )sin Z � 5 0 ? S 0+( )Z HZ++ 0=
+
+Z � 0 I 0 ϕ0, ,( ) and H
+0 i 	 0 �
+i 	 0– 0 ?
+
+Φ0
+� Φ0 ? 0
+
+= =
+
+Z X H
+
+HX λX H Iλ–( )X⇒ 0 λ3 Φ0γ
+� 2– Φ0λ ? 2– λ 	 02–⇒ 0= = =
+
+λ1 0=
+
+λ2 Φ0
+� 2 ? 2+( )– 	 02– 0 λ2 3,⇒ 	 02 Φ0 � 2 ? 2+( )+±= =
+
+1
+∆ �------ α∆
+
+�( )Y 5 0 � S 0 ?+( )Y λ " Y++sin 0=
+α∆ �( )sin⇒ ∆ � 5 0 � S 0 ? λ"+ +( )– 1≤=
+
+λ" 	 02 Φ0 � 2 ? 2+( )++=
+
+∆ � 1
+5 0& S 0 � 	 02 Φ0 � 2 ? 2+( )++ +
+--------------------------------------------------------------------------------------- &≤ max �( ) � max ?( )= =
+
+Φ0 9 10
+4m2/s2⋅≈ 5 0 20m/s≈
+
+	 0 10 4– s 1–≈
+& � 2.65 10 6–× m 1–∼= ∆ �
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 69
+
+i.e.
+
+where
+
+Continuing as above, the eigenvalues  of  are given by
+
+i.e.
+
+Hence
+
+If  this gives:
+
+The function on the left hand side has a maximum negative value when , in
+
+which case there is a real solution for
+
+� 0 iα∆
+�[ ]exp i∆ �–[ ]exp–
+2∆ �---------------------------------------------------------- i
+
+� 5 0 � 0 i ? S 0 � 0 	 0 I 0– i � ϕ0 iα∆
+�[ ] α∆ �–[ ]exp+( )exp
+
+2∆ �------------------------------------------------------------------+ + + 0=
+
+I 0 iα∆
+�[ ] i∆ �–[ ]exp–exp
+2∆ �---------------------------------------------------------- i
+
+� 5 0 I 0 i ? S 0 I 0 	 0 � 0 i ? ϕ0 iα∆
+�[ ] α∆ �–[ ]exp+( )exp
+
+2∆ �------------------------------------------------------------------+ + + + 0=
+
+ϕ0
+iα∆ �[ ] i∆ �–[ ]exp–exp
+
+2∆ �---------------------------------------------------------- i
+� 5 0ϕ0 i ? S 0ϕ0 iΦ0 � � 0 ? I 0+( ) iα∆
+
+�[ ] α∆ �–[ ]exp+( )exp
+2∆ �------------------------------------------------------------------+ + + 0=
+
+i � 0
+∆ �-------- α∆
+
+�( ) i � 5 0 � 0 i ? S 0 � 0 	 0 I 0– i � ϕ0 α∆ �( )cos+ + +sin 0=
+i I 0
+∆ �------- α∆
+
+�( ) i � 5 0 I 0 i ? S 0 I 0 	 0 I 0 i ? ϕ0 α∆ �( )cos+ + + +sin 0=
+iϕ0
+∆ �------- α∆
+
+�( ) i � 5 0ϕ0 i ? S 0ϕ0 iΦ0 � � 0 ? I 0+( ) α∆ �( )cos+ + +sin 0=
+
+α∆ �( )sin
+∆ �-----------------------Z 5 0
+
+� S
+0 ?+( )Z HZ++ 0=
+
+Z � 0 I 0 φ0, ,( ) H
+0 i 	 0 � α∆ �( )cos
+i 	 0– 0 ? α∆ �( )cos� Φ0 α∆ �( )cos ? Φ0 α∆ �( )cos 0
+
+= =
+
+λ H
+
+λ3 Φ0λ
+� 2 ? 2+( ) 2 α∆ �( ) λ 	 02–cos– 0=
+
+λ 0=
+
+λ2 Φ0
+� 2 ? 2+( ) 2 α∆ �( ) 	 02–cos– 0 λ⇒ 	 02 Φ0 � 2 ? 2+( ) 2 α∆ �( )cos+±= =
+
+α∆ �( ) ∆ � 	 02 Φ0 � 2 ? 2+( ) 2 α∆ �( )cos+ ∆ � 5 0 � S 0 ?+( )+ +sin 0=
+
+	 0 0=
+
+α∆ �( ) ∆ � α∆ �( )cos Φ0 � 2 ? 2+( )+sin ∆ � 5 0 � S 0 ?+( )–=
+
+∆ � Φ0 � 2 ? 2+( ) 1≤
+α
+
+
+
+Numerical methods
+
+70 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+If  the condition is less restrictive. The numerical phase speed is:
+
+while the analytical one is given by the same formula, but with the frequency  given by
+
+We can therefore compute the dispersion error
+
+6.6  The spherical harmonics
+
+When using spherical geometry it is natural to expand any dependent variable in terms of a truncated series of
+
+spherical harmonics
+
+(78)
+
+where is the longitude and . Again is the zonal wave number, now n the total wavenumber
+
+and  represents the effective meridional wave number. In (78) we can choose the truncation that we want.
+
+(a) If the truncation is described as triangular (a model with this truncation and is
+
+said to be a T40 model).
+
+(b) For rhomboidal truncation .
+
+The reason for these descriptions becomes apparent when we plot a diagram of permissible values of and for
+
+fixed ; such diagrams for are shown in Fig. 14 .
+
+∆ � 5 0 � S 0 ?+( ) 1 ∆ � 15 0 � S 0 ?+------------------------------≤⇒≤
+
+∆ � Φ0 � 2 ? 2+( ) 1>
+
+� num α� 2 ? 2+( )------------------------–=
+
+αanal
+
+αanal 1,
+� 5 0 ? S 0+( ) slow solution (or Rossby wave)–=
+
+αanal 2.3,
+� 5 0 ? S 0+( ) 	 02 Φ0 � 2 ? 2+( )+ fast solution (inertia–gravity waves)±–=
+
+H � num
+� anal-----------
+
+α
+αanal
+-----------= =
+
+ϕ
+
+ϕ λ µ �, ,( ) ϕ+�po +� λ µ,( )+ �=
+
+q
+∑
+
+ 
+ 
+ 
+
+� %–=
+
+%
+∑=
+
+λ µ latitude( )sin= �
+? �–
+
+r &= � 40=
+
+r & �+=
+? �
+
+& & 4=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 71
+
+Figure  14. Permissible vales of  and  for triangular and rhomboidal truncation.
+
+The spherical harmonics have the property that
+
+(79)
+
+where  is the Laplacian in spherical coordinates and  is the earth's radius. Another property is that
+
+where  is the associated Legendre polynomial of degree  and order , which may be computed as
+
+and are orthogonal:
+
+The space derivatives can be computed analytically as:
+
+and using the properties of the Legendre polynomial we have
+
+� ?
+
+∇2
+o +� ?s? 1+( )
+ 2---------------------
+
+o +�–=
+
+∇2 
+
+
+o +� λ µ,( ) t +� µ( ) i � λ[ ]exp=
+
+t +� ? �
+
+t +� µ( )= 2 ? 1+( ) ? �–( )!? �+( )!----------------------
+˜ 1
+
+2
++ ? !----------- 1 µ–
+
+2( )
+
+�
+2
+-----
+
+µ
++ �+
++ �+( )
+
+d
+
+d µ2 1–( )
++
+
+m 0≥;
+
+t + �– µ( )= t +� µ( )
+
+1
+2
+--- t +� µ( ) tvu� µ( ) µ
+
+1–
+
+1
+
+∫ δ+ u,=
+
+∂
+∂λ
+------
+o +� i � o +� � 0≥=
+
+
+
+Numerical methods
+
+72 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+For we use the fact that . With these relationships space derivatives can be calculated exactly
+
+leaving a set of ordinary differential equations for the time rate of change of the spherical harmonic coefficients
+
+.
+
+Normally we have to deal with non-linear terms in which two spherical harmonics interact to produce a third. Un-
+
+less the truncation is very severe the calculations are very time consuming. This problem can be overcome by the
+
+transform method introduced in section Subsection 6.3.
+
+(a) Starting in spectral space, the spectral coefficients are used to calculate the dependent variables on a
+
+latitude–longitude grid (inverse spectral transform). For a regularly spaced longitude grid with at
+
+least points and a specially chosen latitude grid (the Gaussian latitudes which are almost
+
+regularly spaced), the transformation can be done exactly.
+
+(b) The non-linear dynamics and physical process terms of each prognostic equation are calculated in
+
+real space.
+
+(c) The non-linear terms are transformed back to the spectral domain (direct spectral transform).
+
+In order to perform the spectral transforms it is convenient to introduce the Fourier coefficients
+
+Scalarly multiplying Eq. (78) by each of the spherical harmonics and making use of the orthogonality properties
+
+of both the Fourier basis functions and the Legendre polynomials, we get
+
+which is the direct spectral transform. This transform can be done by first performing the integral with respect to
+
+. This is a Fourier transform which will compute the Fourier coefficients. If the original function is given in a
+
+discrete set of longitude points, the transform is a discrete Fourier transform and, as discused earlier it is exact if
+
+the longitude points are equally spaced and its number is at least 2M+1.
+
+The integral with respect to the latitude can be performed from the Fourier coefficients by means of a Gaussian
+
+quadrature formula and it can be shown that this integral is exact if the latitudes at which the input data are given
+
+are taken at the points where
+
+(these are called the Gaussian latitudes) with . Furthermore products of two functions can be
+
+computed alias-free if the number of Gaussian latitudes is . The Gaussian latitudes are not
+
+equally spaced as the points to compute the discrete Fourier transforms but they are nearly so and therefore this
+
+1 µ2–( ) ∂∂µ
+------
+o +� ? ε+ 1+
+
+� o + 1+
+�
+
+– ? 1+( )ε+�po + 1–
+� � 0≥+=
+
+ε+� ?
+2 � 2–
+
+4 ? 1–( )-----------------------  
+  1 2⁄
+
+=
+
+� 0> o + �– o +�( )*=
+
+ϕ+�
+
+2& 1+
+
+ϕ� µ �,( ) 1
+2π
+------ ϕ λ µ �, ,( ) # � λ–[ ]exp λ
+
+0
+
+2π
+
+∫ ϕ+
+� �( ) t +� µ( )+ �=
+
+(
+∑= =
+
+ϕ +� �( ) 1
+4π
+------ ϕ λ µ �, ,( ) t +� µ( ) # � λ–[ ]exp λ µ
+
+0
+
+2π( )
+
+∫
+0
+
+1
+
+∫=
+
+λ
+
+t (xw0 µ( ) 0=
+
+�zy 2 & 1+( )/2≥
+�zy 3 & 1+( )/2≥
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 73
+
+spacing is approximately the same as the longitudinal spacing.
+
+The distribution of points allowing exact transforms is called the linear Gaussian grid and it has at least (2M+1)
+
+longitude points equally spaced at each of at least (2M+1)/2 Gaussian latitude rows. Products of two functions can
+
+be computed alias-free if we use a quadratic Gaussian grid which is made of at least (3M+1) equally spaced points
+
+in each of at least (3M+1)/2 Gaussian latitudes.
+
+The same distribution of grid-points of a Gaussian grid can represent a linear or a quadratic Gaussian grid depend-
+
+ing on the spectral truncation used in conjunction with that grid. As an example, the quadratic grid corresponding
+
+to a spectral truncation of T213 coincides with the linear Gaussian grid corresponding to the spectral truncation
+
+T319.
+
+Finally it should be noted that only true scalars should be represented by a series of spherical harmonics: hence
+
+when spectral methods are used, the primitive equations are put in their vorticity and divergence form, rather than
+
+in their momentum (u and v) form.
+
+6.7  The reduced Gaussian grid
+
+When using a regular Gaussian grid as described above, either a quadratic or a linear Gaussian grid, the number of
+
+longitude points per row of latitude is the same no matter how close we are to the pole. Therefore the geographycal
+
+distance between points of the same row decreases as we approach the poles and the resolution, which is nearly
+
+isotropic close to the equator becomes highly anisotropic close to the poles.
+
+The triangular truncation in spectral space is isotropic because the shortest wavelength representable (wavenumber
+
+n=M) is independent of the wave direction (given by the value of the zonal wavenumber m). On the other hand the
+
+amplitude of the associated Legendre polynomials is very small when m is large and approaches 1. This suggest
+
+the possibility of ignoring some of the values of m in the Fourier transforms at Gaussian latitudes approaching the
+
+poles. The number of longitude points needed to represent properly the retained wavelengths is then smaller and
+
+the distance between points decreases less dramatically than with the regular (or full) grid, resulting in a more iso-
+
+tropic resolution.
+
+The Gaussian grid resulting from these considerations is called the reduced Gaussian grid.
+
+In spherical geometry, even using the reduced linear Gaussian grid, the number of degrees of freedom in grid-point
+
+space is larger than the number of degrees of freedom in spectral space and therefore, if we start with the represen-
+
+tation of a field in grid-point space, go to spectral space and return to grid-point space, part of the degrees of free-
+
+dom in the initial data are lost and spectral or “Gibbs” ripples appear as a consequence of the spectral fitting.
+
+Nevertheless, the problem is less noticeable when using the linear Gaussian grid than when using the quadratic
+
+Gaussian grid because in the former the ratio between the number of degrees of freedom in grid-point space and in
+
+spectral space is closer to 1 than in the latter.
+
+6.8  Diffusion in spectral space
+
+The linear diffusion equation in two dimensions for a variable A is
+
+Transforming to spectral space and making use of the property of the spherical harmonics given by Eq. (79), we get
+
+µ
+
+�∂
+∂
+M � ∇2 M K 0>;=
+
+
+
+Numerical methods
+
+74 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Applying the leapfrog time discretization we get two solutions, the physical solution which is unconditionally sta-
+
+ble and a computational solution which is unconditionally unstable. If we apply a forward time-stepping scheme
+
+we get one solution which is conditionally stable. Finally if we apply a fully implicit (or backward) time-stepping
+
+scheme we get
+
+which is a decoupled system of equations and the scheme is unconditionally stable.
+
+There is no penalty for using an implicit time-stepping scheme because the basis functions are eigenfunctions of
+
+the equation operator. It is also straightforward to apply a superharmonic operator such as , or even with
+
+any integer value of m. It sufices to substitute in the solution  by .
+
+6.9  Advantages and disadvantages
+
+6.9 (a)  Advantages.
+
+(i) Space derivatives calculated exactly.
+
+(ii) Non-linear quadratic terns calculated without aliasing (if computed in spectral space or using the
+
+quadratic grid).
+
+(iii) For a given accuracy fewer degrees of freedom are required than in a grid-point model.
+
+(iv) Easy to construct semi-implicit schemes since spherical harmonics are eigenfunctions of the
+
+Helmholtz operator.
+
+(v) On the sphere there is no pole problem.
+
+(vi) Phase lag errors of mid-latitude synoptic disturbances are reduced.
+
+(vii) The use of staggered grids is avoided.
+
+6.9 (b)  Disadvantages.
+
+(i) The schemes appear complicated, though they are relatively easy to implement.
+
+(ii) The calculation of the non-linear terms takes a long time unless the transform method is used.
+
+(iii) Physical processes cannot be included unless the transform method is used.
+
+(iv) As the horizontal resolution is refined, the number of arithmetic operations increases faster in
+
+spectral models than in grid-point models due to the Legendre transforms whose cost increases as
+
+N3.
+
+(v) Spherical harmonics are not suitable for limited-area models.
+
+�∂
+∂
+M +� � ?s? 1+( )
+ 2---------------------
+
+M +�–=
+
+M +� � ∆ �+( ) M +� �( )–
+∆ �--------------------------------------------------
+
+� ?7? 1+( )
+--------------------- M +� � ∆ �+( )–=
+M +� � ∆ �+( )=
+
+M +� �( )
+1 ∆ � � ?7? 1+( )/ 
+ 2+---------------------------------------------------
+
+∇4 ∇2
+�
+
+?7? 1+( )/ 
+ 2 ?7? 1+( )/ 
+ 2( ) �
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 75
+
+6.10  Further reading
+
+The original version of this note is based mainly on a review article by Machenhauer on "The spectral method"
+
+which is Chapter 3 of GARP Publication Series No.17, Volume II. That article contains far more information than
+
+is in this note, except for the linear and the reduced Gaussian grids.
+
+7. THE FINITE-ELEMENT TECHNIQUE
+
+7.1  Introduction
+
+As with the spectral method, the finite element technique approximates the field of a dependent variable by a finite
+
+series expansion in terms of linearly independent analytical functions. This means that the dependent variable is
+
+defined over the whole domain rather than just at discrete points as in the grid-point method. The difference be-
+
+tween the spectral and finite-element techniques lies in the form of the expansion functions: for the spectral method
+
+these are global functions whereas for the finite elements they are only locally non zero (see Subsection 1.4).
+
+There are two basic steps in the finite-element technique:
+
+(a) expand the dependent variables in terms of a set of low-order polynomials (the basis functions)
+
+which are only locally non-zero.
+
+(b) insert these expansions into the governing equations and orthogonalize the error with respect to
+
+some test functions.
+
+As an example consider how we can represent a field in finite-element notation when we are given the values of
+
+at equally spaced points along the -direction. Let the points be given by (the nodes) and the values of the
+
+dependent variable by (the nodal value)—see Fig. 15 . Now suppose that varies linearly between the nodes—
+
+there is a piecewise linear fit. Therefore the behaviour of within an element (the region between the nodes) is
+
+determined by the nodal values. If we define a set of basis functions given by the hat (chapeau) function (see
+
+Fig. 15 ), the field of  can be represented by
+
+(80)
+
+An example of this is given in Fig. 15 . This approach is called collocation method.
+
+ϕ
+ϕ
+
+� � �
+ϕ � ϕ
+
+ϕ
+�'� �( )
+
+ϕ
+
+ϕ ϕ �{�'� �( )�∑=
+
+
+
+Numerical methods
+
+76 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 15. Illustrations of (a) linear piecewise fit, (b) linear basis functions and (c) of how a linear piecewise fit is
+
+made up of a linear combination of basis functions.
+
+Another approach to the calculation of the expansion coefficients when we are given a continuous function is
+
+to minimize the distance between the continuous function and the discrete approximation . In order
+
+to apply this approach, we need first to define a topology which is usually done by defining a scalar product ( , )
+
+and the corresponding norm ; therefore the space of functions is given the structure of a Hilbert
+
+space. It can be easily shown that this procedure gives the same result as the Galerkin approach of scalarly multi-
+
+plying both sides of (80) by each of the basis functions
+
+(81)
+
+which is a system of simultaneous linear equations for the unknown coefficients .
+
+7.2  Linear advection equation
+
+7.2 (a)  . Once again we consider the linear advection equation with periodic boundary conditions
+
+ϕ �
+ϕ ϕ �A�'� �( )∑
+
+ψ 2 ψ ψ,( )=
+
+��� �( )
+
+ϕ ��� �( ),( ) ϕ �J�'� �( ) ��� �( ),( )�∑=
+
+ϕ �
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 77
+
+Define a mesh of points , with . We assume that the finite-ele-
+
+ment approximation to the exact solution has a piecewise linear representation using the  as the nodes.
+
+Substituting in the original equation gives
+
+(82)
+
+where is the residual. If we simply set (point collocation) we have the problem that is not de-
+
+fined at the nodes. If this is overcome by making further approximations we end up with the usual centred differ-
+
+ence approximation. However, the use of higher-order finite-element interpolation with point collocation does not
+
+lead to standard higher order difference schemes.
+
+An alternative approach is to use the Galerkin method with the basis functions as the test functions (the least-
+
+squares method gives the same results). Therefore, we have
+
+(83)
+
+Substituting for  from (82) into (83) gives
+
+(84)
+
+Since the basis functions are hat-functions, there are going to be many combinations of and for which the in-
+
+tegrals are zero. In fact, for a given , there will only be non-zero contributions for (that is
+
+). It is easy to show that
+
+Using these results in (84) gives
+
+(85)
+
+We find that this implicit scheme has a slightly smaller truncation error for the space derivative than the usual fourth
+
+order scheme.
+
+∂ϕ
+∂ �------ � 0
+
+∂ϕ
+∂
+�------+ 0 ϕ � � �,+( ) ϕ � �,( ) ϕ � 0,( ) 	 �( )= = =
+
+� � , 1–( )∆�= , 1 2 …� 1+, ,= ∆� � �⁄= � �
+
+ϕ
+� �,( ) ϕ � �( ) �'� �( )� 1=
+
+(
+1+
+
+∑=
+
+� dϕ �
+d
+�--------- �'� � 0 ϕ � d �'�d�--------�∑+�∑=
+
+� �
+0= d �'� d�⁄
+
+� ��" �d∫ 0 # 1 2 …� 1+, ,= =
+�
+
+dϕ �
+d
+�--------- ��"i�'� � � 0 ϕ � �'�d �d------- ��"
+
+�
+d
+
+0
+
+*
+∫�∑+d
+
+0
+
+*
+∫�∑ 0=
+
+# ,
+, # , 1 ,|, 1+, ,–=� � 1– � � � 1+≤ ≤
+
+�'� 1+ �'� �d∫ 16---∆
+�
+
+= �'�2 �d∫ 23---∆
+�
+
+=
+
+e � 1±d �
+d
+
+-------------- �}� �d∫ 12---±=
+e �d �
+
+d
+------- �'� �d∫ 0=
+
+� �~]± � � �d∫ 0=
+e �~]±d �
+d
+
+--------------- � � �d∫ 0 p 1>=
+
+1
+6
+---
+
+dϕ � 1+
+d
+�--------------- 4dϕ �
+
+d
+�--------- dϕ � 1–
+
+d
+�---------------+ +   � 0
+
+ϕ � 1+ ϕ � 1––
+2∆
+�------------------------------  + 0=
+
+
+
+Numerical methods
+
+78 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Now consider how the scheme defined by (85) is used. in practice. Let represent the time derivative of at
+
+node  and time level .
+
+(86)
+
+Applying (85) at time level  yields
+
+(87)
+
+Since the RHS of (87) is known, this set of simultaneous linear equations can be solved for all the . The next
+
+step is to introduce a time stepping scheme. For example, if the leapfrog scheme is used (86) becomes
+
+(88)
+
+To study the stability of this scheme we combine (87) and (88) to give the complete numerical algorithm
+
+(89)
+
+and then use the von Neumann series method in the usual way. For this scheme it can be shown that there is stability
+
+if ; this is more restrictive than for the corresponding finite difference scheme which is cen-
+
+tred in space and time. Further analysis shows that the scheme is neutral , with the relative phase speed of
+
+the physical mode being given by
+
+The variation of and with for the finite element method is given in Table 3 for the case where
+
+. Also the results of using this technique on the test problem given in Subsection 2.6 are shown
+
+in Figs. 5 and 6 . Comparison of these with the results from the fourth order leapfrog scheme shows that they ap-
+
+pear to produce forecasts of a similar quality. The major disadvantage of this method is that it is implicit.
+
+The scheme defined by (87) and (88) (or (89)) is a three-level scheme. If a two-level scheme is required (i.e. a for-
+
+ward time difference) we can take the Crank–Nicolson approach and use a weighted mean of the advection terms
+
+at time levels  and  with weights  and . The expressions corresponding to (87) and (88) are then
+
+which can be combined to give
+
+= �+ ϕ
+, ?
+
+dϕ �+
+d
+�--------- = �+=
+
+?
+
+1
+6
+---
+= � 1+
++
+
+4
+= �+ = � 1–
+
++
++ +( ) � 0 ϕ � 1+ ϕ � 1––2∆�------------------------------   for all ,–=
+
+= �+
+
+ϕ �+ 1+ ϕ �+ 1– 2∆ � = �++=
+
+ϕ � 1–
++ 1+ 4ϕ �+ 1+ ϕ � 1–
+
++ 1++ + ϕ � 1–
++
+
+1 6α+( ) 4ϕ �+ ϕ � 1+
++
+
+1 6α–( )+ +=
+
+α � 0∆ � ∆�⁄ 3≤= G
+1=( )
+
+H 1
+α >-------
+
+C
+L 2 C 2–( )1 2⁄
+
+-----------------------------
+ 
+ 
+ 
+
+atan=
+
+C α > Lsin– 2 >cos+
+3
+
+--------------------- > 2π$------= = =
+G H $
+
+α 0.5 1 3⁄( )×=
+
+? ? 1+ β+ β + 1+
+1
+6
+---
+= � 1+
++
+
+4
+= �+ = � 1–
+
++
++ +( ) β+ 1+ M �
+
++ 1+ β+ M �++=
+ϕ � 1–
++ 1+ ϕ �+ ∆ � = �++=
+
+ϕ � 1–
++ 1+ 1 3αβ + 1+–( ) 4ϕ �
+
++ 1+ ϕ � 1+
++ 1+ 1 3αβ+ 1++( )+ + ϕ � 1–
+
++
+1 3αβ++( ) 4ϕ � 1+
+
++
+1 3αβ +–( )+=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 79
+
+A stability analysis shows that for there is instability, whereas for there is absolute stability
+
+with giving a neutral scheme (i.e. no damping, though there are phase errors). As the explicit
+
+scheme gives a coupled system of equations, no penalty is paid in using an implicit approach which is absolutely
+
+stable if both systems can be solved using the same kind of solver.
+
+7.2 (b)  . In the piecewise linear element representation, the function is obliged to behave linearly between
+
+nodes. To improve this fit we can use second-order polynomials as the basis functions as the convolution polyno-
+
+mials represented in Fig. 16 . With this representation we get not only continuity of the function at the nodes as in
+
+the piecewise linear case but also continuity of the first derivative.
+
+Figure  16. Second order polynomials as basis functions.
+
+Figure  17. Linear together with quadratic elements.
+
+An alternative is to use simultaneously linear and quadratic elements as the ones shown in Fig. 17 .
+
+We don't automatically get continuity of the derivative at the nodes in this representation, but the fit of a given func-
+
+tion between the nodes can be improved.
+
+Now, if we apply the Galerkin approach to the linear advection equation, as was done in the piecewise linear rep-
+
+resentation, we get a similar system of simultaneous equations
+
+(90)
+
+but the matrix instead of being tridiagonal as it was in equations (89) is a less sparse matrix and therefore more
+
+expensive to solve.
+
+7.3  Second-order derivatives
+
+Let us now turn to the treatment by means of finite elements of an equation involving second-order space deriva-
+
+tives. As an example, we will show how finite-element techniques can be used to solve a simple Helmholtz equation
+
+β + 1 2⁄> β + 1 2⁄≤
+β + β+ 1+ 1 2⁄= =
+
+AΨ
++ 1+ F +=
+
+
+
+Numerical methods
+
+80 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(91)
+
+A first alternative is to use quadratic elements as the basis functions and use the Galerkin method as before
+
+(92)
+
+so that the second derivatives of the basis functions can be calculated analytically and then the five-diagonal system
+
+(92) solved.
+
+A second alternative using linear elements is as follows:
+
+Let us assume that we use the scalar product of space , that is
+
+then (92) can be written as
+
+The first term can be integrated by parts
+
+the first term of the RHS is zero for all and , and now all the derivatives are first order and can be
+
+calculated analytically using linear elements.
+
+The matrix of the resulting system of equations is tridiagonal except for the elements ,
+
+, , .
+
+7.4  Boundaries, irregular grids and asymmetric algorithms
+
+The finite-element method can easily cope with boundaries and irregular grids by choosing suitable basis functions.
+
+Also asymmetric algorithms can be derived by choosing test functions that are different from the basis functions.
+
+These aspects of the finite-element method will be illustrated by their application to the linear advection equation
+
+using a linear piecewise fit.
+
+7.4 (a)  Boundaries. Suppose we have boundaries at nodes and . Making a linear piece-
+
+wise fit it is easy to see that the basis functions for are the usual hat functions, whereas the basis func-
+
+tions associated with the boundary nodes have a value of 1 at the boundary falling to 0 at the first internal node (see
+
+Fig. 18 ). The usual Galerkin procedure then gives
+
+∂2ψ
+∂
+� 2--------- α2ψ– 0=
+
+ψ � d
+2 �'�
+
+d
+� 2---------- �'�,  
+
+ 
+α2 ψ �J�'�U��",( )�∑–�∑ 0=
+
+�
+
+	/�,( ) 	A��d
+0
+
+*
+∫=
+
+ψ � d
+2 �'�
+
+d
+� 2---------- ��"
+
+�
+α2 ψ ��∫ � ��"�∑–d
+
+�
+d∫�∑ 0=
+
+d2 �}�
+d
+� 2---------- ��"
+
+�
+d∫
+
+d �'�
+d
+�-------- ��"
+
+0
+
+*
+d �'�
+d
+�--------d ��"
+
+d
+�------- �d∫–=
+
+# 1≠ #m� 1+≠
+
+, 1 #, 1= =( )
+, 2 #, 1= =( ) , � 1+ #, � 1+= =( ) , �#, � 1+= =( )
+
+, 1= , � 1+=
+2 ,�≤ ≤
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 81
+
+(93)
+
+This set of equations can be solved for the  at all nodes, including the boundary nodes.
+
+Now a paradox arises: we know that the linear advection equation has a unique solution given a suitable set of initial
+
+and boundary conditions, but the system (93) gives us, in principle, the values of at all nodes and, therefore,
+
+does not allow us to specify any boundary condition. The same is true for the Helmholtz equation of Subsection 7.3.
+
+The solution of this paradox is that either the matrix of the resulting system is singular and, therefore, the system
+
+of equations cannot be solved, or the system is over specified and the solution we get doesn't correspond to the
+
+boundary conditions.
+
+The cure is then to scalarly multiply only by the interior elements that is, use in (84) or (92) only the values of
+
+and compute and from the boundary conditions. The system then has equations and
+
+can be solved for the  interior coefficients
+
+7.4 (b)  Irregular grids. Using the basis functions shown in Fig. 18 , it is straightforward to show that the fi-
+
+nite-element formulation of the advection equation on an irregular grid is
+
+Naturally this reduces to (85) when the grid is uniform, i.e. .
+
+7.4 (c)  Asymmetric algorithms. So far the choice of linear basis functions has lead to symmetric algorithms.
+
+However, this symmetry can be broken by using asymmetric test functions. For example, the use of the basis and
+
+test functions illustrated in Fig. 15 in the advection equation produces an algorithm which has some of the char-
+
+acteristics of the upstream finite difference scheme.
+
+1
+3
+---
+
+dϕ2
+d
+�--------- 2dϕ1
+
+d
+�---------+   � 0
+
+ϕ1 ϕ2–
+∆
+�-----------------  + 0=
+
+1
+6
+---
+
+dϕ � 1–
+d
+�--------------- 4dϕ �
+
+d
+�--------- dϕ � 1+
+
+d
+�---------------+ +   � 0
+
+ϕ � 1+ ϕ �–
+∆
+�------------------------  + 0 2 , ?≤ ≤=
+
+1
+3
+---
+
+dϕ (
+d
+�----------- 2dϕ ( 1+
+
+d
+�-----------------+   � 0
+
+ϕ ( 1+ ϕ (–
+∆
+�---------------------------  + 0=
+
+dϕ d �⁄
+
+dϕ d �⁄
+
+2 #m�≤ ≤ ψ1 ψ ( 1+ � 1–
+� 1– ψ � 2 ,�≤ ≤( )
+
+1
+6
+---
+
+dψ � 1–
+d
+�---------------- 2dψ �
+
+d
+�---------+   ∆
+
+� � 1 2⁄– 16--- 2
+dψ �
+d
+�--------- dψ � 1+
+
+d
+�----------------+   ∆
+
+� � 1 2⁄+ � 0 ψ � 1+ ψ � 1––( )+ + 0=
+
+∆
+� � 1– ∆ � � 1+ ∆�= =
+
+1
+3
+---
+
+dψ � 1–
+d
+�---------------- 2dψ �
+
+d
+�---------+   � 0
+
+ψ � ψ � 1––
+∆
+�-------------------------  + 0=
+
+
+
+Numerical methods
+
+82 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  18. llustrations of (a) linear basis functions in the vicinity of a boundary, (b) linear basis functions for an
+
+irregular grid and (c) linear basis and test functions which would give asymmetric algorithms.
+
+7.5  Treatment of non-linear terms
+
+Consider the treatment of the non-linear tern in the one-dimensional advection equation
+
+A straightforward one-step approach is to use
+
+Substitution in the non-linear equation and making the Galerkin assumption yields
+
+∂ �
+∂ �------ �
+
+∂ �
+∂
+�------+ 0=
+
+� � �A�'� G�∑
+∂ �
+∂
+�------ � � d �'�
+
+d
+�--------�∑= = =
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 83
+
+Alternatively, a two-step method can be used. In this we first find the best piecewise approximation to by using
+
+the Galerkin assumption
+
+Having solved this set of equations for the , the second step is to find the best approximation to by again
+
+using the Galerkin assumption
+
+This is more accurate than the one-step procedure. but it has the disadvantage that an extra matrix inversion is re-
+
+quired to find the .
+
+Finally, it is worth noting that finite element schemes do not appear to suffer from aliasing and non-linear instabil-
+
+ity. This happens because the interactions which normally give rise to aliasing are heavily smoothed in the finite-
+
+element method.
+
+7.6  Staggered grids and two-dimensional elements
+
+Figure  19. Staggered piecewise linear elements.
+
+In Subsection 4.3 it was shown that it is natural to use a staggered grid when dealing with the gravity-wave equa-
+
+tions. Therefore, we will now consider the finite-element approximations to these equations using linear basis func-
+
+tions and a staggered grid.
+
+Define two sets of basis functions (  and ) shown in Fig. 19 and assume that
+
+1
+6
+---
+
+d � � 1+
+d
+�--------------- 4d � �
+
+d
+�--------- d � � 1–
+
+d
+�---------------+ +  
+
+1
+2∆
+�---------- � � 1+ 2 � �+( )
+
+3
+--------------------------------- � � 1+ � �–( ) � � 1– 2 � �+( )3-------------------------------- � � � � 1––( )+  
+
+ 
+–=
+
+G
+
+1
+6
+---
+G � 1+ 4 G � G � 1–+ +( ) � � 1+ � � 1––2∆�------------------------------=
+
+G � � G
+
+1
+6
+---
+
+d � � 1+
+d
+�--------------- 4d � �
+
+d
+�--------- d � � 1–
+
+d
+�---------------+ +  
+
+1
+12
+------ � � 1– G � 1– G �+( ) � � 1+ G � 1+ G �+( ) � � G � 1+ 6 G � G � 1–+ +( )+ +{ }–=
+
+G �
+
+�'� �}� 1 2⁄+
+
+
+
+Numerical methods
+
+84 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Substituting the expansions in the following equation
+
+and using the Galerkin procedure with the  as test functions gives
+
+Calculation of the integrals leads to
+
+The corresponding finite element approximation to the other equation
+
+is the following
+
+7.7  Two dimensional elements
+
+With rectangular mesh we can define rectangular elements where the linear basis function associated
+
+with node ( ) has a value of unity at this node and falls to zero at the 8 adjacent nodes (see Fig. 20 ). A variable
+
+ can then be expanded in terms of these basis functions.
+
+Substituting this in the original partial difference equation and using the usual Galerkin procedure to orthogonalize
+
+the error leads to a set of equations describing the behaviour of the expansion coefficients .
+
+� �P�A�'� and ��∑ � � 1 2⁄+ �'� 1 2⁄+�∑= =
+
+∂ �
+∂ �------
+
+� ∂ �
+∂
+�------+ 0=
+
+�}�
+
+d �P�
+d
+�--------- ��"i�'� � � � � 1 2⁄+ �'� d �'� 1 2⁄+d�-------------------
+
+�
+d∫∑+d∫∑
+
+1
+6
+---
+
+d �Q� 1–
+d
+�--------------- 4d �Q�
+
+d
+�--------- d �Q� 1+
+
+d
+�---------------+ +  
+
+� � � 1 2⁄+ � � 1 2⁄––( )
+∆
+�---------------------------------------------+ 0=
+
+∂ �
+∂ �------ �
+
+∂ �
+∂
+�------+ 0=
+
+1
+6
+---
+
+d � � 3 2⁄+
+d
+�-------------------- 4d � � 1 2⁄+
+
+d
+�-------------------- d � � 1 2⁄–
+
+d
+�--------------------+ +   �
+
+�Q� 1+ �Q� 1––( )
+∆
+�-----------------------------------+ 0=
+
+��" � � �,( )
+#U,,
+
+ϕ
+
+ϕ
+� � �, ,( ) ϕ" �{��" � � �,( )"<�,∑=
+
+ϕ " �
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 85
+
+Figure  20. llustration of a two dimensional linear basis function for a rectangular grid. In the shaded area the
+
+basis function is non-zero; the basis function is zero at nodes marked by • and unity at the node marked X.
+
+For solving equations with spherical geometry, it is possible to generate a grid of icosohedra, with each triangular
+
+face divided into equilateral triangles. Each element then has the form shown in Fig. 21 . To illustrate the kind of
+
+algorithms produced, just one example will be given. Using linear elements it can be shown that the finite element
+
+description of the derivative  is
+
+Cullen (1974) has used this approach in a primitive equation model using spherical geometry.
+
+Figure  21. An element is made up of 6 triangles.
+
+7.8  The local spectral technique
+
+One of the advantages of the finite-element method is the possibility of using irregular grids while still maintaining
+
+a high degree of accuracy, as opposed to the finite difference technique. This allows us to define elements whose
+
+shape is adapted to the geometry of the domain in which we want to solve our equations. This possibility is the
+
+basis of the success that finite elements have had in engineering problems involving complicated structures. The
+
+main weakness of the method is that, inside each element the function is assumed to have a linear behaviour, or
+
+otherwise we end up with a system of equations whose matrix is not sparse and, therefore, is very expensive to
+
+solve both in terms of CPU time and storage memory.
+
+A way round this problem is provided by the local spectral technique. In this approach we define a set of local do-
+
+mains, just as in the finite-element method, but we use inside each element a spectral representation, taking as basis
+
+X
+
+G
+∂ϕ ∂
+
+�
+⁄=
+
+1
+12
+------
+G
+
+1
+
+G
+2
+
+G
+3 6
+
+G
+4
+
+G
+5
+
+G
+6
+
+G
+7+ + + + + +( )
+
+1
+6∆
+�---------- ϕ2 ϕ1–( ) 2 ϕ5 ϕ3–( ) ϕ7 ϕ6–( )+ +[ ]=
+
+
+
+Numerical methods
+
+86 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+functions a set of Lagrange interpolating polynomials and imposing continuity of the solution through the element
+
+boundaries. This gives us a system of equations with a blocked matrix, each block being diagonal and therefore
+
+very sparse.
+
+The technique is very well suited for implementation on a parallel computer if the interior of each element is solved
+
+in a single processor, the communications being limited to passing a small quantity of information between nearest
+
+neighbours only.
+
+7.9  Application for the computation of vertical integrals in the ECMWF model
+
+In the semi-Lagrangian version of the ECMWF forecast model, the vertical discretization is needed only in order
+
+to compute the vertical integrals of the continuity and the hydrostatic equations. The quantities to be integrated are
+
+defined at “full” levels and the integration is performed by the mid-point rule, so that the integrals are in principle
+
+only available at “half” levels. Extrapolation or averaging to full levels compromise the second-order accuracy of
+
+the integration.
+
+As an alternative, a finite-element scheme has been developed using cubic splines as basis functions. These B-
+
+splines differ from the cubic splines defined in Subsection 5.3. The B-splines are defined as piecewise cubic (at
+
+each interval) polynomials which are non-zero only over 4 grid intervals, whose zeroth, first and second derivatives
+
+are continuous and whose integral over the whole domain is prescribed.
+
+These polynomials can be used as basis functions for the finite-element method. Unlike the case with the piecewise
+
+linear elements, we can not use the collocation method because the coefficients of the expansion of a function in
+
+terms of these basis functions are not the values of the function at the nodes.
+
+Let’s compute the value of a vertical integral using this method:
+
+Then we expand both F(x) and f(y) as a linear combination of B-splines (the basis fuctions chosen to expand both
+
+functions could be different. In our case they are the same except for the boundaries where they are modified to suit
+
+the appropriate boundary conditions)
+
+Now we apply the Galerkin procedure using some “test functions” ti(x)
+
+which can be expressed in matrix form
+
+(94)
+
+The initial information we get to perform the integral is the set of values of f(x), say , at the “full levels” of the
+
+model and the final result we need is the value of F(x) also on the full levels of the model, say . If we choose the
+
+= �
+( ) 	 �( ) �
+
+0
+
+-
+∫=
+
+Ψ "<" �( )" 1=
+
+(
+∑ ψ "!��" �( ) �
+
+0
+
+-
+∫" 1=
+
+(
+∑=
+
+Ψ " d" �( ) � � �( ) �
+0
+
+1
+
+∫" 1=
+
+(
+∑ ψ " � � �( ) ��" �( ) �( )
+
+0
+
+-
+∫
+
+�
+0
+
+1
+
+∫" 1=
+
+(
+∑=
+
+M
+˜
+
+Ψ̃ 
+˜
+
+ψ̃ => Ψ̃
+M
+˜
+
+1– 
+˜
+
+ψ̃= =
+
+	 ˜ = ˜
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 87
+
+number of basis functions the same as the number of degrees of freedom of f(x) (including appropriate boundary
+
+conditions) then transforming this set of values to the vector is simply a matrix multiplication by a square matrix,
+
+say , and the projection from to the values of F(x) is a multiplication by another matrix, say . Therefore
+
+expression (94) can be written as
+
+and the matrix  is our integration operator.
+
+8. SOLVING THE ALGEBRAIC EQUATIONS
+
+8.1  Introduction
+
+In all the methods we have seen for solving the partial differential equations of atmospheric motion we finally arrive
+
+at a set of simultaneous algebraic equations where the unknowns are the grid points or the coefficients at time step
+
+ and we have to solve this system.
+
+The spectral method leads to the simplest case where the matrix of the system to be solved
+
+is diagonal due to the orthogonality of the basis functions chosen, and so the equations of the system are decoupled
+
+from one another. The solution then is straightforward, each equation having only one unknown. On the other hand,
+
+as we saw in the chapter on the spectral technique, the transformations to grid-point space and back to spectral
+
+space are very expensive in terms of computing, mainly when the number of degrees of freedom in the model is
+
+increased and so finite-difference and finite-element methods cannot be discarded, even in the horizontal discreti-
+
+zation.
+
+In these cases, the system of algebraic equations we arrive at is coupled, mostly in the form of tridiagonal or block
+
+tridiagonal matrices.
+
+The simplest method of solving a system of simultaneous equations is by matrix inversion, so that if matrix is
+
+non-singular, it has an inverse  and the system can be transformed into
+
+The drawback of this method is that, with large matrices, the inversion operation is very expensive both in terms
+
+of memory and CPU time.
+
+8.2  Gauss elimination
+
+Let us assume we have a one-dimensional model treated by means of finite differences (centred) or finite elements
+
+(linear) of dimension (the number of grid points or the number of elements). We end up with the following sys-
+
+tem of equations at every time step
+
+ψ̃K
+˜
+
+Ψ̃
+K
+
+'
+˜
+
+1–
+
+= ˜ K '
+˜
+
+1– M
+˜
+
+1– 
+˜
+
+K
+˜
+	 ˜=
+
+K
+'
+
+˜
+1– M
+
+˜
+1– 
+
+˜
+
+K
+˜
+
+� ∆ �+
+
+Ax B=
+
+A
+A 1–
+
+A 1– Ax A 1– B x⇒ A 1– B= =
+
+?
+
+
+
+Numerical methods
+
+88 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+or  with  tridiagonal
+
+The most used method for solving this system is the so-called Gauss elimination, or forward elimination and back
+
+substitution. The method is implemented in most scientific subroutine libraries and can, therefore, be used by a
+
+simple subroutine call. It runs as follows:
+
+From the first equation, we extract
+
+and substitute in the second equation
+
+now we extract
+
+and substitute in the third equation ... and so on
+
+When we reach the last equation and substitute from the last but one, we are left with an equation in a single
+
+unknown which can therefore be solved and the result substituted in the expression for taken from the last
+
+but one equation, and so on until we arrive back at the expression for .
+
+The method works as long as the matrix of the system is not quasi-singular and the denominators (pivots) of the
+
+expressions are not too small. It is, therefore, useful to reorder the unknowns so that the pivots ,
+
+
+
+11
+�
+
+1
+
+
+
+21
+�
+
+2+ � 1=
+
+12
+�
+
+1
+
+
+
+22
+�
+
+2
+
+
+
+32
+�
+
+3+ + � 2=
+
+23
+�
+
+2
+
+
+
+33
+�
+
+3
+
+
+
+43
+�
+
+4+ + � 3=
+
+
+ + 1 +,– � + 1– 
+ ++, � ++ � +=
+
+Ax B= A
+
+A
+
+
+
+11
+
+
+
+21 0 0 0 … 0
+
+12
+
+
+
+22
+
+
+
+32 0 0 … 0
+0 
+ 23 
+ 33 
+ 43 0 … 0
+0 0
+
+0 0
+
+. . .
+
+. . . 0 
+ + 1 +,– 
+ ++,
+
+=
+
+�
+1
+
+�
+1
+
+� 1 
+ 21 � 2–( )
+
+11
+
+------------------------------=
+
+
+
+12
+
+� 1 
+ 21� 2–( )
+
+11
+
+------------------------------ 
+ 22� 2 
+ 32 � 3+ + � 2=
+
+�
+2
+
+�
+2
+
+� 2
+
+
+
+21 � 1
+
+11
+
+-------------– 
+ 32 � 3–  
+
+
+
+22
+
+
+
+21
+
+11
+
+-------– 
+ 
+
+---------------------------------------------------=
+
+� + 1– � + 1–�
+1
+
+
+
+11
+
+
+
+22
+
+
+
+21
+
+
+
+11⁄–
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 89
+
+are as big as possible; this is always done in the scientific subroutines from well developed libraries.
+
+In matrix form, the method is equivalent to decomposing the original matrix  in the form
+
+where  is diagonal and
+
+where  and  is the rank of matrix  (  is the transpose of )
+
+8.3  Iterative methods
+
+When the matrix is not as sparse as in the previous example of Gauss elimination, a direct method of solution could
+
+be intractable due to memory and/or CPU limitations, large amounts of both resources being needed for inverting
+
+a large matrix. The most straightforward methods are then the iterative methods. We need to solve the system.
+
+(95)
+
+and start off with a guess for the solution . This not being in general the true solution, we can calculate a re-
+
+sidual.
+
+(96)
+
+and use it to get a new estimate  and a new residual
+
+(97)
+
+and so on. If the residuals are smaller as increases, the method converges and we stop when the residual
+
+becomes smaller than a pre-defined magnitude.
+
+The general procedure for iterative methods can be expressed as follows
+
+(98)
+
+where is known as the splitting, or preconditioning, matrix and could be simply the unity matrix. Then we add
+
+and subtract
+
+A
+
+A MKMT≡
+
+K
+
+M
+
+1 0 0�
+1 1 0
+
+0 � 2 1
+� � 1+ 1 � � 2+
+
+0 1 � � 3+
+0 1 � +
+
+1
+
+=
+
+, int ?
+2
+--- 
+
+ = ? A MT M
+
+Ax B=
+
+�
+0
+
+�
+
+R0 Ax0 B–=
+
+�
+1
+
+R1
+M
+
+x1 B–=
+
+R + ?
+
+Ax B=
+
+Q 1– Ax Q 1– B=
+
+Q
+Ix
+
+
+
+Numerical methods
+
+90 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(99)
+
+(100)
+
+we then obtain the th iterative estimate of  from the th estimate by
+
+(101)
+
+This equation can be viewed as the discrete analogue (with unit time step) of
+
+(102)
+
+which has a stationary solution when the right hand side becomes zero.
+
+The general solution of evolutionary problem (102) is
+
+(103)
+
+where is an eigenvalue of matrix (the diagonal elements of the diagonalized matrix) and is
+
+a constant vector. The solution approaches the stationary solution when the real part of is negative, that
+
+is to say, if all the eigenvalues of matrix have real positive parts (elliptic problem). The solution can be made
+
+to converge quicker by multiplying the eigenvalues by a constant greater than 1 (successive over-relaxation).
+
+The iteration procedure (101) is performed successively over each component of vector ; if we use in the right-
+
+hand side of (101) always the components of from the th iteration the method is called Jacobi iteration; on the
+
+other hand, if we use on the right-hand side of the new iteration values of the components of whenever they are
+
+available, the procedure is called Gauss–Seidel iteration, it cuts down the storage requirement on a computer as
+
+only one value of each component of (either the th iteration or the estimate) needs to be kept and it can be
+
+shown to converge quicker than the Jacobi method.
+
+As an example, let us work out the iterative solution of the Helmholtz equation in centred finite-difference form
+
+(104)
+
+where is the discrete Laplace operator and and are known. If is the th iteration for this solution,
+
+we get the "residual" vector
+
+(105)
+
+or
+
+(106)
+
+and we take the th iteration of  such that the new residual is zero
+
+(107)
+
+x Q 1– A I–( )x+ Q 1– B=
+
+x I Q 1– A–( )x Q 1– B+=
+
+? 1+( ) � ?
+
+x
++ 1+ I Q 1– A–( )x+ Q 1– B+=
+
+dx
+d
+�------ Q 1– Ax Q 1– B+–=
+
+x λ �[ ] k–exp=
+λ Q– 1– A Q– 1– A k
+
+x k= λ
+Q 1– A
+
+x� ? �
+
+� ?
+
+∇2
+� " � λ" �2 � " �– = " �=
+
+∇2 λ" � = " � � " �+ ?
+
+∇2
+� "<�,
++
+
+λ "<�,2 � "<�,– = "<�,– � "<�,
++
+
+=
+
+� " 1 �,–
++ � " 1 �,+
+
++ � "8� 1–,
++ � "<� 1+,
+
++
+4– λ"<�,2–( ) � "8�,
+
++ = "<�,–+ + + + � "<�,
++
+
+=
+
+? 1+( ) � "8�,
+� " 1 �,–
++ � " 1 �,+
+
++ � "<� 1–,
++ � "<� 1+,
+
++
+4– λ"<�,2–( ) � "<�,
+
++ 1+ = "<�,–+ + + + 0=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 91
+
+(108)
+
+This is the Jacobi iterative method.
+
+If we proceed for the calculation of the new components in the sense of increasing sub-indexes and , we can
+
+use in (106) the already available values of and instead of the th iteration values and we get the
+
+Guass–Seidel procedure.
+
+If we multiply in (108) the fraction by a factor (the over-relaxation factor) before adding it to we get the
+
+successive overrelaxation method or SOR
+
+(109)
+
+It can be shown that, in an iterative method, the short-scale errors of the first guess with respect to the true solution
+
+converge very quickly towards zero. What makes iterative methods expensive in terms of computer time is the slow
+
+convergence of the long-range features of the initial error. This suggests the so-called multigrid methods in order
+
+to speed up the convergence of an iterative method to the point of making it competitive with direct methods, such
+
+as the ones which are described later.
+
+If we chose a subset of grid points from the original grid, say one of every four points and solve the equation over
+
+this reduced grid, the long-scale features are seen from this grid as shorter scale because they cover a smaller
+
+number of grid points and, therefore, the convergence is faster. Once a solution is found on a coarse grid, we inter-
+
+polate it to the finer grid and refine the solution in this grid. The procedure can run over a range of grid sizes and
+
+can be iterated forwards and backwards from the coarser to the finer grids.
+
+A further refinement of the method is called the adaptive multigrid method. In this procedure we define the finer
+
+grid on which the solution from the coarse grid has to be refined only in the domain regions where we find that the
+
+truncation error of the completed solution exceeds a certain predefined threshold value.
+
+8.4  Decoupling of the equations
+
+The fields to be forecasted in P.E. models are three dimensional and, therefore, the matrices of the algebraic system
+
+to which we arrive when we discretize the partial differential equations are, in principle, six-dimensional and there-
+
+fore too big to be treated directly by any direct or iterative means.
+
+The general system of equations can be expressed as
+
+(110)
+
+8.4 (a)  Separable case.
+
+The simplest case would be that the matrix be factorizable, i.e.
+
+(111)
+
+but this case is unfortunately very rare.
+
+� "<�,
++ 1+ � "<�,
+
++ � "8�,
++
+
+4 λ"<�,2+
+------------------+=
+
+# ,� " 1– �,
++ 1+ � "<� 1–,
+
++ 1+ ?
+
+µ
+� "<�,
++
+
+� "<�,
++ 1+ � "<�,
+
++ � "<�,
++
+
+4 λ"<�,2+
+------------------
+
+ 
+ 
+ 
+
+µ+=
+
+M " �B�� + � " �BB∑�∑"∑
+ �� +=
+
+M " �B�� + 4F"� G �� )!B+≡
+
+
+
+Numerical methods
+
+92 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+The procedure would then be as follows:
+
+(i) Define
+
+(112)
+
+where
+
+(113)
+
+(ii) Solve
+
+(114)
+
+for each pair
+
+(iii) Solve
+
+(115)
+
+for each pair
+
+(iv) Finally solve
+
+(116)
+
+for each pair
+
+8.4 (b)  Use of the eigenvector matrix.
+
+Let us consider the case of Poisson equation in the three dimensions
+
+(117)
+
+where  is the horizontal Laplacian in Cartesian coordinates.
+
+If we apply centred finite differences in the vertical we get the system of coupled equations
+
+(118)
+
+where  is the vector of fields  at the different vertical levels and matrix  stands for
+
+ "� + G �� ) B+ � " �BB∑�∑
+G �� o " �+�∑= =
+
+o " �+ )!B+ � " �BB∑=
+
+4F"�  "� +"∑
+ �� +=
+
+� ?,( )
+
+G �� o " �+�∑
+ "� +=
+
+� #,( )
+
+)!B+ � " �BB∑
+o " �+=
+
+#,,( )
+
+∇3
+2ϕ
+
+=
+∇h
+
+2ϕ ∂
+2ϕ
+
+∂ R 2---------+= =
+
+∇h
+2
+
+∇2ϕ
+˜
+
+Mϕ
+˜
+
++ F=
+
+ϕ
+˜
+
+ϕ M
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 93
+
+ of rank  (the number of levels)
+
+Let  ( )be the eigenvectors of this matrix which form the columns of matrix
+
+Then the system (118) may be written as
+
+(119)
+
+where  and .
+
+Matrix is a diagonal matrix made of the eigenvalues of and therefore (119) is a system of decoupled
+
+bi-dimensional equations.
+
+8.4 (c)  Fourier transform in a bi-dimensional roblem.
+
+Let
+
+(120)
+
+where
+
+ (direct Fourier transform)
+
+taking into account the orthogonality relationship
+
+(121)
+
+for the Fourier functions, the original bidimensional system
+
+(122)
+
+is reduced to
+
+(123)
+
+which are  systems of one-dimensional equations from whose solution we can then find
+
+M
+
+2– 1 0 …
+1 2– 1 0 …
+0 1 2– 1 0 …
+
+. . . . . .
+
+. . . . . .
+
+= �
+
+)� , 1 …�,= E
+
+∇2ϕ′
+˜
+
+E 1– MEϕ′
+˜
+
++ F′=
+
+ϕ′
+˜
+
+E 1– ϕ
+˜
+
+= F′ E 1– F=
+
+E 1– ME M �
+
+� ]�� 1&------ )
+" � " � # C π&---------   and 
+
+] +
+sin" 0=
+
+%
+∑ 1&------ )
+
+�  � + � C π&------------  sin� 0=
+
+%
+∑= =
+
+) " 1 2⁄ if # 0 or # &= =
+1 otherwise
+
+
+
+
+=
+
+3 � π
+&------------  
+
+3�C π
+&----------  sinsinB 0=
+
+%
+∑ 12--- & δ]�,=
+
+M "� + � " ��∑"∑
+ � +=
+
+M �+ C( ) � ˆ ]���∑
+ � +=
+
+& 1+ (p=0,… & )
+
+
+
+Numerical methods
+
+94 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+ (inverse Fourier transform)
+
+The reduction of the system to form (123) can be accomplished for matrices whose eigenvectors are the Fourier
+
+bases, such as the one for a Poisson or a Helmholtz equation. Let us consider the Poisson equation using centred
+
+second order finite differences
+
+where
+
+ being the grid point value of the unknown at row
+
+ being the grid point value of the second number at row
+
+The eigenvalues of  are ; , and the corresponding eigenvectors
+
+The same holds for any matrix of the form
+
+whose eigenvalues are
+
+This matrix appears in the finite difference discretization of a Helmholtz equation.
+
+Calling
+
+� " � 2 ) ] � ˆ ]�� #DC π&---------  sin] 0=
+
+%
+∑=
+
+∇2U V or BU V= =
+
+B
+
+A I 0 …
+I A I 0 …
+0 I A I …
+. . . . …
+
+U
+
+U1
+U2
+.
+
+U (
+V
+
+V1
+V2
+.
+
+V (
+= = =
+
+U+ ?
+V+ ?
+
+A
+
+4– 1 0 . . …
+1 4– 1 0 . …
+0 1 4– 1 0 …
+. . . . . …
+
+I
+
+1 0 0 …
+0 1 0 …
+0 0 1 …
+. . . …
+
+= =
+
+A λ � 4– 2 , π &⁄( )cos+= , 1 …&,=
+
+q � , π&------  sin
+2 , π
+&---------  sin
+
+3 , π
+&---------  sin . …=
+
+A*
+
+
+ � 0 . …
+� 
+ � 0 …
+0 � 
+ � …
+. . . . …
+. . . . …
+
+=
+
+λ � 
+ 2 � , π &⁄( )cos+=
+
+Q q1 q2 … q %=
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 95
+
+we have
+
+The original system may be written as
+
+Multiplication by  in this system gives
+
+The product of by a vector is the discrete Fourier transform of the vector , namely , and therefore we
+
+get
+
+and the equation for Fourier component  is
+
+which is a set of decoupled equations for the Fourier components. This method is therefore identical to the vertical
+
+decoupling of section Subsection 8.4 (b) but, when the eigenvectors are the Fourier basis functions, there is the
+
+advantage of using the Fast Fourier Transform algorithm in projecting onto the eigenvector space.
+
+8.5  The Helmholtz equation
+
+In many of the present forecast models, the equation of the semi-implicit time stepping scheme leads to a Helm-
+
+holtz equation
+
+(124)
+
+where  is a matrix for the vertical coordinate and its dimension is the number of levels in the model.
+
+By the method of vertical decoupling of Subsection 8.4 we can convert set (124) into a set of "horizontal" equa-
+
+tions, one for each level. Nevertheless, one of the advantages of using the spectral technique on a global model
+
+based on the spherical harmonics is that these functions are eigenfunctions of the Laplacian operator so that effec-
+
+tively the set of equations (124) are already decoupled in the horizontal and the coupling is between the different
+
+vertical levels for each spectral coefficient of , that is
+
+(125)
+
+the system
+
+(126)
+
+QAQT diag λ �( ) Λ and QTQ≡ I= =
+
+U B 1+ AUB U B 1–+ + VB=
+
+Q
+
+QUB 1+ QAQTQUB QUB 1–+ + QVB=
+
+Q UB U ŨB
+
+ŨB 1+ ΛŨB ŨB 1–+ + VB=
+
+,
+
+5@B 1+
+�
+
+λ �5JB � 5JB 1–
+�
+
++ +
+S B �=
+
+1 Γ∇2–( )x B=
+
+Γ
+
+x
+
+1 Γ∇2–( )x[ ] +� 1 ?7? 1+( )
+ 2---------------------Γ+   x+
+�
+
+≡
+
+1
+?s? 1+( )
+
+ 2---------------------Γ+   x+
+
+�  +�=
+
+
+
+Numerical methods
+
+96 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+is, for fixed , a system of ( = number of vertical levels) equations, easily solved by simple matrix
+
+inversion.
+
+In the case of finite differences or finite elements in the horizontal things are not as easy and we have to decouple
+
+the equations in the vertical to arrive at a set of horizontal Helmholtz equations
+
+(127)
+
+whose matrices are very large but sparse.
+
+We can solve each system (127) by an iterative (expensive) method, by use the Fourier transform method (if we
+
+have the appropriate boundary conditions) or by a block reduction algorithm as follows:
+
+Let the problem be to solve equation
+
+(128)
+
+in two dimensions, where is a block tridiagaonal matrix as found with centred second order finite differences or
+
+piecewise linear finite elements
+
+(129)
+
+where  is a matrix (normally also tri-diagaonal) and  the unit matrix corresponding to one dimension. ,
+
+Therefore, if we have discretized dimension by values and dimension by values, and are
+
+matrices and  has  blocks.
+
+Now multiply each even row by  and add the odd rows immediately above and below giving
+
+(130)
+
+the fourth block equation reads
+
+which includes only even numbered ’s; we can therefore write down a system of equations for the even numbered
+
+'s
+
+� ?,( ) � �
+
+1
+� ∇2–( )x B=
+
+Dψ G=
+
+D
+
+D
+
+E I– 0 0 …
+I– E I– 0 …
+
+0 I– E I– …
+. . . . …
+
+=
+
+E I
+
+ & � � E I & &×
+D � �×
+
+E
+
+E I– 0 0 . …
+
+0 E2 2I– 0 I– 0 …
+0 I– E I– 0 …
+. . . . . …
+
+ψ1
+ψ2
+.
+
+ψ (
+
+g1
+g1 g3 Eg2+ +
+
+g3
+.
+
+=
+
+E2 2I–( )ψ4 I ψ2 ψ6+( )– g3 g5 Eg4+ +=
+
+ψ
+ψ
+
+
+
+Numerical methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 97
+
+(131)
+
+which is of the same form as the original system but with the dimension reduced and the method can be iterated
+
+until left with a single block
+
+(132)
+
+ is of the form
+
+(133)
+
+In the trigometric identity , let  and we get
+
+(134)
+
+Now  is the Chebyshev polynomial of order  for which the zeros are
+
+(135)
+
+by analogy, is expressible as a product of linear factors
+
+(136)
+
+and (132) takes the form
+
+The matrix is factorized and, therefore, the method of Subsection 8.3 can be applied to obtain, for instance , and
+
+from (131) and the same method gives
+
+Having solved for the even numbered fields, the odd numbered ones are obtained from the original system as sys-
+
+tems of  equations.
+
+REFERENCES
+
+(a) General
+
+Kreiss, H. and J. Oliger, 1973: Methods for the approximate solution of time dependent problems. WMO/ICSU
+
+Joint Organising Committee, GARP Publications Series No. 10, 107 pp.
+
+E2 2I– I– 0 . …
+
+I– E2 2I– I– . …
+
+0 I– E2 2I– I– …
+. . . . …
+
+ψ2
+ψ4
+.
+
+.
+
+g1 g3 Eg2+ +
+
+g1 g5 Eg4+ +
+
+.
+
+.
+
+=
+
+E
++( )ψ " g " +( )=
+
+E
++( )
+
+E  1+( ) E ( ){ }2 2I–=
+2θcos 2 θcos( )2 1–= θ 2 β=
+
+2 2 1+ β( )cos 2 H 2β( )cos{ }2 2–=
+2 2  β( )cos 2
+
+α � ( ) 2 π2
+� 1–
+
+2 1+-----------  
+  ,cos 1 2 …2, ,= =
+
+E ( )
+
+E ( ) E 2 π2
+� 1–
+
+2 1+-----------  
+ 
+
+Icos–� 1=
+2 
+∏=
+
+E α1I–( ) E α2I–( )… E αI–( )ψ " g"
++( )=
+
+ψ2
+ψ4 ψ6 …, ,
+
+& &×
+
+
+
+Numerical methods
+
+98 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Mesinger, F. and A. Arakawa, 1976: Numerical methods used in atmospheric models. WMO/ISCU Joint Organis-
+
+ing Committee, GARP Publications Series No. 17, Volumes I and II, pp 64 and 499.
+
+(b) Specific
+
+Bates, J. R. and A. McDonald, 1982: Multiply-upstream, semi-Lagrangian advective schemes: analysis and appli-
+
+cation to a multi-level primitive equation model. Mon. Wea. Rev., 10, 1831–1842.
+
+Carpenter, K. M., 1981: The accuracy of Gadd's modified Lax–Wendroff algorithm for advection. Quart. J. R. Met.
+
+Soc., 107, 468–70.
+
+Collins, W. G., 1983: An accuracy variation of the two-step Lax–Wendroff integration of horizontal advection.
+
+Quart. J. R. Met. Soc., 109. 255–261.
+
+Crowley, W.P., 1968: Numerical advection experiments. Mon. Wea. Rev., 96, 1-11
+
+Cullen, M. J. P., 1979: The finite element method. GARP Publication Series, No. 17, Vol. II. 302–337.
+
+Gadd, A. J., 1978: A numerical advection scheme with small phase speed errors. Quart. J. R. Met. Soc., 104, 569–
+
+582.
+
+Leslie, L. M. and B. J. McAvaney, 1973: Comparative test of direct and iterative methods for solving Helm-
+
+holtz-type equations. Mon. Wea. Rev., 101, 235–239.
+
+Machenhauer, B., 1979: The spectral method. GARP Publication Series No. 17, Vol. II, 124–275.
+
+Pudykiewicz, J. and A. Staniforth, 1984: Some properties and comparative performance of the semi-Lagrangian
+
+method of Robert in the solution of the advection-diffusion equation. Atmosphere–Ocean, 22, 283–308.
+
+Ritchie, H., 1986: Eliminating the interpolation associated with the semi-Lagrangian scheme. Mon. Wea. Rev.,
+
+114, 135-146.
+
+Robert, A., 1981: A stable numerical integration scheme for the primitive meteorological equations. Atmosphere–
+
+Ocean, 19, 35-46.
+
+Robert, A., 1982: A semi-Lagrangian and semi-implicit numerical integration scheme for the primitive meteoro-
+
+logical equations. J. Meteor. Soc. Japan, 60, 319-325.
+
+Strong, G. and G. J. Fix, 1973: An analysis of the finite element method. Prentice-Hall Series in Automatic Com-
+
+putation, Prentice-Hall, 306 pp.
+
+Temperton, C., 1977: Direct methods for the solution of the discrete Poisson equation: some comparisons. EC-
+
+MWF Research Dept. Internal Report No. 13.
+
+Vichenevetsky, R. and J. B. Bowles, 1982: Fourier analysis of numerical approximations of hyperbolic equations.
+
+SIAM, Philadelphia.

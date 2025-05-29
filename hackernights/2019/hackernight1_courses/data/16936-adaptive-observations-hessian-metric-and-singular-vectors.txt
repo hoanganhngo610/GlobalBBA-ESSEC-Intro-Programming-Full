@@ -1,0 +1,1995 @@
+Adaptive observations, the Hessian metric and singular vectors
+
+
+this text appeared in the proceedings of the ECMWF Seminar 2003 on
+Recent developments in data assimilation for atmosphere and ocean
+
+Adaptive observations, the Hessian metric and singular vectors
+
+Martin Leutbecher
+
+ECMWF, Shinfield Park, Reading
+RG2 9AX, United Kingdom
+
+ABSTRACT
+
+Techniques for planning adaptive observations that are based on tangent-linear models and their adjoints are discussed.
+The emphasis is on the validation of techniques that predict the statistically expected impact of additional non-routine
+observations on the forecast error. The concepts are illustrated using the Lorenz-95 system, which is a low-dimensional
+system that has similar error growth characteristics as operational NWP systems. The objective of a consistent approach to
+data assimilation and adaptive observations is formulated and illustrated for an extended Kalman filter and for an OI/3D-
+Var system. A reduced rank technique is introduced. It predicts forecast error variance in a singular vector subspace.
+The reduced rank predictions of forecast error variance are evaluated for both assimilation systems. Furthermore, a few
+examples are given of possible applications of the reduced rank estimate in the context of an operational variational
+assimilation scheme.
+
+1 Introduction
+
+Several techniques have been proposed that hold promise of identifying optimal sites for additional observa-
+tions in order to improve numerical weather forecasts. Experience with such techniques has been and is going
+to be gained in field experiments as FASTEX, NORPEX, WSRP and the Atlantic TOST/TReC1. It has been
+documented for the past observation campaigns2 that the use of targeted observations has overall a positive
+impact. However, we do not know how optimal the sites for the additional observations are really. So far, a
+proper3 test to quantify the degree of optimality for the full NWP system is lacking because it would require a
+large number of additional observations: both targeted and un-targeted ones. The goal of this presentation is to
+advocate a more realistic target for targeted observation techniques: Can we predict how forecast uncertainty
+changes due to intermittent modifications of the observing network? Such predictions of changes of forecast
+uncertainty are necessarily part of any optimisation procedure for planning adaptive observations. A modi-
+fication of the observing network will be called intermittent if it occurs only during an isolated assimilation
+cycle. Changes to the routine observing network that last over several subsequent assimilation cycles will not
+be covered here as they require appropriate techniques to account for the propagation of covariance information
+from one assimilation cycle to the next.
+
+Predictions of changes of forecast uncertainty can be verified with observing system experiments in a similar
+way as the spread of ensemble forecasts is verified with the error of the ensemble mean or the error of the un-
+perturbed control forecast. The equivalent of the spread-skill relationship for the adaptive observation problem
+is a change of forecast uncertainty – change of skill relationship. Such a kind of verification has been presented
+
+1 Fronts and Atlantic Storm-Track EXperiment (1997); The North Pacific Experiment (1998); Winter Storm Reconnaissance Pro-
+gram (1999-2003), THORPEX Observing System Test or THORPEX REgional Campaign (2003)
+
+2About 10–40 dropsondes per case constituted the additional targeted observations in the past campaigns.
+3that is with real observations, see e.g. Hansen and Smith (2000) or Leutbecher et al. (2002) for attempts to quantify optimality with
+
+observations taken from a simulated truth.
+
+393
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+by Majumdar et al. (2001) for the Ensemble Transform Kalman filter technique (ETKF). The ETKF has been
+introduced by (Bishop et al. 2001) for observation targeting. The underlying assimilation scheme is computa-
+tionally very efficient as it can work with subspaces of the dimension of the ensemble. The scheme belongs
+to the wider class of the Ensemble Square Root filters (Tippett et al. 2003). In their evaluation of the ETKF
+targeting approach, Majumdar et al. (2001) noted that the lack of consistency between the ETKF assimilation
+scheme on which the targeting is based and the operational 3D-Var used at NCEP to assimilate the additional
+dropsonde observations is a likely cause of discrepancies between the predicted reductions of forecast error
+variance and the actual realizations.
+
+In order to predict changes of forecast uncertainty, knowledge is required about the statistics of initial condition
+errors, and of how they change due to the assimilation of additional observations, and about the perturbation
+dynamics from the assimilation time to the forecast verification time. All techniques that are currently feasi-
+ble for operational NWP models assume either explicitly or implicitly that the perturbation dynamics can be
+approximated by a linear operator. Ensemble based techniques as the ETKF assume that linear combinations
+of ensemble perturbations are a solution of the model equations. For linear perturbation dynamics and Gaus-
+sian error statistics, optimal state estimation can be achieved with the extended Kalman filter. As outlined by
+Berliner et al. (1999) the extended Kalman filter is also the appropriate technique to objectively select optimal
+sites for additional observations. Current developments in data assimilation in general and in observation tar-
+geting in particular can be seen as an attempt to approximate the extended Kalman filter. Approximations of
+the extended Kalman filter are necessary due to the large dimension of the state space of NWP models. Several
+methods that aim at improving approximations of the extended Kalman filter can be found in these proceed-
+ings. One aim of this contribution is to explain and to verify approximate versions of the extended Kalman filter
+for observation targeting in the context of a low-dimensional system. Throughout this paper a perfect model
+scenario will be adopted, the contribution of model errors to forecast errors will be neglected.
+
+Adjoint-based techniques such as sensitivity to initial conditions and singular vectors have been proposed to
+identify sensitive regions of the atmosphere in which additional observations should be taken (e.g. Palmer
+et al. 1998; Montani et al. 1999, and references therein). Two extensions of these techniques that actually
+account for the assimilation of additional observations are the Kalman filter sensitivity and the Hessian reduced
+rank estimate. The former, proposed by Bergot and Doerenbecher (2002), predicts forecast error variance in
+the direction of an adjoint sensitivity to the model state. The latter, introduced by Leutbecher (2003), predicts
+forecast error variance in the direction of a subspace of leading Hessian singular vectors. The Hessian reduced
+rank estimate can be seen as a special version of a more general class of singular vector based reduced rank
+techniques of predicting forecast error variance. We will start with the more general case. The method is
+explained and illustrated with the Lorenz-95 system, which may be one of the simplest dynamical systems
+that permits the construction of some nontrivial examples. Section 2 explains the methodology and section 3
+contains the results. The Hessian reduced rank estimate in the context of an operational NWP framework is
+explained in section 4. The paper concludes with a discussion in section 5.
+
+2 Adaptive observations in the Lorenz 95 system — Methodology
+
+In his lecture at the 1995 predictability seminar at ECMWF, Edward Lorenz introduced a chaotic dynamical
+system that has similar error growth characteristics as operational NWP systems. I will refer to it from now on
+as L95. The L95-system is attractive as its dynamics are sufficiently complex and yet it is a low order system
+in which some advanced techniques can be tested easily. Therefore, the system is an ideal starting point for
+studies in data assimilation and predictability.
+
+394
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+2.1 L95-dynamics
+
+Here, we use a 40-variable version of the L95-system given by
+
+dxi
+dt
+
+=−xi−2xi−1 + xi−1xi+1− xi +F, (1)
+
+where i = 1,2 . . .40, and cyclic boundary conditions are used x0 = x40, x−1 = x39, x41 = x1. The magnitude
+of the forcing is set to F = 8. Lorenz (1995) concluded that similar error growth characteristics to operational
+NWP systems are obtained if a time unit in the L95-system is associated with 5 days. This scaling will be
+used throughout this paper. Solutions of the system are obtained by numerical integration with a fourth-order
+Runge-Kutta scheme using a 3-hour time-step (∆t = 0.025). For the chosen forcing, the system has 13 positive
+Lyapunov exponents, the largest corresponds to a doubling time of 2.1 days. The dynamics is the same for
+each variable as (1) is invariant under the transformation i→ i+1. Variables fluctuate about the mean in a non-
+periodic manner with a climatological standard deviation of sclim = 3.6. A perturbation of the initial condition
+will grow with time and its leading edge propagates “eastward” (to higher indices) at a speed of about 25
+degrees/day. See Lorenz (1995) and Lorenz and Emanuel (1998) for a more detailed discussion of the system.
+
+The system has been used previously for adaptive observation studies. Lorenz and Emanuel (1998) have com-
+pared various strategies for adding observations using a direct insertion data assimilation scheme. Berliner
+et al. (1999) have illustrated observation targeting based on the extended Kalman filter with the L95-system.
+Hansen and Smith (2000) compared the performance of various targeting strategies for both direct insertion and
+ensemble Kalman filter assimilation. They conclude that “for analysis errors of sufficiently small magnitude,
+dynamically based selection schemes will outperform those based only upon uncertainty estimates; it is in this
+limit that singular vector-based adaptive observation strategies will be productive.”
+
+2.2 Observing network
+
+Now, the observing network is described that is used for the predictability experiments with the L95 system in
+this study. Observations become available every 6 hours. The observations are based on model states from a
+long integration of Eqn. (1) using the same setting as for the forecast model4. This integration is referred to
+as truth or truth run. Observed values are constructed by adding noise to the values taken from the truth run.
+The noise represents unbiased and uncorrelated normally distributed errors. The purpose is to mimic to some
+extent the inhomogeneous atmospheric observing network. Therefore, the 40-variables are divided into ocean
+points (i = 1−20) and land points (points i = 21−40, cf. Fig. 1). Over land, there is an observation at every
+location with a standard deviation of observation error of 0.05sclim. Over the ocean, observations are available
+at “cloud-free locations” with an error standard deviation of 0.15sclim. Clouds depend deterministically on
+the state x of the system but in such a way that the space-time pattern looks like a random process (Fig. 2).
+The probability for occurrence of cloud is 0.7. Land and ocean observations together constitute the routine
+observing network.
+
+For the adaptive part of the observing network, a single additional observation with the error characteristics of
+a land observation is considered. The aim of adding this observation over the less well observed ocean is to
+improve the forecast at a chosen range of up to 5 days for the western part of the continent (sites 21–28), which
+will be referred to as “Europe” (Fig. 1). The evaluation of the targeting techniques is based on a 1000 day
+period during which additional observations (with 0.05sclim) are available at every ocean site once daily
+
+5.
+4That means that a perfect model scenario is adopted.
+5A major observing campaign also termed the Second Hemispheric Adaptive observing, Predictability-Intercomparison and
+
+Research Experiment.
+
+395
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+1
+
+20
+21
+
+23. . . 
+
+40
+
+28
+
+Europe
+
+Atlantic
+
+China
+
+Figure 1: The 1D-world of NWP in the L95-system
+
+Next, we will formulate the data assimilation and observation targeting methodologies that we will compare.
+We begin with an extended Kalman-filter in section 2.3. Section 2.4 deals with the reduced-rank approximation
+of the Kalman filter for the observation targeting part. Finally, a version of the reduced rank estimate that
+uses constant climatological background error covariances is introduced in section 2.5. Impact experiments use
+either none (control) or one of the additional observations and always start from the control-background fields
+and covariances.
+
+2.3 Data assimilation and observation targeting with the extended Kalman filter
+
+The covariance evolution in the Kalman filter is described by an alternating sequence of forecast steps and
+analysis updates. The covariance update can be written as(
+
+Paj
+)−1 = (P fj )−1 +HTj R−1j H j, (2)
+
+where the index j denotes objects at time t j. Otherwise, the notation follows the standard introduced by Ide
+et al. (1997). The covariance forecast from time t j to the next assimilation cycle at t j+1 is given by
+
+P fj+1 = M j(∆t) P
+a
+j M
+
+T
+j (∆t)+Q, (3)
+
+where M j(∆t) denotes the propagator of the tangent-linear model from time t j to time t j+1 = t j + ∆t. It is
+necessary to include a small model error term Q in order to avoid filter divergence. The nonlinear model is
+perfect but the linear model used in the extended Kalman filter is imperfect due to linearisation errors6.
+
+6The model error covariance matrix is represented with a diagonal matrix with qkk = 5× 10
+−3
+sclim for ocean points and qkk =
+
+5×10−4sclim for land points. At the western seaboard there is a smooth transition of q from ocean values to land values to account for
+the eastward advection of larger errors.
+
+396
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+Figure 2: Hovmuller diagram of cloud cover (white) affecting the data coverage of observations over the
+ocean (sites 1–20)
+
+The application of the Kalman filter to observation targeting requires an extension of the forecast range and
+variance localisation. The linear prediction of the forecast error variance in the verification region at time
+t j+` = t j + `∆t is then given by the trace of
+
+LEuP
+f
+j+`L
+
+T
+Eu = LEuM j(`∆t)P
+
+a
+j M
+
+T
+j (`∆t)L
+
+T
+Eu, (4)
+
+where the contribution of the model error term Q has been neglected. The operator LEu denotes the projection
+operator for the verification region ((LEu) j j = 1 for j = 21,22, . . . ,28 and 0 otherwise).
+
+The prediction of changes of forecast error variance in the verification region due to an additional observation
+at location i proceeds similarly. From now onwards, there is no need to refer to different assimilation cycles.
+Therefore, the time index j is dropped. New indices r and i are introduced to refer to the routine observing
+network and an additional observation at location i, respectively. Index i is used in two ways: The 40-by-1 and
+1-by-1 matrices Hi,Ri refer to observation operator and error variance “matrix” for the additional observation
+at location i whereas the symbols Pai ,P
+
+f
+i
+
+denote the covariance matrices for the routine observing network
+augmented by the additional observation at site i. The effect of the additional observation on the analysis error
+covariance matrix valid at time t j is described by
+
+(Pai )
+−1 =
+
+(
+P fr
+
+)−1
++HTr R
+
+−1
+r Hr +H
+
+T
+i R
+−1
+i Hi = (P
+
+a
+r )
+−1 +HTi R
+
+−1
+i Hi (5)
+
+Note, that the covariance update (5) starts from the routine forecast error covariance matrix P fr valid at time t j.
+This is consistent with the assumption that the modification of the observing network is isolated in time. The
+covariance matrix is evolved from t j to t j+` via
+
+P fi = MP
+a
+i M
+
+T, (6)
+
+where M denotes the propagator from t j to t j+`. The reduction of forecast error variance in the verification
+region that is due to an additional observation at position i is then given by
+
+ri = trace
+(
+LEu
+
+(
+P fr −P fi
+
+)
+LTEu
+
+)
+. (7)
+
+The optimal position for an adaptive observation is the one that maximises (7).
+
+397
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+2.4 A reduced rank approximation of the covariance forecast step in the Kalman filter
+
+Approximations to the Kalman filter are important in order to develop techniques that are feasible for current
+NWP models with state space dimensions ranging from 105 to 107. In this section, we explore an approximation
+to the covariance forecast step (Eqn. 3). for the prediction used for planning the adaptive observations. For the
+assimilation of data, an extended Kalman filter is used as in the previous section. The approximation reduces
+the rank of the problem by predicting the variance of forecast errors only in a subspace of leading singular
+vectors. Formally, this means that trace(LEuP
+
+f LTEu) is replaced by trace(ΠnLEuP
+f LTEuΠ
+
+T
+n ), where Πn denotes
+
+a projection into the n-dimensional subspace of leading singular vectors of LEuM. The singular vectors are
+computed with the inverse of the routine analysis error covariance matrix (Par )
+
+−1 as initial time metric because
+these singular vectors evolve into the leading eigenvectors of the forecast error covariance matrix LEuP
+
+f
+r L
+
+T
+Eu.
+
+We will use the notation Vn = (v1 . . .vn) for the matrix containing the leading n initial singular vectors as
+columns.
+
+For the routine observing network, the analysis error covariances in the singular vector subspace can be rep-
+resented by VnVTn because the singular vectors v j are orthonormal with respect to the routine analysis error
+
+covariance metric (Par )
+−1. Intuitively, it makes sense that only initial errors in the direction of the initial sin-
+
+gular vectors need to be accounted for if one is interested in the forecast error in the direction of the evolved
+singular vectors. A formal proof is given in Leutbecher (2003). For the augmented observing network, the
+analysis error covariances are represented by an outer product of transformed singular vectors VnΓiΓ
+
+T
+i V
+
+T
+n . The
+
+n-by-n transformation matrix Γi is an inverse square root of the matrix
+
+Ci = V
+T
+n (P
+
+a
+i )
+−1 Vn = In +VTn H
+
+T
+i R
+−1
+i HiVn. (8)
+
+The matrix Ci is the modified analysis error covariance metric expressed in the basis of the singular vectors.
+This representation of the analysis error covariances involves an approximation of the full covariance matrix by
+a block-diagonal form — see Leutbecher (2003) for further details. Using these representations of the analysis
+error covariances, the forecast error variance in the verification region turns out to be
+
+trace(ΠnLEuP
+f LTEuΠ
+
+T
+n ) =
+
+{
+∑nj=1s2j for the routine network and
+trace(ΓT diag(s21 , . . . ,s2n )Γ) for the modified network.
+
+(9)
+
+Here, s j denotes the singular value of singular vector v j.
+
+2.5 Approximation using a reduced rank covariance prediction and a climatological back-
+ground error covariance matrix
+
+The next step of approximating the full Kalman filter is the replacement of the predicted forecast error covari-
+ance matrix P f in the assimilation by a static matrix B (Eqn. 2). This approximation will be used consistently
+for the data assimilation part and the targeting part. Subsequently, we will refer to it as the OI-assimilation
+scheme7. Variational assimilation schemes can be viewed as implementations of the Kalman filter that are ini-
+tialised with a fixed static background error covariance matrix B at the initial time of each assimilation cycle.
+With this approximation of the background error covariances, the analysis error covariance matrix is given by
+
+A−1 = B−1 +HTR−1H. (10)
+7OI-schemes for NWP applications also select observations. This aspect is not considered here.
+
+398
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+range (d) 0 1 2 3 4 5
+KF 0.11 0.17 0.25 0.38 0.57 0.80
+OI 0.33 0.49 0.74 1.04 1.38 1.74
+sclim = 3.6, so,land = 0.18, so,ocean = 0.54
+
+Table 1: Kalman filter (KF) versus optimum interpolation (OI) performance, global rms errors
+
+For the L95-system, the background error matrix has been obtained from forecast-minus-truth8 differences from
+the 1000-day period9. The diagnosed estimate B(n) depends on the estimate B(n−1) used in the assimilation.
+Superscripts refer to the iteration number. The iterations are started with a diagonal matrix B(0). A few iterations
+are required until the estimate of the background error covariance matrix converges. The approximation of the
+background error covariances is combined with the reduced rank technique introduced in the previous section:
+Forecast error variances are predicted in a subspace of leading singular vectors. The motivation for this twofold
+approximation is that it leads to a system that is similar to the current implementation of the Hessian reduced
+rank estimate for the ECMWF forecasting system. The latter will be discussed in section 4.
+
+3 Adaptive observations in the Lorenz 95 system — Results
+
+Now, we turn to the verification of the variance predictions obtained with the three different targeting tech-
+niques. Results are based on a 1000-day period. There are 21 different forecasts on each day: The control
+forecast and the 20 forecasts using an additional observation at site i, i = 1, . . . ,20. The latter always start
+from the control forecast as background. The results obtained with the Kalman filter will be compared with the
+results obtained with the two reduced rank approximations. Due to the low dimensionality of the system, we
+will consider only the rank 1 version of the reduced rank approximations. At the end of the section, the impact
+of the additional targeted observations will be discussed.
+
+3.1 Skill of forecast systems using the routine observations
+
+Before discussing results of the observation targeting experiments, it is of interest to compare the skill of
+the forecast system using an OI assimilation scheme with that of the forecast system using a Kalman filter
+assimilation scheme. Global rms errors of analyses and forecasts are given in Tab. 1. The Kalman filter
+analyses and short-range forecasts are about three times more accurate than the optimum interpolation analyses
+and forecasts. The 1-day forecast error of the Kalman filter system is about as large as the observation error of
+a land observation and the 1-day forecast error of the optimum interpolation system is similar to the error of an
+ocean observation.
+
+3.2 Prediction of forecast error variance reductions
+
+The goal of targeting techniques — as advocated throughout this paper — is to make skilful predictions of
+how forecast error variance is reduced due to various upgrades of the observing system. A prerequisite for this
+is the prediction of forecast error variances. Forecast error variance prediction is one of the classical aims of
+
+8truth is defined in section 2.2.
+9This technique should provide an upper bound on forecast errors for all techniques using a static representation of B because truth
+
+is unknown and further approximations of B are required for operational NWP systems. See Mike Fisher’s contribution for a description
+of how B is estimated and represented in operational NWP systems.
+
+399
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+0 0.04 0.08 0.12 0.16 0.20 0.24 0.28 0.32 0.36
+0
+
+0.04
+
+0.08
+
+0.12
+
+0.16
+
+0.20
+
+0.24
+
+0.28
++
+
++
+
++
+
++
++
+
++
+
+++
+
+++
++
+
++
+++++++++
+
+0 0.04 0.08 0.12 0.16 0.20 0.24 0.28 0.32 0.36
+0
+
+0.04
+
+0.08
+
+0.12
+
+0.16
+
+0.20
+
+0.24
+
+0.28
+
+fc range  2 days (A04)
+bins of  50 forecasts
+
+m
+ea
+
+n 
+sq
+
+ua
+re
+
+d 
+er
+
+ro
+r
+
+fc err variance
+
+Figure 3: Mean squared error versus Kalman filter variance predictions. 2 day forecast range, verification
+region “Europe”. Size of bins. . .
+
+ensemble prediction. The corresponding verification diagrams are referred to as spread-skill diagrams. In the
+linear regime, there is no need for a Monte-Carlo approach. In the Kalman filter, the variances are evolved
+explicitly using the tangent-linear model via (4). Figure 3 shows the verification of this variance prediction for
+the 2-day forecast for Europe for the system that uses the routine observations only. Cases are stratified with the
+predicted 2-day forecast error variance in the verification region and grouped into bins of 50 forecasts each in
+order to construct the diagram. The mean predicted variance in each bin is plotted on the abscissa whereas the
+mean squared error in each bin is plotted on the ordinate. The latter constitutes asample estimate of the actual
+variance. For a perfect system, all points will scatter close to the diagonal. The scatter around the diagonal will
+decrease with increasing bin size. There appears to be a tendency for slightly too large variance predictions.
+This may be due to a conservative estimate of the model error term in the Kalman filer and due to nonlinear
+error saturation effects.
+
+Now, we turn to the predictions of forecast error variance reductions. We begin with the (full rank) Kalman
+filter and then turn to the two levels of approximation in subsequent sections.
+
+3.2.1 Kalman filter predictions
+
+The predictions of forecast error variance reductions in the full rank Kalman filter are based on Eqn. (7). The
+verification of these predictions proceeds similarly to the verification of the variance predictions themselves.
+Cases are now stratified by the predicted reduction of forecast error variance. Figure 4 shows the verification
+for the 2-day forecast over “Europe” for bin sizes of 50 and 250. The number of bins in Fig. 4a is larger than
+in Fig. 3 because there are now 20 realizations of a variance reduction each day. However, as the background
+
+400
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+error is the same in these realizations the data are not independent. In consequence the relationship between
+predicted and realized reductions in forecast error variance is still quite noisy for a bin size of 50. The scatter
+is considerably reduced at a bin size of 250. There is a small tendency to over-predict forecast error reductions.
+Apart from this minor discrepancy, the Kalman filter based prediction of forecast error variance reductions is
+skilful. We note that large sample sizes may be required for the verification.
+
+3.2.2 Kalman filter-rank-1 predictions
+
+Now, we turn to the verification of the approximate version of the Kalman filter targeting that uses rank reduc-
+tion based on a subspace of leading singular vectors. Only the rank 1 case is considered here. The reduction
+of the total mean square error in the verification region is compared with the predicted reduction of forecast
+error variance in the subspace of the leading singular vector. The verification for forecast day 2 is plotted in
+Fig. 5. The rank-1 predictions of variance reduction are of a similar magnitude as the full-rank predictions.
+The projection of forecast errors in the direction of the leading singular vector will result in smaller variances
+for every forecast: the one using the routine observations and each one using an augmented observing network.
+However, the block-diagonal approximation of the analysis error covariance matrix for the modified observing
+network results in an underestimation of the associated forecast error variance. The net effect is a moderate
+over-prediction of forecast error variance reductions. This appears plausible as the forecast error explained by
+the leading singular vector is quite large in this low dimensional system.
+
+3.2.3 OI-rank-1 predictions
+
+Next, we verify forecast error variance reductions obtained with the rank-1 system that uses climatological
+background error covariances. From the perspective of current NWP applications, this is the most interesting
+step as the similar systems can be designed for operational NWP systems. The Hessian reduced rank estimate,
+which will be discussed in section 4, is one example. Predicted and actual reductions of forecast error variance
+in the L95-system are compared in Fig. 6. The average realized mean square error reductions increase mono-
+tonically with the predicted rank 1 error variance reductions. Generally, the OI-rank 1 system significantly
+over-predicts the variance reductions. This feature could be removed by an empirical scaling of the predicted
+variance reductions.
+
+The different performance of the optimum interpolation system (OI) and the Kalman filter system (KF) has two
+causes: the different covariance estimate and the different accuracy of the trajectory upon which the lineari-
+sation is based. As mentioned previously, the trajectory of the OI-system has about a three times larger error
+than the trajectory of the KF-system. In order to disentangle the two causes one can compare with Kalman
+filter results for longer forecast ranges. The 4-day error of the KF-system has a similar magnitude as the 2-day
+error in the OI-system (Tab. 1). The verification of forecast error variance reductions is plotted in Fig. 7. We
+notice a useful monotonically increasing relationship. There is evidence for nonlinear error saturation effects
+for predicted reductions of forecast error variance larger than 1 but no sign of saturation for reductions smaller
+than 0.5. In the OI-system, the overestimation of variance reductions is independent of the predicted reduc-
+tion. This suggests that the constant background error covariance estimate is the main cause for the systematic
+overestimation of variance reductions in the OI-system.
+
+401
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+(a)
+
+0 0.04 0.08 0.12 0.16 0.20 0.24 0.28 0.32
+−0.01
+
+0.03
+
+0.07
+
+0.11
+
+0.15
+
+0.19
+
+0.23
+
++
+
++
++
+
++
+
++
+
++
+
++
+
++
++
+
++
+
++
+
++
++++
+
++
++
+
+++
++
++
+
++
+
++
+
++
++
+
++
+
++
+
+++
++
+
++
++
+
+++
++++
+++
++
+++
+++
++
++++
++
++
+
++
++
+
++
++++++
++
+++
+++++++
+++
++
++
+++
+++
+++++
++
++++++++
++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+0 0.04 0.08 0.12 0.16 0.20 0.24 0.28 0.32
+−0.01
+
+0.03
+
+0.07
+
+0.11
+
+0.15
+
+0.19
+
+0.23
+
+fc range  2 days (A04)
+bins of  50 forecasts
+
+re
+du
+
+ct
+io
+
+n 
+of
+
+ m
+ea
+
+n 
+sq
+
+ua
+re
+
+ e
+rr
+
+or
+
+reduction of fc error variance
+
+(b)
+
+0 0.02 0.04 0.06 0.08 0.10 0.12 0.14
+−0.01
+
+0.01
+
+0.03
+
+0.05
+
+0.07
+
+0.09
+
+0.11
++
+
++
+
++
+
+++
+
++
++++
+
++
++
+
+++++
++++++++++++++++++
+
+0 0.02 0.04 0.06 0.08 0.10 0.12 0.14
+−0.01
+
+0.01
+
+0.03
+
+0.05
+
+0.07
+
+0.09
+
+0.11
+
+fc range  2 days (A04)
+bins of 250 forecasts
+
+re
+du
+
+ct
+io
+
+n 
+of
+
+ m
+ea
+
+n 
+sq
+
+ua
+re
+
+ e
+rr
+
+or
+
+reduction of fc error variance
+
+Figure 4: Verification of the predictions of forecast error variance reductions due to additional observations
+(Kalman filter). Top panel: bins of 50 forecasts; bottom panel: bins of 250 forecasts
+
+402
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+0 0.04 0.08 0.12 0.16 0.20 0.24 0.28 0.32 0.36
+−0.01
+
+0.01
+
+0.03
+
+0.05
+
+0.07
+
+0.09
+
+0.11
+
+0.13
+
+0.15
+
+0.17
+
+0.19
++
+
+++
+
++
+
++
+
++
+
+++
+
++
+
++
+
++
+++
+
++
+
++
+
++
+
++
+
++
++
+++++
+
++++
++
+
++
+
+++
++++
++
+
++
+
+++
++
+
++
++
++
++
+
++
+
++
++
+
++
+
+++
++
++
++
+
++++
+++
++++
++
+
++
++
+++
+++++++
++++++++++++++++++++++
+
+++++++++
+++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+0 0.04 0.08 0.12 0.16 0.20 0.24 0.28 0.32 0.36
+−0.01
+
+0.01
+
+0.03
+
+0.05
+
+0.07
+
+0.09
+
+0.11
+
+0.13
+
+0.15
+
+0.17
+
+0.19
+
+fc range  2 days (R08)
+bins of  50 forecasts
+
+re
+du
+
+ct
+io
+
+n 
+of
+
+ m
+ea
+
+n 
+sq
+
+ua
+re
+
+ e
+rr
+
+or
+
+reduction of fc error variance
+
+Figure 5: Evaluation of the Kalman Filter rank-1 predictions of forecast error variance reductions due to
+additional observations. 2-day forecast and bins of 50 forecasts.
+
+0 0.2 0.4 0.6 0.8 1.0 1.2
+−0.1
+
+0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
++
+
++
+
++
+
++
++
+
++++
++++
+
++
++
+
+++++
++++++++++++++++
+
+0 0.2 0.4 0.6 0.8 1.0 1.2
+−0.1
+
+0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
+fc range  2 days (R07)
+bins of 250 forecasts
+
+re
+du
+
+ct
+io
+
+n 
+of
+
+ m
+ea
+
+n 
+sq
+
+ua
+re
+
+ e
+rr
+
+or
+
+reduction of fc error variance
+
+Figure 6: Verification of 2-day forecast error variance reductions: OI-rank 1. 2-day forecast and bins of 250 forecasts.
+
+403
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+0 0.4 0.8 1.2 1.6 2.0 2.4 2.8
+0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
+0.8 +
+
++
+
++
++
+
++++++
++
+
++
++++
+
++
++++++++++++++++++
+
+0 0.4 0.8 1.2 1.6 2.0 2.4 2.8
+0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
+0.8
+
+fc range  4 days (R08)
+bins of 250 forecasts
+
+re
+du
+
+ct
+io
+
+n 
+of
+
+ m
+ea
+
+n 
+sq
+
+ua
+re
+
+ e
+rr
+
+or
+
+reduction of fc error variance
+
+Figure 7: Verification of Kalman filter rank-1 predictions of forecast error variance reductions due to additional
+observations. 4-day forecast and bins of 250 forecasts.
+
+3.3 Impact of adaptive observations on the forecast error distribution
+
+Figure 8 illustrates the fact that the optimal site for an additional observation depends on the underlying assim-
+ilation scheme. Next, we look at the impact that the adaptive observation has on the distribution of forecast
+errors (Fig. 9). A hard test for any targeting scheme that adapts positions for additional observations on a daily
+basis is whether it outperforms a scheme that adds an observation at the best fixed site. Based on Fig. 8, site 19
+and 20 are selected as best10 fixed sites for the KF and OI-system, respectively. For both systems, the forecasts
+using targeted observations are significantly better than the forecasts using the fixed additional observation or
+the forecast using routine observations only. Further, we note that the rank-1 KF targeting and full-rank KF-
+targeting yield almost identical reductions of the forecast error distribution. The forecast improvement obtained
+with an additional observation at a fixed site in the OI-system is fairly small compared to the improvement ob-
+tained with the rank-1 OI targeting. Note, that observation targeting is particularly efficient in reducing the risk
+for particularly large forecast errors, say the largest 5–10% of errors.
+
+4 Reduced rank prediction of forecast error variance reductions in an opera-
+tional NWP context
+
+The reduced rank methodology for predicting the effect of additional observations on forecast uncertainty has
+been introduced in the context of a low-dimensional system in section 2. Now, we will see how this idea can be
+
+10Another choice would be the site that actually leads to the largest forecast error reduction.
+
+404
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+(a)
+
+0 3 6 9 12 15 18 21
+0.00
+
+0.05
+
+0.10
+
+0.15
+
+0.20
+
+0.25
+
+0.30
+
+fc range  2 days (A04)
+fr
+
+ac
+tio
+
+n 
+of
+
+ c
+as
+
+es
+
+position of targeted obs.
+
+(b)
+
+0 3 6 9 12 15 18 21
+0.00
+
+0.05
+
+0.10
+
+0.15
+
+0.20
+
+0.25
+
+0.30
+
+0.35
+
+0.40
+
+fc range  2 days (R07)
+
+fr
+ac
+
+tio
+n 
+
+of
+ c
+
+as
+es
+
+position of targeted obs.
+
+Figure 8: Position of targeted observation sites using the KF for assimilation and targeting (a) and using OI for
+assimilation and OI-rank1 for targeting (b).
+
+405
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+(a)
+
+tg obs (KF−rank 1)
+
+0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
+0
+
+5
+
+10
+
+15
+
+20
+
+25
+
+fc range  2 days (A04/R08)
+
+rms error
+
+cd
+f 
+
+of
+ f
+
+or
+ec
+
+as
+t e
+
+rr
+or
+
+s 
+(p
+
+er
+ce
+
+nt
+)
+
+0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
+0
+
+5
+
+10
+
+15
+
+20
+
+25
+
+control
+
+obs at 19
+
+tg obs (KF full rank)
+
+(b)
+
+0.0 0.5 1.0 1.5 2.0 2.5 3.0 3.5
+0
+
+5
+
+10
+
+15
+
+20
+
+25
+
+fc range  2 days (R07)
+
+cd
+f 
+
+of
+ f
+
+or
+ec
+
+as
+t e
+
+rr
+or
+
+s 
+(p
+
+er
+ce
+
+nt
+)
+
+rms error
+
+tg obs (OI rank 1)
+
+obs at 20
+
+control
+
+Figure 9: Impact of adaptive observations on the 2-day forecast error distribution. Panel (a) KF assimilation and
+KF/KF-rank-1 targeting; panel (b) OI assimilation and OI-rank-1 targeting.
+
+406
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+applied in an operational NWP context. First, the implementation of a reduced rank estimate of forecast error
+variance based on an incremental variational assimilation scheme will be explained. Then, three examples will
+be given to illustrate the scope of this method.
+
+4.1 Incremental Var and the Hessian reduced rank estimate
+
+The ECMWF forecast system uses an incremental 4D-Var scheme. The analysis is found by minimising a cost
+function
+
+J(x) =
+1
+2
+
+xTB−1x+
+1
+2
+(Hx−d)TR−1(Hx−d),
+
+where the vector x denotes departure from the background and the vector d denotes departures of the observed
+values from the background interpolated to observations. The Hessian of the cost function of the variational
+assimilation scheme yields an estimate of the inverse of the analysis error covariance matrix.
+
+∇∇J = B−1 +HTR−1H
+
+We assume here that J is quadratic11. Therefore, the Hessian applied to an arbitrary vector can be computed
+exactly as finite difference of gradients.
+
+Singular vectors computed with the routine Hessian12 as initial time metric are used to define a reduced rank
+estimate of forecast error variance reductions. These vectors are referred to as Hessian singular vectors. Bark-
+meijer et al. (1998) introduced Hessian singular vectors and showed how they could be obtained from the
+iterative solution of a generalised eigenproblem. The reduced rank estimate of forecast error variance is defined
+as the variance of forecast errors projected into the subspace of routine Hessian singular vectors. Leutbecher
+(2003) introduced it and proposed the name Hessian reduced rank estimate. In order to quantify the effect of
+additional observations on the forecast error in the subspace of the routine Hessian singular vectors, it is neces-
+sary to compute the modified Hessian in the subspace of the leading n routine Hessian singular vectors. Here,
+n is the rank of the estimate. The modified Hessian in the subspace of the leading n routine Hessian singular
+vectors is denoted by the n-by-n matrix C. An efficient computation of this matrix is possible via
+
+Ci j = v
+T
+i ∇∇Jmod v j = v
+
+T
+i
+
+(
+∇∇Jroutine +H
+
+T
+a R
+−1
+a Ha
+
+)
+v j
+
+= di j + (Havi)
+T R−1a Hav j.
+
+The main computational burden is the calculation of the routine Hessian singular vectors v j. To compute
+the matrix C it is sufficient to apply the observation operator for the additional observations Ha to each of
+the singular vectors. Then, the reduction of forecast error variance in the singular vector subspace is readily
+computed as
+
+trace
+([
+
+I−C−1
+]
+
+diag(s21 . . .s
+2
+n )
+
+)
+,
+
+where the s j denote the singular values of the routine Hessian singular vectors.
+11This is the case for linearised observation operators. Note that the cost function used in the operational assimilation contains some
+
+non-quadratic terms, e.g. the one that represents variational quality control. The non-quadratic terms are neglected in the estimate of
+the analysis error covariance matrix used here.
+
+12we use routine Hessian to refer to the metric associated with the routine observing network. Similarly, we will use modified
+Hessian to refer to the Hessian associated with the modified observing network consisting of the routine network and a set of additional
+observations.
+
+407
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+Figure 10: Flight tracks considered during the Winter Storms Reconnaissance Program. Dots correspond to hypo-
+thetical dropsonde sounding locations.
+
+4.2 Ranking of flight tracks
+
+The Hessian reduced rank estimate can be employed to select the best observing network upgrade among a finite
+number of feasible options. An example is the design of a flight track to deploy dropsondes over the ocean with
+the aim to improve a short-range forecast over the continent downstream. At NCEP, the Ensemble Transform
+Kalman filter is used operationally to select the best track for a targeting flight. Figure 11 shows an example of
+the predictions of forecast error variance reductions obtained with the Ensemble Transform Kalman filter and
+with the Hessian reduced rank estimate for a case during the last Winter Storms Reconnaissance Program.
+
+The histogram provided by the Ensemble Transform Kalman filter is considerably flatter than the histogram
+obtained with the Hessian reduced rank estimate. Flights from Hawaii are generally expected to be more
+effective in reducing forecast error than those from Alaska according to the Hessian reduced rank estimate. In
+contrast, the Ensemble Transform Kalman filter shows little difference between the group of flight-tracks from
+Hawaii and the group from Alaska. However, the ordering of flight tracks obtained within each group is not
+too dissimilar for the two targeting techniques. The Atlantic TReC (2003) offers the opportunity for a more
+rigorous comparison between the Ensemble Transform Kalman filter and the Hessian Singular vectors.
+
+4.3 Objective diagnosis of sensitive areas from singular vectors
+
+Singular vectors have been used for observation targeting since the FASTEX experiment in 1997. Montani et al.
+(1999) and Buizza and Montani (1999) suggested to diagnose regions in which to place additional observations
+by means of a function defined as weighted average of the leading n singular vectors. They proposed to use the
+singular values as weights to give more attention to those errors that contribute most to the forecast error in the
+verification region at verification time. Montani et al. (1999) based the function on temperature perturbations
+
+408
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+(a)
+
+(b)
+
+flight track number
+
+Figure 11: Ranking of flight tracks using the Ensemble Transform Kalman Filter (a) and the Hessian reduced rank
+estimate (b). The value of each bar corresponds to the reduction of forecast error variance associated with a
+deployment of about 20 dropsondes along a flight track. The additional observations are aimed at improving the
+48-hour forecast over Alaska, valid time: 6 Feb 2003, 0 UT, targeted observation time: 4 Feb 2003, 0 UT.
+
+409
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+Figure 12: Comparison of two ways to objectively diagnose a sensitive region from a set of leading singular vectors:
+The reduction of forecast error variance as function of the position of an additional dropsonde location is shaded; the
+function proposed by Buizza and Montani (1999), the singular-value-weighted average of the vertically integrated
+total energy, is contoured. Verification region over Alaska, 48-hour forecast range, observation time 4 Feb. 2003,
+0 UT.
+
+of the singular vectors and Buizza and Montani (1999) based their function on the vertically integrated total
+energy of the singular vectors. Although this method allows to objectively diagnose a “sensitive” region from
+the singular vectors, a thorough theoretical justification for the choice of this diagnostic function has been
+lacking. With the Hessian reduced rank estimate this question can be addressed. Let us assume that we want to
+optimise the location of a couple of dropsondes. Then, the appropriate objective measure should be the forecast
+error variance reduction due to the use of an additional sounding at a given location. A plot of the forecast error
+variance reduction as function of the sounding location will indicate the region where the additional observation
+is likely to yield the largest forecast improvement. It turns out that the maps of forecast error variance reduction
+agree remarkably well with maps of the weighted average of the vertically integrated total energy of the singular
+vectors (Fig. 12). Thus, in retrospective the choice of the function by Buizza and Montani (1999) is justified.
+
+4.4 Comparison of different observation types
+
+Up to now, adaptive observation campaigns were focused on targeting in situ observations, predominantly
+dropsondes deployed from research aircraft over the oceans. In principle, one can apply targeting strategies to
+any kind of observation13. Furthermore, targeting techniques may become a tool for adaptive data selection
+strategies. These could help to cope with the huge stream of satellite data that will be available for NWP in
+a few years from now. In this context, the question arises whether the abundance of advanced satellite data
+will eliminate the need for targeted in situ observations. One may conjecture that adaptive in situ observations
+
+13A first attempt to widen the scope of observation targeting is undertaken in the Atlantic THORPEX regional campaign Oct-Dec
+2003, where additional soundings from ASAP ships, regular land stations and additional data from the AMDAR aircraft will be taken.
+
+410
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+may still be useful to constrain the analysis below cloud where satellite observing capabilities are more limited.
+The Hessian reduced rank estimate can be employed to address that issue14. Forecast error variance reductions
+can be determined for different observation types such as targeted dropsondes and satellite radiances in the
+sensitive region and its surroundings. An example of such a comparison is presented in Fig. 13. The 20
+dropsonde locations are selected to sample the target region well15 whereas the HIRS data are not used in a
+cloudy region, which is associated with a front traversing the target region. In this case, the dropsondes are
+more efficient in constraining the forecast error over Europe at a range of 2 days than the HIRS radiances.
+However, the HIRS data may be important for constraining the error of subsequent analyses and forecasts by
+improving the first guess in the vicinity of the frontal zone. However, the presented methodology is not capable
+of quantifying improvements arising from an improved first guess field.
+
+5 Discussion
+
+Now, we will discuss the factors that are likely to affect the skill of the predictions of forecast error variance
+reductions for an operational NWP system.
+
+5.1 Error dynamics
+
+The estimates of forecast error variance are based on linear error dynamics. There are two issues here. First, we
+note that the tangent-linear model is not the tangent-linear of the nonlinear forecast model. The tangent-linear
+model and its adjoint are based on simplified version of the model — simplified in terms of the spatial resolution
+and in terms of the representation of parameterised physical processes16. Advances in the formulation of the
+tangent-linear and adjoint models should result in improved variance predictions. A test of the sensitivity of
+the observation targeting guidance to the spatial resolution and the representation of moist processes in the
+tangent-linear model will be performed during the Atlantic TReC17. Second, the validity of the tangent-linear
+assumption is a contentious issue. Gilmour et al. (2001) conclude that the tangent-linear assumption is probably
+not useful beyond 24 h. But their measure of nonlinearity is dominated by small scales. The results of Reynolds
+and Rosmond (2003) are more optimistic. They find that singular vectors can be useful at a range of up to 72
+hours. Their diagnostic is similar to that of Gilmour et al. (2001) but the scale-dependence is studied explicitly.
+Furthermore, the diagnostic is applied in the space of the singular vectors.
+
+5.2 Covariance estimates
+
+The skill of the forecast error variance predictions depends on the quality of the background error covariance
+estimate. This has been illustrated by the comparison of the Kalman filter and OI experiments for the L95-
+system. Several presentations in this seminar deal with the estimation and representation of the background
+error covariances in data assimilation schemes18. Improvements in the covariance representation used in the
+
+14different parts of the observing network are observing system experiments in which data from part of the network are denied. These
+experiments are computationally demanding as many assimilation cycles need to be run for each observing network configuration. The
+interpretation of individual cases is not very meaningful as results depend on the actual observation errors and background errors. The
+Hessian reduced rank estimate can be used to complement traditional observing system experiments. It has the advantage that it yields
+meaningful results for individual cases as it is a dynamic-statistical technique that provides expectation values rather than realizations.
+
+15This is a hypothetical deployment.
+16see presentation by Janiskova in this volume.
+17Atlantic THORPEX Regional Campaign, Oct–Dec 2003.
+18see, e.g., presentations by Fisher, Farrell and Ioannou, Houtekamer.
+
+411
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+(a)
+
+ 0  1  2  
+ Cases 
+
+0.00
+
+0.10
+
+0.20
+
+0.30
+
+0.40
+
+0.50
+
+ 
+
+ch
+an
+
+ne
+l_4
+
+ch
+an
+
+ne
+l_5ch
+
+an
+ne
+
+l_6ch
+an
+
+ne
+l_7ch
+
+an
+ne
+
+l_1
+1
+
+ch
+an
+
+ne
+l_1
+
+2
+ch
+
+an
+ne
+
+l_1
+4
+
+ch
+an
+
+ne
+l_1
+
+5
+
+all
+_c
+
+ha
+nn
+
+els
+
+sim
+u_
+
+dro
+p
+
+(b)
+
+30°N
+
+40°N
+
+50°N
+
+60°N
+
+70°N
+
+80°N
+
+100°W
+
+100°W
+
+80°W
+
+60°W
+
+40°W 20°W
+
+0°
+
+20°E
+
+40°E
+
+40°E
+
+20 simulated obs - 11x t/u/v 2003-08-19-18 
+targeting date : 2003-08-19-18 / target : tegg ftg10p1 / verif box +48h 
+
+(c)
+
+30°N
+
+40°N
+
+50°N
+
+60°N
+
+70°N
+
+80°N
+
+100°W
+
+100°W
+
+80°W
+
+60°W
+
+40°W 20°W
+
+0°
+
+20°E
+
+40°E
+
+40°E
+
+All HIRS channels noaa16 : 2003-08-19-18
+targeting date : 2003-08-19-18 / target : tegg ftg10p1 / verif box +48h
+
+Figure 13: Comparison of the reduction of forecast error variance (total energy in subspace of leading 10 singular
+vectors) due to 20 targeted dropsondes and due to HIRS radiances (a). The data coverage for the dropsondes and
+the radiances is plotted in panels (b) and (c), respectively. The shading in (b,c) is the sensitive region as diagnosed
+from the leading Hessian singular vectors.
+
+data assimilation are likely to be also beneficial for the associated targeting technique.
+
+Correlated observation errors are largely unaccounted for in present assimilation schemes. Correlations of
+errors between channels and in space are expected for many satellite data, such as radiances and atmospheric
+motion vectors (Bormann et al. 2003). Predictions of forecast error variance reductions due to dense data with
+suspected error correlations should be interpreted with caution as long as these observation error correlations
+are not accounted for in the assimilation and targeting schemes. A possibility to address the problem without
+actually including correlated observation error in the assimilation scheme is optimal thinning of data Liu and
+Rabier (2002).
+
+The targeting technique presented here faces one additional challenge that is not shared with the data assim-
+ilation schemes. It is necessary to predict the spatial distribution of used routine observations19. The spatial
+distribution of observations (and their error characteristics) have to be known before the observations are actu-
+ally taken. For parts of the network, the day-to-day variability is small so that the latest available data coverage
+
+19that is after the quality control steps.
+
+412
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+provides a useful proxy for the coverage in the next few days. However, for satellite data affected by cloud it
+is a nontrivial task to predict the future data coverage. The relevance of this issue will grow with the amount
+and accuracy of satellite data used. It is conceivable that algorithms have to be developed that predict the data
+coverage based on forecast model cloud.
+
+5.3 Rank Reduction
+
+As the dimension of the singular vector subspace is increased the reduced rank estimate of forecast error vari-
+ance converges to the prediction of forecast error variance that would be obtained with the Kalman filter. The
+question arises how many singular vectors are required to reliably predict the forecast error variance reductions.
+For the L95-system, one singular vector was sufficient. For the NWP problem, the answer will depend on the
+size of the verification region. A trivial upper bound for the dimension of the subspace is the number of degrees
+of freedom20 in the verification region. A more useful bound can be obtained by looking at the fraction of
+forecast error explained by the n leading singular vectors. Cardinali and Buizza (2003) find for 10 NORPEX
+cases that the leading 10 total energy singular vectors explain approximately 40% of the total forecast error in
+the verification region. Thus it appears that of the order of 10–100 singular vectors are required for a reliable
+prediction of forecast error variance reductions. In addition, there may be a necessity for updating the sub-
+space in a sequential approach. Assume that already a part of the envisaged network upgrade constrains the
+error in the routine Hessian singular subspace well. Then, new singular vectors should be computed with the
+Hessian metric using the routine observations and the partial network upgrade in order to plan further adaptive
+observations. The necessity for such a sequential approach will depend on the size of the adaptable part of the
+observing network and on the dimension of the subspace
+
+6 Conclusions
+
+Adjoint-based tools to predict changes of forecast error variance due to modifications of the observing net-
+work have been discussed in this paper. The methods comprise the Kalman filter and approximations of it.
+The evaluation of these techniques was illustrated with experiments using the Lorenz 95 system. The rank-1
+targeting technique based on the Kalman filter turned out to be as skilful as the full-rank Kalman filter. The
+rank-1 method that uses climatological background error covariances is also skilful. It is a targeting technique
+consistent with the used OI-assimilation. However, there appears a potential for improvements by accounting
+for flow-dependent aspects of the error statistics.
+
+An objective for any targeting technique should be that it is based on analysis error covariance statistics which
+are consistent with the covariance estimates employed in the assimilation scheme which will use the adaptive
+observations. The Hessian reduced rank estimate is a targeting technique that achieves consistency with the
+4D-Var assimilation scheme21.
+
+The verification of targeting techniques for operational NWP models, such as the Hessian reduced rank esti-
+mate, is a major outstanding task. Due to the statistical nature of the verification, large sample sizes are required.
+Data denial experiments may be better suited for the evaluation of targeting techniques than experiments with
+existing targeted observations for two reasons. The number of cases where targeted observations are available
+may be too small. Furthermore, for almost all of these cases deployments of additional observations outside
+the identified sensitive regions are lacking.
+
+20number of grid points times number of variables. For a typical verification region with 2000 km horizontal extension and a T42
+truncation for the singular vectors, this corresponds to about 6×103 degrees of freedom.
+
+21to be precise: The inner loop of a 4D-Var scheme that uses a quadratic approximation of the cost function.
+
+413
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+Acknowledgements
+
+I am grateful to Alexis Doerenbecher for providing the results presented in section 4 and useful comments on
+the manuscript. Thanks also to Erik Andersson for a suggestion that helped to improve the paper.
+
+References
+
+Barkmeijer, J., M. Van Gijzen, and F. Bouttier, 1998: Singular vectors and estimates of the analysis-error
+covariance metric. Quart. J. Roy. Meteor. Soc., 124, 1695–1713.
+
+Bergot, T. and A. Doerenbecher, 2002: A study on the optimization of the deployment of targeted observations
+using adjoint-based methods. Quart. J. Roy. Meteor. Soc., 128, 1689–1712.
+
+Berliner, L. M., Z.-Q. Lu, and C. Snyder, 1999: Statistical design for adaptive weather observations. J. Atmos.
+Sci., 56, 2536–2552.
+
+Bishop, C. H., B. J. Etherton, and S. J. Majumdar, 2001: Adaptive sampling with the ensemble transform
+Kalman filter. Part I: Theoretical aspects. Mon. Wea. Rev., 129, 420–436.
+
+Bormann, N., S. Saarinen, G. Kelly, and J.-N. Thépaut, 2003: The spatial structure of observation errors in
+atmospheric motion vectors from geostationary satellite data. Mon. Wea. Rev., 131, 706–718.
+
+Buizza, R. and A. Montani, 1999: Targeting observations using singular vectors. J. Atmos. Sci., 56, 2965–2985.
+
+Cardinali, C. and R. Buizza, 2003: Forecast skill of targeted observations: A singular-vector-based diagnostic.
+J. Atmos. Sci., 60, 1927–1940.
+
+Gilmour, I., L. A. Smith, and R. Buizza, 2001: On the duration of the linear regime: Is 24 hours a long time in
+weather forecasting? J. Atmos. Sci., 58, 3525–3539.
+
+Hansen, J. A. and L. A. Smith, 2000: The role of operational constraints in selecting supplementary observa-
+tions. J. Atmos. Sci., 57, 2859–2871.
+
+Ide, K., P. Courtier, M. Ghil, and A. C. Lorenc, 1997: Unified notation for data assimilation: Operational,
+sequential and variational. J. Meteor. Soc. Japan, 75(181–189).
+
+Leutbecher, M., 2003: A reduced rank estimate of forecast error variance changes due to intermittent modifi-
+cations of the observing network. J. Atmos. Sci., 60, 729–742.
+
+Leutbecher, M., J. Barkmeijer, T. N. Palmer, and A. J. Thorpe, 2002: Potential improvement to forecasts of
+two severe storms using targeted observations. Quart. J. Roy. Meteor. Soc., 128, 1641–1670.
+
+Liu, Z. and F. Rabier, 2002: The interaction between model resolution, observation resolution and observation
+density in data assimilation: A one-dimensional study. Quart. J. Roy. Meteor. Soc., 128, 1367–1386.
+
+Lorenz, E. N., 1995: Predictability: A problem partly solved. In Seminar on Predictability, volume Vol. I,
+ECMWF, Reading, UK, 1–18.
+
+Lorenz, E. N. and K. A. Emanuel, 1998: Optimal sites for supplementary weather observations: Simulation
+with a small model. J. Atmos. Sci., 55, 399–414.
+
+414
+
+
+
+LEUTBECHER, M: ADAPTIVE OBSERVATIONS
+
+Majumdar, S. J., C. H. Bishop, B. J. Etherton, I. Szunyogh, and Z. Toth, 2001: Can an Ensemble Transform
+Kalman Filter predict the reduction in forecast error variance produced by targeted observations? Quart.
+J. Roy. Meteor. Soc., 127, 2803–2820.
+
+Montani, A., A. J. Thorpe, R. Buizza, and P. Unden, 1999: Forecast skill of the ECMWF model using targeted
+observations during FASTEX. Quart. J. Roy. Meteor. Soc., 125, 3219–3240.
+
+Palmer, T. N., R. Gelaro, J. Barkmeijer, and R. Buizza, 1998: Singular vectors, metrics, and adaptive observa-
+tions. J. Atmos. Sci., 55, 633–653.
+
+Reynolds, C. A. and T. E. Rosmond, 2003: Nonlinear growth of singular-vector-based perturbations. Quart.
+J. Roy. Meteor. Soc., 129, 3059–3078.
+
+Tippett, M. K., J. L. Anderson, C. H. Bishop, T. M. Hamill, and J. S. Whitaker, 2003: Ensemble square root
+filters. Mon. Wea. Rev., 131, 1485–1490.
+
+415
+
+
+	1 Introduction
+	2 Adaptive observations in the Lorenz 95 system --- Methodology
+	2.1 L95-dynamics
+	2.2 Observing network
+	2.3 Data assimilation and observation targeting with the extended Kalman filter
+	2.4 A reduced rank approximation of the covariance forecast step in the Kalman filter
+	2.5 Approximation using a reduced rank covariance prediction and a climatological background error covariance matrix
+
+	3 Adaptive observations in the Lorenz 95 system --- Results
+	3.1 Skill of forecast systems using the routine observations
+	3.2 Prediction of forecast error variance reductions
+	3.2.1 Kalman filter predictions
+	3.2.2 Kalman filter-rank-1 predictions
+	3.2.3 OI-rank-1 predictions
+
+	3.3 Impact of adaptive observations on the forecast error distribution
+
+	4 Reduced rank prediction of forecast error variance reductions in an operational NWP context
+	4.1 Incremental Var and the Hessian reduced rank estimate
+	4.2 Ranking of flight tracks
+	4.3 Objective diagnosis of sensitive areas from singular vectors
+	4.4 Comparison of different observation types
+
+	5 Discussion
+	5.1 Error dynamics
+	5.2 Covariance estimates
+	5.3 Rank Reduction
+
+	6 Conclusions

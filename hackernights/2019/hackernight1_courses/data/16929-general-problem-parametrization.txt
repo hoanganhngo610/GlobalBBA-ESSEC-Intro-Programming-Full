@@ -1,0 +1,697 @@
+General
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+The general problem of parametrization
+March 1984
+
+By M. Tiedtke
+
+Table of contents
+
+1 . Introduction
+
+2 . The spectrum of atmospheric motions
+
+3 . The non-parametrized equations
+
+4 . Principles of parametrization
+
+REFERENCES
+
+1. INTRODUCTION
+
+Numerical weather prediction is generally performed by numerical integration of the hydrodynamic equations gov-
+
+erning atmospheric motions. Therefore, the differential equations taking a grid-point model, for example, are ap-
+
+proximated by finite difference equations applied to a grid of finite volumes. In contrast to the original differential
+
+equations which describe the whole spectrum of atmospheric motions, the finite difference equations of a grid-
+
+point model describe only those scales which are larger than twice the grid length. For practical reasons the grid
+
+length in numerical forecast models cannot be reduced very much below 100 km and, therefore, atmospheric proc-
+
+esses on scales smaller than 100 km are excluded from those models. However, small-scale flow affects the mean
+
+flow as, for instance, considerable amount of water vapour, sensible heat and momentum are transported by turbu-
+
+lent and convective motions. The effects of the subgrid-scale flow on the mean flow may be ignored for short fore-
+
+cast periods of up to 1 to 2 days, but they become increasingly important for longer periods and must be considered
+
+in models for medium-range forecasts and in general-circulation models. Since subgrid-scale processes are not in-
+
+cluded in models, only their statistical effects on the mean flow can be taken into account. The statistical contribu-
+
+tions by the different processes must, therefore, be expressed in terms of the large-scale parameters themselves.
+
+The mathematical procedure involved is generally called parametrization.
+
+In the following section the problem of parameterization is discussed from a general point of view, i.e. in relation
+
+to the scales of atmospheric motions.
+
+2. THE SPECTRUM OF ATMOSPHERIC MOTIONS
+
+Atmospheric processes are generally observed over a broad spectrum, ranging from microturbulent flow to plane-
+
+tary waves. Fig. 1 gives an idea of the characteristic time scales and length scales of several types of atmospheric
+
+process. We notice that microturbulent processes have a characteristic length scale of 1 m, cumulus convection 1
+
+km, deep convection 10 km, mesoscale processes (like tropical cloud clusters) 100 km and synoptical disturbances
+
+1000 km to 10000 km. In addition, Fig. 2 shows how the energy is distributed spectrally near the surface. The spec-
+
+trum shown is the classical spectrum of horizontal wind speed given by van der Hoven (1957). The spectrum
+
+has a maximum at high frequencies ( ) which corresponds to microturbulent flow of length scales of
+
+1 m to 100 m ( is the frequency, is the period of oscillation, is the spectral energy density). An-
+
+���( )� 50 hours 1–∼� 1 τ⁄= τ ���( )
+
+
+
+The general problem of parametrization
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+other maximum is found for very long periods ( days) which reflects synoptical disturbances. A third weaker
+
+maximum appears at a period of which is that of diurnal oscillations. We also observe a broad interval
+
+of small values around a period of min with a corresponding length scale of km ( ) The
+
+smallest scales resolved in a forecast model ( km) fall into this spectral interval, so that the spectral region
+
+around the first energy maximum belongs entirely to the subgrid-scale. For forecast models the spectral interval of
+
+the large-scale disturbances is of primary interest. There have been many attempts in the past to derive the spectral
+
+distribution of kinetic energy from observational data, most recently by Chen and Wiin-Nielsen (1978). The inves-
+
+tigations show that the kinetic energy follows closely a –3 power distribution for large wave numbers (Fig. 3 ). The
+
+–3 power law seems to be due to the two-dimensional character of the large-scale flow. Three-dimensional isotropic
+
+flow which is typical for the small-scale turbulent processes on the other hand shows a –5/3 power distribution.
+
+Both distributions are valid only for inertial subranges of the spectrum, where kinetic energy (or enstrophy) is
+
+merely transferred from the larger scales (where production occurs) to the smaller scales of dissipation. Theoretical
+
+aspects related to this problem are reviewed by Lilly (1973).
+
+Figure  1. Characteristic scales of atmospheric processes
+
+τ 4=
+τ 12 h=
+τ 30= � 10= � � τ⋅=
+
+� 100∼
+
+
+
+The general problem of parametrization
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+Figure  2. Spectrum of the horizontal wind velocity. After van der Hoven (1957). Some experimental points are
+
+shown on the graph.
+
+Figure  3. The kinetic energy  for the total atmosphere as a function of a two-dimensional spectral index ( )
+
+plotted on logarithmic scales. (After Chen and Wiin-Nielsen (1978)).
+
+3. THE NON-PARAMETRIZED EQUATIONS
+
+In a forecast model only the large-scale flow can be explicitly prescribed. The differential equations of motion
+
+� �
+
+
+
+The general problem of parametrization
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+must, therefore, be rewritten in such a way that the time evolution of the mean flow, as resolved by the grid, is pre-
+
+scribed. This is achieved by averaging the equations.
+
+For simplicity we consider here processes in dry air. The equations of motion are then
+
+Navier-Stokes equations of motion
+
+(1)
+
+Mass continuity equation
+
+(2)
+
+First law of thermodynamics
+
+(3)
+
+Equation of state
+
+(4)
+
+here
+
+The frictional force  results from a convergence of viscous momentum flux as
+
+(5)
+
+where  is the stress tensor with the components
+
+is the coefficient of viscosity, is the Kronecker delta ( if and , if ) and quantities
+
+involving a repeated index are to be summed over the index.
+
+The rate of conversion from kinetic energy into internal energy due to viscosity is
+
+∂ ρv( )
+∂ 	-------------- ∇ ρv v⋅( )⋅+ ∇
+– ρ∇ϕ– 2ρΩ v F+×–=
+
+∂ρ
+∂ 	------ ∇ ρv( )⋅+ 0=
+
+∂ ρ �( )
+∂ 	-------------- ∇ ρ � v( )⋅+ 
+ ∇ v ρ � ε+ +⋅=
+
+
+  ρ �=
+
+
+ pressure=
+v velocity=
+
+ρ density of air=
+
+α 1
+ρ
+--- specific volume= =
+
+ϕ gravitational potential=
+F friction=
+
+� ����� internal energy= =
+� rate of accession of heat from external sources=
+ε rate of conversion of kinetic energy into heat by friction=
+
+F
+
+F ∇ �⋅=
+
+�
+
+��� � µ 2
+3
+---δ � � ∂ ���∂ ���---------
+
+∂ ���
+∂ ���--------
+
+∂ ���
+∂ ���---------+ 
+
+ –=
+
+µ δ� � δ� � 0= � 0≠ δ� � 1= � �=
+
+
+
+The general problem of parametrization
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+(6)
+
+(the two dots indicate a double scalar product).
+
+The equation for the kinetic energy , the equation for the potential energy and the equation for the
+
+internal energy  follow from (1) to (5)as
+
+(7)
+
+From these equations we see that time changes of the different kinds of energy result from
+
+1) Convergence of energy fluxes across boundaries
+
+2) Conversions between the different kinds of energy
+
+3) External heating
+
+ (radiative exchanges and heat conduction through the boundaries of a unit volume)
+
+Dissipation of eddy kinetic energy into heat by viscous flow takes place at the smallest eddies of the microturbulent
+
+spectral subrange. Their dimensions range from 1 mm to several cm and their time periods are fractions of a second.
+
+The viscous flow occurs at the far end of the spectrum shown in Fig. 2 , with .
+
+The prediction equations of a forecast model are derived by averaging the equations (1) to (5). The averaging gen-
+
+erally applied is the Reynold's averaging which, for one dimension, takes the form
+
+(8)
+
+The original value is then defined as the sum of the averaged value (mean value) and a fluctuation (or
+
+eddy value)
+
+(9)
+
+It is convenient to introduce also a weighted operator
+
+ε P ∇v⋅ ⋅=
+
+ρ � 1
+2
+---ρv2= ρϕ
+
+ρ �
+
+∂ ρ �( )
+∂ 	--------------- ∇ ρv � 
+ v P v⋅–+( )⋅+ ρv ∇ϕ 
+ ∇ v P ∇v⋅ ⋅–⋅+⋅–=
+
+∂ ρϕ( )
+∂ 	--------------- ∇ ρvϕ( )⋅+ ρv ∇ϕ⋅=
+
+∂ ρ �( )
+∂ 	-------------- ∇ ρv �( )⋅+ 
+ ∇– v P ∇v ρ �+⋅ ⋅+⋅=
+
+∇ ρv � 
+ v P v⋅–+( )⋅
+∇ ρvϕ( )⋅
+∇ ρv �( )⋅
+
+ρv ∇ϕ⋅
+
+ ∇ v⋅
+ξ P ∇v⋅ ⋅=
+
+�
+
+� 1000»
+
+ �( ) 1∆�-------
+ � � ′+( ) � ′d
+
+∆ ! 2⁄–
+
+∆ ! 2⁄
+∫=
+
+   
+′
+
+   
+′,     where
+
+ 
+′+ 0= =
+
+
+
+The general problem of parametrization
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(10)
+
+and we similarly have
+
+(11)
+
+To derive the equations for the mean motion we make use of the following rule
+
+(12)
+
+The equations for the mean motion follow then as
+
+ 1
+ρ
+---ρ
+ 
+
+=
+
+)
+
+   
+″,     where
+
+ 
+″+ ρ
+
+ 
+″= =
+
+) )
+
+ρ"$# ρ "%# ρ" ″ # ″+= ) )
+
+
+
+The general problem of parametrization
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+Momentum equation
+
+(13)
+
+Continuity equation
+
+(14)
+
+First law of thermodynamics
+
+(15)
+
+Equation of state
+
+(16)
+
+We see that:
+
+The equations (13) to (15) for the mean motion , and have the same form as the original equations (1) to
+
+(3) for , , and , and follow simply from those by replacing the variables by the mean values. However, the
+
+equations for the mean value contain additional terms
+
+which depend on the eddy motion. The term in the momentum equation is called the Reynold's stress and
+
+acts as an additional friction to the average Navier–Stokes stress tensor . From the equations (13) to (15) we can
+
+derive the equations for the different kinds of energy. As the kinetic energy splits up into two parts, i.e. those of the
+
+mean motion and of the eddy motion
+
+the equation for the kinetic energy of the eddy motion must also be considered. The energy equations may be writ-
+
+ten as
+
+∂ ρv( )
+∂ 	-------------- ∇ ρ v v ρv″v″ 
+–+( )⋅+ ∇
+ ρ∇ϕ– 2Ω ρ v×––=
+
+) ) )
+
+∂ρ
+∂ 	------ ∇ ρ v( )⋅+ 0=
+
+)
+
+∂ ρ �( )
+∂ 	----------------- ∇ ρ � v ρ � ″v″ 
+–+( )⋅+ 
+ ∇ v 
+ ∇ v″⋅ ρ � P ∇v⋅ ⋅+ +–⋅–=
+
+) ) ) ) )
+
+
+  ρ �= )
+
+v) ρ � )
+
+v ρ �
+
+∇ ρv″v″( )⋅
+
+∇ ρ � ″v″( )⋅
+
+ ∇ v″⋅
+
+ρv″v″–
+P
+
+ρv
+2
+
+2
+----- ρ v
+
+2
+
+2
+-------- 1
+
+2
+---ρv″2+=
+
+)
+
+
+
+The general problem of parametrization
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(17)
+
+As was done for the energy equations (7) for the non-averaged flow, the energy conversions between the different
+
+kinds of energies can be seen from the equations (17) for the mean flow and for the eddy flow.
+
+In contrast to the differential case, there are now explicit conversion terms from the kinetic energy of the mean flow
+
+to that of the eddy flow and from the eddy kinetic energy to the internal energy.
+
+1) Dissipative heating due to viscous momentum flux.
+
+2) Generation of turbulent kinetic energy by mechanical turbulence in a shear flow.
+
+3) The work done by the turbulent flow against the pressure gradient. The largest contribution comes
+
+from the vertical component in the boundary layer as the pressure gradient term is related to the
+
+turbulent heat flux
+
+Thus turbulent kinetic energy is generated/destroyed depending on the turbulent heat flux being
+
+upward or downward.
+
+4. PRINCIPLES OF PARAMETRIZATION
+
+Considering the prognostic equations (13) to (15) for the mean motion, we are faced with the general problem of
+
+parametrization, i.e. to determine the terms depending on viscosity and on the eddy motion. The problem is gen-
+
+erally solved in forecast models as follows:
+
+The viscous terms are not taken into account, as the sink of kinetic energy of the mean flow due to viscous flow is
+
+small compared with that resulting from the transfer to eddy kinetic energy. Consequently, the warming effect due
+
+to dissipation is also neglected in the thermodynamic equation.
+
+The eddy terms are generally specified in one of the following three ways.
+
+1) Eddy fluxes are neglected.
+
+2) Eddy fluxes are determined by means of the -theory.
+
+∂
+∂ 	----- ρ
+
+v
+2
+
+2
+-------- 
+
+  ∇ ρ v v
+2
+
+2
+-------- v 
++⋅+
+
+v 
+ ρv″v″–( )– )
+= ρ v ∇ϕ⋅– 
+ ∇ v⋅+ P..∇v– ρv″v″+ ..∇v
+
+∂
+∂ 	----- ρϕ( ) ∇ ρvϕ( )⋅+ = ρ v ∇ϕ⋅
+∂
+∂ 	----- ρ �( )
+
+∇ ρ v � ρv″ � ″ 
+ v″++( )⋅+
+= 
+– ∇ v⋅ P..∇v+ P..∇v″+ +v″ ∇
+⋅
+
+∂
+∂ 	----- ρ
+
+v
+2
+
+2
+-------- 
+
+ 
+
+∇ v ρv″
+2
+
+2
+-------- v″ρv″
+
+2
+
+2
+-------- v″P–+
+
+ 
+ 
+ 
+
+⋅+
+
+= ρv″v″..∇v– P..∇v″– v″ ∇
+⋅–
+
+)
+
+)
+)
+
+)
+
+)
+
+)
+)
+
+)
+
+) )
+
+)
+)
+
+(2)
+
+(1)
+
+(1) (3)
+
+& ″∂
+ ′∂'-------- (
+& ″ρ′ (
+
+θ
+---ρ & ″θ′∼∼–
+
+�
+
+
+
+The general problem of parametrization
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+3) Eddy fluxes are specified using higher order closure schemes.
+
+The first scheme is often used in barotropic models. Neglect of the eddy terms in barotropic models seems justified,
+
+since the energetic conversions in barotropic flow are reduced to transformations between different kinds of me-
+
+chanical energy. Horizontal diffusion is, however, sometimes included for reason of numerical stability.
+
+The -approach is widely adopted in baroclinic numerical forecast models. This method is based on the assump-
+
+tion that the eddy flow yields down-gradient transfer of momentum and sensible heat. Taking the eddy momentum
+
+flux for example, we would have
+
+where is the diffusion coefficient of momentum. The -theory is applied to determine eddy fluxes in the hor-
+
+izontal direction as well as in the vertical direction. An example of the -approach is given in the lectures on the
+
+parameterization of vertical eddy fluxes in the planetary boundary layer.
+
+Higher-order closure schemes use prediction equations for the eddy fluxes . These equations are similar to
+
+the eddy kinetic equation and contain triple products of eddy variables. These triple products must be specified ei-
+
+ther in terms of the predicted values (parametrized) or again be predicted, which leaves the problem of parametri-
+
+zation at a higher level. A hierarchy of higher-order closure models for the planetary boundary layer have been
+
+given by Mellor and Yamada (1974).
+
+REFERENCES
+
+Chen,T. and A. Wiin-Nielsen 1978 On nonlinear cascades of atmospheric energy and enstrophy in a two-dimen-
+
+sional spectral index. Tellus, 30, 313-322.
+
+Lilly, D.K. 1973 Lectures in sub-synoptic scales of motions and two-dimensional turbulence in P. Morel, Dynamic
+
+Meteorology, pp. 353-418.
+
+Mellor, G.L. and A. Yamada 1974 A hierarchy of turbulence closure models for planetary boundary layers. J. At-
+
+mos. Sci., 31, pp.1791-1806.
+
+van der Hoven, I. 1957 Power spectrum of horizontal wind speed in the frequency range from 0.0007 to 900 cycles
+
+per hour. J. of Met., 14, pp. 160-164.
+
+van Miegham, F. 1973 Atmospheric Energetics, pp. 306, Clarendon Press, Oxford.
+
+�
+
+ρv″v″ ρ
+�
+
+M∇ v–=
+
+)
+
+�
+M
+
+�
+�
+
+ρ � ″� ″

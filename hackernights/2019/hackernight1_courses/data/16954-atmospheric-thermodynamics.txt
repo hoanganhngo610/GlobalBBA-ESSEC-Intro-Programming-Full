@@ -1,0 +1,1948 @@
+Atmospheric 
+Thermodynamics  
+
+Peter Bechtold  
+
+ECMWF, Shinfield Park, Reading, England  
+
+June 2009; last update May 2015 
+
+ 
+
+ 
+
+
+
+
+
+Atmospheric Thermodynamics  
+
+ 
+
+Meteorological Training Course Lecture Series i 
+
+Contents 
+
+PREFACE ................................................................................................................................................................. II 
+
+1 IDEAL GAS LAW ............................................................................................................................................ 1 
+
+1.1 GAS LAW FOR DRY AIR AND WATER VAPOUR ..................................................................................................... 1 
+
+1.2 GAS LAW FOR MIXTURE OF DRY AIR AND WATER VAPOR ................................................................................... 1 
+
+2 FIRST LAW OF THERMODYNAMICS ........................................................................................................ 2 
+
+3 SECOND LAW OF THERMODYNAMICS .................................................................................................... 2 
+
+4 ENTHALPY ...................................................................................................................................................... 3 
+
+5 STATE FUNCTIONS AND MAXWELL RELATIONS ................................................................................. 3 
+
+6 HUMIDITY VARIABLES ............................................................................................................................... 4 
+
+7 VIRTUAL TEMPERATURE ........................................................................................................................... 5 
+
+8 REVERSIBLE ADIABATIC TRANSFORMATION WITHOUT PHASE CHANGE ................................... 5 
+
+8.1 POTENTIAL TEMPERATURE OF DRY AIR .............................................................................................................. 5 
+
+8.2 POISSON RELATION AND SPEED OF SOUND ......................................................................................................... 6 
+
+8.3 POTENTIAL TEMPERATURE OF MOIST AIR ........................................................................................................... 6 
+
+8.4 DRY STATIC ENERGY .......................................................................................................................................... 7 
+
+9 REVERSIBLE ADIABATIC TRANSFORMATION WITH PHASE CHANGE ........................................... 7 
+
+9.1 SPECIFIC HEAT OF PHASE CHANGE ...................................................................................................................... 7 
+
+9.2 LIQUID PHASE .................................................................................................................................................... 7 
+
+9.3 EQUIVALENT POTENTIAL TEMPERATURE AND MOIST STATIC ENERGY ................................................................ 8 
+
+9.4 LIQUID AND ICE PHASE ....................................................................................................................................... 9 
+
+10 CLAUSIUS CLAPEYRON EQUATION ......................................................................................................... 9 
+
+11 WAYS OF REACHING SATURATION ........................................................................................................10 
+
+11.1 DEW POINT TEMPERATURE ............................................................................................................................... 11 
+
+11.2 WET BULB TEMPERATURE ................................................................................................................................ 11 
+
+11.3 ISENTROPIC (OR ADIABATIC) CONDENSATION TEMPERATURE .......................................................................... 11 
+
+11.4 PSEUDO-ADIABATIC PROCESSES ....................................................................................................................... 11 
+
+12 ENERGY DIAGRAMS – TEPHIGRAM ........................................................................................................12 
+
+12.1 DETERMINE ISENTROPIC CONDENSATION TEMPERATURE ................................................................................. 12 
+
+12.2 WET-BULB TEMPERATURE ............................................................................................................................... 13 
+
+12.3 EQUIVALENT POTENTIAL TEMPERATURE .......................................................................................................... 14 
+
+13 SATURATION ADJUSTMENT – NUMERICAL PROCEDURE .................................................................14 
+
+ACKNOWLEDGMENTS ........................................................................................................................................15 
+
+REFERENCES .........................................................................................................................................................16 
+
+LIST OF SYMBOLS ................................................................................................................................................17 
+
+ 
+
+  
+
+
+
+ Atmospheric Thermodynamics 
+
+ 
+
+ii  Meteorological Training Course Lecture Series 
+
+Preface 
+
+The current Note stems from material presented in a 1-2 hours Training course lecture on “Introduction to 
+
+moist processes” that originally has been developed by Adrian Tompkins. The aim is to give a short 
+
+introduction into the principles of atmospheric thermodynamics, and to present a “handy” overview and 
+
+derivation of the quantities used in numerical weather prediction 
+
+The material presented is kept to a minimum, and focuses on the concept of enthalpy of moist air. This 
+
+should allow the reader to elaborate on more involved thermodynamical problems.  
+
+Several textbooks dedicated to atmospheric thermodynamics exist. One might notice that some authors 
+
+mainly use the notion of “adiabatic” atmospheric processes whereas others use the notion of isentropic 
+
+processes throughout their derivations. Here we will use both notions. 
+
+Among the textbooks I would particularly recommend 
+
+ Dufour L. et J. v. Mieghem, 1975: Thermodynamique de l’Atmosphère, Institut Royal 
+
+météorologique de Belgique 
+
+ Maarten Ambaum, 2010: Thermal Physics of the Atmosphere, John Wiley Publishers 
+
+ Sam Miller, 2015: Applied thermodynamics for Meteorologists, Cambridge Univ. Press 
+
+ Rogers and Yau, 1989: A short course in cloud physics, International series in natural philosophy 
+
+ Houze R., 1993: Cloud dynamics, Academic Press 
+
+ Emanuel K. A., 1994: Atmospheric convection, Oxford University Press 
+
+The book by Dufour and v. Mieghem is probably the most comprehensive and accurate textbook in 
+
+atmospheric thermodynamics. Unfortunately it seems not available anymore. 
+
+ 
+
+
+
+Atmospheric Thermodynamics  
+
+ 
+
+Meteorological Training Course Lecture Series 1 
+
+1 Ideal gas law 
+
+In an ideal gas the individual molecules are considered as non-interacting. The ideal gas law stems from the 
+
+law of Boyle and Mariotte saying that at constant temperature T 
+
+ pV cste  (1) 
+
+and the law of Gay-Lussac that describes the relation between temperature T, and pressure p for a gas with 
+
+given mass m and volume V 
+
+ 
+p
+
+cste
+T
+  (2) 
+
+The ideal gas law can then be written as either 
+
+ 
+1;
+
+p V m R T
+
+p R T   
+
+
+ 
+ (3) 
+
+where R is the gas constant, ρ is density, and α the specific volume of the gas. A gas under e.g. very high 
+
+pressure might not entirely follow the ideal gas law. It is then called a van der Waals gas, and for these 
+
+gases an additional correction term is added to the rhs of (3). 
+
+1.1 Gas law for dry air and water vapour 
+
+Using subscripts d and v for dry air and water vapor, respectively, it follows from (3) that 
+
+ 
+d d d
+
+v v v
+
+p R T
+
+p R T
+
+
+
+
+
+
+
+
+ (4) 
+
+where pv is the water vapor pressure (Note that the water vapor pressure is also often denoted as e in the 
+
+literature). The gas constants are given as Rd=287.06 J kg-1 K-1, and Rv=461.52 J kg-1 K-1, and one defines 
+
+ 0.622d
+
+v
+
+R
+
+R
+    (5) 
+
+1.2 Gas law for mixture of dry air and water vapor 
+
+Dalton’s law says that when different gases are put in the same volume, then the pressure of the mixture of 
+
+gases is equal to the sum of the partial pressures of the constituents. Therefore one obtains for moist air 
+
+ ; ;d v d d v vp p p p p N p p N     (6) 
+
+where p is the actual atmospheric pressure, and Nd and Nv are the Mole fractions of dry air and water 
+
+vapor, respectively. It follows the important relation 
+
+ d v
+
+d v
+
+dp dpdp
+
+p p p
+   (7) 
+
+which means that the change in water vapour pressure is proportional to the change in atmospheric 
+
+pressure (e.g. when climbing to higher altitudes both the atmospheric pressure and water vapour pressure 
+
+decrease). Then from (3) , (4)and (5) the gas equation for moist air is obtained as 
+
+ ( )d d v vp V m R m R T   (8) 
+
+
+
+ Atmospheric Thermodynamics 
+
+ 
+
+2  Meteorological Training Course Lecture Series 
+
+2 First law of thermodynamics 
+
+The first law, or the principle of energy conservation, says that it exists a state function, the internal energy 
+
+that increases according to the heat supplied and diminishes according to the work done by the system. 
+
+Denoting the specific internal energy (J kg-1) as e=E/m (this is the traditional notation and e should not be 
+
+confused with the water vapour pressure), the first law writes 
+
+ ;de dQ dw dQ pd dQ Tds      (9) 
+
+where dQ denotes the heat supply, s the entropy, and dw the change due to the work done. Meteorologists 
+
+often use the notion of heat, but formally it is better to work with entropy instead, as dQ is not a perfect 
+
+differential, but ds is. The internal energy equation in its differential form can also be expressed as 
+
+ 5
+;
+
+2
+
+v
+
+v vd d
+
+de c dT dQ pd Tds pd
+
+e Q
+c c R
+
+T T 
+
+ 
+
+
+
+
+
+    
+
+
+  
+
+
+ (10) 
+
+where cv is the specific heat, or better heat capacity, at constant volume. The value cvd =5/2 Rd = 717.6 J 
+
+kg-1 K-1 for dry air is obtained for a diatomic gas as is the atmosphere. 
+
+Next possible inequality between dQ and Tds in (9) is explained through the second law of 
+
+thermodynamics. 
+
+3 Second law of thermodynamics 
+
+The second law of thermodynamics goes back to the work of Carnot, Clausius and Kelvin. It states that the 
+
+entropy of the system can not diminish; it can only either remain constant or increase. For a reversible 
+
+transformation one can write 
+
+ 0Tds dQ   (11) 
+
+where dQ/T is the exact differential of the state function s. It follows that for an adiabatic transformation 
+
+(dQ=0), the entropy is an invariant of the system. For an irreversible transformation  
+
+ Tds - dQ’= 0 (12) 
+
+where the Clausius non-compensated heat dQ’ has been introduced. It follows that for an irreversible 
+
+adiabatic (dQ=0) transformation the entropy produced by the system is /ds dQ T . 
+
+  
+
+
+
+Atmospheric Thermodynamics  
+
+ 
+
+Meteorological Training Course Lecture Series 3 
+
+4 Enthalpy  
+
+The beauty of the first law of thermodynamics is that all other relevant state functions can be easily derived 
+
+through so called Legendre transformations. Writing 
+
+ ( )de Tds pd Tds d p dp        (13) 
+
+It follows that 
+
+ ( )d e p dh Tds dp      (14) 
+
+where a new state function, the enthalpy, has been derived that has dependent variables entropy and 
+
+pressure. This can also be written as 
+
+ ; ;p p v pd vd
+h
+
+dh c dT Tds dp c c R c c R
+T
+
+
+
+
+       
+
+
+ (15) 
+
+with cpd=7/2 Rd=1004.7 J kg-1 K-1 the heat capacity for dry air at constant pressure, as obtained from (14) 
+
+and (3). The enthalpy is the preferred state function in meteorology as it uses pressure as dependent 
+
+variable, and simplifies for isentropic transformations. Furthermore, the enthalpy is also the relevant 
+
+function in flow processes as can be seen from the equations of motion 
+
+ 
+
+1
+
+; 0
+
+dU
+p p
+
+dt
+
+dU
+h T s h ds
+
+dt
+
+
+
+
+     
+
+      
+
+ (16) 
+
+Therefore, in isentropic flow (see Section 8.1) the acceleration of the flow is given by the gradient of the 
+
+enthalpy. 
+
+5 State functions and Maxwell relations 
+
+As for the enthalpy, one can further apply Legendre transformations to change the dependent variables to 
+
+derive the Helmholtz free energy f and the Gibbs function gf. The Gibbs function, having dependent 
+
+variables temperature and pressure, is particularly convenient to describe phase transitions. As a summary 
+
+all four energy functions are listed in (17). Also, for each function a corresponding Maxwell relation is 
+
+obtained stemming from the fact that the order of differentiation is irrelevant, e.g. 
+
+( / ) / ( / ) /e s e s           
+
+ 
+
+s ps
+
+f
+
+T pT
+
+de Tds pd dh Tds dp
+
+T p T
+
+s p s
+
+df sdT pd dg sdT dp
+
+s p s
+
+T p T
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+
+   
+
+         
+        
+
+         
+
+     
+
+         
+        
+
+         
+
+ (17) 
+
+
+
+ Atmospheric Thermodynamics 
+
+ 
+
+4  Meteorological Training Course Lecture Series 
+
+6 Humidity variables 
+
+For any intensive quantity χ (i.e. a scale invariant quantity that does not depend on the amount of 
+
+substance, in contrast to an extensive quantity like mass or volume) one can write the mixture of a dry air 
+
+mass and a mass of water vapour as 
+
+  d v v v d dm m m m      (18) 
+
+in order to obtain 
+
+ v d
+v d
+
+d v d v
+
+m m
+
+m m m m
+   
+
+ 
+ (19) 
+
+The specific humidity is defined as the ratio of the mass of water vapour and moist air so that we can 
+
+rewrite (19) to obtain 
+
+ (1 )v v v dq q      (20) 
+
+Note that this is also valid for temperature. However, when the air mass becomes “saturated” the mixed 
+
+value has to be adjusted to take into account latent heat effects (see Sections 10, 11, 13). 
+
+The mixing ratio is defined as the ratio of water vapour and dry air. Therefore, if we divide (18) by md 
+
+instead of md+mv, one obtains the “mixed value” of the intensive quantity in terms of the mixing ratio rv  
+
+  
+1
+
+1
+v v d
+
+v
+
+r
+r
+
+   
+
+
+ (21) 
+
+Comparing (20) and (21) one easily obtains the conversion rules from q to r and vice versa 
+
+ ;
+1 1
+
+v v
+v
+
+v v
+
+r q
+q r
+
+r q
+ 
+
+ 
+ (22) 
+
+There are different ways to describe the water content in the atmosphere. A list of the most common 
+
+definitions is given in   
+
+Table 1.  
+
+Table 1. List of common humidity variables and their usual notations. ε=0.622 is defined in (5). 
+
+ Unit Definition 
+
+Vapour pressure Pa e=pv 
+
+Absolute humidity kg m-3 
+v
+
+v
+
+m
+
+V
+   
+
+Specific humidity kg kg-1 
+
+(1 )
+
+v v v
+v
+
+d v d v
+
+m e e
+q q
+
+m m p e p
+
+ 
+ 
+
+   
+     
+
+   
+ 
+
+Mixing ratio kg kg-1 
+v v
+
+v
+
+d d
+
+m e e
+r r
+
+m p e p
+
+
+ 
+
+
+    
+
+
+ 
+
+Relative humidity  
+=   v v
+
+s vs vs
+
+p qe
+RH
+
+e p q
+   
+
+Specific liquid water content kg kg-1 
+l
+
+lq
+
+
+
+  
+
+
+
+Atmospheric Thermodynamics  
+
+ 
+
+Meteorological Training Course Lecture Series 5 
+
+Total water content kg kg-1 
+w t v lq q q q    
+
+7 Virtual temperature 
+
+Another way to describe the vapour content is the virtual temperature which is an artificial temperature. It 
+
+describes the temperature dry air needs to have in order to have at the same pressure the same density as 
+
+a sample of moist air. Definition 
+
+ 
+
+d v
+
+p p
+
+R T RT
+    (23) 
+
+The probably easiest derivation of the virtual temperature is obtained by recalling that R of the mixture is 
+
+given by (20), i.e. 
+
+ 1(1 ) (1 )v v v d d vR q R q R R q
+
+
+
+      (24) 
+
+Putting (24) into (23) and rearranging, one obtains 
+
+ 
+ 1 (1 )
+
+1 1 (1 0.608 )
+(1 )
+
+v
+v v v
+
+v
+
+r
+T T q T T q
+
+r
+
+ 
+
+ 
+
+   
+        
+
+  
+ (25) 
+
+Therefore, moisture decreases the air density and increases the virtual temperature, e.g. an air parcel at 
+
+T=300 K at qv=5 g kg-1 is virtually about 1 K warmer than a reference dry air parcel. 
+
+8 Reversible adiabatic transformation without phase change 
+
+8.1 Potential temperature of dry air 
+
+The process we describe now is often called “dry” adiabatic transformation, but indeed is an isentropic 
+
+transformation (dQ = ds = 0) without phase change. Considering only dry air, one obtains from the enthalpy 
+
+equation (15) 
+
+ d
+pd
+
+R T
+c dT dp dp
+
+p
+   (26) 
+
+or 
+
+ ln lnpd dc d T R d p  (27) 
+
+which can be integrated from state T1 = T, p1 = p to a state T0 = θ, p0 = 1000 hPa to obtain 
+
+ 0
+2
+
+;
+7
+
+d
+
+pd
+
+p R
+T
+
+p c
+
+
+
+ 
+ 
+
+   
+ 
+
+ (28) 
+
+Where θ, a quantity that usually increases with height,  is referred to as the potential temperature and is 
+
+also plotted as such in thermodynamic diagrams (see below). Finally, differentiating (28) and taking into 
+
+account (15), one obtains the important relation between entropy and the  potential temperature 
+
+ lnpdds c d   (29) 
+
+which states that ds = 0 in isentropic flow (dθ = 0). 
+
+  
+
+
+
+ Atmospheric Thermodynamics 
+
+ 
+
+6  Meteorological Training Course Lecture Series 
+
+8.2 Poisson relation and speed of sound 
+
+With the aid of (28) , using T0 = θ  and (3) one can also verify that 
+
+ 
+0 0
+
+pd vdC C
+
+p
+
+p
+
+
+
+
+
+   
+   
+
+   
+ (30) 
+
+which is the Poisson relation that allows to compute the speed of sound c in dry air as 
+
+ 
+2
+
+d
+
+pd
+
+vd
+
+cp
+c R T
+
+c
+
+
+ 
+
+
+ (31) 
+
+that for T = 300 K is c = 347.2 m s-1 or roughly 331 m s-1 for T = 273.16 K=0°C. 
+
+8.3 Potential temperature of moist air 
+
+Considering a system that does not change mass and heat with its environment, then 
+
+ 0dH Vdp   (32) 
+
+where H is the enthalpy of dry air and water vapour. Taking into account (8) and  (26) this can be written as 
+
+ ( ) ( )d pd v pv d d v v
+dp
+
+m c m c dT m R m R T
+p
+
+    (33) 
+
+Where cpv = 1846.1 J kg -1 K-1 is the heat capacity of water vapour. Dividing by md or md+mv gives 
+
+ 
+
+( ) ( )
+
+[ (1 ) ] [ (1 ) ]
+
+pd v pv d v v
+
+v pd v pv v d v v
+
+dp
+c r c dT R r R T
+
+p
+
+dp
+q c q c dT q R q R T
+
+p
+
+  
+
+    
+
+ (34) 
+
+from which it follows that 
+
+ 0 ; d v vm
+pd v pv p
+
+p R r R R
+T
+
+p c r c c
+
+
+
+ 
+  
+
+   
+ 
+
+ (35) 
+
+Note that we have chosen the subscript m as the subscript v is normally reserved for the virtual potential 
+
+temperature where the density effect of vapor is generally only considered through the virtual temperature 
+
+effect but not through the effect on κ 
+
+ 
+0
+
+v v
+
+p
+T
+
+p
+
+
+
+
+ 
+
+  
+ 
+
+ (36) 
+
+  
+
+
+
+Atmospheric Thermodynamics  
+
+ 
+
+Meteorological Training Course Lecture Series 7 
+
+8.4 Dry static energy 
+
+Instead of the potential temperature of dry air one often uses the dry static energy Replacing dp in (26) by 
+
+the hydrostatic approximation dp =-gρdz, with g = 9.81 m s-2, the gravity acceleration, one obtains 
+
+ 0pd zc dT gdz ds    (37) 
+
+It follows that in an atmosphere in hydrostatic equilibrium the dry static energy sz = cpT + gz (often it is 
+
+denoted by s, but this notation has been reserved for the entropy) is conserved during adiabatic ascent 
+
+without phase change. Furthermore, in contrast to θ it is linear in T and z, and therefore a preferred 
+
+quantity for numerical weather prediction, in particular convection parametrization. 
+
+Finally, with the aid of (37) we can also derive the dry adiabatic lapse rate of the atmosphere 
+
+ 
+pd
+
+dT g
+
+dz c
+   (38) 
+
+which amounts to a temperature decrease of 0.98 K per 100 m. 
+
+9 Reversible adiabatic transformation with phase change 
+
+9.1 Specific heat of phase change 
+
+Before presenting the differential enthalpy equation including phase changes, we have to introduce the 
+
+latent heats. These correspond to the heat, or additional enthalpy required, to pass from state l, e.g. liquid 
+
+water having enthalpy hl to a state v, e.g water vapour having enthalpy hv 
+
+ 
+00 00 00 00( ) ( ) ( ) ( )v v l v pv l lL h h h T c T T h T c T T         (39) 
+
+Following this procedure one can readily derive the expressions for the latent heat of vaporization Lv, the 
+
+latent heat of sublimation (ice to vapour) Ls, and the latent heat of melting Lm 
+
+ 
+
+00 00
+
+00 00
+
+6 1 6 1
+
+00 00 00
+
+( ) ( )( )
+
+( ) ( )( )
+
+273.16 ; ( ) 2.5008 10 ; ( ) 2.8345 10
+
+v v pv l
+
+s s pv i
+
+m s v
+
+v s
+
+L L T c c T T
+
+L L T c c T T
+
+L L L
+
+T K L T J kg L T J kg 
+
+   
+
+   
+
+ 
+
+    
+
+ (40) 
+
+where T00 is the triple point temperature where all three phases coexist, and where the heat capacities of 
+
+liquid water and ice are given as cl = 4218 J kg-1 K-1, and ci =2106 J kg-1 K-1.  
+
+9.2 Liquid phase  
+
+Equivalent to (32) the differential enthalpy equation for a closed system containing dry air, water vapour 
+
+and liquid water can be written as 
+
+ 0dH Vdp   (41) 
+
+from which it follows using (33) and (39)  that 
+
+
+
+ Atmospheric Thermodynamics 
+
+ 
+
+8  Meteorological Training Course Lecture Series 
+
+ 
+
+( ) ( ) ;
+
+( ) ( )
+
+d pd v pv l l d d v v v v
+
+d pd v pv l l d d v v v l
+
+dp
+m c m c m c dT m R m R T L dm or
+
+p
+
+dp
+m c m c m c dT m R m R T L dm
+
+p
+
+    
+
+    
+
+ (42) 
+
+Note that for the condensation process dmv < 0 and dml > 0. Using (40), (42) can also be written as 
+
+ ( ) ( ) ( );d pd w l d d v v v v w v l
+dp
+
+m c m c dT m R m R T d L m m m m
+p
+
+       (43) 
+
+where mw is the  total water mass. Dividing by md one obtains 
+
+ ( ) ( );p d v v v v p pd w l
+dp
+
+c dT R r R T d L r c c r c
+p
+
+      (44) 
+
+where cp is the heat capacity of moist air containing liquid water.  
+
+One can also divide (42) by md + mv to obtain  
+
+ [(1 ) ] ( ); (1 )p v d v v v v p v pd w l
+dp
+
+c dT q R q R T d L q c q c q c
+p
+
+        (45) 
+
+The notation drvs instead of drv, and dqvs instead of dqv, is actually more appropriate as the phase change 
+
+from vapor to liquid only occurs when the mixing ratio exceeds the saturation value (see Section 10). 
+
+9.3 Equivalent potential temperature and moist static energy 
+
+The equivalent potential temperature is readily obtained by integration of (44). It is the temperature 
+
+obtained by a parcel during a fictive adiabatic process where all the water vapour it contains has been 
+
+condensed 
+
+ 0 exp( / ); ;de v v p p pd w l
+p
+
+p R
+T L r c T c c r c
+
+p c
+
+
+
+ 
+ 
+
+    
+ 
+
+ (46) 
+
+Often cp is replaced here by its constant dry value as it is the case for a pseudo-adiabat (a non reversible 
+
+process, see Section 11.3). However, even if for T in the exponential very often the actual environmental 
+
+temperature is used, strictly one should use the temperature at the isentropic condensation level (see 
+
+Section 11.3). For a discussion of various definitions of the equivalent potential temperature the reader is 
+
+referred to Betts (1973). 
+
+The moist static energy hz is derived from (44) using (24), repeating the procedure as for the dry static 
+
+energy (Section 8.4) 
+
+ 
+(1 ) ;
+
+; (1 )
+
+z p v v v pd v v p pd w l
+
+z p v v pd v v p v pd w l
+
+h c T r gz L r c T gz L r c c r c
+
+h c T gz L q c T gz L q c q c q c
+
+        
+
+        
+ (47) 
+
+It is a conserved quantity in a reversible adiabatic process, and due to its linearity, a widely used quantity in 
+
+convection computations. 
+
+  
+
+
+
+Atmospheric Thermodynamics  
+
+ 
+
+Meteorological Training Course Lecture Series 9 
+
+9.4 Liquid and ice phase  
+
+In analogy with the preceding Section one can extend (42) for the ice phase to obtain 
+
+ 
+
+( ) ( ) ;
+
+( ) ( ) ;
+
+d pd v pv l l i i d d v v v v m i
+
+d pd v pv l l i i d d v v v l s i
+
+dp
+m c m c m c m c dT m R m R T L dm L dm or
+
+p
+
+dp
+m c m c m c m c dT m R m R T L dm L dm
+
+p
+
+      
+
+      
+
+ (48) 
+
+where mi is the mass of ice. Then the conserved quantities ice-liquid potential temperature and a “liquid-
+
+water static energy” can be derived. We only give here the expression for the “liquid-water static energy” 
+
+as 
+
+ (1 ) ;zil p v v l s i pd v l s i p pd w lh c T r gz L r L r c T gz L r L r c c r c            (49) 
+
+For further accurate formulations of the equivalent potential temperature and enthalpy including the ice 
+
+phase the reader is refered to Bolton (1980) and Pointin (1984). 
+
+10 Clausius Clapeyron equation 
+
+Consider a closed system where the liquid and gas phase of a substance, e.g. water, are in equilibrium, i.e. 
+
+as many molecules leave the fluid to go into the vapour as vice versa. Then for this state the specific Gibbs 
+
+functions gv and gl must be equal. From (17) it then follows that 
+
+ v v l
+
+v l
+
+dp s s
+
+dT  
+
+
+
+
+
+ (50) 
+
+Furthermore, using 
+
+ v l v
+v l
+
+h h L
+s s
+
+T T
+
+
+    (51) 
+
+one obtains the Clausius-Clapeyron equation 
+
+ 
+2( )
+
+v v v v
+
+v l v
+
+dp L L p
+
+dT T R T 
+ 
+
+
+ (52) 
+
+where the specific volume of water has been neglected. It is important that there is no mention of air, only 
+
+water substance in the derivation. Therefore, the commonly perceived fact that “air holds water” is wrong, 
+
+the air does not hold water!  
+
+The problem in integrating the Clausius-Clapeyron equation lies in the temperature dependence of Lv. 
+
+Assuming a constant value (52) can be readily integrated to obtain 
+
+ 
+0 00
+
+1 1
+ln vs v
+
+vs v
+
+p L
+
+p R T T
+
+   
+    
+
+   
+ (53) 
+
+where the integration constant pvs0  is evaluated for the triple point temperature T00 = 273.16 K as pvs0 = 
+
+6.112 hPa. Empirical accurate integration formula of (52) for the water vapor saturation pressure over 
+
+liquid water and ice have been computed by Thetens 
+
+
+
+ Atmospheric Thermodynamics 
+
+ 
+
+10  Meteorological Training Course Lecture Series 
+
+ 
+
+00
+
+00
+
+0
+
+0
+
+17.502 ( )/( 32.19);
+
+22.587( )/( 0.7)
+
+exp
+
+exp ;
+
+vs vs
+
+vsi vs
+
+T T T
+
+T T T
+
+p p
+
+p p
+
+ 
+
+ 
+
+
+
+
+
+liquid water
+
+ice              (54) 
+
+In atmospheric models one typical interpolates between the saturation pressure over water and ice for 
+
+temperatures below T00 to account for the fact that all 3 phases can be present. The water vapour 
+
+saturation curve as a function of temperature is plotted in Figure 1. Two interesting final remarks can be 
+
+made 
+
+ Due to the non-linearity of the saturation curve, a mixture of two unsaturated parcels can be 
+
+oversaturated, as illustrated in Figure 1. 
+
+ The boiling temperature of water is the temperature where the pressure of the gas bubbles equals 
+
+the atmospheric pressure. Therefore, from inversion of (54) we get for an atmospheric pressure of 
+
+1013 hPa a boiling temperature of 99.5 °C – everybody knows it should be something like 100 °C, 
+
+but not why! 
+
+ 
+Figure 1. Water vapor saturation pressure as a function of temperature (°C). Also plotted are two 
+unsaturated parcels (stars). As their mixture is laying on a straight line, it is shown that due to the non-
+linearity of the saturation curve a mixture of two unsaturated parcels can be oversaturated. 
+
+11 Ways of reaching saturation 
+
+An air parcel can reach saturation through 
+
+ Diabatic (external) cooling, e.g. by radiation 
+
+ Addition of moisture through evaporation of falling precipitation, turbulent mixing, differential 
+
+advection, or surface moisture fluxes 
+
+ Cooling during isentropic ascent 
+
+The processes under the first two items are supposed to be isobaric processes (no change in pressure), 
+
+whereas isentropic lifting implies the air parcel undergoes a change in height (pressure). 
+
+
+
+Atmospheric Thermodynamics  
+
+ 
+
+Meteorological Training Course Lecture Series 11 
+
+11.1 Dew point temperature 
+
+The dew point temperature is the temperature to which a parcel must be cooled (e.g. by radiation) in order 
+
+to be saturated, i.e. its specific humidity or mixing ratio must equal the saturation specific humidity (mixing 
+
+ratio) 
+
+ ( )v vs dq q T  (55) 
+
+One can solve this equation for Td by inverting the saturation formula (54). 
+
+11.2 Wet bulb temperature 
+
+The wet bulb temperature Tw is the temperature to which air may be cooled at constant pressure by 
+
+evaporation of water into it until saturation is reached. It can be solved for graphically (see Section 12.2) or 
+
+numerically be solving e.g. the simplified moist enthalpy equation 
+
+ 
+( ( ) )p v vs v vs vc dT L dq L q T q      (56) 
+
+This equation is non-linear and therefore either requires an iterative procedure or a linearized formulation 
+
+(for the latter see Section 13). 
+
+11.3 Isentropic (or adiabatic) condensation temperature 
+
+As (unsaturated) moist air expands (e.g. through vertical motion), it cools adiabatically conserving θ. 
+
+Eventually saturation pressure is reached. The temperature and pressure at that level T = Tc,p= pc are known 
+
+as the “isentropic condensation temperature” and “pressure”, respectively. The level is also known as the 
+
+“Lifting Condensation Level”. If expansion continues, condensation will occur (assuming that liquid water 
+
+condenses efficiently and no super saturation can persist), thus the temperature will decrease at a slower 
+
+rate, the moist adiabatic lapse rate. The isentropic condensation temperature can be easily determined 
+
+graphically (see Section 12.1) or numerically, by searching, starting from the surface (pressure p, 
+
+temperature T), for the layer where first qv(p) >=  qvs(pc). Tc is then obtained as 
+
+ 
+0
+
+( , ) cc
+p
+
+T T p
+p
+
+
+
+
+ 
+
+  
+ 
+
+ (57) 
+
+Formula also exist for an accurate direct numerical computation (e.g. Davies-Jones, 1983) of (Tc,pc) for given 
+
+departure properties (T,p) 
+
+11.4 Pseudo-adiabatic processes 
+
+When lifting a parcel one has to make  a decision concerning the condensed water.  Does it falls out 
+
+instantly or does it remain in the parcel? If it remains, it will have an important effect on parcel buoyancy 
+
+(see Lecture Note on convection), and also the heat capacity of liquid water needs to be accounted for. 
+
+Furthermore, once the freezing point is reached, ice processes would need to be taken into account. These 
+
+are issues concerning microphysics, and dynamics. The air parcel history will depend on the situation. 
+
+Therefore, often one takes a simple approach known as the “pseudo adiabatic process”, a non-reversible 
+
+process, where one assumes that all condensate formed immediately leaves the parcel. The pseudo-
+
+adiabatic, approximation can be qualified as a “good” approximation, it is in any case a much better 
+
+approximation than assuming a reversible adiabat, i.e all condensates remains in the parcel. Furthermore, a 
+
+
+
+ Atmospheric Thermodynamics 
+
+ 
+
+12  Meteorological Training Course Lecture Series 
+
+thermodynamic diagram, a 2D diagram (see below) cannot hold a third dimension (condensate), and 
+
+therefore always pseudoadiabats are plotted. 
+
+12 Energy diagrams – Tephigram 
+
+The Tephigram is a meteorological energy diagram with an orthogonal coordinate system consisting of 
+
+temperature T (°C) and potential temperature θ (°C) (dry adiabat). It is illustrated in Figure 2. Knowing T and 
+
+θ one can compute pressure p. The isobars appear as quasi-horizontal lines in Figure 2. Furthermore, 
+
+knowing T and p one can compute the saturation specific humidity qvs or mixing ratio rvs, and the moist 
+
+adiabats or more precisely pseudoadiabats.  
+
+ 
+
+ 
+Figure 2. Tephigram with highlighted isotherm (blue), isentrope (iso-theta) (dashed-black),  isobar (red), 
+and saturation specific humidity (dotted black). 
+
+Another property of the Tephigram becomes apparent when writing the enthalpy equation (15) as 
+
+ lndpd pd
+pd
+
+RdT dp
+dQ c T c Td
+
+T c p
+
+
+ 
+    
+
+ 
+    (58) 
+
+from which it follows that in this particular coordinate system areas T dlnθ are areas of equal energy (heat 
+
+content). 
+
+12.1 Determine isentropic condensation temperature 
+
+During dry adiabatic ascent, both θ and the specific humidity of the parcel are conserved. Therefore, the 
+
+isentropic condensation temperature Tc is graphically obtained in Figure 3 as the intersection of the dry 
+
+adiabat through the departure point (T,p) with the saturation specific humidity line through p having the 
+
+value qsv=qv(p) or in other words having the coordinates (Td,p). Then at the level pc, the lifting condensation 
+
+
+T
+
+pressure
+
+Pseudoadiabat
+
+
+T
+
+pressure
+
+Pseudoadiabat
+
+
+TT
+
+pressurepressure
+
+PseudoadiabatPseudoadiabat
+
+
+
+Atmospheric Thermodynamics  
+
+ 
+
+Meteorological Training Course Lecture Series 13 
+
+level, the parcel is actually saturated, so that its humidity qv(p) is equal to the saturation value, and its 
+
+temperature Tc and dewpoint temperature become equivalent. 
+
+ 
+
+Figure 3. Graphical determination of the isobaric condensation temperature Tc: It is obtained as the 
+intersection of the dry adiabat through the departure point (T,p) with the saturation specific humidity line 
+(dotted red) through the point (qv,p) which is equivalent to the dewpoint  (Td,p). Note that a sounding is 
+either given as (T(p),Td(p)) or (T(p),qv(p)). 
+
+12.2 Wet-bulb temperature 
+
+The wet-bulb temperature Tsw is the temperature of an air parcel brought to saturation by e.g. evaporation 
+
+of rain. It therefore plays an important role in the computation of convective downdraughts driven by 
+
+cooling through evaporating precipitation. The graphical procedure to determine Tsw is illustrated in Figure 
+
+4. One determines first, as in Figure 3, the lifting condensation level, and then follows the moist adiabat 
+
+through the lifting condensation level down to the departure level p.The wet-bulb potential temperature θw 
+
+is obtained by further extending the moist-adiabat to the 1000 hPa pressure  level. 
+
+ 
+
+Figure 4. Determination of the wet-bulb temperature Tsw. As in Figure 3, one determines first the lifting 
+condensation level (Tc,p), but then extends the moist adiabat through the lifting condensation level  down 
+to the departure level p, where the temperature Tsw can be read from the diagram. 
+
+
+
+ Atmospheric Thermodynamics 
+
+ 
+
+14  Meteorological Training Course Lecture Series 
+
+12.3 Equivalent potential temperature 
+
+The equivalent potential temperature is conserved during moist adiabatic ascent, and also in the presence 
+
+of precipitation. This makes it an attractive variable for moist convective modelling, including saturated 
+
+updraughts and downdraughts. Its graphical determination is illustrated in Figure 5 and can be summarised 
+
+as follows. One follows the moist adiabat through the lifting condensation level upward until all water 
+
+vapour has been removed (condensed), i.e. the slope of the moist adiabat becomes equal to that of a dry 
+
+adiabat. Then one descends along the dry adiabat down to the departure level to obtain Te or further to the 
+
+1000 hPa level to obtain the equivalent potential temperature θe. 
+
+ 
+
+Figure 5. Graphical determination of the equivalent temperature Te and equivalent potential temperature 
+θe. One follows the moist adiabat through the lifting condensation level upward until all water vapour has 
+been condensed, and then descends along a dry adiabat to the departure level or the 1000 hPa level, 
+respectively. 
+
+13 Saturation adjustment – numerical procedure 
+
+Last not least we still need an efficient numerical procedure to solve the saturation adjustment problem. 
+
+The procedure uses a simplified form of the moist enthalpy equation (42) and (45) at constant pressure 
+
+(dp = 0). The initial temperature T and specific humidity qv are known 
+
+ Given , vT q  
+
+check if ( )v vsq q T  then 
+
+solve for adjusted  , vT q
+   
+
+so that ( )v vsq q T
+   
+
+ ( )v vslq q q T
+   
+
+Using p v vsdT L dqc  
+
+
+
+Atmospheric Thermodynamics  
+
+ 
+
+Meteorological Training Course Lecture Series 15 
+
+The last relation can be linearised with the aid of a first order Taylor expansion around the initial 
+
+temperature T  to yield 
+
+ 
+
+ * *
+*
+
+( ) ( ) ( ) (2)
+
+( )
+
+1
+
+vs
+
+p v v vs
+
+T
+
+v v vs
+
+v vsp
+
+Tp
+
+dq
+c T T L q q T T T O
+
+dT
+
+L q q T
+T T
+
+L dqc
+
+c dT
+
+     
+
+
+ 
+
+
+
+ 
+  
+
+ (59) 
+
+(59) can be solved using (52) and the definition of qvs in   
+
+Table 1. Once T* is known one can compute qv* and ql. This computation is very accurate. However, for 
+
+accuracy of order (10-2 K) it can be done twice. Note that in (59) we have used a general cp, so that moist 
+
+effects could possibly be included. The formula can also be extended for the ice phase by using “mixed” or 
+
+interpolated values for Lv and qsv, e.g. as a function of temperature. 
+
+Finally, note that the denominator in (59) has value between 1 and 2, so that the actual temperature 
+
+increment T*-T has value *0 ( ( ))v
+
+p
+
+v vs
+
+L
+
+c
+T T q q T     …… loosely speaking it is somewhere in the middle 
+
+because of the latent heat release during condensation, changing in turn the saturation value. This fact is 
+
+graphically illustrated in Figure 6.  
+
+ 
+
+Figure 6. Illustration of the adjustment procedure from an initial oversaturated state (T,qv) to an adjusted 
+state (T*,qvs(T*)). The result T* is obtained through a linearization of the saturation curve at T. 
+
+Acknowledgments 
+
+My special gratitude goes to my colleague Martin Steinheimer for careful revisions to the manuscript, and 
+
+to Adrian Tompkins who originally gave the “Moist introduction” lecture at ECMWF. I also want to thank 
+
+my colleagues Anton Beljaars, Richard Forbes, Elias Holm and Martin Köhler for many helpful discussions 
+
+and Els Kooji-Connally for her expertise in type setting.  
+
+  
+
+
+
+ Atmospheric Thermodynamics 
+
+ 
+
+16  Meteorological Training Course Lecture Series 
+
+References 
+
+Betts, A. and F. J. Dugan, 1973: Empirical formula for saturation pseudoadiabats and saturation equivalent 
+
+temperature. J. Atmos. Sci., 12, 731-732. 
+
+Bolton, D., 1980: The computation of equivalent potential temperature. Mon. Wea. Rev., 108, 1046-1053. 
+
+Davies-Jones, R. P., 1983: An accurate theoretical approximation for adiabatic condensation temperature. 
+
+Mon. Wea. Rev., 111, 1119-1121. 
+
+Pointin, Y., 1984: Equivalent potential temperature and enthalpy as prognostic variables in cloud modelling. 
+
+J. Atmos. Sci., 41, 651-660. 
+
+  
+
+
+
+Atmospheric Thermodynamics  
+
+ 
+
+Meteorological Training Course Lecture Series 17 
+
+List of Symbols 
+
+c Speed of sound m s-1 
+
+cp Heat capacity (specific heat) at constant pressure J kg-1 K-1 
+
+cpd Heat capacity of dry air  
+
+cpv Heat capacity of water vapour  
+
+cl Heat capacity of liquid water  
+
+ci Heat capacity of ice  
+
+cp Heat capacity (specific heat) at constant volume J kg-1 K-1 
+
+E Internal energy J  
+
+e Internal energy, specific J kg-1 
+
+f Helmholtz free energy, specific  
+
+gf Gibbs function, specific  
+
+h Enthalpy, specific  
+
+hz Moist static energy, specific  
+
+hzil Liquid water static energy, specific  
+
+H Enthalpy J 
+
+g Gravity constant m s-2 
+
+Lm Latent heat of melting J kg-1 
+
+Ls Latent heat of sublimation  
+
+Lv Latent heat of vaporisation  
+
+m Mass kg 
+
+md Mass of dry air  
+
+mi Mass of ice  
+
+ml Mass of liquid water  
+
+mv Mass of water vapor  
+
+mw Total mass of water (vapour+liquid)  
+
+Nd Mole fraction of dry air unitless 
+
+Nv Mole fraction of water vapor  
+
+p Pressure (total pressure of atmosphere) Pa 
+
+pd Pressure of dry air  
+
+pv,e Pressure of water vapour  
+
+pvs Saturation water vapour pressure  
+
+qv Specific humidity unitless 
+
+qvs Saturation specific humidity  
+
+ql Specific humidity of liquid water  
+
+qw Total water specific humidity   
+
+R Gas constant J kg-1 K-1 
+
+Rd Gas constant for dry air  
+
+Rv Gas constant for water vapour  
+
+RH Relative humidity unitless 
+
+ri Ice  mixing ratio unitless 
+
+rv Water vapour mixing ratio  
+
+rw Total water  mixing ratio  
+
+s Entropy, specific J kg-1 K-1 
+
+sz Dry static energy, specific J kg-1 
+
+  
+
+
+
+ Atmospheric Thermodynamics 
+
+ 
+
+18  Meteorological Training Course Lecture Series 
+
+T Temperature K 
+
+Tc Adiabatic condensation temperature  
+
+Td Dewpoint temperature  
+
+Te Equivalent temperature  
+
+Tw Wet bulb temperature  
+
+Tv Virtual temperature  
+
+V Volume m3 
+
+z Height m 
+
+α Specific volume m3 kg-1 
+
+ε Rd/Rv unitless 
+
+κ R/cp  
+
+ρ Density kg m-3 
+
+ρd Density of dry air  
+
+ρv Density of water vapour  
+
+ρl Density of liquid water  
+
+θ Dry Potential temperature K 
+
+θm Potential temperature of moist air  
+
+θe Equivalent Potential temperature  
+
+θv Virtual Potential temperature  
+
+θw Wet bulb quivalent Potential temperature

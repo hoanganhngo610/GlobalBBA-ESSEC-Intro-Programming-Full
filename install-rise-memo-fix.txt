@@ -1,0 +1,9 @@
+pip3 install --upgrade --force-reinstall --no-cache-dir jupyter
+pip3 install --upgrade --force-reinstall --no-cache-dir RISE
+
+sudo -E env "PATH=$PATH" jupyter-nbextension install rise --py
+sudo -E env "PATH=$PATH" jupyter-nbextension enable rise --py
+
+jupyter nbextension list
+
+jupyter notebook --no-browser

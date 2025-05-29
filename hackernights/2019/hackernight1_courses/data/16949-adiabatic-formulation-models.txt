@@ -1,0 +1,3925 @@
+Adiabatic_formulation
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+Adiabatic formulation of models
+
+By Terry Davies
+
+Table of contents
+
+1 . Introduction
+
+2 . Governing equations
+
+2.1 Horizontal coordinate systems
+
+2.2 The shallow water equations
+
+2.3 Map projections
+
+3 . Horizontal discretization
+
+3.1 Finite differences
+
+3.2 Spectral technique
+
+3.3 Finite-element techniques
+
+4 . Vertical coordinates
+
+4.1 Pressure coordinate
+
+4.2 Sigma coordinates
+
+4.3 Hybrid coordinates
+
+4.4 Isentropic coordinates
+
+5 . Vertical discretization
+
+5.1 Vertical differencing schemes for baroclinic primitive equation models
+
+REFERENCES
+
+1. INTRODUCTION
+
+These notes are not a verbatim record of the lecture series, but rather a condensation of the topics covered. They
+
+describe some of the techniques used in the adiabatic formulation of primitive-equation models of the atmosphere.
+
+Some sections have been taken directly from earlier notes by D. Burridge and from a paper by A. Simmons and D.
+
+Dent. These notes are not complete and need to be supplemented by the following sources:
+
+(i) ‘Numerical prediction and dynamic meteorology’ by Haltiner and Williams. This is a very useful
+
+textbook and reference book describing many of the basic principles and techniques used in NWP.
+
+(ii) ‘Numerical methods for weather prediction’, ECMWF Seminar notes 1983 and, in particular,
+
+chapters by Mesinger, Janjic and Arakawa. Unfortunately this volume is out of print but you may be
+
+able to find a copy in your home institution.
+
+
+
+Adiabatic formulation of models
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+In addition to the above, useful material can also be found in Philips’s article in ‘Planetary fluid dynamics’ edited
+
+by P. Morel and ‘Numerical methods used in atmospheric models’ by Mesinger and Arakawa, Garp Publications
+
+Series No. 17, Volume 1, (1976).
+
+2. GOVERNING EQUATIONS
+
+Taking an inertial (or fixed) frame of reference, Newton's second law can be expressed as
+
+(1)
+
+where F is the sum of all the forces per unit mass. is the velocity as observed in the inertial frame. We need to
+express this equation in a reference frame on earth and which rotates with the earth.
+
+Let  be the angular velocity of the earth, then
+
+(2)
+
+where V is the velocity relative to the earth and r represents the position vector of the particle as measure from the
+origin at the earth's centre.
+
+Now consider the time derivative of a vector in the inertial frame and
+
+in the rotating frame where and are unit vectors along the orthogonal axes
+
+in the two frames. Thus
+
+Now  , etc. so that we can write
+
+(3)
+
+Using the expression in (1) and using (2) we can show that
+
+The second term of the right-hand side is the Coriolis force and the third term the centrifugal force. In atmospheric
+
+motions, the forces we are concerned with are those of gravitation, friction and pressure. Normally, the centrifugal
+
+force is included in the gravitational force which is taken as constant  .
+
+The equation of motion can be written as
+
+(4)
+
+DVa
+D
+�----------- F=
+
+Va
+
+Ω
+
+Va V Ω r×+=
+
+V V′ � i′ V′� j′ V′ � k′+ +=
+V V � i V� j V � k+ += i′ j′ k′, , i j k, ,
+
+DV
+D
+�--------- dV′ �
+
+d
+�------------i′ dV′�
+
+d
+�------------ j′ dV′ �
+
+d
+�-----------k′+ +=
+
+dV �
+d
+�----------i dV�
+
+d
+�---------- j dV �
+
+d
+�----------k V � di
+
+d
+�----- V� dj
+
+d
+�----- V � dk
+
+d
+�------+ + + + +=
+
+di d
+�⁄ Ω i×=
+
+DV
+D
+�--------- dV
+
+d
+�------- Ω V×+=
+
+DVa
+D
+�----------- dV
+
+d
+�------- 2Ω V Ω Ω r×( )×+×+=
+
+� k=
+
+d �
+d
+�-------- α∇�– 2Ω V � k– F+×–=
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+where F denotes the frictional force and is the specific volume, is the density. The equation of mass
+continuity expresses the fact that local density changes are brought about by mass divergence.
+
+(5)
+
+or, alternatively,  .
+
+The first law of thermodynamics can be written
+
+(6)
+
+where is the heating or cooling from diabatic effects, is the rate of change of internal energy and
+
+ represents the work done by expansion.
+
+For a perfect gas,  and we have the equation state of
+
+(7)
+
+where is the gas constant and and are the specific heats at constant pressure and volume,
+
+respectively.
+
+Using  we can rewrite (6) as
+
+(8)
+
+Alternatively, we can expand  and rearranging (8) we have
+
+ , (9)
+
+where  .
+
+In terms of potential temperature (or where ) where ,
+
+ hPa.
+
+We have  and, on substituting in (9), and rearranging we find
+
+(10)
+
+2.1  Horizontal coordinate systems
+
+Application of the equations of motion requires the use of an appropriate coordinate system. The obvious choice
+
+for global models is to choose spherical polar coordinates with longitude , latitude and radial distance . The
+
+map factors in this system are , ,  and the velocity components are
+
+α 1 ρ⁄= ρ
+
+∂ρ
+∂ �------ ∇ ρV⋅–=
+
+dρ d �⁄ ρ∇ V⋅–=
+
+� d�
+d
+�----- � dα
+
+d
+�-------+=
+
+�
+d� d �⁄
+
+� dα d �⁄( )
+� 	 v 
+=
+
+� � ρ 
+=
+� 	� 	 v–= 	� 	 v
+
+� 	 v 
+=
+� 	 vd 
+d �------- �
+
+dα
+d
+�-------+=
+
+� dα
+d
+�------- � d
+
+d
+�----- � 
+�---------   �
+
+d 
+
+d
+�------- � 
+�---------
+
+d�
+d
+�------–= =
+
+� 	� d 
+
+d
+�------- � 
+�---------ω–=
+
+ω d� d �⁄=
+Θ � 0 �⁄( )κ 
+= 
+ ΠΘ= Π ��� 0⁄( )κ= κ ��	�⁄=� 0 1000=
+
+	� dΘ
+d
+�------- 	� ΠdΘ
+
+d
+�------- 	� Θ κ�----Π
+
+d�
+d
+�------+=
+
+	� dΘ
+d
+�------- Θ
+----
+
+�
+=
+
+λ ϕ ��
+λ � ϕcos= � ϕ �= ��� 1=
+
+
+
+Adiabatic formulation of models
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+t
+
+The radial distance where is the radius of the earth and is the vertical distance above the surface
+
+of the earth.
+
+The components of the momentum equation become
+
+(11)
+
+(12)
+
+(13)
+
+where
+
+From equations (11), (12) and (13), it can be shown that
+
+(14)
+
+i.e. the rate of change of kinetic energy is equal to the rate at which the forces of pressure friction and gravity do
+
+work.
+
+We can also show that
+
+(15)
+
+which is the angular momentum principle.
+
+For long integrations e.g. climate runs, it is important that these principles are maintained.
+
+In the study of larger-scale atmospheric motions, at least for motions we are usually concerned with in numerical
+
+modelling, the following approximations can be justified.
+
+(i) Since , we replace  by the constant value .
+
+(ii) The Coriolis and metric terms proportional to  are ignored.
+
+(iii) We make the hydrostatic approximation to equation (13) so that
+
+� �
+λ
+dλ
+d
+�------ � ϕdλ
+
+d
+�------cos= = , the eastward component
+
+� �
+ϕ
+
+dϕ
+d
+�------ � dϕ
+
+d
+�------= = , the northward component
+
+� ��� d �
+d
+�------ d �
+
+d
+�------= = , the radial component, t
+
+� � �+= � �
+
+d �
+d
+�------- 2Ω � θ 2Ω � ϕ ��� ϕtan�-------------------
+
+���
+�--------–
+
+1
+ρ � ϕcos-------------------
+
+∂�
+∂λ
+------– � λ+ +cos–sin=
+
+d �
+d
+�------ 2Ω � ϕ � 2 ϕtan�------------------–
+
+���
+�--------–
+
+1
+ρ �------
+
+∂�
+∂ϕ
+------– � ϕ+sin–=
+
+d �
+d
+�-------- 2Ω � ϕ � 2 � 2+�-----------------
+
+1
+ρ
+---∂�
+
+∂ �------– �– ���+ +cos=
+
+d
+d
+�----- ∂∂ �-----
+
+�
+ϕacos
+
+--------------- ∂
+∂λ
+------
+
+�
+�---
+
+∂
+∂ϕ
+------ � ∂
+
+∂ �-----+ + +=
+
+d
+d
+�----- 1
+
+2
+---V2 
+
+  V 1ρ
+---∇�– F � k–+  ⋅=
+
+d
+d
+�----- � Ω � ϕcos+( ) � ϕcos[ ] � ϕ 1ρ � ϕcos-------------------
+
+∂�
+∂λ
+------– � λ+  cos=
+
+� �« � �
+ϕcos
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+(16)
+
+i.e. the gravity force balances the vertical pressure gradient force.
+
+Under these assumptions,
+
+(17)
+
+(18)
+
+(19)
+
+(20)
+
+where  is the Coriolis parameter.
+
+Equations (18), (19), (20) together with the continuity equation (5), the equation of state (7) and the thermodynamic
+
+equation ((8), (9) or (10)) give us the required number of equations for the unknowns ; these are
+
+known collectively as the primitive equations.
+
+However, there is no prediction equation for since we ignore vertical accelerations ( ) by our use of the
+
+hydrostatic approximation.  is usually diagnosed from a form of the continuity equation.
+
+2.2  The shallow water equations
+
+The primitive equations are nonlinear, and it is only possible to solve them approximately using numerical meth-
+
+ods. Some of the properties of the primitive equations, and also of the numerical schemes used in their solution,
+
+can be examined by studying simplified forms of the equations.
+
+One such set of equations are the shallow water equations.
+
+If we assume constant density, the horizontal pressure force in the equations of motion is independent of height so
+
+that
+
+(21)
+
+where  is the height of the free surface.
+
+If we further assume that the velocity field is initially independent of height, then it will remain so and consequently
+
+we can omit the vertical advection terns.
+
+We also assume that the fluid is incompressible so that the continuity equation is
+
+(22)
+
+which can be integrated from  to  (the bottom to the free top surface) to give
+
+∂�
+∂�------ ρ�–=
+
+� ϕdλ
+d
+�------ �,acos � dϕ
+
+d
+�------ �, d�
+
+d
+�------= = =
+
+d �
+d
+�------- 1ρ ϕacos------------------
+
+∂�
+∂λ
+------– � � ��� ϕtan�----------- � λ+ + +=
+
+� �� �------- 1ρ �-------
+∂�
+∂ϕ
+------– � �– � 2 ϕtan�-----------– � ϕ+
+
+∂�
+∂�------ ρ�–=
+
+� 2Ω ϕsin=
+��� � � ρ 
+, , , , ,
+
+� d � d �⁄�
+
+∇� ρ� ∇ �=
+�
+
+∇ V ∂
+�
+
+∂�-------+⋅ 0=
+
+� 0= � �=
+
+
+
+Adiabatic formulation of models
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(23)
+
+At the bottom  whilst at the top,  , the rate at which the free surface rises or falls.
+
+Thus
+
+(24)
+
+or
+
+The set of equations is completed by the momentum equations which are
+
+(25)
+
+The equations of motion above are in a form known as the advective form due to the presence of the term.
+
+The equations of motion can easily be rearranged into their vector invariant form viz:
+
+(26)
+
+where
+
+is the vorticity in spherical coordinates (cf. with in a Cartesian system) and
+
+ is the kinetic energy.
+
+The equations of motion can be combined and rearranged into their vorticity/divergence form. Consider the shallow
+
+water equations in a Cartesian system where the vorticity is .
+
+(27)
+
+Operating on the -equation by , the -equation by  and subtracting, we obtain
+
+(28)
+
+The divergence can be obtained by operating on the -equation by and the -equation by and adding
+
+to obtain
+
+�
+∇ V �"!#� 0–+⋅ 0=
+
+�
+0 0=
+
+�$! d � d �⁄=
+
+�$! ∂ �
+∂ �------ V ∇
+
+�
+⋅+
+
+�
+∇ V⋅–= =
+
+∂
+�
+
+∂ �------ V ∇
+� �
+
+∇ V⋅+⋅+ 0=
+
+∂V
+∂ �------- V ∇V � k V � ∇
+
+�
++×+⋅+ 0=
+
+V ∇V⋅
+
+∂V
+∂ �------- ζ %+( )k V ∇ �
+
+� &
++( )+×+ 0=
+
+ζ 1 ϕacos
+--------------- ∂
+
+�
+∂λ
+------
+
+∂
+∂ϕ
+------ � ϕcos( )–  =
+
+ζ ∂ � ∂'⁄ ∂ � ∂(⁄–=&
+0.5 � 2 � 2+( )=
+
+ζ ∂ � ∂'⁄ ∂ � ∂(⁄–=
+∂ �
+∂ �------ �
+
+∂ �
+∂'------ �
+
+∂ �
+∂(------ � �– �
+
+∂
+�
+
+∂'------+ + + 0=
+∂ �
+∂ �------ �
+
+∂ �
+∂'------ �
+
+∂ �
+∂(------ � � �
+
+∂
+�
+
+∂(------+ + + + 0=
+� ∂ ∂'⁄ � ∂ ∂(⁄
+
+∂ζ
+∂ �------ ∇ ζ �+( )V[ ]⋅+ 0=
+
+� ∂ ∂'⁄ � ∂ ∂(⁄
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+(29)
+
+2.3  Map projections
+
+So far, we have used a spherical polar coordinate system in our derivation of the primitive equations. However, it
+
+is sometimes necessary to map onto a plane. This is often done for limited-area modelling and, of course, is nec-
+
+essary when producing charts.
+
+The advective form of the shallow water equations in a generalized linear coordinate system with correspond-
+
+ing map factors  and  are
+
+(30)
+
+(31)
+
+(32)
+
+In this system, the vorticity  and divergence  are given by
+
+(33)
+
+(34)
+
+When , the angles between intersecting curves are preserved and the system is conformal.
+
+We have already shown that a spherical polar coordinate system has .
+
+2.3 (a)  Polar stereographic projection. This projection is used for maps and was widely used in modelling in
+
+limited area models and the hemispheric domain. If  is the radius of a latitude circle on the map then
+
+(35)
+
+The longitudinal angle is defined as so that with axes with origin at the pole, positive eastwards,
+
+positive northwards from our reference longitude, then and . In terms of and these
+
+become
+
+(36)
+
+with , where is the map factor ( ). The wind
+
+components ( ) in the ( ) directions are and are related to the velocities ( ) in
+
+the spherical system by  and .
+
+∂)
+∂ �------- ∇ ζ �+( ) * �×[ ] ∇
+
+2 � � � 2 � 2+
+2
+
+-----------------+ 
+ +⋅+ 0=
+
+'+(,� � � �
+
+∂ �
+∂ �------
+
+�� �------
+∂ �
+∂'------
+
+�� �------
+∂ �
+∂(------ � �
+
+1� � � �------------ �
+∂
+� �
+
+∂'--------- �
+∂
+� �
+
+∂(---------–  +–
+�� �------
+
+∂
+�
+
+∂'------+ + + 0=
+
+∂ �
+∂ �------
+
+�� �------
+∂ �
+∂'------
+
+�� �------
+∂ �
+∂(------ � �
+
+1� � � �------------ �
+∂
+� �
+
+∂'--------- �
+∂
+� �
+
+∂(---------–  +
+�� �------
+
+∂
+�
+
+∂(------+ + + + 0=
+
+∂
+�
+
+∂ �------
+1� � � �------------
+
+∂
+∂'------
+� � � �( ) ∂∂(------
+
+� � � �( )++ 0=
+
+ζ )
+
+ζ 1� � � �------------
+∂
+
+∂'------
+� � �( ) ∂∂(------
+
+� � �( )–=
+
+) 1� � � �------------
+∂
+
+∂'------
+� � �( ) ∂∂(------
+
+� � �( )+=
+� � � �=
+
+�
+λ ϕ
+
+�
+ϕ,acos �= =
+
+�
+
+� 2 Φ
+2
+---- where Φ,atan π
+
+2
+--- ϕ–= =
+
+Θ λ= ',(,( ) '
+( ' � Θsin= ( � Θcos= ϕ λ
+
+' 2 ϕ λsinacos
+1 ϕsin+( )
+
+------------------------------ (, 2 ϕ λcosacos
+1 ϕsin+( )
+
+-------------------------------–= =
+
+� �.- ϕ( ) ϕcos= - ϕ( ) 2 1 ϕsin+( )⁄= � � � � 1 - ϕ( )⁄= =���, '+(, � � �/' ˙ �, � �0( ˙= = � s � s,� �
+s λ
+
+�
+s λsin–cos=
+
+� �
+s λ
+
+�
+s λcos+sin=
+
+
+
+Adiabatic formulation of models
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+2.3 (b)  Mercator (cylindrical) projection. This is commonly used for maps or for modelling in tropical re-
+
+gions. The  (east–west) and  (north–south) coordinates are defined by
+
+(37)
+
+where is the latitude at which the projection is true (usually , the equator). The map factor
+
+.
+
+3. HORIZONTAL DISCRETIZATION
+
+So far, we have derived the basic hydrodynamical equations that govern atmospheric motions. Given the initial
+
+fields of mass and velocity it is possible to treat the solution of these equations as an initial value problem and thus
+
+obtain the mass and velocity distribution at some future time. However, the partial differential equations are non-
+
+linear and can only be solved by using numerical techniques. Furthermore, the nonlinearity of the equations means
+
+that any small errors in the initial conditions are likely to grow, making the solution useless in a deterministic sense
+
+after a number of days.
+
+There are a variety of methods that can be employed in the solution of the equations. We shall put them into three
+
+broad categories—finite difference, spectral and finite-element techniques.
+
+3.1  Finite differences
+
+The first numerical techniques used in the solution of the primitive equations were based on finite differences. In
+
+this technique values and derivatives of the dependent variables are represented at discrete points on a grid. Usually
+
+the grid is regular in the coordinate system used, at least in the horizontal. In the vertical most centres have a
+
+non-uniform grid as it seems desirable to have finer resolution in the boundary layer and around the jet stream. Fur-
+
+ther enhancements to the performance (and to some extent the accuracy) of finite difference schemes can be made
+
+by staggering the dependent variables, i.e. by holding variables at different grid-points. Normally staggered
+
+schemes give a better simulation of geostrophic adjustment and they are either more accurate or more economical
+
+than equivalent non-staggered schemes.
+
+In the design of any numerical scheme certain conditions need to be met to maintain stability. Since the primitive
+
+equations are nonlinear, they are prone to nonlinear computational instability under certain conditions. Nonlinear
+
+instability can be avoided by designing schemes in such a way as to conserve particular properties, normally en-
+
+strophy or kinetic energy. Such conservation properties are usually met by satisfying integral constraints that are
+
+also satisfied by the continuous system of equations. By maintaining these constraints in longer integrations, the
+
+statistical structure of the atmosphere is maintained and it may help to reduce systematic errors.
+
+The design of conservative finite-difference schemes was pioneered by Arakawa (1966), Lilly (1964) and Sadourny
+
+(1975), and a review can be found in Arakawa (1984). Failure to conserve enstrophy, in particular, eventually leads
+
+to a spurious cascade of energy to smaller scales. It is possible to limit or control this false cascade by removing
+
+energy from these smaller scales by the use of lateral diffusion, but excessive lateral smoothing leads to enhanced
+
+energy dissipation.
+
+To achieve conservation in the discretized system, successive terms need to cancel so that summing over a domain
+
+(equivalent to integrating the continuous equations) leaves only boundary values.
+
+Conservation properties do not necessarily endow a particular scheme with increased local accuracy, which may
+
+be more advantageous for the forecasting of small-scale phenomena. Thus, the choice of a scheme with or without
+
+' (
+
+' ϕ0λ (,acos ϕ0 1 ϕsin+ ϕcos--------------------  lnacos= =
+
+ϕ0 ϕ0 0=- ϕ( ) ϕ0cos
+ϕcos
+
+-------------- 1� �------
+1� �------= = =
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+conservation is likely to be dictated by the problem being solved.
+
+For global models, the most straightforward grid to use is based on lines of constant increments in latitude and lon-
+
+gitude (Fig. 1 ). However, on such a grid the longitudinal points converge, and east–west resolution consequently
+
+increases as the poles are approached. Unless special measures are taken, this increase in resolution results in the
+
+violation of the CFL condition when explicit time-stepping schemes are used. In some formulations, the poles are
+
+singular points and usually have to be treated separately.
+
+Figure  1Illustration of a regular latitude/longitude grid near a pole.
+
+We can demonstrate the effects of converging meridians by considering a linearized version of the shallow-water
+
+equations
+
+(38)
+
+(39)
+
+(40)
+
+where we have inserted which will act to highlight the effects of longitudinal differencing and, if
+
+necessary, as a smoothing operator. We will examine the behaviour of two different schemes on an unstaggered
+
+grid, i.e. are held at the same points. First, with a leapfrog scheme, the differentiation is
+
+replaced by . We use central differences for the space differencing and, after substituting
+
+solutions of the form , etc we arrive at a system of equations, the determinant of
+
+which is
+
+∂ �
+∂ �------
+
+��1
+� ϕcos----------------
+
+∂
+�
+
+∂λ
+------+ 0=
+
+∂ �
+∂ �------
+
+�
+�---
+
+∂
+�
+
+∂ϕ
+------+ 0=
+
+∂
+�
+
+∂ �------
+2
+� ϕcos---------------- 1
+
+∂ �
+∂λ
+------ ∂
+
+∂ϕ
+------ � ϕcos( )++ 0=
+
+1 1 ϕ( )=
+��� and �, ∂ � ∂ �⁄��3 1+ ��3 1––( ) 2∆ �⁄��3 λ34� ˆ i * ∆λ 5 ∆ϕ+( )[ ]exp=
+
+
+
+Adiabatic formulation of models
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(41)
+
+(Note we have also used  in the difference equation for ).
+
+Evaluating the determinant, we obtain roots  and the solutions of
+
+(42)
+
+where (43)
+
+i.e. (44)
+
+ or
+
+(45)
+
+Reverting back to one dimension, this is simply or , the usual CFL sta-
+
+bility condition. For a regular Cartesian, two-dimensional grid we would have .
+
+Now consider our latitude–longitude grid where as the poles are approached , becomes small and dom-
+
+inates the CFL condition. There are a number of ways to circumvent this problem. One of the simplest is to let the
+
+time step decrease towards the pole thereby maintaining the ratio , but this is prohibitively expensive. It is
+
+just as easy to restrict the number of waves in the solution, i.e. not letting the term approach 1. Again,
+
+there are a variety of ways of doing this in practice. Essentially we obtain the Fourier components in the longitu-
+
+dinal direction and either truncate or smooth those modes (the higher wave numbers) that would be unstable by our
+
+stability criterion equation (45). We then perform an inverse transform to obtain our desired solution. Essentially
+
+we are trying to control the effect of in the first tern of (45) . For a particular
+
+latitude, we only retain those waves so that , or
+
+, gives us the value of that can be retained for a particular latitude. If we choose to
+
+truncate the solution at a particular wave number, the process is known as Fourier dropping. Alternatively, we can
+
+smooth the amplitude of a wave that would be unstable by using
+
+We also have some freedom on how we apply the chopping or smoothing. We can apply the filter to the dependent
+
+variables, the tendencies or the increments. Arakawa and Lamb (1981) apply the smoothing operators within
+
+the differencing as in equations (38) and (40).
+
+It is instructive to repeat the above stability analysis using a forward–backward scheme for time differencing, i.e.
+
+the time differencing uses a forward scheme and the height term in the first two equations is at the latest time level.
+
+The same procedure as before gives.
+
+λ2 1– 0 λ�61 ∆
+�
+
+� ϕcos( )∆λ----------------------------2i * ∆λ( )sin
+0 λ2 1– λ� ∆
+
+�
+� ∆ϕ-----------2i 5 ∆ϕ( )sin
+
+λ
+2 1 ∆ �� ϕcos( )∆λ----------------------------2i * ∆λ( )sin λ
+
+2 ∆ �
+� ∆ϕ-----------2i 5 ∆ϕ( )sin λ
+
+2 1–
+
+0=
+
+ϕ 7 1+cos ϕ 7 1–cos ϕ 7cos= = �
+λ 1±=
+
+λ4 2λ2– 1 4 8 λ2+ + 0=
+
+8 � 2 ∆ �( )2 1 2 * ∆λ( )2sin� 2 ∆λ( )2 ϕ2cos-----------------------------------
+5 ∆ϕ( )2sin
+
+� 2 ∆ϕ( )2------------------------+=
+
+λ2 1 2 8– 4 8 2 4 8–( )±=
+λ 1 provided that A 1<<
+
+� 2 ∆ �( )2 1 2 * ∆λ( )2sin� 2 ∆λ( )2 ϕ2cos-----------------------------------
+5 ∆ϕ( )2sin
+
+� 2 ∆ϕ( )2------------------------+ 1 for all wave numbers *95,( )<
+
+� 2 ∆ �( )2 ∆'( )2⁄ 1< � 2( )∆ � ∆'⁄ 1<
+2 � 2( )∆ � ∆'⁄ 1<
+
+� ∆λ ϕcos
+∆ � ∆λ⁄
+
+* ∆λ( )sin
+
+ϕacos 1 2 * ∆λ2sin � 2 ∆λ( )2 ϕ2cos[ ]⁄
+* ∆λ( )sin � ∆λ ϕ2cos( )⁄ 1 � ∆λ ϕ0cos( )⁄<* ∆λ( ) ϕcos ϕ0cos⁄<sin *
+
+1 * ϕ,( ) * ∆λ( ) ϕcos ϕ0cos⁄<( )sin
+1
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+(46)
+
+Evaluating the determinant as before we find we require for i.e. in one dimension
+
+and, for a regular Cartesian two-dimensional . The maximum time step for the forward–back-
+
+ward scheme is twice that for the leapfrog scheme and it has the further advantage of being a 2-level scheme.
+
+As with the leapfrog scheme, the smoothing factor plays the same role in determining those wave numbers we
+
+can retain by requiring .
+
+Another solution to the problem of converging meridians is to use a grid developed by Kurihara where points are
+
+skipped as the poles are approached, thereby roughly maintaining the same resolution. In its simplest form this
+
+leads to overlapping of grid boxes in the north–south direction, which complicates a little the differencing algo-
+
+rithms. A more serious drawback of such a grid appears to be associated with larger errors near the poles.
+
+The above examples involved the use of unstaggered grids. However, the space differencing in equations (38) to
+
+(40) only involves variables at points adjacent to those required in the solution of the equations. Therefore, it is
+
+possible to carry the velocity components and height field at alternate points, thereby reducing the computation
+
+time and storage by half. The truncation error remains unaltered. By staggering the variables in this way we have
+
+effectively made the shortest resolvable wavelength. If we want to include waves then we can reduce
+
+the grid length by half and, in this case, for comparable computational effort as the unstaggered grid we increase
+
+the accuracy.
+
+In two-dimensions, there are more options available when staggering the variables. One of the most recent reviews
+
+can be found in Janic and Mesinger (1984). The various choices of grids are denoted by the letters A to E. The A
+
+grid is the unstaggered arrangement. The other grids are as shown below.
+
+The importance in the staggering of the variables is not just for computational efficiency, but is also related to the
+
+behaviour in the geostrophic adjustment process. By examining the dispersion properties for each of the grids, the
+
+relative merits of each of the grids can be assessed. Janic and Mesinger (1984) suggest that there is little to choose
+
+between the B and C grids whereas the unstaggered A grid is poor.
+
+We have considered so far the adjustment or gravity-wave part of our system of equations. If necessary, the advec-
+
+tive terms can be included in our simplified system. If we then carry out a stability analysis, the CFL criterion is
+
+usually modified by the addition of a velocity term such as compared with . Now
+
+typically has a value of about 300 m/s whereas maximum values of are around 100 m/s. Hence, the sta-
+
+bility condition is dominated by the gravity-wave speed. The addition of the nonlinear advection terms complicates
+
+the solution and makes it much more expensive to solve. However, since the stability condition for the winds is
+
+around a third as restrictive as the gravity-wave condition this expense could be reduced by somehow allowing the
+
+advection to set the time step rather than the gravity-wave speed. There are broadly two approaches. One is the
+
+λ 1– 0 ��1 ∆
+�
+
+� ϕcos( )∆λ----------------------------i * ∆λ( )sin
+0 1 � ∆
+
+�
+� ∆ϕ-----------i 5 ∆ϕ( )sin
+
+2 1 ∆ �� ϕcos( )∆λ----------------------------i * ∆λ( )sin λ
+2 ∆ �
+� ∆ϕ-----------i 5 ∆ϕ( )sin λ 1–
+
+0=
+
+8 4≤ λ 1≤ � 2 ∆ � ∆'⁄ 2<
+2 � 2 ∆ � ∆'⁄ 2<
+1
+
+1 * ϕ,( ) * ∆λ ϕcos ϕ0cos⁄<sin
+
+4∆' 2∆'
+
+:
+� �
+���,� �
+
+C� � �
+� �� � �
+
+D� � �
+� �� � �
+
+E���, � ���,� ���, ����, � ���,
+
+; � �+( )∆ � ∆'⁄ � � ∆ � ∆'⁄� � ;
+
+
+
+Adiabatic formulation of models
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+semi-implicit approach, where the gravity-wave terms are treated implicitly and the advection terms are treated ex-
+
+plicitly. Alternatively, a split–explicit approach can be adopted, where both parts are treated explicitly but separate-
+
+ly so that differencing schemes suited to the relevant characteristics of each problem can be used. For example, a
+
+forward–backward scheme for the gravity-wave adjustment and a Lax–Wendroff or a Heun scheme for the advec-
+
+tion step. If this approach is used, several adjustment steps can be taken for every advection step (typically 3 ad-
+
+justment steps for each advection step).
+
+3.2  Spectral technique
+
+The operational ECMWF forecast model uses a spectral technique for its horizontal discretization. Over the past
+
+decade or so this technique has become the most widely used method of integrating the governing equations of
+
+numerical weather prediction over hemispheric or global domains. Following the development of efficient trans-
+
+form methods by Eliasen et al. (1970) and Orszag (1970), and the construction and testing of multi-level primi-
+
+tive-equation models (e.g. Bourke, 1974; Hoskins and Simmons, 1975; Daley et al., 1976), spectral models were
+
+introduced for operational forecasting in Australia and Canada during 1976. The technique has been utilized oper-
+
+ationally in the USA since 1980, in France since 1982, and in Japan and at ECMWF since 1983. Implementation
+
+of a spectral model is planned in the Federal Republic of Germany. The method is also extensively used by groups
+
+involved in climate modelling.
+
+A comprehensive account of the technique has been given by Machenhauer (1979), and a further description of the
+
+method has been given by Jarraud and Simmons (1984). Reference should be made to these or other reviews for
+
+further discussion of most of the points covered below.
+
+In the usual application of the method, the basic prognostic variables are vorticity, divergence, temperature, a hu-
+
+midity variable, and the logarithm of surface pressure. Their horizontal representation is in terms of truncated series
+
+of spherical harmonic functions, whose variation is described by sines and cosines in the east–west and by associ-
+
+ated Legendre functions in the north–south. The horizontal variation of a variable  is thus given by
+
+(47)
+
+where  is the latitude and  is the sine of the longitude. For the particular choice of normalization adopted at
+
+and
+
+.
+
+As is a real variable, is equal to the complex conjugate of , enabling the model to deal explicitly
+
+with the  for . The sum
+
+defines the "Fourier coefficients",  of the variable .
+
+<
+
+<
+λ µ,( )
+
+< 3
+=?>
+3
+=
+
+µ( ) i - λ[ ]exp
+3 ==
+@
+∑= A–=
+
+A
+∑=
+
+λ µ
+
+>
+3
+=
+
+µ( ) 2 B 1+ B -–( )!B -+( )!----------------------
+1
+
+23 B !------------ 1 µ
+2–( )
+= 2⁄ d3 =+
+
+dµ3 =+----------------- µ
+2 1–( ) - 0≥,=
+
+>
+3
+=– µ( ) > 3
+
+=
+µ( )=
+
+< < 3
+=– < 3
+
+=
+< 3
+= - 0≥
+
+< 3
+=9>
+3
+=
+
+µ( )
+3 ==
+@
+∑
+
+< =
+µ( )
+
+<
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+It is becoming increasingly common for the so-called "triangular" truncation of the expansion to be used. This trun-
+
+cation is defined by , and gives uniform resolution over the sphere. The symbol “TN” is the
+
+usual way of defining the resolution of such a truncation; being the smallest total wave number retained in the
+
+expansion. The smallest resolved half-wavelength in any particular direction is then (320 km for T63, 190
+
+km for T106), although the corresponding lateral variation is of larger scale.
+
+Derivatives of a spectrally represented variable  are known analytically:
+
+(48)
+
+and
+
+(49)
+
+where
+
+with
+
+The orthogonality of the spherical harmonics enables the to be determined from according to the formula
+
+(50)
+
+The computational efficiency of the evaluation of the Fourier coefficients is enhanced for global models by writing
+
+the summation over  (known as the inverse Legendre transform) in the form
+
+(51)
+
+Evaluating these two sums separately enables a simple evaluation of the inverse transform for the corresponding
+
+latitude in the opposite hemisphere:
+
+(52)
+
+C D
+constant= = D
+
+π � D⁄
+<
+
+∂
+<
+
+∂λ
+------- i - < 3
+
+=9>
+3
+=
+
+µ( ) i - λ[ ]exp
+3 ==
+@
+∑= A–=
+
+A
+∑=
+
+∂
+<
+
+∂µ
+-------
+
+< 3
+= d> 3
+
+=
+dµ
+
+-------------- i - λ[ ]exp
+3 ==
+
+@
+∑= A–=
+
+A
+∑=
+
+1 µ2–( )
+d
+>
+3
+=
+
+dµ
+-------------- B ε3 1+
+
+= >
+3 1+
+= B 1+( )ε 3
+
+= >
+3 1–
+=
+
++–=
+
+ε3
+= B 2 - 2–
+
+4 B 2 1–-------------------  
+ 
+
+1
+2
+---
+
+=
+
+< 3
+= <
+
+< 3
+= 1
+
+4π
+------
+
+<
+λ µ,( )
+
+>
+3
+=
+
+µ( ) i– - λ[ ]exp λd µd
+0
+
+2π
+
+∫
+1–
+
+1
+
+∫=
+
+B
+
+< 3
+=9>
+3
+=
+
+µ( )
+3 ==
+@
+∑
+
+< 3
+=E>
+3
+=
+
+µ( )
+< 3
+=9>
+3
+=
+
+µ( )
+3 = 1+=3 =+( ) odd
+
+@
+∑+3 ==3 =+( ) even
+
+@
+∑=
+
+< 3
+= >
+3
+=
+
+µ–( )
+3 ==
+
+@
+∑
+
+< 3
+= >
+3
+=
+
+µ( )
+< 3
+= >
+3
+=
+
+µ( )
+3 = 1+=3 =+( ) odd
+
+@
+∑–3 ==3 =+( ) even
+
+@
+∑=
+
+
+
+Adiabatic formulation of models
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Similarly, the latitudinal integral in (50), the direct Legendre transform, need be taken only over one hemisphere:
+
+(53)
+
+The spherical harmonics are eigenfunctions of the Laplacian operator on the sphere:
+
+(54)
+
+where is the radius of the earth. This is utilized in deriving wind components from vorticity and divergence. If
+
+and are the eastward and northward velocity components multiplied by the cosine of latitude, the (relative)
+
+vorticity and divergence  are defined by
+
+(55)
+
+and
+
+(56)
+
+In terms of a stream function and velocity potential :
+
+Thus
+
+(57)
+
+and
+
+(58)
+
+< =
+µ( )
+>
+3
+=
+
+µ( ) µd
+1–
+
+1
+
+∫
+< =
+
+µ( )
+< =
+
+µ–( )+[ ]
+>
+3
+=
+
+µ( ) µ for - B even+d
+0
+
+1
+
+∫=
+
+< =
+µ( )
+< =
+
+µ–( )–[ ]
+>
+3
+=
+
+µ( ) µ for - B odd+d
+0
+
+1
+
+∫=
+
+∇2
+>
+3
+=
+
+µ( ) i - λ[ ]exp{ } BEB 1+( )� 2---------------------
+>
+3
+=
+
+µ( ) i - λ[ ]exp–=
+
+�; �
+)
+
+ξ 1�---
+1
+
+1 µ2–( )
+-------------------∂ �
+
+∂λ
+------- ∂
+
+;
+∂µ
+--------–
+
+ 
+ 
+ 
+
+=
+
+) 1�---
+1
+
+1 µ2–( )
+-------------------∂
+
+;
+∂λ
+-------- ∂ �
+
+∂µ
+-------+
+
+ 
+ 
+ 
+
+=
+
+ψ χ
+
+; 1
+�--- 1 µ
+
+2–( )∂ψ∂µ
+-------– ∂χ
+
+∂λ
+------+
+
+ 
+ 
+ 
+
+=
+
+� 1�---
+∂ψ
+∂λ
+------- 1 µ2–( )∂χ∂µ
+
+------+
+ 
+ 
+ 
+
+=
+
+ξ ∇2ψ and ) ∇2χ= =
+
+; � B 1– B 1+( ) 1– 1 µ2–( )ξ3
+= d >F=3
+
+dµ
+-------------- i -G) 3
+
+=H>
+3
+=
+
+–
+ 
+ 
+  I - λ[ ]exp
+
+3 ==
+
+@
+∑= A–=
+
+A
+∑=
+
+� �– B 1– B 1+( ) 1– i - ξ3
+=H>
+3
+=
+
+1 µ2–( ) ) 3
+= d> = 3
+
+dµ
+--------------+
+
+ 
+ 
+  I - λ[ ]exp
+
+3 ==
+@
+∑= A–=
+
+A
+∑=
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 15
+
+The sequence of calculations for each time step of a spectral model can now be broadly summarized as follows.
+
+The analytical representation of basic fields (Eqs. (47)) is used to evaluate these fields, and derived fields such as
+
+horizontal velocities (Eqs. (48) and Eqs. (49)) and (in some implementations) temperature and moisture gradients,
+
+at an array of grid points. These grid-point values are used to compute contributions to the tendencies of the fields
+
+at the grid points from both resolved dynamical processes and from the parametrized processes. These tendencies
+
+are projected back to give tendencies of the spectral coefficients, enabling time-stepping to be completed. The
+
+transformation to and from grid-point values is particularly efficient in the east–west, for which Fast Fourier Trans-
+
+formation can be used. Gaussian quadrature is employed for the latitudinal integration used in the projection back
+
+to spectral space Eqs. (53); this requires that the grid in the north–south has a particular distribution (the so-called
+
+"Gaussian" latitudes) for each resolution, although this can be regarded as a regular grid for all practical applica-
+
+tions of output grid-point products from spectral models at today's operational resolutions. An exact transformation
+
+of quadratic terms is achieved by using a grid which has a finer resolution than that of the spectral representation,
+
+with at least points in the east–west and from pole to pole for TN truncation (Fig. 2 ). If,
+
+as is generally (but not necessarily) the case, the physical parametrizations are computed on this grid, then prog-
+
+nostic fields such as surface temperature or snow cover, and output fields such as precipitation, are defined and up-
+
+dated on this grid.
+
+Figure 2. Illustration of various spectral truncations: Triangular truncation and Rhomboidal
+
+truncation
+
+In the formulation adopted at ECMWF, complete tendencies of the temperature, moisture and logarithm of surface
+
+pressure are computed in grid-point space, and transformed directly into the corresponding tendencies of spectral
+
+coefficients. For vorticity and divergence, integration by parts is used. The wind tendencies can be written in the
+
+form
+
+(59)
+
+and
+
+(60)
+
+3
+D
+
+1+( ) 3
+D
+
+1+( ) 2⁄
+
+T
+C 8 J )+ +=
+
+R
+C 8 	+=
+
+∂
+;
+
+∂ �-------- �$K
+1
+�---
+
+∂ L
+∂λ
+-------–=
+
+∂ �
+∂ �------- �$M
+
+1 µ2–( )
+�-------------------
+
+∂ L
+∂µ
+-------–=
+
+
+
+Adiabatic formulation of models
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+where ,  and  are quantities that can readily be computed in grid-point space.
+
+Using equations (50), (55) and (56), (59) and (60) yield
+
+(61)
+
+and
+
+(62)
+
+The fact that the spherical harmonics are eigenfunctions of the Laplacian operator makes it relatively simple to im-
+
+plement an efficient semi-implicit treatment of gravity-wave terms. It is also straightforward to implement linear
+
+forms of "horizontal" diffusion along the coordinate surfaces defined by the vertical discretization. Such diffusion
+
+is widely used in spectral models, with largely satisfactory results. There can, however, as in finite-difference mod-
+
+els, be problems associated with diffusion along coordinate surfaces which slope significantly in the vicinity of
+
+steep terrain, and the introduction of other forms of diffusion may require significant effort and computational cost.
+
+Recent developments of the spectral technique have been along a number of lines. Apart from computational re-
+
+finements of the type discussed in the following section, the technique has lent itself to some further gains in
+
+time-stepping efficiency in high-resolution applications (Simmons et al., 1988), and there is promise of further in-
+
+creases of efficiency with the use of a semi-Lagrangian treatment of advection (Ritchie, 1988). The applicability
+
+of the technique has been widened by the development of limited-area spectral models (e.g. Tatsumi, 1986), and
+
+of a stretched coordinate within the framework of a global model (Courtier and Geleyn, 1988, following Schmidt,
+
+1977).
+
+3.3  Finite-element techniques
+
+Finite-elements are much less widespread in operational NWP when compared with either spectral or grid-point
+
+models. RPN in Canada have the most practical experience in using finite-elements for both horizontal and vertical
+
+discretization. A review article by Staniforth (1987) gives an introduction and contains useful references.
+
+There is an experimental version of the Centre's model that uses finite elements in the vertical and, apart from noise
+
+problems at the upper boundary, this version appears to give greater accuracy more cheaply than increasing vertical
+
+resolution using finite differences.
+
+�$K �$M L
+
+∂ξ3
+=
+
+∂ �-------------
+1
+
+4π �----------
+1
+
+1 µ2–
+--------------
+
+∂ �$M
+∂λ
+
+----------
+∂ �$K
+∂µ
+
+----------–
+ 
+ 
+ > 3
+
+=
+µ( ) i - λ–[ ]exp λd µd
+
+0
+
+2π
+
+∫
+1–
+
+1
+
+∫=
+
+1
+4π �----------
+
+1
+
+1 µ2–
+-------------- i -G�$M > 3
+
+=
+µ( ) 1 µ2–( ) �$K d
+
+>
+3
+=
+
+dµ
+--------------+
+
+ 
+ 
+ 
+
+i - λ–[ ] λd µdexp
+0
+
+2π
+
+∫
+1–
+
+1
+
+∫=
+
+∂ ) 3
+=
+
+∂ �--------------
+1
+
+4π �----------
+1
+
+1 µ2–
+--------------
+
+∂�$K
+∂λ
+
+----------
+∂ �$M
+∂µ
+
+---------- � ∇2 L–+
+ 
+ 
+ > 3
+
+=
+µ( ) i - λ–[ ]exp λd µd
+
+0
+
+2π
+
+∫
+1–
+
+1
+
+∫=
+
+1
+4π �----------
+
+1
+
+1 µ2–
+-------------- i -G�"K > 3
+
+=
+µ( ) 1 µ2–( )– �$M d
+
+>
+3
+=
+
+dµ
+--------------
+
+ 
+ 
+ 
+
+i - λ–[ ] λd µdexp
+0
+
+2π
+
+∫
+1–
+
+1
+
+∫=
+
+BEB 1+( )
+4π � 2--------------------- L
+
+>
+3
+=
+
+µ( ) i - λ–[ ] λd µdexp
+0
+
+2π
+
+∫
+1–
+
+1
+
+∫+
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 17
+
+4. VERTICAL COORDINATES
+
+So far, height above mean sea level has been used as the vertical coordinate in our system of equations. For mid-lat-
+
+itude synoptic-scale disturbances the Coriolis force and pressure-gradient force are in approximate balance—the
+
+geostrophic relationship which is , a diagnostic relationship relating the velocity field to the
+
+pressure gradient.
+
+However, the density varies with latitude and height which make the above equation less easy to use than an alter-
+
+native system which uses pressure as the vertical coordinate. Other coordinates are more useful for numerical tech-
+
+niques in solving the complete equations of motion. We can derived a system of equations for a generalized vertical
+
+coordinate which is assumed to be related to the height by a single-valued monotonic function. This was derived
+
+by Kasahara (1974).
+
+We have
+
+(63)
+
+and
+
+(64)
+
+Thus
+
+(65)
+
+Using the above, we have
+
+(66)
+
+(67)
+
+(68)
+
+The total derivative  can be transformed into the  system using (66) and (67), thus
+
+(69)
+
+However, by definition, the total derivative in the  system is
+
+� k V× 1 ρ⁄( ) �∇–=
+
+�
+
+ζ ζ '+(N� �, , ,( ) or � �O'+( ζ �, , ,( )= =
+
+∂8
+∂ P-------   ζ
+
+∂8
+∂ P-------   �
+
+∂8
+∂�-------
+
+∂�
+∂ P------   ζ where P+ '+( or
+
+�, ,= =
+
+∂8
+∂�-------
+
+∂8
+∂ζ
+-------∂ζ
+
+∂�------=
+
+∂8
+∂ P-------   ζ
+
+∂8
+∂ P-------   �
+
+∂8
+∂ζ
+-------∂ζ
+
+∂�------
+∂�
+∂ P------   ζ+=
+
+∂8
+∂ �-------   ζ
+
+∂8
+∂ �-------   �
+
+∂8
+∂ζ
+-------∂ζ
+
+∂�------
+∂�
+∂ �------   ζ+=
+
+∇ζ 8 ∇ �Q8 ∂8∂ζ-------
+∂ζ
+∂�------∇ζ�+=
+
+∇ζ V⋅ ∇ � V⋅ ∂V∂ζ-------
+∂ζ
+∂�------ ∇ζ �⋅+=
+
+d d
+�⁄ ζ
+
+d
+d
+�----- d
+
+d
+�-----   ζ V ∇ζ
+
+� ∂�
+∂ �------   ζ– V ∇ζ⋅–
+
+∂ζ
+∂�------
+
+∂
+∂ζ
+------+⋅+=
+
+ζ
+
+
+
+Adiabatic formulation of models
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(70)
+
+where  is the vertical velocity in the  system.
+
+From (69) and (70) we have
+
+(71)
+
+Using (67). We can write the horizontal pressure forces as
+
+(72)
+
+where  is the geopotential. The hydrostatic equation becomes
+
+(73)
+
+The horizontal equation of motion (neglecting friction) becomes
+
+(74)
+
+To derive the continuity equation, from (71) we have
+
+(75)
+
+Thus
+
+(76)
+
+Using (66) and (67) and substituting in the continuity equation
+
+we have
+
+i.e.
+
+d
+d
+�----- ∂∂ �-----   ζ V ∇ζ ζ̇
+
+∂
+∂ζ
+------+⋅+=
+
+ζ̇ dζ d �⁄= ζ
+
+ζ̇ ∂ζ∂�------ �
+∂�
+∂ �------   ζ– V ∇ζ �⋅( )–=
+
+1
+ρ
+---∇ �R�– 1ρ---∇ζ�–
+
+1
+ρ
+---∂�
+
+∂�------∇ζ �+
+1
+ρ
+---∇ζ�– ∇ζΦ–= =
+
+Φ � �=
+∂�
+∂ζ
+------ ρ∂Φ∂ζ
+
+-------–=
+
+d �
+d
+�-------- 1ρ---∇ζ�– ∇ζΦ– � k V×–=
+
+� ∂�
+∂ �------   ζ � ∇ζ � ζ̇
+
+∂�
+∂ζ
+------+⋅+=
+
+∂ �
+∂�-------
+
+∂ �
+∂ζ
+-------∂ζ
+
+∂�------
+∂ζ
+∂�------
+
+∂
+∂ζ
+------ ∂�
+
+∂ �------   ζ
+∂V
+∂ζ
+------- ∇ζ� V ∇∂�∂ζ------⋅ ζ̇
+
+∂
+∂ζ
+------ ∂�
+
+∂ζ
+------ 
+
+  ∂�
+∂ζ
+------∂ζ̇
+
+∂ζ
+------+ + +⋅+= =
+
+∂ζ
+∂�------
+
+d
+d
+�----- ∂�∂ζ------  
+
+∂V
+∂ζ
+------- ∇ζ�⋅+ ∂ζ̇∂ζ------+=
+
+d
+d
+�----- ρln( ) ∇ � ∂ �∂�-------+⋅+ 0=
+
+d
+d
+�----- ρln( ) ∇ζ V ∂V∂ζ-------
+
+∂ζ
+∂�------ ∇ζ�
+
+∂ζ
+∂�------
+
+d
+d
+�----- ∂�∂ζ------  
+
+∂V
+∂ζ
+------- ∇ζ�⋅+ ∂ζ̇∂ζ------+ +⋅–⋅+
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 19
+
+(77)
+
+or
+
+(78)
+
+Alternatively, by expanding (77) and using the hydrostatic equation, we can obtain
+
+(79)
+
+The above equations for a generalized vertical coordinate may now be used to examine alternative coordinate sys-
+
+tems.
+
+4.1  Pressure coordinate
+
+ and  so that the equation of motion (74) becomes
+
+(80)
+
+and the hydrostatic equation is
+
+(81)
+
+The first term in the continuity equation (77) vanishes, so that
+
+(82)
+
+where is the vertical velocity. Integrating (80) from where , to an arbitrary
+
+level, , yields
+
+(83)
+
+At the surface we assume no normal flux so that
+
+(84)
+
+In the pressure system, the geostrophic approximation gives
+
+(85)
+
+d
+d
+�----- ρ∂�∂ζ------   ∇ζ V
+
+∂ζ̇
+∂ζ
+------+⋅+ln 0=
+
+d
+d
+�----- ∂�∂ζ------   ∇ζ V
+
+∂ζ̇
+∂ζ
+------+⋅+ln 0=
+
+∂
+∂ζ
+------ ∂�
+
+∂ �------   ∇ζ V
+∂�
+∂ζ
+------ 
+
+  ∂
+∂ζ
+------ ζ̇∂�∂ζ------  +⋅+ 0=
+
+ζ �=
+∇ζ� ∇�4� 0= = ∂� ∂�⁄ 1=
+
+d �
+d
+�-------- ∇� Φ– � k V×–=
+
+∂Φ
+∂�-------
+
+1
+ρ
+---–=
+
+∇�S� ∂ω
+∂�-------+⋅ 0=
+
+ω d� d �⁄ � ˙= = � 0= ω 0=
+�
+
+ω ∇� V⋅ �d
+0
+
+�
+∫=
+
+ωs
+d� s
+d
+�--------- ∂� s∂ �--------- Vs ∇� s⋅+ ∇� V �d⋅( )
+
+0
+
+�UT
+∫–= = =
+
+� k V× ∇� Φ–=
+
+
+
+Adiabatic formulation of models
+
+20 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+This relates the horizontal velocity to the geopotential gradient and, since there is no longer a dependence on
+
+density, the same gradient implies the same wind at any height.
+
+4.2  Sigma coordinates
+
+The lower boundary condition (82) is not easy to apply in practice. To circumvent this problem, Phillips suggested
+
+the use of  as the vertical coordinate. The hydrostatic equation becomes
+
+(86)
+
+and the equation of motion becomes
+
+(87)
+
+The continuity becomes
+
+Expanding the first term and rearranging we have
+
+(88)
+
+The boundary conditions are  at  and 1, so that integrating (86) from  to 1 gives
+
+(89)
+
+i.e. the surface pressure tendency is given by the mass divergence integrated over the entire atmosphere.
+
+Integrating (86) from  to an arbitrary level gives our equation for , viz
+
+(90)
+
+Although the lower boundary condition in the sigma coordinate system is easier to apply than in pressure coordi-
+
+nates, the system does have a drawback in the terms for the horizontal pressure force. In pressure coordinates the
+
+pressure force is simply the gradient of geopotential whereas in sigma coordinates it is the difference of two terms
+
+which are large in magnitude when compared with the result, i.e.
+
+(91)
+
+In designing a difference scheme for the above, care must be taken in selecting a scheme that minimizes the error
+
+in the difference between the terms. Even so, where the gradient in orography is steep, it is almost impossible to
+
+devise a consistent scheme that is free from appreciable error.
+
+σ �V� *⁄=
+
+� * ρ∂Φ∂σ-------–=
+
+∂V
+∂ �------- V ∇V σ̇
+
+∂V
+∂σ
+-------+⋅+ ∇σΦ–
+
+� 
+� *---------∇� *– � k V×–=
+
+d � *ln( )
+d
+�-------------------- ∇σ V ∂σ̇∂σ------+⋅+ 0=
+
+∂� *
+∂ �--------- ∇ � * �( )⋅–
+
+∂ � σ̇( )
+∂σ
+
+----------------= =
+
+σ̇ 0= σ 0= σ 0=
+
+∂� *
+∂ �--------- ∇ � * �( ) σd⋅
+
+0
+
+1
+
+∫–=
+
+σ 0= σ̇
+
+� *σ̇– σ∂� *∂ �--------- ∇ � * �( ) σd⋅
+0
+
+σ
+
+∫+=
+
+∇Φ– � 
+� *---------∇� *–
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 21
+
+Over steep orography, the sigma levels slope appreciably even in the stratosphere (see Fig. 3 ) and the problems
+
+with the horizontal pressure force remain. It seems, therefore, that a scheme which combines the advantage of sig-
+
+ma coordinates near the surface and pressure coordinate in the stratosphere may prove advantageous. Such schemes
+
+exist and are known as hybrid coordinates.
+
+-coordinates
+
+-coordinates
+
+-coordinates
+
+Figure  3Illustration of the three vertical coordinate systems.
+
+4.3  Hybrid coordinates
+
+There are various ways of defining a coordinate system that has the properties of sigma coordinates in the lower
+
+atmosphere and pressure in the stratosphere. Arakawa and Lamb (1977) use the definition
+
+(92)
+
+where
+
+�
+
+�
+
+σ
+
+ηW �XWY� I–( )
+π
+
+-----------------------=
+
+
+
+Adiabatic formulation of models
+
+22 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(93)
+
+where is an interfacial pressure (e.g. near the tropopause) and is the pressure at the top of the model. In
+
+fact, setting gives the standard -system. In this hybrid system the boundary conditions are
+
+applied at .
+
+Simmons and Burridge (1981) showed that an alternative way of defining hybrid coordinates was to define the
+
+half-levels by the relation
+
+(94)
+
+where is a constant pressure. This form of coordinate allows a direct control over the flattening of the
+
+coordinate surfaces as the pressure decreases. Note that we can define sigma coordinates or hybrid coordinates as
+
+in (89) in the same manner as (91), so that for sigma coordinates
+
+(95)
+
+An alternative form of hybrid coordinates equivalent to the Arakawa–Lamb system is
+
+(96)
+
+The reason for defining the half-levels in this way is due to the appearance of terms involving in
+
+the equations which, when discretized, become (see, for example, the continuity equa-
+
+tion (78)).
+
+4.4  Isentropic coordinates
+
+In coordinates (isentropic), for dry adiabatic motions, potential temperature is conserved, so that the energy
+
+equation becomes  and the isentropic surfaces become material surfaces.
+
+From (74), the horizontal pressure force is
+
+Using  where , we have
+
+i.e.
+
+Hence, using equation of state, we have
+
+(97)
+
+π
+� I � T for � T � � I≤ ≤–
+� * � I for � I � � *≤ ≤–
+
+
+=
+
+� I � T� I � T 0= = σ
+η 1±=
+
+�XW 1 2⁄+ 8ZW 1 2⁄+ � 0 J�W 1 2⁄+ � *+=
+� 0
+
+�FW 1 2⁄+ σW 1 2⁄+ � *=
+
+�XW 1 2⁄+ � I 1 2⁄+ ηW 1 2⁄+ηI 1 2⁄+----------------- for η W 1 2⁄+ ηI 1 2⁄+≤=
+
+�XW 1 2⁄+ � I 1 2⁄+ η W 1 2⁄+ ηI 1 2⁄+–( ) � * � I 1 2⁄+–( )1 ηI 1 2⁄+–( )-------------------------------------------------------------------------------+=
+
+�FW 1 2⁄+ ∂� ∂η⁄
+∆�XW �FW 1 2⁄+ �XW 1 2⁄––=
+
+Θ Θ
+dΘ d �⁄ 0=
+
+1 ρ⁄( )– ∇Θ� ∇ΘΦ–
+Θ 
+ Π⁄ Π �V� 0⁄( )κ=
+
+∇Θ Θln( ) 0 ∇Θ 
+ln( ) κ∇Θ �ln( )–= =
+
+1
+�----∇Θ�–
+
+	�
+� 
+---------∇Θ 
+=
+
+1
+ρ
+---∇Θ�– ∇Θ 	� 
+=
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 23
+
+The horizontal pressure force can thus be written as or where is called
+
+the Montgomery stream function. The hydrostatic equation (73) can be written .
+
+Again, using the definition for  above we have
+
+Differentiating w.r.t.  gives
+
+Substituting for  in the hydrostatic equation, using the equation of state and rearranging, we obtain
+
+(98)
+
+or alternatively
+
+For the continuity equation it is convenient to use one of the forms (78) or (79) with  replacing
+
+The boundary conditions are, at the top  and at the earth’s surface .
+
+The isentropic coordinate shows (as with the pressure coordinate) the advantage of a simpler pressure gradient
+
+force, but also the disadvantage at the surface which is intersected by -surfaces. It is possible to introduce yet
+
+another hybrid scheme using -coordinates near the surface and -coordinates away from the surface. However,
+
+how to join or overlap these systems is not as straightforward as in the sigma–pressure type of hybrid coordinate.
+
+For further details see Bleck (1978) and references therein.
+
+5. VERTICAL DISCRETIZATION
+
+Even though computer power has increased enormously in the last 10 to 15 years the vertical resolution in primitive
+
+equation models is quite low, 10 to 20 levels in the vertical being typical and these levels are generally irregularly
+
+spaced to take account of the strong variation of atmospheric quantities in the vertical. For example, high resolution
+
+near the earth's surface is required with many formulations to represent the transition between the turbulence region
+
+close to the surface and the free atmosphere.
+
+However, there are a number of problems arising from the choice of vertical coordinate system and the distribution
+
+of discrete model levels in the vertical. Firstly, the inevitable presence of an artificial upper boundary can eventually
+
+contaminate forecasts. The conclusion of several theoretical studies is that having the model top at zero pressure
+
+is, in some respects, as a result of inevitable finite-difference errors, equivalent to having the model top at some
+
+small finite non-zero pressure. On the other hand, it has been pointed out that the influence of lowering the upper
+
+boundary is not damaging to the structure of the planetary waves in the troposphere, if it is placed no lower than
+
+the middle stratosphere and if the model has several layers in the stratosphere where damping effects can attenuate
+
+waves reflected from the top.
+
+∇Θ 	� 
+ Φ+( )– ∇ΘC– C 	� 
+ Φ+=
+∂� ∂Θ⁄ ρ ∂Φ ∂Θ⁄( )–=
+
+Θ
+
+Θln 
+ κ �� 0------ln–ln=
+
+Θ
+
+1
+Θ
+----
+
+1
+
+
+----
+∂ 
+
+∂Θ
+------- �	�0�-----------
+
+∂�
+∂Θ
+-------–=
+
+∂� ∂Θ⁄
+∂
+
+∂Θ
+------- 	� 
+ Φ+( ) 	� 
+Θ------------=
+
+∂
+C
+
+∂Θ
+--------- Π=
+
+Θ ζ
+
+Θ̇ 0= Θ̇ ∂Θ ∂ �⁄ V* ∇Θ*⋅+=
+
+Θ
+σ Θ
+
+
+
+Adiabatic formulation of models
+
+24 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Experimentally (Mechoso et al., 1984), it has been shown that the impact of the upper boundary on forecasts is
+
+considerable at the uppermost model levels in all cases, and that lowering the upper boundary to the lower strato-
+
+sphere can affect significantly middle and lower tropospheric forecasts in some cases. The comparison between
+
+integrations with 16 and 19-level models described below supports these results.
+
+The detrimental effects of using terrain-following coordinates have been the subject of study for many years.
+
+Small-scale errors and computational noise where the coordinate surfaces are steep or rapidly changing in the hor-
+
+izontal are generated as a result of the discrete approximations made for the terms in the partial differential equa-
+
+tions. The particular problem of the pressure gradient force is well known. The horizontal pressure gradient force
+
+(see equation (91)) in a -coordinate model is given by
+
+and near steep orography the near cancellation of the two terms in this expression is a potential source of large
+
+spatial truncation errors.
+
+These errors can be decreased to some extent by formulating carefully the differencing approximations for the hy-
+
+drostatic equation and pressure gradient force, but cannot be totally eliminated as long as a terrain-following coor-
+
+dinate is used. There is also some concern about the accurate representation of the advection of quantities such as
+
+moisture near significant irregularities in the coordinate surface, and there are also problems in the treatment of
+
+horizontal diffusion terms. Overall, the undesirable effects can be partly removed by using a hybrid coordinate sys-
+
+tem which changes smoothly from a terrain-following specification near the lower boundary, to a horizontal or iso-
+
+baric definition in the upper troposphere and stratosphere. An alternative method has also been developed, using
+
+quasi-horizonal coordinates and representing mountains as steps, although this has not been tested exhaustively in
+
+practice as yet. A full discussion of the numerical problems associated with terrain following coordinate systems
+
+is given in Mesinger and Janic (1984) and Simmons and Burridge (1981).
+
+In comparison with the scheme used for horizontal discretization, the vertical discretization scheme in use in the
+
+majority of large-scale models of the atmosphere can be described as rudimentary based, as they generally are, on
+
+simple finite differences that provide second-order accuracy, at best, with the irregularity of the level spacing re-
+
+ducing the local accuracy to first order.
+
+Very few attempts have been made to employ the use of analytical functions that are continuously differentiable
+
+and defined globally; the two really potentially useful approaches—by Francis (1972) using Laguerre polynomials
+
+and by Machenhauer and Daley (1972) who used Legendre functions—have not led to practical schemes for nu-
+
+merical models of the atmosphere. The use of Laguerre polynomials leads to severe stability criteria, whereas the
+
+use of Legendre polynomials gives rise to computational problems at the upper boundary.
+
+In contrast to the global functional approaches of Francis and Machenhaur and Daley, the use of local functional
+
+approaches based on Galerkin implementations of finite elements has been fairly successful. A successful finite
+
+element formulation for the vertical discretization in -coordinate primitive equation models was described by
+
+Staniforth and Daley (1977), and a 36-hour forecast from real data was presented to demonstrate the viability of
+
+the method.
+
+The remainder of this section is devoted to a description of a vertical finite differencing scheme for a -coordinate
+
+model.
+
+5.1  Vertical differencing schemes for baroclinic primitive equation models
+
+In this subsection I shall discuss the methodology underlying the design of many vertical differencing schemes.
+
+σ
+
+∇Φ– � 
+� *---------∇� *–
+
+σ
+
+σ
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 25
+
+The approach is based on the imposition of some important conservation laws.
+
+The equations introduced in Section 1 may be rewritten as
+
+(99)
+
+(100)
+
+(101)
+
+(102)
+
+with
+
+(103)
+
+For completeness we again state the upper and lower "no flux" boundary conditions
+
+(104)
+
+For our discussion we shall require mass and energy conservation. In particular, we want the work done by pressure
+
+forces to be balanced by the changes in the total potential energy arising from  (the -term).
+
+The integrated continuity equation is
+
+(105)
+
+The divergence term in (105) integrates to zero over the globe, which means that the total mass is conserved.
+
+A "kinetic energy" equation can be derived from the momentum equations in the form
+
+(106)
+
+∂� s
+∂ �--------- ∇σ � sv( )
+
+∂
+∂σ
+------ � sσ̇( )+⋅+ 0 continuity of mass=
+
+∂v
+∂ �------ [ k v× σ̇
+
+∂v
+∂σ
+------ ∇σ Φ
+
+&
++( ) � 
+ ∇σ � sln( )+ ++ + 0 momentum=
+
+∂
+∂ �----- � s 	 � 
+( ) ∇σ � sv 	 � 
+( )
+
+∂
+∂σ
+------ � sσ 	 � 
+˙( ) � 
+ ωσ-------------–+⋅+ 0 thermodynamics=
+
+∂Φ
+∂ σln( )
+----------------- � 
+ hydrostatic equation–=
+
+[ � 1� ϕcos----------------
+∂ �
+∂λ
+------
+
+∂
+∂ϕ
+------ � ϕcos( )–
+
+ 
+ 
+ 
+
++=
+
+& 1
+2
+--- � 2 � 2+( ) 1
+
+2
+--- v v⋅( )= =
+
+ω � sσ̇ σ ∂� s∂ �--------- v ∇σ� s⋅+  +=
+
+� sσ̇( )σ 0= 0=
+� sσ̇( )σ 1= 0=
+
+� 
+ ω( ) σ⁄ ω
+
+∂� s
+∂ �--------- ∇σ � sv σd
+
+0
+
+1
+
+∫⋅–=
+
+� sv ∂v∂ �------ � sσ̇v
+∂v
+∂σ
+------ � sv∇σ & � sv ∇σΦ � 
+ ∇σ � sln+( )⋅+ +⋅+⋅
+
+or
+
+0=
+
+� s∂
+&
+
+∂ �------- � sσ̇
+∂
+&
+
+∂σ
+------- � sv∇σ & � sv ∇σΦ � 
+ ∇σ � sln+( )⋅+ ++ 0=
+
+
+
+Adiabatic formulation of models
+
+26 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Using the continuity equation, (99) and (106) may be rewritten as
+
+(107)
+
+In order to construct the total energy equation we need to express the pressure gradient terms in an alternative form.
+
+Using the continuity and hydrostatic equations we have
+
+(108)
+
+Combining (107) and (108) we have
+
+Now
+
+Addition of the kinetic energy equation and the flux form of the thermodynamic equation (equation (101)) and in-
+
+tegration from  to 1 gives
+
+(109)
+
+Equation (109) is an expression of the energy conservation law for the -system (99) to (103). The horizontal di-
+
+vergence tern in (109) integrates to zero over the whole globe, which means that the total energy, potential plus
+
+kinetic, is conserved.
+
+∂
+∂ �----- � s
+
+&
+( ) ∇σ � sv&( ) ∂∂σ------ � sσ̇
+
+&
+( ) � sv ∇σΦ � 
+ ∇σ � sln+( )⋅+ +⋅+ 0=
+
+� sv ∇σΦ⋅ ∇σ � svΦ( ) Φ ∇σ � sv⋅( )+⋅=
+∇σ � svΦ( ) Φ ∂� s∂ �---------
+
+∂
+∂σ
+------ � sσ̇( )+
+
+ 
+ 
+ 
+
++⋅=
+
+∇σ � svΦ( ) ∂∂σ------ Φ σ
+∂� s
+∂ �--------- � sσ̇+    
+
+  ∂Φ
+∂σ
+------- σ
+
+∂� s
+∂ �--------- � sσ̇+  –+⋅=
+
+∂ � s&( )
+∂ �------------------ ∇σ � sv
+
+&
+( ) ∂∂σ
+
+------ � sσ&̇( ) ∇σ � svΦ( ) ∂∂σ------ Φ σ
+∂� s
+∂ �--------- � sσ̇+    
+
+ 
++⋅+ +⋅+
+
+∂Φ
+∂ �------- σ
+
+∂� s
+∂ �--------- � sσ̇+  – � 
+ � sv ∇σ � sln⋅+ 0=
+
+∂Φ
+∂ �------- σ
+
+∂� s
+∂ �--------- � sσ̇+  – � 
+ � sv ∇σ � sln⋅+
+
+� 
+
+σ
+
+--------- σ
+∂� s
+∂ �--------- � sσ̇+   � 
+ v ∇σ� s⋅+
+
+� 
+ ω
+σ
+
+-------------= =
+
+σ 0=
+
+∂
+∂ �----- � sΦs � s
+
+& 	� 
++( ) σd
+0
+
+1
+
+∫+
+ 
+ 
+ 
+
+∇σ � sv & 	� 
+ Φ+ +( ) σd
+0
+
+1
+
+∫⋅+ 0=
+
+σ
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 27
+
+Figure  4Vertical disposition of variables
+
+The disposition of variables and the grid structure in the vertical for the -coordinate model we shall be using is
+
+illustrated in Figs. 4 and 5 . The primary variables, and , are kept at the full levels and the vertical velocity
+
+and the geopotential are kept at half levels. The variable grid spacing  is defined by
+
+(110)
+
+σ
+v 
+ σ̇
+
+∆σ W
+∆σW σW 1 2⁄+ σW 1 2⁄––=
+
+
+
+Adiabatic formulation of models
+
+28 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  5Vertical distribution of levels for the 16-level (top) and 19-level (bottom) models.
+
+(i) The equation of continuity. The continuity equation is taken in the form
+
+(111)
+
+Multiplying (111) by  and summing (integration) from  gives
+
+(112)
+
+For  we have
+
+(113)
+
+∂� s
+∂ �--------- ∇σ � svW( )
+
+∆ � sσ̇( )W
+∆σ W---------------------+⋅+ 0=
+
+∆σ W * 1 … \, ,=
+
+σW 1 2⁄+ ∂� s∂ �--------- ∇σ � sv W( )∆σW]� sσ̇ W 1 2⁄++⋅[ ]W 1=
+
+^
+∑+ 0=
+
+� sσ̇1 2⁄ 0=( )
+\ D=
+
+∂� s
+∂ �--------- ∇σ � svW( )∆σW⋅W 1=
+
+^
+∑– ∇σ � svW( )∆σ W3 1=
+
+@
+∑⋅–= =
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 29
+
+Equation (113) is a finite difference analogue of (105), which obviously conserves the total (global) mass of the
+
+model atmosphere.
+
+(ii) Energy conservation. The finite difference momentum equation is
+
+(114)
+
+where  with .
+
+The finite difference kinetic energy equation is
+
+and this may be rewritten as
+
+(115)
+
+Using the finite difference continuity equation we may rewrite equation (115) in the flux form
+
+(116)
+
+where  .
+
+In order to derive the analogue of the identity (108) we need a hydrostatic equation; we use
+
+(117)
+
+For the finite difference model we have
+
+∂vW
+∂ �-------- [ k v
+
+1
+2
+---
+
+σ̇ W 1 2⁄+ v W 1+ vW–( ) σ̇ W 1 2⁄– vW vW 1––( )+
+∇σσW---------------------------------------------------------------------------------------------------  
+
+ 
++×+
+
+∇σ ΦW & W+{ } � 
+ W ∇σ � sln+ + 0=
+ΦW αW ΦW 1 2⁄+ βW ΦW 1 2⁄–+= αW βW+ 1=
+
+� svW ∂vW∂ �--------
+1
+2
+--- � sv W σ̇W 1 2⁄+ vW 1+ vW–( ) σ̇W 1 2⁄– v W vW 1––( )+∆σW---------------------------------------------------------------------------------------------------  
+
+ 
+⋅+⋅
+
+� svW ∇σ& W_� svW ∇σΦW`� 
+ ∇σ � sln+{ }⋅+⋅+ 0=
+
+� s∂
+& W
+∂ �----------
+
+1
+2
+---
+� sσ̇W 1 2⁄+ v W 1+ vW⋅ � sσ̇W 1 2⁄–– vW vW 1–⋅
+
+∆σW------------------------------------------------------------------------------------------------  
+  1
+
+2
+---vW v W ∆ � sσ̇( ) W∆σW---------------------⋅–+
+
+� sv W ∇σ & W]� svW ∇σΦ W`� 
+ ∇σ � sln+{ }⋅+⋅+ 0=
+
+∂
+∂ �----- � s
+
+& W( ) ∇σ � sv W & W( ) ∆σ � sσ̇v
+2
+
+σ
+
+2
+-------------------
+
+ 
+ 
+ 
+ 
+
+W
+� sv W ∇σΦW`� 
+ ∇σ � sln+{ }⋅+ +⋅+ 0=
+
+)
+
+v2
+σ
+
+ 
+  W 1 2⁄+ v W 1+ v W (geometric mean)⋅=
+
+)
+
+∆σΦ
+∆ σln
+------------- 
+
+  W � 
+–=
+
+
+
+Adiabatic formulation of models
+
+30 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(118)
+
+Note:
+
+If we require total energy conservation then the form of the last term in (118) is a constraint on our choice for the
+
+ term, , in the thermodynamic equation.
+
+The thermodynamic equation for our model is
+
+(119)
+
+If the  term is chosen to maintain energy conservation we have
+
+(120)
+
+The term  can be interpreted as a definition of  for the model.
+
+From (120) we note that we still have a degree of freedom remaining, namely the choice of and , subject to
+
+. These weights can be chosen in such a way that no spurious angular momentum is generated by
+
+pressure forces, Simmons and Burridge (1981).
+
+REFERENCES
+
+Books and collections.
+
+Dutton, J.A., 1986: The ceaseless wind: An introduction to the theory of the atmospheric motion. Paperback edi-
+
+� svW ∇σΦW⋅ ∇σ � svW ΦW( ) Φ W ∇σ � svW( )⋅–⋅=
+∇σ � svW ΦW( ) ΦW ∂� s∂ �---------
+
+∆σ � sσ̇( )W
+∆σW------------------------+  
+
+ 
++⋅=
+
+∇σ � svW ΦW( ) Φ W∆σW----------∆σ σ
+∂� s
+∂ �--------- � sσ̇+   W+⋅=
+
+∇σ � svW ΦW( )
+∆σ Φ σ
+
+∂� s
+∂ �--------- � sσ̇+    
+
+ 
+W
+
+∆σ W--------------------------------------------------------+⋅=
+∆σΦ( )W
+∆σW------------------ βW σ
+
+∂� s
+∂ �--------- � sσ̇+   W 1 2⁄+ αW σ
+
+∂� s
+∂ �--------- � sσ̇+   W 1 2⁄–+–
+
+ΦWa8$W 1 2⁄+ 8$W 1 2⁄––( ) αW ΦW 1 2⁄+ βW Φ W 1 2⁄–+( ) 8$W 1 2⁄+ 8$W 1 2⁄––( )=
+ΦW 1 2⁄+ 8$W 1 2⁄+ ΦW 1 2⁄– 8$W 1 2⁄––( ) Φ W 1 2⁄+ Φ W 1 2⁄––( ) β Wb8$W 1 2⁄+ αWc8$W 1 2⁄–+( )–=
+
+ω κ 
+ ω σ⁄
+
+� s∂ 
+ W∂ �---------- � svW ∇σ 
+ W_� s
+1
+2
+---
+
+σ̇ W 1 2⁄+ 
+ W 1+ 
+ W–( ) σ̇ W 1 2⁄– 
+ W 
+ W 1––( )+
+∆σ W--------------------------------------------------------------------------------------------------------  
+
+  κ 
+ ω
+σ
+
+------------ 
+  W–+⋅+ 0=
+
+ω
+
+κ 
+ ω
+σ
+
+------------ 
+  W
+
+1
+	 �-------
+� 
+ ω
+
+σ
+------------- 
+
+  W=
+
+1
+	�-------
+
+∆Φ( )W
+∆σ W---------------- βW σ
+
+∂� s
+∂ �--------- � sσ̇+   W 1 2⁄+ αW σ
+
+∂� s
+∂ �--------- � sσ̇+   W 1 2⁄–+  
+
+ 
+– � 
+ W vW ∇� s⋅+=
+
+1
+	�------- � 
+ W
+
+∆ σln
+∆σ
+
+------------- 
+  W β W σ
+
+∂� s
+∂ �--------- � sσ̇+   W 1 2⁄+ α W σ
+
+∂� s
+∂ �--------- � sσ̇+   W 1 2⁄–+  
+
+  � 
+ Wd� svW ∇ �ln s⋅+=
+
+∆ σln ∆σ⁄( ) W 1 σW⁄
+αW β W
+
+αW βW+ 1=
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 31
+
+tion.
+
+ECMWF Seminar 1983: Numerical methods for weather prediction. Vol. 1 and Vol. 2.
+
+Holton, J.R., 1979: An introduction to dynamic meteorology. Second edition.
+
+Chang, J., (Editor), 1977: General circulation models of the atmosphere. Methods in Computational Physics 17.
+
+Haltiner, G.J. and R.T. Williams, 1980: Numerical prediction and dynamic meteorology. Second Edition.
+
+Journal papers.
+
+Arakawa, A., 1966: Computational design for long-term numerical integration of the equations of fluid motion:
+
+two-dimensional incompressible flow. Part 1. J. Comp. Phys. 1, p119.
+
+Arakawa, A. and V.R. Lamb, 1977: Computational design and the basic dynamical processes of the UCLA general
+
+circulation Model. Methods in Computational Physics 17. p173.
+
+Arakawa, A. and V.R. Lamb, 1981: A potential enstrophy and energy conserving scheme for the shallow water
+
+equations. Mon. Wea. Rev., 109. p18.
+
+Arakawa, A., 1984a: The use of integral constraints in designing finite-difference schemes for the two-dimensional
+
+advection equation. ECMWF Seminar 1983 Numerical Methods for Weather Prediction. Vol. 1. p159.
+
+Arakawa, A., 1984b: Vertical differencing of filtered models. ECMWF Seminar 1983 Numerical Methods for
+
+Weather Prediction. Vol. 1. p183.
+
+Arakawa, A., 1984c: Vertical differencing of the primitive equations. ECMWF Seminar 1983 Numerical Methods
+
+for Weather Prediction. Vol. 1. p207.
+
+Bell, R.S. and A. Dickinson, 1987: The Meteorological Office operational numerical weather prediction system.
+
+Meteorological Office Sci. Pap. 41 London HMSO.
+
+Bleck, R., 1978: On the use of hybrid vertical coordinates in numerical weather prediction models. Mon. Wea. Rev.,
+
+106. p1233.
+
+Bourke, W., 1974: A multi-level spectral model 1: Formulation and hemispheric integrations. Mon. Wea. Rev., 102.
+
+p687.
+
+Bourke, W., B. McAvaney, K. Puri and R. Thurling, 1977: Global Modelling of Atmospheric Flow by Spectral
+
+Methods. Methods in Computational Physics 17. p267.
+
+Corby, G.A., A. Gilchrist and P.R. Rowntree, 1977: United Kingdom Meteorological Office five-level general cir-
+
+culation model. Methods in Computational Physics 17. p67.
+
+Courtier, P. and J-F. Geleyn, 1988: A global numerical weather prediction model with variable resolution: Appli-
+
+cation to the shallow-water equations. Quart. J. Roy. Met. Soc., 114. p1321.
+
+Daley, R., C. Girard, J. Henderson and 1. Simmonds, 1976: Short term forecasting with a multi-level spectral prim-
+
+itive equation model. Atmosphere 14. p98.
+
+Davies, H.C., 1976: A lateral boundary formulation for multi-level prediction models. Quart. J. Roy. Met. Soc.,
+
+102. p405.
+
+Davies, H.C., 1984: Techniques for limited area modelling. ECMWF Seminar 1983 Numerical Methods for Weath-
+
+er Prediction. Vol. 2. p213.
+
+Dey, C.H., 1978: Noise suppression in a primitive equation prediction model. Mon. Wea. Rev., 106. p159.
+
+
+
+Adiabatic formulation of models
+
+32 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Eliasen, E., B. Machenhauer and E. Ramussen, 1970: On a numerical method for the integration of the hydrody-
+
+namical equations with a spectral representation of the horizontal fields. Rep. No. 2 Institut for Teoretisk Meteor-
+
+ologi, Univ. of Copenhagen.
+
+Francis, P.E., 1972: The possible use of Laguerre polynomials for representing the vertical structure of numerical
+
+models of the atmosphere. Quart. J. Roy. Met. Soc., 98. p662.
+
+Francis, P.E., 1975: The use of a multipoint filter as a dissipative mechanism in a numerical model of the general
+
+circulation of the atmosphere. Quart. J. Roy. Met. Soc., 101. p567.
+
+Gadd, A.L, 1978a: A split-explicit integration scheme for numerical weather prediction. Quart. J. Roy. Met. Soc.,
+
+104, p569.
+
+Gadd, A.J., 1978b: A numerical advection scheme with small phase speed errors. Quart. J. Roy. Met. Soc., 104.
+
+p583.
+
+Gadd, A.J., 1980: Two refinements of the split explicit integration scheme. Quart. J. Roy. Met. Soc., 106. p215.
+
+Hoskins, B.J. and A.J. Simmons, 1975: A multi-layer spectral model and the semi-implicit method. Quart. J. Roy.
+
+Met. Soc., 101. p637.
+
+Janic, Z. and F. Mesinger, 1984: Finite-difference methods for the shallow water equations on various horizontal
+
+grids. ECMWF Seminar 1983 Numerical Methods for Weather Prediction. Vol. 1. p29.
+
+Jarraud, M. and A.J. Simmons, 1984: The spectral technique. ECMWF Seminar 1983 Numerical Methods for
+
+Weather Prediction. Vol. 2. pl. K911berg, P.W. and J.K. Gibson. 1977: Multi-level limited-area forecasts using
+
+boundary zone relaxation. WGNE Progress Rep. No. 15, p48.
+
+Kasahara, A., 1974: Various vertical coordinate systems used for Numerical Weather Prediction. Mon.Wea.Rev.,
+
+102, p509.
+
+Kasahara, A., 1977: Computational aspects of numerical models for weather prediction and climate simulation.
+
+Methods in Computational Physics 17. pl.
+
+Kirkwood, E. and J. Demme, 1977: Some effects of the upper boundary condition and vertical resolution on mod-
+
+elling forced stationary planetary waves. Mon. Wea. Rev., 105. p133.
+
+Kurihara, Y., 1965: Numerical integration of the primitive equations on a spherical grid. Mon. Wea. Rev., 93, p399.
+
+Lilly, D.K., 1964: Numerical solutions for the shape-preserving two-dimensional thermal convection element. J.
+
+Atmos. Sci., 21. p83.
+
+Machenhauer, B., 1979: The spectral method. In: Numerical Methods used in Atmospheric Models. GARP Publli-
+
+cation Series No. 17, Vol. II.
+
+Machenhauer, B. and R. Daley, 1972: A bamclinic primitive equation model with spectral representation in three-di-
+
+mensions. Rep. No. 4. Institut for Teoretisk Meteorologi, Univ. of Copenhagen.
+
+Mechoso, C.R., M.J. Suarez, K. Yamazaki, A. Kitoh and A. Arakawa, 1984: Effects of the stratosphere on tropo-
+
+spheric forecasts. In: Report of the seminar on progress in numerical modelling and the understanding of predict-
+
+ability as a result of the global weather experiment. WMO GARP Special Report No. 43.
+
+Mesinger, F. and A. Arakawa, 1976: Numerical methods used in atmospheric models. GARP Publication Series
+
+No. 17, Vol. I.
+
+Mesinger, F. 1981: Horizontal advection schemes of a staggered grid- an enstrophy and energy conserving model.
+
+Mon.Wea.Rev., 109. p467.
+
+
+
+Adiabatic formulation of models
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 33
+
+Mesinger, F. and Z. Janic, 1984: Finite-difference schemes for the pressure-gradient force and for the hydrostatic
+
+equation. ECMWF Seminar 1983 Numerical methods for weather prediction. Vol. I. p103.
+
+Orszag, S.A., 1970: Transform method for the calculation of vector coupled sums: application to the spectral form
+
+of the vorticity equation. J. Atmos. Sci. 27. p890.
+
+Phillips, N.A., 1957: A coordinate system having some special advantages for numerical forecasting. J. Meteor.
+
+14. p184.
+
+Phillips, N.A., 1959: Numerical integration of the primitive equations on the hemisphere. Mon. Wea. Rev., 87. p333.
+
+Phillips, N.A., 1973: Principles of large-scale numerical weather prediction. Article in: Dynamic Meteorology: Ed-
+
+itor P. Morel: p3.
+
+Ritchie, H., 1988: Application of the semi-Lagrangian method to a spectral model of the shallow-water equations.
+
+Mon. Wea. Rev.,116. p1587.
+
+Sadourny, R., 1975: The dynamics of finite-difference models of the shallow-water equations. J. Atmos. Sci. 32.
+
+p680.
+
+Schmidt, F., 1977: Variable fine mesh spectral global models. Beit. Phys. Atmos. 50. p211.
+
+Simmons, A.J. and D.M. Burridge, 1981: An energy and angular-momentum conserving vertical finite-difference
+
+scheme and hybrid vertical coordinates. Mon. Wea. Rev., 109. p758.
+
+Simmons, A.J. and R Snuffing, 1981: An energy and angular-momentum conserving vertical finite-difference
+
+scheme, hybrid coordinates and medium-range weather prediction. ECMWF Tech. Rep. No. 28.
+
+Simmons, A.J. and D. Dent, 1989: The ECMWF multi-tasking weather prediction model. To appear in Computer
+
+Physics Reports.
+
+Simmons, A.J., D.M. Burridge, M. Jarraud, C. Girard and W. Wergen, 1988: The ECMWF medium-range predic-
+
+tion models. Development of the numerical formulations and the impact of increased resolution. Meteorol. Atmos.
+
+Phys. 40. p28.
+
+Staniforth, A. and R.W. Daley, 1977: A finite-element formulation for the vertical discretization of sigma coordi-
+
+nate primitive equation models. Mon. Wea. Rev., 105. p1108.
+
+Staniforth, A. and H.L. Mitchell, 1977: A semi-implicit finite-element barotropic model. Mon.Wea.Rev., 105. p154.
+
+Staniforth, A., 1987: Review: Formulating efficient finite-element codes for flows in regular domains. Int. J. Num.
+
+Meth. Fluids 7. p l.
+
+Washington, W.M. and D.L. Williamson, 1977: A description of the NCAR Global Circulation Models. Methods
+
+in Computational Physics 17. pl 11.
+
+Williamson, D.L. 1976: Linear stability of finite-difference approximations on a uniform latitude-longitude grid
+
+with Fourier filtering. Mon. Wea. Rev., 104. p31.

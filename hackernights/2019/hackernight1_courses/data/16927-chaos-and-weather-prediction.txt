@@ -1,0 +1,2698 @@
+Chaos
+
+
+Chaos and weather prediction
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+Chaos and weather prediction
+January 2000
+
+By Roberto Buizza1
+
+European Centre for Medium-Range Weather
+
+Abstract
+
+The weather is a chaotic system. Small errors in the initial conditions of a forecast grow rapidly, and affect predictability.
+Furthermore, predictability is limited by model errors due to the approximate simulation of atmospheric processes of the state-
+of-the-art numerical models.
+
+These two sources of uncertainties limit the skill of single, deterministic forecasts in an unpredictable way, with days of high/
+poor quality forecasts randomly followed by days of high/poor quality forecasts.
+
+Two of the most recent advances in numerical weather prediction, the operational implementation of ensemble prediction
+systems and the development of objective procedures to target adaptive observations are discussed.
+
+Ensemble prediction is a feasible method to integrate a single, deterministic forecast with an estimate of the probability
+distribution function of forecast states. In particular, ensemble can provide forecasters with an objective way to predict the skill
+of single deterministic forecasts, or, in other words, to forecast the forecast skill. The European Centre for Medium-Range
+Weather Forecasts (ECMWF) Ensemble Prediction System (EPS), based on the notion that initial condition uncertainties are
+the dominant source of forecast error, is described.
+
+Adaptive observations targeted in sensitive regions can reduce the initial conditions’ uncertainties, and thus decrease forecast
+errors. More generally, singular vectors that identify unstable regions of the atmospheric flow can be used to identify optimal
+ways to adapt the atmospheric observing system.
+
+Table of contents
+
+1 . Introduction
+
+2 . The Lorenz system
+
+3 . Numerical weather prediction
+
+4 . Sources of forecast error
+
+5 . The ECMWF Ensemble Prediction System
+
+5.1 The original EPS configuration
+
+5.2 The new EPS configuration
+
+6 . Targeted observations
+
+7 . Summary and future developments
+
+8 . Conclusion
+
+9 . Acknowledgements
+
+APPENDIX A Singular vector definition
+
+1.  Corresponding author address: Dr Roberto Buizza, ECMWF, Shinfield Park, Reading RG2 9AX. Tel.:0118-9499653. Email:
+buizza@ecmwf.int
+
+
+
+Chaos and weather prediction
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+APPENDIX B Projection operators
+
+REFERENCES
+
+1. INTRODUCTION
+
+A dynamical system shows a chaotic behavior if most orbits exhibit sensitive dependence (Lorenz 1993). An orbit
+
+is characterized by sensitive dependence if most other orbits that pass close to it at some point do not remain close
+
+to it as time advances.
+
+Figure 1. (a)-(c) Forecast for the geopotential height at 1000 hPa (this field illustrates the atmospheric state close
+
+to the surface) given by three forecasts started from very similar initial conditions, and (d) verifying analysis.
+
+Contour interval is 5 m, with only values smaller than 5 m shown.
+
+The atmosphere exhibits this behavior. Fig. 1 shows three different weather forecasts, all started from very similar
+
+initial conditions. The differences among the three initial conditions were smaller than estimated analysis errors,
+
+and each of the three initial conditions could be considered as an equally probable estimate of the “true” initial state
+
+of the atmosphere. After 5 days of numerical integration, the three forecasts evolved into very different atmospheric
+
+situations. In particular, note the different positions of the cyclone forecast in the Eastern Atlantic approaching
+
+United Kingdom (Fig. 1 (a)-(c) ). The first forecast indicated two areas of weak cyclonic circulation west and south
+
+of the British Isles; the second forecast positioned a more intense cyclone southwest of Cornwall, and the third fore-
+
+cast kept the cyclone in the open seas. This latter turned out to be the most accurate when compared to the observed
+
+atmospheric state (Fig. 1 (d). This is a typical example of orbits initially close together and then diverging during
+
+5
+
+�
+
+FC_0 1000hPa Z 1996-12-21 12h fc t+120
+
+0
+�
+
+0
+�
+
+5
+�5�
+
+5�
+FC_25 1000hPa Z 1996-12-21 12h fc t+120
+
+0� 5�
+
+5
+
+�
+
+FC_24 1000hPa Z 1996-12-21 12h fc t+120 Analysis 1000hPa Z 1996-12-26 12h
+	
+
+
+
+Chaos and weather prediction
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+time evolution.
+
+The atmosphere is an intricate dynamical system with many degrees of freedom. The state of the atmosphere is
+
+described by the spatial distribution of wind, temperature, and other weather variables (e.g. specific humidity and
+
+surface pressure). The mathematical differential equations describing the system time evolution include Newton's
+
+laws of motion used in the form ‘acceleration equals force divided by mass’, and the laws of thermodynamics
+
+which describe the behavior of temperature and the other weather variables. Thus, generally speaking, there is a
+
+set of differential equations that describe the weather evolution, at least, in an approximate form.
+
+Richardson (1922) can be considered the first to have shown that the weather could be predicted numerically. In
+
+his work, he approximated the differential equations governing the atmospheric motions with a set of algebraic dif-
+
+ference equations for the tendencies of various field variables at a finite number of grid points in space. By extrap-
+
+olating the computed tendencies ahead in time, he could predict the field variables in the future. Unfortunately, his
+
+results were very poor, both because of deficient initial data, and because of serious problems in his approach.
+
+After World War II the interest in numerical weather prediction revived, partly because of an expansion of the me-
+
+teorological observation network, but also because of the development of digital computers. Charney (1947, 1948)
+
+developed a model applying an essential filtering approximation of the Richardson's equations, based on the so-
+
+called geostrophic and hydrostatic equations. In 1950, an electronic computer (ENIAC) was installed at Princeton
+
+University, and Charney, Fjørtoft and Von Neumann & Ritchmeyer (1950) made the first numerical prediction us-
+
+ing the equivalent barotropic version of Charney’s model. This model provided forecasts of the geopotential height
+
+near 500 hPa, and could be used as an aid to provide explicit predictions of other variables as surface pressure and
+
+temperature distributions. Charney's results led to the developments of more complex models of the atmospheric
+
+circulation, the so-called global circulation models.
+
+With the introduction of powerful computers in meteorology, the meteorological community invested more time
+
+and efforts to develop more complex numerical models of the atmosphere. One of the most complex models used
+
+routinely for operational weather prediction is the one implemented at the European Centre for Medium-Range
+
+Weather Forecasts (ECMWF). At the time of writing (December 1999), its is based on a horizontal spectral trian-
+
+gular truncation T319 with 60 vertical levels formulation (Simmons et al. 1989, Courtier et al. 1991, Simmons et
+
+al. 1995). It includes a parameterization of many physical processes such as surface and boundary layer processes
+
+(Viterbo & Beljaars 1995) radiation (Morcrette 1990), and moist processes (Tiedtke 1993, Jacob 1994).
+
+The starting point, in mathematical terms the initial conditions, of any numerical integration is given by very com-
+
+plex assimilation procedures that estimate the state of the atmosphere by considering all available observations.
+
+The fact that a limited number of observations are available (limited compared to the degrees of freedom of the
+
+system) and that part of the globe is characterized by a very poor coverage introduces uncertainties in the initial
+
+conditions. The presence of uncertainties in the initial conditions is the first source of forecast errors.
+
+A requirement for skilful predictions is that numerical models are able to accurately simulate the dominant atmos-
+
+pheric phenomena. The fact that the description of some physical processes has only a certain degree of accuracy,
+
+and the fact that numerical models simulate only processes with certain spatial and temporal, is the second source
+
+of forecast errors. Computer resources contribute to limit the complexity and the resolution of numerical models
+
+and assimilation, since, to be useful, numerical predictions must be produced in a reasonable amount of time.
+
+These two sources of forecast errors cause weather forecasts to deteriorate with forecast time.
+
+Initial conditions will always be known approximately, since each item of data is characterized by an error that de-
+
+pends on the instrumental accuracy. In other words, small uncertainties related to the characteristics of the atmos-
+
+pheric observing system will always characterize the initial conditions. As a consequence, even if the system
+
+equations were well known, two initial states only slightly differing would depart one from the other very rapidly
+
+
+
+Chaos and weather prediction
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+as time progresses (Lorenz 1965). Observational errors, usually in the smaller scales, amplify and through non-
+
+linear interactions spread to longer scales, eventually affecting the skill of these latter ones (Somerville 1979).
+
+The error growth of the 10-day forecast of the ECMWF model from 1 December 1980 to 31 May 1994 was ana-
+
+lyzed in great detail by Simmons et al. (1995). It was concluded that 15 years of research had improved substan-
+
+tially the accuracy over the first half of the forecast range (say up to forecast day 5), but that there had been little
+
+error reduction in the late forecast range. While this applied on average, it was also pointed out that there had been
+
+improvements in the skill of the good forecasts. In other words, good forecasts had higher skill in the nineties than
+
+before. The problem was that it was difficult to assess a-priori whether a forecast would be skilful or unskillful us-
+
+ing only a deterministic approach to weather prediction.
+
+Figure 2. The deterministic approach to numerical weather prediction provides one single forecast (blue line) for
+
+the “true” time evolution of the system (red line). The ensemble approach to numerical weather prediction tries to
+
+estimate the probability density function of forecast states (magenta shapes). Ideally, the ensemble probability
+
+density function estimate includes the true state of the system as a possible solution.
+
+Generally speaking, a complete description of the weather prediction problem can be stated in terms of the time
+
+evolution of an appropriate probability density function (PDF) in the atmosphere's phase space (Fig. 2 ). Although
+
+this problem can be formulated exactly through the continuity equation for probability (Liouville equation, see e.g.
+
+Ehrendorfer 1994), ensemble prediction based on a finite number of deterministic integrations appears to be the
+
+only feasible method to predict the PDF beyond the range of linear error growth. Ensemble prediction provided a
+
+way to overcome one of the problems highlighted by Simmons et al. (1995), since it can be used to estimate the
+
+forecast skill of a deterministic forecast, or, in other words, to forecast the forecast skill.
+
+Since December 1992, both the US National Center for Environmental Predictions (NCEP, previously NMC) and
+
+ECMWF have integrated their deterministic high-resolution prediction with medium-range ensemble prediction
+
+(Tracton & Kalnay 1993, Palmer et al. 1993). These developments followed the theoretical and experimental work
+
+of, among others, Epstein (1969), Gleeson (1970), Fleming (1971a-b) and Leith (1974).
+
+Both centres followed the same strategy of providing an ensemble of forecasts computed with the same model, one
+
+started with unperturbed initial conditions referred to as the “control” forecast and the others with initial conditions
+
+defined adding small perturbations to the control initial condition. Generally speaking, the two ensemble systems
+
+Forecast time
+
+Linear regime Non-linear regime
+
+
+
+Chaos and weather prediction
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+differ in the ensemble size, in the fact that at NCEP a combination of lagged forecasts is used, and in the definition
+
+of the perturbed initial. The reader is referred to Toth & Kalnay (1993) for the description of the 'breeding' method
+
+applied at NMC and to Buizza & Palmer (1995) for a thorough discussion of the singular vector approach followed
+
+at ECMWF.
+
+A different methodology was developed few years later at the Atmospheric Environment Service (Canada), where
+
+a system simulation approach was followed to generate an ensemble of initial perturbations (Houtekamer et al.
+
+1996). A number of parallel data assimilation cycles is run randomly perturbing the observations, and using differ-
+
+ent parameterisation schemes for some physical processes in each run. The ensemble of initial states generated by
+
+the different data assimilation cycles defines the initial conditions of the Canadian ensemble system. Moreover,
+
+forecasts started from such an ensemble of initial conditions are used to estimate forecast-error statistics (Evensen
+
+1994, Houtekamer & Mitchell 1998).
+
+Ensemble prediction, which can be considered one of the most recent advances in numerical weather prediction, is
+
+the first topic discussed in this work. The development of objective procedures to target adaptive observations is
+
+the second topic on which attention will be focused.
+
+The idea of targeting adaptive observations is based on the fact that weather forecasting can be improved by adding
+
+extra observations only in sensitive regions. These sensitive regions can be identified using tangent forward and
+
+adjoint versions of numerical weather prediction models (Thorpe et al. 1998, Buizza & Montani 1999). Once the
+
+sensitive regions have been localised, instruments can be sent to those locations to take the required observations
+
+using pilot-less aircraft, or energy-intensive satellite instruments can be switched on to sample them with greater
+
+accuracy.
+
+After this Introduction, section 2 describes some early results by Lorenz, and illustrates the chaotic behavior of a
+
+simple 3-dimension system. In section 3 the main steps of numerical weather prediction are delineated. The impact
+
+of initial condition and model uncertainties on numerical integration is discussed in section 4. The ECMWF En-
+
+semble Prediction System is described in section 5. Targeting adaptive observations using singular vectors is dis-
+
+cussed in section 6. Some conclusions are reported in section 7. Some mathematical details are reported in two
+
+Appendices.
+
+2. THE LORENZ SYSTEM
+
+One of the fathers of chaos theory is Edward Lorenz (1963, 1965). Results from the 3-dimentional Lorenz system
+
+(1)
+
+illustrate the dispersion of finite time integrations from an ensemble of initial conditions (Fig. 3 ). The different
+
+initial points can be considered as estimates of the “true” state of the system (which can be thought of as any point
+
+inside ellipsoid), and the time evolution of each of them as possible forecasts. Subject to the initial “true” state of
+
+the system, points close together at initial time diverge in time at different rates. Thus, depending on the point cho-
+
+sen to describe the system time evolution, different forecasts are obtained.
+
+The two wings of the Lorenz attractor can be considered as identifying two different weather regimes, for example
+
+one warm and wet and the other cold and sunny. Suppose that the main purpose of the forecast is to predict whether
+
+the system is going through a regime transition. When the system is in a predictable initial state (Fig. 3 (a)), the
+
+
+ ˙ = σ
+– σ �+
+� ˙ = 
+ �– � 
+ �–+ ˙ = 
+ � � –
+
+
+
+Chaos and weather prediction
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+rate of forecast diverge is small, and all the points stay close together till the final time. Whatever the point chosen
+
+to represent the initial state of the system, the forecast is characterised by a small error, and a correct indication of
+
+a regime transition is given. The ensemble of points can be used to generate probabilistic forecasts of regime tran-
+
+sitions. In this case, since all points end in the other wing of the attractor, there is a 100% probability of regime
+
+transition.
+
+Figure  3. Lorenz attractor with superimposed finite-time ensemble integration.
+
+By contrast, when the system is in a less predictable state (Fig. 3 (b)), the points stay close together only for a short
+
+time period, and then start diverging. While it is still possible to predict with a good degree of accuracy the future
+
+forecast state of the system for a short time period, it is difficult to predict whether the system will go through a
+
+regime transition in the long forecast range. Fig. 3 (c) shows an even worse scenario, with points diverging even
+
+after a short time period, and ending in very distant part of the system attractor. In probabilistic terms, one could
+
+have only predicted that there is a 50% chance of the system undergoing a regime transition. Moreover, the ensem-
+
+ble of points indicates that there is a greater uncertainty in predicting the region of the system attractor where the
+
+system will be at final time in the third case (Fig. 3 (c)).
+
+The comparison of the points’ divergence during the three cases indicates how ensemble prediction systems can be
+
+used to “forecast the forecast skill”. In the case of the Lorenz system, a small divergence is associated to a predict-
+
+able case, and confidence can be attached to any of the single deterministic forecasts given by the single points. By
+
+contrast, a large diverge indicate low predictability.
+
+
+
+Chaos and weather prediction
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+Figure  4. ECMWF forecasts for air temperature in London started from (a) 26 June 1995 and (b) 26 June 1994.
+
+Similar sensitivity to the initial state is shown in weather prediction. Fig. 4 shows the forecasts for air temperature
+
+in London given by 33 different forecasts started from very similar initial conditions for two different dates, the
+
+26th of June of 1995 and the 26th of June 1994. There is a clear different degree of divergence during the two cases.
+
+All forecasts stay close together up to forecast day 10 for the first case (Fig. 4 (a)), while they all diverge already
+
+at forecast day 3 in the second case (Fig. 4 (b)). The level of spread among the different forecasts can be used as a
+
+measure of the predictability of the two atmospheric states.
+
+3. NUMERICAL WEATHER PREDICTION
+
+Numerical weather prediction is realised by integrating primitive-equation models. The equations are solved by re-
+
+placing time-derivatives by finite differences, and spatially either by finite difference schemes or spectral methods.
+
+The state of the atmosphere is described at a series of grid-points by a set of state variables such as temperature,
+
+velocity, humidity and pressure.
+
+At the time of writing (December 1999) the ECMWF high-resolution deterministic model has a spectral triangular
+
+truncation TL319, which is equivalent to a grid-point spacing of about 60 km at mid-latitudes (Fig. 5 ) and 60 ver-
+
+tical levels (Fig. 6 ).
+
+3
+�
+
+0
+
+28
+
+2
+�
+
+6
+
+2
+�
+
+4
+
+22
+
+20
+
+18
+
+16
+
+14
+
+12
+
+10
+
+8
+�
+
+0
+�
+
+1 2
+�
+
+3
+�
+
+4
+�
+
+5
+�
+
+6
+�
+
+7
+�
+
+8
+�
+
+9
+�
+
+10
+Forecast day
+
+D
+eg
+
+re
+e 
+
+C
+
+UK
+
+C
+�
+
+ontrol A
+�
+
+nalysis Ensemble
+
+ECMWF ensemble forecast - Air temperature
+Date: 26/06/1995 London Lat: 51.5 Long: 0
+
+3
+�
+
+4
+
+3
+�
+
+0
+
+2
+�
+
+8
+
+2
+�
+
+6
+
+24
+
+2
+�
+
+2
+
+2
+�
+
+0
+
+18
+
+16
+
+14
+
+12
+
+10
+
+0
+�
+
+1 2
+�
+
+3
+�
+
+4
+�
+
+5
+�
+
+6
+�
+
+7
+�
+
+8
+�
+
+9
+�
+
+10
+Forecast day
+
+D
+eg
+
+re
+e 
+
+C
+
+UK
+
+C
+�
+
+ontrol A
+�
+
+nalysis Ensemble
+
+ECMWF ensemble forecast - Air temperature
+Date: 26/06/1994 London Lat: 51.5 Long: 0
+
+
+
+Chaos and weather prediction
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  5. Grid-points over Europe of the ECMWF model.
+
+Figure  6. Vertical levels of the ECMWF model.
+
+0
+�
+
+.1
+
+0
+�
+
+.3
+
+0
+�
+
+.5
+
+1
+
+3
+�
+5
+�
+
+10
+
+5
+�
+
+0
+
+100
+
+2
+�
+
+00
+3
+�
+
+00
+
+5
+�
+
+00
+7
+�
+
+00
+1000
+
+P
+re
+
+ss
+ur
+
+e 
+(h
+
+P
+a)
+
+1
+
+2
+
+3
+�
+4
+�
+5
+�
+6
+ 
+7
+8
+!
+9
+"
+11
+13
+15
+17
+19
+2
+�
+
+1
+23
+25
+27
+
+3
+�
+
+1
+3
+�
+
+5
+3
+�
+
+9
+4
+�
+
+4
+5
+�
+
+0
+
+Le
+ve
+
+l n
+um
+
+be
+r
+
+
+
+Chaos and weather prediction
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+Figure  7. Type and number of observations used to estimate the atmosphere initial conditions in a typical day.
+
+Figure  8. Map of radiosonde locations.
+
+Meteorological observations made all over the world (Fig. 7 ) are used to compute the best estimate of the system
+
+initial conditions. Some of these observations, such as the ones from weather balloons or radiosondes, are taken at
+
+specific times at fixed locations (Fig. 8 ). Other data, such as the ones from aircrafts, ships or satellites, are not fixed
+
+in space. Generally speaking, there is a great variability in the density of the observation network. Data over oce-
+
+anic regions, in particular, are characterised by very coarse resolution.
+
+Observations cannot be used directly to start model integration, but must be modified in a dynamically consistent
+
+way to obtain a suitable data set. This process is usually referred to as data assimilation. At the time of writing (De-
+
+cember 1999), ECMWF uses a 4-dimensional data assimilation scheme to estimate the actual state of the atmos-
+
+phere (Courtier et al. 1994).
+
+In the ECMWF model, dynamical quantities as pressure and velocity gradients are evaluated in spectral space,
+
+while computations involving processes such as radiation, moisture conversion, turbulence, are calculated in grid-
+
+point space. This combination preserves the local nature of physical processes, and retains the superior accuracy
+
+of the spectral method for dynamical computation.
+
+The physical processes associated with radiative transfer, turbulent mixing, moist processes, are active at scales
+
+smaller than the horizontal grid size. The approximation of unresolved processes in terms of model-resolved vari-
+
+ables is referred to as parameterisation (Fig. 9 ). The parameterisation of physical processes is probably one of the
+
+G
+#
+
+eo-stationary
+s$ atellitesERS-2
+
+3
+%
+
+82,299
+
+P
+&
+
+olar-orbiting satellites
+
+C
+'
+
+loud
+m( otion
+v) ector
+S
+*
+
+AT
++
+
+O
+,
+
+B
+2
+-
+
+6,674
+S
+*
+
+ATEM
+TO
+,
+
+VS
+
+TEMP 1,234
+Pilot 737
+
+Profilers
+5
+.
+
+55
+Buoys - d
+
+/
+rifting 6
+
+0
+,106
+
+moored 469
+
+S
+*
+
+HIP 4,706
+
+AIREP
+AMDAR 5
+
+.
+5,921
+
+ACAR
+
+9
+1
+
+4,985}
+2
+
+S
+*
+
+YNOP
+44,616
+
+Data Coverage (o_suite) - TEMP 1200 UTC 970217 Total number of obs = 558
+
+60OS
+
+30OS
+
+0O
+
+30O
+3
+N
+
+60ON
+
+150OW 120O
+3
+W 90OW 60O
+
+3
+W 30OW 0O 30OE 60O
+
+3
+E 90OE 120O
+
+3
+E 150OE
+
+Observation Type
+542	 LAND
+13	 SHIP
+3	 DROPSONDE
+
+
+
+Chaos and weather prediction
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+most difficult and controversial area of weather modelling (Holton 1992).
+
+Figure  9. Schematic diagram of the different physical processes represented in the ECMWF model.
+
+4. SOURCES OF FORECAST ERROR
+
+It has been already mentioned that uncertainties in the initial conditions and in the model are both sources of fore-
+
+cast error. Some indications of the relative importance of the two sources can be deduced from the works of Down-
+
+ton & Bell (1988) and Richardson (1998), who compared forecasts given by the UKMO (United Kingdom
+
+Meteorological Office) and the ECMWF forecasting systems. In these studies, substantial forecast differences be-
+
+tween the ECMWF and the UKMO operational forecasts could mostly be traced to differences between the two
+
+operational analyses, rather than between the two forecast models. On the other hand, recent results from Harrison
+
+et al. (1999) indicate that the impact of model uncertainties on forecast error cannot be ignored.
+
+These results suggest that an ensemble system should certainly simulate the presence of uncertainties in the initial
+
+conditions, since this is the dominant effect, but it should also simulate model uncertainties.
+
+The first version of the ECMWF Ensemble Prediction System (hereafter EPS, Palmer et al. 1993, Molteni et al.
+
+1996) implemented operationally in December 1992 included only a simulation of initial uncertainties. A similar
+
+“perfect model” strategy was followed at the US National Centers for Environmental Prediction (NCEP, Tracton
+
+& Kalnay 1993).
+
+Houtekamer et al. (1996) first included model uncertainties in the ensemble prediction system developed at the At-
+
+mospheric Environment Service in Canada. Following a system simulation approach to ensemble prediction, they
+
+developed a procedure where each ensemble member differs both in the initial conditions, and in sub-grid scale
+
+parameters. In this approach, each ensemble member is integrated using different parameterizations of horizontal
+
+diffusion, convection, radiation, gravity wave drag, and with different orography.
+
+There are certainly good grounds for believing that there is a significant source of random error associated with the
+
+parameterized physical processes. For example, consider a grid point over the tropical warm pool area during a
+
+
+
+Chaos and weather prediction
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+period of organized deep convection. By definition, the actual contributions to the tendencies due to parameterized
+
+physical processes are often associated with organized mesoscale convective systems whose spatial extent may be
+
+comparable with the model resolution. In such a case, the notion of a quasi-equilibrium ensemble of sub-grid-scale
+
+processes, upon which all current parameterizations schemes are based, cannot be a fully-appropriate concept for
+
+representing the actual parameterized heating (Palmer 1997). For example, even if the parameterized heating fields
+
+agree on average (i.e. over many time steps) at the chosen grid point, there must inevitably be some standard devi-
+
+ation in the time-step by time-step difference between observed and modeled heating.
+
+Since October 1998, a simple stochastic scheme for simulating random model errors due to parameterized physical
+
+processes has been used in the ECMWF EPS (Buizza et al. 1999). The scheme is based on the notion that the sort
+
+of random error in parameterized forcing are coherent between the different parameterization modules, and have
+
+certain coherence on the space and time scales associated, for example, with organized convection schemes. More-
+
+over, the scheme assumes that the larger the parameterized tendencies, the larger the random error component will
+
+be. The notion of coherence between modules allows the stochastic perturbation to be based on the total tendency
+
+from all parameterized processes, rather than on the parameterized tendencies from each of the individual modules.
+
+In this respect the ECMWF scheme differs conceptually from that of Houtekamer et al. (1996). More details about
+
+the scheme are reported in the following section.
+
+5. THE ECMWF ENSEMBLE PREDICTION SYSTEM
+
+Routine real-time execution of the ECMWF EPS started in December 1992 with a 31-member T63L19 configura-
+
+tion (spectral triangular truncation T63 and 19 vertical levels, Palmer et al. 1993, Molteni et al. 1996). A major
+
+upgrade to a 51-member TL159L31 system (spectral triangular truncation T159 with linear grid) took place in 1996
+
+(Buizza et al. 1998). A scheme to simulate model uncertainties due to random model error in the parameterized
+
+physical processes was introduced in 1998.
+
+5.1  The original EPS configuration
+
+Schematically, each ensemble member  was defined by the time integration
+
+(2)
+
+of the model equations
+
+(3)
+
+starting from perturbed initial conditions
+
+(4)
+
+where and identify the contribution to the full equation tendency of the non-parameterized and parameterized
+
+physical processes, and where  is the operational analysis at .
+
+The initial perturbations were generated using the singular vectors of the linear version of the ECMWF,
+
+computed to maximize the total energy norm over a 48-hour time interval (Buizza & Palmer 1995), and scaled to
+
+have an amplitude comparable to analysis error estimates.
+
+465
+
+47598( ) : 475;8,( ) < 475;8,( )+[ ] d 8=
+= 0
+
+=
+∫=
+
+∂ 475
+∂ 8-------- :
+
+475;8,( ) < 465>8,( )+=
+
+46598 = 0( ) 4 0 8 = 0( ) δ 47598 = 0( )+=
+
+: < 4
+0
+8 = 0( ) 8 = 0
+
+δ 475?8 = 0( )
+
+
+
+Chaos and weather prediction
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+The singular vectors of the tangent forward propagator sample the phase space directions of maximum growth dur-
+
+ing a 48-hour time interval. Small errors in the initial conditions along these directions would amplify most rapidly,
+
+and affect the forecast accuracy. The reader is referred to Appendix A for a more complete mathematical definition
+
+of the singular vectors.
+
+Fig. 10 illustrates the typical structure of the leading singular vector used to generate the ensemble of initial per-
+
+turbations for 17 January 1997. Total energy singular vectors are usually located in the lower troposphere at initial
+
+time, with total energy peaking at between around 700 hPa (i.e. around 3000 m), in regions of strong barotropic
+
+and baroclinic energy conversion (Buizza & Palmer 1995). During their growth, they show an upscale energy trans-
+
+fer and upward energy propagation. Results have indicated a very good agreement between the regions where sin-
+
+gular vectors are located and other measures of baroclinic instability such as the Eady index introduced by Hoskins
+
+& Valdes (1990). This is shown in Fig. 11 for the case of 17 January 1997. The reader is referred to Hoskins et al.
+
+(1999) for recent investigations on singular vector growth mechanisms.
+
+Figure 10. Most unstable singular vector growing between 17 and 19 January 1997 at initial (left panels) and final
+
+(right panels) times. The top panels show the singular vector temperature component (shaded blue/green for
+
+negative and shaded yellow/red for positive values) and the atmospheric state (geopotential height) at 500 hPa (i.e.
+
+approximately at 5000 m). Bottom panels are as top panels but for 700 hPa (i.e. approximately at 3000 m).
+
+Contour interval is 8 dam for geopotential height, and 0.2 degrees for temperature at initial time and 1.0 degree at
+
+final time.
+
+4@ 96
+5A 12
+
+52
+8
+
+544
+
+5B 44
+
+560
+
+5C 60 576
+
+S
+D
+
+V_1(T)/Z 500hPa 1997-01-18 12h
+
+4965E 12
+528
+
+5F 44
+
+54
+4
+
+5G 60
+
+5H 60
+
+5I 76
+
+576
+
+S
+J
+
+V_1(T)/Z 500hPa 1997-01-20 12h
+
+2K 7L 2K27
+2
+
+288
+
+2M 88 3N 04
+
+304
+
+S
+J
+
+V_1(T)/Z 700hPa 1997-01-18 12h
+
+2O 72
+
+272
+
+2P 88 3Q 04
+
+304
+
+S
+J
+
+V_1(T)/Z 700hPa 1997-01-20 12h
+
+
+
+Chaos and weather prediction
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+Figure 11. Eady index (top panel) and location of the leading singular vectors identified by the root-mean-square
+
+amplitude of the EPS perturbations at forecast day 1 (bottom panel) for the case of 17 January 1997. Contour
+
+interval is 1 day-1 for the Eady index, and 1 m for the EPS perturbation amplitude.
+
+Until 26 March 1998, the EPS initial perturbations were computed to sample instabilities growing in the forecast
+
+range, and no account was taken of perturbations that had grown during the data assimilation cycle leading up to
+
+the generation of the initial conditions (Molteni et al. 1996).
+
+A way to overcome this problem is to use singular vectors growing in the past, and evolved to the current time.
+
+The 50 perturbed initial conditions were generated by adding and subtracting 25 perturbations defined using 25
+
+singular vectors selected from computed singular vectors so that they do not overlap in space. The selection criteria
+
+were that the leading 4 singular vectors are always selected, and that subsequent singular vectors are selected only
+
+if less than 50% of their total energy cover a geographical region where already 4 singular vectors are located.
+
+Once the 25 singular vectors were selected, an orthogonal rotation in phase-space and a final re-scaling were per-
+
+formed to construct the ensemble perturbations. The purpose of the phase-space rotation is to generate perturba-
+
+tions with the same globally averaged energy as the singular vectors, but smaller local maxima and a more uniform
+
+spatial distribution. Moreover, unlike the singular vectors, the rotated singular vectors are characterized by similar
+
+amplification rates (at least up to 48 hours). Thus, the rotated singular vectors diverge, on average, equally from
+
+the control forecast. The rotation is defined to minimize the local ratio between the perturbation amplitude and the
+
+amplitude of the analysis error estimate given by the ECMWF data assimilation procedure. The re-scaling allowed
+
+perturbations to have local maxima up to  larger than the local maxima of the analysis error estimate.
+
+A way to take into account perturbations growing during the data assimilation period was to generate the EPS initial
+
+perturbation using two sets of singular vectors. In mathematical terms, since 26 March 1998 (Barkmeijer et al.
+
+1
+
+1
+
+1
+
+1R
+
+1S
+1
+
+1
+
+1
+
+1T
+1 1
+
+2
+U
+
+2
+
+Eady index 1997-01-18/20
+
+EPS 500hPa Z 1997-01-18 12h fc t+24
+
+α 0.6=
+
+
+
+Chaos and weather prediction
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+1999a) the day initial perturbations have been generated using both the singular vectors growing in the forecast
+
+range between day and day at initial time, and the singular vectors that had grown in the past between
+
+day  and day  at final time
+
+(5)
+
+where is the i-th singular vector growing between day d and d+2 at time t=0. The coefficients ai,j
+
+and bi,j set the initial amplitude of the ensemble perturbations, and are defined by comparing the singular vectors
+
+with estimates of analysis errors (Molteni et al. 1996). Since 26 March 1998, the selection criteria has been kept
+
+as before, but a new scaling factor  has been used.
+
+The initial perturbations are specified in terms of the spectral coefficients of the 3-dimensional vorticity, divergence
+
+and temperature fields (no perturbations are defined for the specific humidity since the singular vector computation
+
+is performed with a dry linear forward/adjoint model), and of the 2-dimensional surface pressure field. They are
+
+added and subtracted to the control initial conditions to define perturbed initial conditions. Then, 50 + 1 (control)
+
+10-day TL159L31 non-linear integrations are performed.
+
+With the current ECMWF computer facilities, each day the whole EPS (10-day integration, 51 members at
+
+TL159L40 with T42L40 singular vectors computed for the Northern and the Southern Hemispheres) takes approx-
+
+imately 150 hours of total computing time (about 10% of this time is used to compute the initial perturbations). By
+
+contrast, the high resolution TL319L60 deterministic forecast (10-day integration) takes about 40 hours, and the
+
+data assimilation procedure used to generate the unperturbed initial conditions takes about 120 hours (4 cycles per
+
+day, once every 6 hours).
+
+5.2  The new EPS configuration
+
+In October 1998, a scheme to simulate random model errors due to parameterized physical processed was intro-
+
+duced (Buizza et al. 1999). This scheme can be considered as a simple first attempt to simulated random model
+
+errors due to parametrized physical processes. It is based on the notion that random errors due to parametrized
+
+physical processes are coherent between the different parametrization modules and have a certain coherence on the
+
+space and time scales represented by the model. The scheme assumes that the larger the parametrized tendencies,
+
+the larger the random error component.
+
+In the new EPS, each ensemble member  can be seen as the time integration
+
+(6)
+
+of the perturbed model equations
+
+(7)
+
+starting from the perturbed initial conditions defined in Eq. (1), where and identify the contribution to the
+
+full equation tendency of the non-parameterized and parameterized physical processes. For each grid point
+
+(identified by its latitude, longitude and vertical hybrid coordinate), the perturbed parameterized
+
+tendency (of each state vector component) is defined as
+
+V
+V V
+
+2+V
+2–
+
+V
+
+δ 47598 = 0( ) αW 5, νWXYX 2+, 8 = 0( ) βW 5, νWX 2 X,– 8 = 48 h( )+[ ]W = 1
+25
+
+∑=
+
+νWXYX 2+, 8 = 0( )
+
+α 0.5=
+
+475
+
+475?8( ) : 475;8,( ) < 5 ′ 475;8,( )+[ ] d 8=
+= 0
+
+=
+∫=
+
+∂ 475
+∂ 8-------- :
+
+475;8,( ) < 5 ′ 475;8,( )+=
+
+: < ′
+Z λ φ σ, ,( )=
+
+
+
+Chaos and weather prediction
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 15
+
+(8)
+
+where is the unperturbed diabatic tendency, and indicates that the same random number has been
+
+used for all grid points inside a  degree box and over  time steps.
+
+The notion of space-time coherence assumes that organized systems have some intrinsic space and time-scales that
+
+may span more than one model time step and more than one model grid point. Making the stochastic uncertainty
+
+proportional to the tendency is based on the concept that organization (away from the notion of a quasi-equilibrium
+
+ensemble of sub-grid processes) is likely to be stronger, the stronger is the parameterized contribution. A certain
+
+space-time correlation is introduced in order to have tendency perturbations with the same spatial and time scales
+
+as observed organization.
+
+Figure  12. Random numbers used to perturb the tendencies due to parameterised physical processes. The top
+
+panel shows the case of no spatial scale, in other words when different random numbers are used at each grid-
+
+point. The bottom panel shows the case when the same random number was used for grid-points inside 5-degree
+
+boxes. Blue crosses identify grid-points with random numbers , green diamonds points with
+
+, and red squares points with .
+
+Fig. 12 shows a map of the random numbers used in a configuration tested when developing the so-called stochas-
+
+tic physics scheme. Fig. 12 (a) shows the matrix of random numbers when each grid-point was assigned an in-
+
+dependent value, while Fig. 12 (b) shows the matrix when the same random number was used inside 5 degree
+
+boxes. Results indicated that even perturbations without any spatial structure (i.e. with random numbers as in Fig.
+
+< 5 ′ 475;8,( ) 1 � 5 λ φ σ, ,( )〈 〉 []\,+[ ] < 465;8,( )=
+
+< …〈 〉 [^\, � 5_ _
+× `
+
+40°N
+a
+
+40°N
+
+50°N 50°N
+b
+60°N
+c
+
+60°N
+
+30°W
+
+30°W 20°W
+
+20°W 10°W
+
+10°W 0°
+
+0° 10°E
+
+10°E 20°E
+
+20°E 30°E
+
+30°E
+
+No spatial scale
+
+RED full squares: maximum DTp values
+GREEN diamonds: DTp values around 1.00
+BLUE crosses: minimum DTp values
+
+40°N
+a
+
+40°N
+
+50°N 50°N
+b
+60°N
+c
+
+60°N
+
+30°W
+
+30°W 20°W
+
+20°W 10°W
+
+10°W 0°
+
+0° 10°E
+
+10°E 20°E
+
+20°E 30°E
+
+30°E
+
+5x5 deg spatial scale
+d
+
+RED full squares: maximum DTp values
+GREEN diamonds: DTp values around 1.00
+BLUE crosses: minimum DTp values
+
+MAGICS 6.0 bragi - ner Thu Nov 25 16:22:55 1999 R Buizza random__
+
+0.5 η 0.3–≤ ≤–
+0.1 η 0.1≤ ≤– 0.3 η 0.5≤ ≤
+
+� 5
+
+
+
+Chaos and weather prediction
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+12 (a)) had a major impact on 10-day model integrations (Buizza et al. 1999).
+
+After an extensive experimentation, it was decided to implement in the operational EPS the stochastic physics
+
+scheme with random numbers sampled uniformly in the interval , a 10 degrees box size ( ), and
+
+a 6 hours time interval ( ).
+
+6. TARGETED OBSERVATIONS
+
+Consider a meteorological system evolving between time and , localised at final time inside a geographical
+
+area (hereafter verification area). Suppose that extra observations could be taken inside a geographical area
+
+at initial time  (hereafter target area), with the purpose of improving the time  forecast inside .
+
+Singular vectors with maximum energy at final time inside a verification area can be used to identify the target area
+
+where extra observation should be taken, at initial time, to reduce the forecast error inside the verification area itself
+
+(Buizza & Montani 1999). The reader is referred to Appendices A and B for a more complete description of the
+
+mathematical formulation.
+
+Other strategies can be used to target adaptive observations. Langland & Rohaly (1996), following the work of Ra-
+
+bier et al. (1996) on sensitivity vectors, proposed to use the lower tropospheric vorticity of the forecast state as cost
+
+function, and to target the region where the sensitivity field is maximum. A similar technique, but based on the use
+
+of a quasi-inverse linear model, was proposed by Pu et al. (1997, 1998). Bishop & Toth (1998) introduced the En-
+
+semble Transform technique, in which linear combinations of ensemble perturbations are used to estimate the pre-
+
+diction error variance associated with different possible deployments of observational resources. Finally, following
+
+Hoskins et al. (1985) and Appenzeller et al. (1996), a more subjective strategy based on the use of potential vorti-
+
+city to analyse atmospheric was also developed.
+
+All these techniques were applied to target observations for the first time during FASTEX, the Fronts and Atlantic
+
+Storm Track Experiment (Joly et al. 1996, Thorpe & Shapiro 1995, Snyder 1996).
+
+The focus of the FASTEX campaign was the extra-tropical cylonic storms that form over the western and mid At-
+
+lantic Ocean, and take about 2 days to develop and move towards Europe. Forecast failures are often associated
+
+with these very active atmospheric phenomena.
+
+Fig. 13 shows the tracks of one of the storms observed during FASTEX, IOP 17 (IOP stands for Intensive Obser-
+
+vation Period), and the location of various aircrafts that made additional observations between 17 and 19 February
+
+1997 (Montani et al. 1999). Singular vectors, computed to have maximum total energy inside a verification region
+
+centred on the British Isles, were used to identify the most sensitive regions where observations were made. The
+
+comparison of the central pressure of two forecasts, one started from initial conditions computed with and one
+
+without the extra observations, with the observed value (Fig. 14 ) indicates that additional, targeted observations
+
+can improve the forecast accuracy. Fig. 15 shows the average impact of the targeted observations on the forecast
+
+error. Results indicated up to 20% forecast error reduction.
+
+0.5 0.5,–[ ]
+_
+
+10=
+
+` 6=
+
+8
+0
+
+8 8
+Σ= Σ08
+
+0
+8 Σ
+
+
+
+Chaos and weather prediction
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 17
+
+Figure 13. Map summarising the extra observations taken during the FASTEX experiment for IOP 17. The black
+
+track identifies the location of the cyclone minimum pressure, the coloured tracks the aircraft missions, and the
+
+red symbols additional radio-soundings (from Montani et al. 1999).
+
+Figure  14. 6-hourly time series of the cyclone central pressure forecast without (blue dash line) and with (red
+
+dotted line) extra observations, and observed (black solid line), for IOP 17 (from Montani et al. 1999).
+
+0
+e
+
+6
+f
+
+12 18 24 30 36 42
+forecast time (hrs)
+
+9
+g
+
+50
+
+9
+g
+
+60
+
+9
+g
+
+70
+
+9
+g
+
+80
+
+9
+g
+
+90
+
+1000
+
+1010
+
+1020
+
+m
+sl
+
+p 
+(h
+
+Pa
+)
+
+T
+h
+
+imeseries of meansealevel pressure
+Initial time:  18Z, 17 February 1997
+
+analysis
+control forecast
+pi erturbed forecast
+
+
+
+Chaos and weather prediction
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  15. Scatter plot of the mean forecast errors with (x-axis) and without (y-axis) the extra observations, for
+
+the 500 and 1000 hPa geopotential height fields over Europe and North Atlantic at forecast day 2, 2.5 and 3 (from
+
+Montani et al. 1999).
+
+Following the FASTEX campaign, other experiments were performed (e.g. NORPEX, the North Pacific Experi-
+
+ment, CALJET, the California Land-falling Jets experiments). All results confirmed that taking extra observations
+
+in sensitive regions could reduce forecast errors.
+
+Robotic aerosondes capable of long-range monitoring could be used operationally in a very near future to fill chron-
+
+ic gaps in the global upper-air sounding network (Holland et al. 1992), and take extra observations in objectively
+
+identified regions. This follows years of intensive research at the Bureau of Meteorology of Melbourne, Australia,
+
+that culminated with the first-ever unmanned aircraft crossing of the Atlantic Ocean in August 1998 (http://
+
+www.aerosonde.com/opshist.htm).
+
+7. SUMMARY AND FUTURE DEVELOPMENTS
+
+Two of the most important advances in numerical weather prediction of the last 10 years, the operational imple-
+
+mentation of ensemble prediction systems and the development of objective techniques to target adaptive observa-
+
+tions, have been discussed.
+
+Ensemble systems provide a possible way to estimate the probability distribution function of forecast states. They
+
+have been developed following the notion that uncertainties in the initial conditions and in the model formulation
+
+are the main sources of forecast errors. Results have demonstrated that a probabilistic approach to weather predic-
+
+tion can provide more information than a deterministic approach based on a single, deterministic forecast.
+
+Ensemble prediction systems are particularly useful, if not necessary, to provide early warnings of extreme weather
+
+events. For example, ensemble systems can be used to predict probabilities of intense precipitation events (Fig. 16
+
+). Global ensemble systems can be used to provide boundary and initial conditions for higher-resolution, limited
+
+area ensemble prediction systems (Molteni et al. 1999, Marsigli et al. 1999).
+
+60
+
+50
+
+40
+
+30
+
+20
+
+10
+
+0
+0
+
+W
+ith
+
+ou
+tD
+
+ro
+ps
+
+on
+de
+
+s
+
+10 20 30 40 50 60
+With Dropsondes (rms error in metres)
+
+
+
+Chaos and weather prediction
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 19
+
+Figure  16. High-resolution TL319L31 forecasts for the flood in Piemonte, Italy, 5-6 November 1994. (a)
+
+Precipitation forecast, accumulated between t+96 h and t+120 h, predicted by the control forecast. (b) Observed
+
+precipitation field. (c) Ensemble probability forecast of more than 20 mm/d of precipitation. (d) Ensemble
+
+probability forecast of more than 40 mm/d of precipitation. Contour isolines 2, 20, 40 and 100 mm/d for
+
+precipitation, and every 20% for probabilities.
+
+At ECMWF, work is in progress in many different areas to further improve the current ensemble prediction system.
+
+Linearized versions of the most important physical processes have been developed (Mahfouf 1999), and investiga-
+
+tion into the behaviour of the linear models in the computation of tropical singular vectors has started. The tropical
+
+target area has been chosen because the current EPS lacks perturbations of the initial condition in this area, where
+
+moist processes are of key importance. Results (Barkmeijer et al. 1999b, Puri et al. 1999) indicate that the inclusion
+
+of tropical singular vectors is essential in cases of hurricane prediction. Results indicate that tropical singular vec-
+
+tors are needed to generate a realistic spread among the ensemble of hurricane tracks.
+
+The operational initial perturbations of the ECMWF EPS are constructed using singular vectors with maximum
+
+total energy growth. Total energy singular vectors have no knowledge of analysis error statistics. Generally speak-
+
+ing, it would be desirable to use information about analysis error characteristics in the singular vector computation.
+
+One way of improving upon this is to use in the singular vector computation statistics generated by the data assim-
+
+ilation system. Work is in progress to use the Hessian of the cost function of the 3-dimensional (or 4-dimensional)
+
+variational assimilation system (3D/4D-Var) to define singular vectors (Barkmeijer et al. 1998). These so-called
+
+Hessian singular vectors are constrained at initial time by analysis error statistics but still produce fast perturbation
+
+growth during the first few days of the forecast.
+
+Work is in progress to investigate whether a so-called consensus analysis, defined as the average of analyses pro-
+
+duced by different weather centres, is a better estimate of the atmospheric initial state than the ECMWF analysis
+
+(Richardson, 1999, personal communication). The operational EPS configuration has been run from the consensus
+
+analysis, average of the ECMWF, UKMO (UK Meteorological Office), Météo-France, NCEP (National Centers
+
+for Environmental Prediction, Washington) and DWD (Deutscher WetterDienst, Offenbach) analyses. The same
+
+perturbations as used in the operational EPS have been added to the consensus analysis to create the 50 perturbed
+
+initial conditions. Preliminary results show that the skill of the control forecast is improved if the consensus anal-
+
+ysis is used instead of the ECMWF analysis as the unperturbed initial condition. Results also indicate that the dif-
+
+ference between the spread in the two systems is rather small, while the ensemble-mean forecast of the system
+
+CON FC: 1994-11-01 12h fc t+120 24H OBSERVED PRECIP: 1994-11-05/06
+
+PROB 20 mm: 1994-11-01 12h fc t+120 PROB 40 mm: 1994-11-01 12h fc t+120
+
+0°
+
+40°N
+
+10°E
+
+20°E
+
+0°
+
+40°N
+
+10°E
+
+20°E
+
+0°
+
+40°N
+
+10°E
+
+20°E
+
+0°
+
+40°N
+
+10°E
+
+20°E
+
+2
+j 2k
+
+2l
+
+20
+
+4m 0
+
+2n
+
+2o
+
+2p 0
+
+20
+
+20
+
+40
+
+4q 0
+2
+r 0
+
+
+
+Chaos and weather prediction
+
+20 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+started from the consensus analysis is more skilful.
+
+Experimentation has started to verify whether a resolution increase from Tl159 to Tl255, and from 31 to 60 vertical
+
+levels would improve the EPS performance. Preliminary studies of the impact of an increase in horizontal resolu-
+
+tion indicate that precipitation prediction improves substantially as resolution increases.
+
+Finally, an ensemble approach to data assimilation is under test. Following Houtekamer et al. (1996), but with the
+
+ECMWF approach to represent model uncertainties, work has started at ECMWF to generate an ensemble of initial
+
+perturbations using the ECMWF 3D/4D-Var data assimilation. The purpose of this work is to investigate whether
+
+a better estimate of the “true” state of the atmosphere can be computed using this probabilistic approach.
+
+8. CONCLUSION
+
+The weather is a chaotic system, and numerical weather prediction is a very difficult task.
+
+This work has demonstrated that the application of linear algebra (i.e. the use of singular vectors computed by solv-
+
+ing an eigenvalue problem defined by the tangent forward and adjoint versions of the model) to meteorology can
+
+help in designing new ways to numerical weather prediction (Buizza 1997).
+
+The same technique can be applied to any dynamical system, in particular to very complex systems with a large
+
+dimension. The basic idea is that there are only few, important directions of the phase-space of any system along
+
+which the most important processes occur. A successful prediction of the system time evolution should sample
+
+these directions, and describe the system evolution along them.
+
+9. ACKNOWLEDGEMENTS
+
+The ECMWF Ensemble Prediction System is the result of the work of many ECMWF staff members and consult-
+
+ants. It is based on the Integrated Forecasting System/Arpege software, developed in collaboration by ECMWF and
+
+Meteo-France. The work of many ECMWF and Meteo-France staff and consultants is acknowledged. I am grateful
+
+to Robert Hine for all his editorial help.
+
+APPENDIX A SINGULAR VECTOR DEFINITION
+
+Farrell (1982), studying the growth of perturbations in baroclinic flows, showed that, although the long time as-
+
+ymptotic behavior is dominated by discrete exponentially growing normal modes when they exist, physically real-
+
+istic perturbations could present, for some finite time intervals, amplification rates greater than the most unstable
+
+normal mode amplification rate. Subsequently, Farrell (1988, 1989) showed that perturbations with the fastest
+
+growth over a finite time interval could be identified solving the eigenvalue problem of the product of the tangent
+
+forward and adjoint model propagators. His results supported earlier conclusions by Lorenz (1965) that perturba-
+
+tion growth in realistic models is related to the eigenvalues of the operator product.
+
+Kontarev (1980) and Hall and Cacuci (1983) first used the adjoint of a dynamical model for sensitivity studies.
+
+Later on, Le Dimet & Talagrand (1986) proposed an algorithm, based on an appropriate use of an adjoint dynamical
+
+equation, for solving constraint minimization problems in the context of analysis and assimilation of meteorolog-
+
+ical observations. More recently, Lacarra & Talagrand (1988) applied the adjoint technique to determine optimal
+
+perturbations using a simple numerical model. Following Urban (1985) they used a Lanczos algorithm (Strang,
+
+1986) in order to solve the related eigenvalue problem. For a bibliography in chronological order of published
+
+works in meteorology dealing with adjoints up to the end of 1992, the reader is referred to Courtier et al. (1993).
+
+
+
+Chaos and weather prediction
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 21
+
+After Farrell and Lorenz, calculations of perturbations growing over finite-time intervals were performed, for ex-
+
+ample, by Borges & Hartmann (1992) using a barotropic model, and by Molteni & Palmer (1993) using a barotrop-
+
+ic and a 3-level quasi-geostrophic model at spectral triangular truncation T21. Buizza (1992) and Buizza et al.
+
+(1993) first identified singular vectors in a primitive equation model with a large number of degrees of freedom.
+
+Let  be the state vector of a generic autonomous system, whose evolution equations can be formally written as
+
+(9)
+
+Denote by an integration of Eq. (9) from to , which generates a trajectory from an initial point to
+
+. The time evolution of a small perturbation x around the time evolving trajectory can be descibed,
+
+in a first approximation, by the linearized model equations
+
+(10)
+
+where is the tangent operator computed at the trajectory point .
+
+Let be the integral forward propagator of the dynamical equations linearized about a non-linear trajectory
+
+(11)
+
+that maps a perturbation at initial time to the optimization time . The tangent forward operator maps the
+
+tangent space , the linear vector space of perturbations at , to , the linear vector space at .
+
+Consider two perturbations and , e.g. at , a positive definite Hermitian matrix , and define the inner prod-
+
+uct  as
+
+(12)
+
+on the tangent space  in this case, where  identifies the canonical Euclidean scalar product,
+
+(13)
+
+Let  be the norm associated with the inner product
+
+(14)
+
+Let  be the adjoint of  with respect to the inner product  ,
+
+(15)
+
+The adjoint of with respect to the inner product defined by can be written in terms of the adjoint defined
+
+with respect to the canonical Euclidean scalar product,
+
+χ
+
+∂χ
+∂ 8------ : χ( )=
+
+χ 8( ) 8 0 8 χ0
+χ1 χ
+
+8( )= χ 8( )
+
+∂Z
+∂ 8------ :?s
+
+Z=
+
+:9s ∂: Z( )
+∂Z--------------- χ =( )
+
+= χ 8( )
+t 8u8
+
+0,( )
+χ 8( )
+
+Zv8( ) t 8w8 0,( ) Zv8 0( )=
+Z 8
+
+0
+8 t
+
+Π0 χ0 Π1 χ1
+Z x χ0 y
+
+… …;( ) z
+Z{x;( ) z Z y x;〈 〉=
+
+Π0 … …;〈 〉
+
+Z{x;〈 〉 Z W x WW 1=
+
+|
+∑=
+
+… z2 … …;( ) z
+
+Z z2 Z}Z;( ) z Z}Z y;〈 〉= =
+t * z t … …;( ) z
+
+t * z Z{x;( ) z Z t x;( ) z=
+t y t *
+
+
+
+Chaos and weather prediction
+
+22 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(16)
+
+From Eqs. (11) and (16) it follows that the squared norm of a perturbation  at time  is given by
+
+(17)
+
+Equation (17) shows that the problem of finding the phase space directions for which is
+
+maximum can be reduced to the search of the eigenvectors
+
+(18)
+
+with the largest eigenvalues .
+
+The square roots of the eigenvalues, , are called the singular values and the eigenvectors the (right) sin-
+
+gular vectors of with respect to the inner product (see, e.g., Noble & Daniel, 1977). The singular vectors with
+
+largest singular values identify the directions characterized by maximum growth. The time interval is called
+
+optimization time interval.
+
+Unlike itself, the operator is normal. Hence, its eigenvectors can be chosen to form a complete
+
+orthonormal basis in the -dimensional tangent space of the perturbations at . Moreover, the eigenvalues
+
+are real, .
+
+At optimization time , the singular vectors evolve to
+
+(19)
+
+which in turn satisfy the eigenvector equation
+
+(20)
+
+From Eqs. (17) and (20) it follows that
+
+(21)
+
+Since any perturbation can be written as a linear combination of the singular vectors , it follows
+
+that
+
+(22)
+
+Thus, maximum growth as measured by the norm  is associated with the dominant singular vector  .
+
+Given the tangent forward propagator , it is evident from Eq. (18) that singular vectors' characteristics depend
+
+strongly on the inner product definition and to the specification of the optimization time interval.
+
+The problem can be generalized by selecting a different inner product at initial and optimization time. Consider
+
+two inner products defined by the (positive definite Hermitian) matrices and , and re-state the problem as
+
+finding the phase space directions  for which
+
+t * z y 1– t * y=
+Z 8
+
+Zv8( ) z2 Zv8 0( ) t *
+z t Zv8
+
+0( );( ) z=
+Z Zv8( ) z2 Z~8 0( ) z2⁄
+
+ν W 8 0( )
+t * z t νW 8 0( ) σW2νW 8 0( )=
+
+σW2
+σW νW 8 0( )t y 88
+
+0–
+
+t t * z t νW 8 0( )
+th χ0
+
+σW2 0≥
+8
+
+ν W 8( ) t 8u8 0,( )νW 8 0( )=
+
+tt * z νW 8( ) σW2ν W 8 0( )=
+
+νW 8( ) z2 σW2=
+Zv8( ) Zv8 0( ) z⁄ νW
+
+max  =
+0( ) 
+
+Zv8( ) zZv8
+0( ) z-------------------- 
+
+  σ1=
+
+… z ν1t
+
+y 0 yZ
+
+
+
+Chaos and weather prediction
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 23
+
+(23)
+
+is maximum. Applying the transformation , the right hand side ofEq. (18) can be transformed into
+
+(24)
+
+Since
+
+(25)
+
+the phase space directions which maximize the ratio in Eq. (24) are the singular vectors of the operator
+
+with respect to the canonical Euclidean inner product. With this definition, the dependence of the
+
+singular vectors' characteristics on the inner products is made explicit.
+
+At ECMWF, due to the very large dimension of the system, the eigenvalue problem that defines the singular vectors
+
+is solved by applying a Lanczos code (Glub & Van Loan 1983).
+
+APPENDIX B PROJECTION OPERATORS
+
+The set of differential equations that defines the system evolution can be solved numerically with different meth-
+
+ods. For example, they can be solved with spectral methods, by expanding a state vector onto a suitable basis of
+
+functions, or with finite-difference methods in which the derivatives in the differential equation of motions are re-
+
+placed by finite difference approximations at a discrete set of grid points in space. The ECMWF primitive equation
+
+model solves the system evolution equations partly in spectral space, and partly in grid point space.
+
+Denote by the grid point representation of the state vector , by the spectral-to-grid point transformation
+
+operator, , and by the multiplication of the vector , defined in grid-point space, by the function
+
+:
+
+(26)
+
+where  defines the coordinate of a grid point, and  is a geographical region.
+
+Define the function  in spectral space as
+
+(27)
+
+where  identifies a wave number and  is a sub-space of the spectral space.
+
+Consider a vector . The application of the local projection operator  defined as
+
+(28)
+
+Zv8( ) zZ~8
+0( ) z--------------------
+
+t Zv8
+0( ) y t Zv8 0( );〈 〉Zv8
+
+0( ) y 0 Zv8 0( );〈 〉----------------------------------------------=
+
+x y 01 2⁄=
+t y 01 2⁄– xv8 0( ) y t y 01 2⁄– xv8 0( );〈 〉xv8
+
+0( )
+x~8
+
+0( );〈 〉
+----------------------------------------------------------------------------
+
+xv8
+0( ) y 01 2⁄– t *y t y 01 2⁄– xv8 0( );〈 〉x~8
+
+0( )
+xv8
+
+0( );〈 〉
+------------------------------------------------------------------------------=
+
+y 01 2⁄– t * y t y 01 2⁄– y 1 2⁄– t y 01 2⁄–( )* y 1 2⁄– t y 01 2⁄–( )=
+
+y 1 2⁄– t y 01 2⁄–
+
+Z Z 
+Z Z=  Z Z( )
+
+Σ∉∀=
+Σ∈∀=
+
+ssg
+
+ssg
+
+0)(
+
+1)(
+
+ Σ
+( )
+
+Ω∉∀=
+Ω∈∀=
+
+nnw
+
+nnw
+
+0)(
+
+1)(
+
+ Ω
+Z `
+
+`  1–  =
+
+
+
+Chaos and weather prediction
+
+24 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+to the vector sets the vector to zero for all grid points outside the geographical region . Similarly, the appli-
+
+cation of the spectral projection operator to the vector sets to zero its spectral components with wave number
+
+outside .
+
+The projection operators and can be used either at initial or at final time, or at both times. As an example,
+
+these operators can be used to formulate the following problem: find the perturbations with (i) the fastest growth
+
+during the time interval , (ii) unitary -norm and wave components belonging to at initial time, (iii)
+
+maximum -norm inside the geographical region and wave components belonging to at optimization time.
+
+This problem can be solved by the computation of the singular values of the operator
+
+(29)
+
+REFERENCES
+
+Appenzeller, Ch., Davies, H. C., Popovic, J. M., Nickovic, S., & Gavrilov, M. B., 1996: PV morphology of a fron-
+
+tal-wave development. Met. and Atm. Phys., 58, 21-40.
+
+Barkmeijer, J., van Gijzen, M., & Bouttier, F., 1998: Singular vectors and estimates of the analysis error covariance
+
+metric. Q. J. R. Meteor. Soc., 124, 549, 1695-1713.
+
+Barkmeijer, J., Buizza, R., & Palmer, T. N., 1999a: 3D-Var Hessian singular vectors and their potential use in the
+
+ECMWF Ensemble Prediction System. Q. J. R. Meteor. Soc., 125, 2333-2351.
+
+Barkmeijer, J., Buizza, R., Palmer, T. N., & Puri, K., 1999b: Tropical singular vectors computed with linearized
+
+diabatic physics. Q. J. R. Meteor. Soc., submitted.
+
+Bishop, C. H., & Toth, Z., 1998: Ensemble Transformation and Adaptive Observations. J. Atmos. Sci., under revi-
+
+sion.
+
+Borges, M., & Hartmann, D. L., 1992: Barotropic instability and optimal perturbations of observed non-zonal
+
+flows. J. Atmos. Sci., 49, 335-354.
+
+Buizza, R., 1992: Unstable perturbations computed using the adjoint technique. ECMWF Research Department
+
+Technical Memorandum No. 189, ECMWF, Shinfield Park, Reading RG2 9AX, UK.
+
+Buizza, R., 1994: Sensitivity of Optimal Unstable Structures. Q. J. R. Meteorol. Soc., 120, 429-451.
+
+Buizza, R., 1997: The singular vector approach to the analysis of perturbation growth in the atmosphere. Ph. D.
+
+thesis, University College London, Gower Street, London.
+
+Buizza, R., & Palmer, T. N., 1995: The singular-vector structure of the atmospheric general circulation. J. Atmos.
+
+Sci., 52, 9, 1434-1456.
+
+Buizza, R., & Montani, A., 1999: Targeting observations using singular vectors. J. Atmos. Sci., 56, 2965-2985.
+
+Buizza, R., Tribbia, J., Molteni, F., & Palmer, T. N., 1993: Computation of optimal unstable structures for a numer-
+
+ical weather prediction model. Tellus, 45A, 388-407.
+
+Buizza, R., Petroliagis, T., Palmer, T. N., Barkmeijer, J., Hamrud, M., Hollingsworth, A., Simmons, A., & Wedi,
+
+N., 1998: Impact of model resolution and ensemble size on the performance of an ensemble prediction system. Q.
+
+J. R. Meteorol. Soc., 124, 1935-1960.
+
+Buizza, R., Miller, M., & Palmer, T. N., 1999: Stochastic simulation of model uncertainties. Q. J. R. Meteorol. Soc.,
+
+125, 2887-2908.
+
+Z Z Σ Z
+Ω
+
+` 
+
+88
+0– y 0 Ω0
+
+y Σ Ω1
+
+ y 1 2⁄– `  1 t  0y 01 2⁄–=
+
+
+
+Chaos and weather prediction
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 25
+
+Charney, J. G., 1947: The dynamics of long waves in a baroclinic westerly current. J. Meteor., 4, 135-162.
+
+Charney, J. G., 1948: On the scale of atmospheric motions. Geofys. Publ., 17, 1-17.
+
+Courtier, P., Freydier, C., Geleyn, J.-F., Rabier, F., & Rochas, M., 1991: The Arpege project at Météo-France. Pro-
+
+ceedings of the ECMWF Seminar on Numerical methods in atmospheric models, Vol. II, 193-231. ECMWF, Shin-
+
+field Park, Reading RG2 9AX, UK.
+
+Courtier, P., Derber, J., Errico, R., Louis, J.-F., & Vukicevic, T., 1993: Important literature on the use of adjoint,
+
+variational methods and the Kalman filter in meteorology. Tellus, 45A, 342-357.
+
+Courtier, P., Thepaut, J.-N., & Hollingsworth, A., 1994: A strategy for operational implementation of 4D-Var, using
+
+an incremental approach. Q. J. R. Meteorol. Soc., 120, 1367-1388.
+
+Downton, R. A., & Bell, R. S., 1988: The impact of analysis differences on a medium-range forecast. Meteorol.
+
+Mag., 117, 279-285.
+
+Ehrendorfer, M., 1994: The Liouville equation and its potential usefulness for the prediction of forecast skill. Part
+
+I: Theory. Mon. Wea. Rev., 122, 703-713.
+
+Ehrendorfer, M., & Tribbia, J. J., 1995: Efficient prediction of covariances using singular vectors. Preprint Volume,
+
+6th International Meeting on Statistical Climatology, Galway, Ireland, 135-138.
+
+Epstein, E. S., 1969: Stochastic dynamic prediction. Tellus, 21, 739-759.
+
+Evensen, G., 1994: Sequential data assimilation with a non-linear quasi-geostrophic model using Monte Carlo
+
+methods to forecast error statistics. J. Geoph. Res., 99, 10,143-10,162.
+
+Farrell, B. F., 1982: The initial growth of disturbances in a baroclinic flow. J. Atmos. Sci., 39, 8, 1663-1686.
+
+Farrell, B. F., 1988: Optimal excitation of neutral Rossby waves. J. Atmos. Sci., 45 (2), 163-172.
+
+Farrell, B. F., 1989: Optimal excitation of baroclinic waves. J. Atmos. Sci., 46 (9), 1193-1206.
+
+Fleming, R. J., 1971a: On stochastic dynamic prediction. I: the energetics of uncertainty and the question of clo-
+
+sure. Mon. Wea. Rev., 99, 851-872.
+
+Fleming, R. J., 1971b: On stochastic dynamic prediction. II: predictability and utility. Mon. Wea. Rev., 99, 927-
+
+938.
+
+Gleeson, T. A., 1970: Statistical-dynamical predictions. J. Appl. Meteorol., 9, 333-344.
+
+Golub, G. H., & Van Loan, C. F., 1983: Matrix computation. North Oxford Academic Publ. Co. Ltd., pp. 476.
+
+Hall, M. C. G., & Cacuci, D. G., 1983: Physical interpretation of the adjoint functions for sensitivity analysis of
+
+atmospheric models. J. Atmos. Sci., 46, 9, 1193-1206.
+
+Holton, J. R., 1992: An Introduction to Dynamic Meteorology. Academic Press Inc., 511 pp.
+
+Holland, G. J., McGeer, T., & Youngren, H., 1992: Autonomous aerosondes for economical atmospheric soundings
+
+anywhere on the globe. Bull. Amer. Met. Soc., 73, 1987-1998.
+
+Hoskins, B. J., & Valdes, P. J., 1990: On the exhistence of storm tracks. J. Atmos. Sci., 47, 1854-1864.
+
+Hoskins, B. J., McIntyre, M. E., & Robertson, A. W., 1985: On the use and significance of isentropic potential vor-
+
+ticity maps. Q. J. R. Meteorol. Soc., 111, 877-946.
+
+Hoskins, B. J., Buizza, R., & Badger, J., 1999: The nature of singular vector growth and structure. Q. J. R. Mete-
+
+orol. Soc., under revision.
+
+
+
+Chaos and weather prediction
+
+26 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Harrison, M. S. J., Palmer, T. N., Richardson, D. S., & Buizza, R., : 1999: Analysis and model dependencies in
+
+medium-range ensembles: two transplant case studies. Q. J. R. Meteorol. Soc., 125, 2487-2515.
+
+Houtekamer, P. L., Lefaivre, L., Derome, J., Ritchie, H., & Mitchell, H., 1996: A system simulation approach to
+
+ensemble prediction. Mon. Wea. Rev., 124, 1225-1242.
+
+Houtekamer, P. L., & Mitchell, H., 1998: Data assimilation using an ensemble Kalman filter. Mon. Wea. Rev., 126,
+
+796-811.
+
+Jacob, C., 1994: The impact of the new cloud scheme on ECMWF's Integrated Forecasting System (IFS). Proceed-
+
+ings of the ECMWF/GEWEX workshop on Modeling, validation and assimilation of clouds, ECMWF, Shinfield
+
+Park, Reading RG2 9AX, 31 October - 4 November 1994, pp. 464.
+
+Joly, A., Jorgensen, D., Shapiro, M. A., Thorpe, A. J., Bessemoulin, P., Browning, K. A., Cammas, J.-P., Chalon,
+
+J.-P., Clough, S. A., Emanuel, K. A., Eymard, R., Gall, R., Hildebrand, P. H., Langland, R. H., Lamaître, Y., Lynch,
+
+P., Moore, J. A., Persson, P. O. G., Snyder, C., & Wakimoto, R. M., 1996: The Fronts and Atlantic Storm-Track
+
+Experiment (FASTEX): Scientific objectives and experimental design. Report Number 6. The FASTEX Project
+
+Office, Météo-France, CNRM, 42 Avenue Coriolis, Toulouse, France.  (Also submitted to Bull. Am. Met. Soc.).
+
+Kontarev, G., 1980: The adjoint equation technique applied to meteorological problems. Technical Report No. 21,
+
+European Centre for Medium-Range Weather Forecasts, Shinfield Park, Reading RG2 9AX, UK.
+
+Lacarra, J.-F., & Talagrand, O., 1988: Short range evolution of small perturbations in a barotropic model. Tellus,
+
+40A, 81-95.
+
+Langland, R H, & Rohaly, G D, 1996: Adjoint-based targeting of observations for FASTEX cyclones. American
+
+Meteorological Society pre-prints of the 7th conference on mesoscale processes, September 9-13, 1996, Reading,
+
+UK, pp. 618.
+
+Le Dimet, F.-X., & Talagrand, O., 1986: Variational algorithms for analysis and assimilation of meteorological ob-
+
+servations: theoretical aspects. Tellus, 38A, 97-110.
+
+Leith, C. E., 1974: Theoretical skill of Monte Carlo forecasts. Mon. Wea. Rev., 102, 409-418.
+
+Lorenz, E. N., 1963: Deterministic non-periodic flow. J. Atmos. Sci., 20, 130-141.
+
+Lorenz, E. N., 1965: A study of the predictability of a 28-variable atmospheric model. Tellus, 17, 321-333.
+
+Lorenz, E. N., 1993: The essence of chaos.  UCL Press, pp 227.
+
+Mahfouf, J.-F., 1999: Influence of physical processes on the tangent-linear approximation. Tellus, 51A, 147-166.
+
+Marsigli, C., Montani, A., Nerozzi, F., Paccagnella, T., Molteni, F., & Buizza, R., 1999b: High resolution ensemble
+
+prediction. Part II: an application to four flood events. Q. J. R. Meteorol. Soc., submitted
+
+Morcrette, J.-J., 1990: Impact of changes to the radiation transfer parameterisation plus cloud optical properties in
+
+the ECMWF model. Mon. Wea. Rev., 118, 847-873.
+
+Molteni, F., & Palmer, T. N., 1993: Predictability and finite-time instability of the northern winter circulation. Q.
+
+J. R. Meteorol. Soc., 119, 1088-1097.
+
+Molteni, F., Buizza, R., Palmer, T. N., & Petroliagis, T., 1996: The new ECMWF ensemble prediction system:
+
+methodology and validation. Q. J. R. Meteorol. Soc., 122, 73-119.
+
+Molteni, F., Buizza, R., Marsigli, C., Montani, A., Nerozzi, F., & Paccagnella, T., 1999: High resolution ensemble
+
+prediction. Part I: representative members definition and global applications. Q. J. R. Meteorol. Soc., submitted.
+
+Montani, A., Thorpe, A. J., Buizza, R., & Unden, P., 1999: Forecast skill in the ECMWF model using targeted ob-
+
+
+
+Chaos and weather prediction
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 27
+
+servations during FASTEX. Q. J. R. Meteorol. Soc., in press.
+
+Noble, B., & Daniel, J. W., 1977: Applied linear algebra, Prenctice-Hall, Inc., pp. 477.
+
+Palmer, T. N., 1997: On parametrizing scales that are only somewhat smaller than the smallest resolved scales, with
+
+application to convection and orography. Proceedings of the ECMWF workshop on New insights and approaches
+
+to convective parametrization, ECMWF, Shinfield Park, Reading RG2-9AX, UK, 328-337.
+
+Palmer, T. N., Molteni, F., Mureau, R., Buizza, R., Chapelet, P., & Tribbia, J., 1993: Ensemble prediction. Proceed-
+
+ings of the ECMWF Seminar on Validation of models over Europe: vol. I, ECMWF, Shinfield Park, Reading, RG2
+
+9AX, UK.
+
+Pu, Z.-X., Kalnay, E., Sela, J., & Szunyogh., 1997: Sensitivity of forecast error to initial conditions with a quasi-
+
+inverse linear method. Mon. Wea. Rev., 125, 2479-2503.
+
+Pu, Z.-X., Kalnay, E., & Toth, Z., 1998: Application of the quasi-inverse linear and adjoint NCEP global models
+
+to targeted observations during FASTEX. Pre-prints of the 12th Conference on Numerical Weather Prediction, 11-
+
+16 January 1998, Phoenix, Arizona, 8-9.
+
+Puri, K., Barkmeijer, J., & Palmer, T. N., 1999: Ensemble prediction of tropical cyclones using targeted diabatic
+
+singular vectors. Q. J. R. Meteorol. Soc., submitted.
+
+Rabier, F., Klinker, E., Courtier, P., & Hollingsworth, A, 1996: Sensitivity of forecast errors to initial conditions.
+
+Q. J. R. Meteorol. Soc., 122, 121-150.
+
+Richardson, L. F., 1922: Weather Prediction by Numerical Process. Cambridge University Press (reprt. Dover, New
+
+York).
+
+Richardson, D. S., 1998: The relative effect of model and analysis differences on ECMWF and UKMO operational
+
+forecasts. Proceedings of the ECMWF Workshop on Predictability, ECMWF, Shinfield Park, Reading RG2 9AX,
+
+UK.
+
+Simmons, A. J., Burridge, D. M., Jarraud, M., Girard, C., & Wergen, W., 1989: The ECMWF medium-range pre-
+
+diction models development of the numerical formulations and the impact of increased resolution. Meteorol. At-
+
+mos. Phys., 40, 28-60.
+
+Simmons, A. J., Mureau, R., & Petroliagis, T., 1995: Error growth and predictability estimates for the ECMWF
+
+forecasting system. Q. J. R. Meteorol. Soc., 121, 1739-1771.
+
+Snyder, C., 1996: Summary of an informal workshop on adaptive observations and FASTEX. Bull. Am. Meteor.
+
+Soc., 77, 953-961.
+
+Somerville, R. C. J., 1979: Predictability and prediction of ultra-long planetary waves. Pre-prints of the Amer. Me-
+
+teor. Soc. Fourth Conference on Numerical Weather Prediction, Silver Spring, MD, 182-185.
+
+Strang, G., 1986: Introduction to applied mathematics. Wellesley-Cambridge Press, pp 758.
+
+Thorpe, A. J., & Shapiro, M. A., 1995: FASTEX: Fronts and Atlantic Storm Track Experiment. The Science Plan.
+
+Available form the FASTEX Project Office, July 1995, pp. 25.
+
+Thorpe, A. J., Buizza, R., Montani, A., & Palmer, T. N., 1998: Chaotic control for weather prediction. Royal So-
+
+ciety New frontiers in Science Exhibition, June 1998, The Royal Society, 6 Carlton House Terrace, London SW1Y-
+
+5AG, UK.
+
+Tiedtke, M., 1993: Representation of clouds in large-scale models. Mon. Wea. Rev., 121, 3040-3060.
+
+Toth, Z., & Kalnay, E., 1993: Ensemble forecasting at NMC: the generation of perturbations. Bull. Am. Met. Soc.,
+
+
+
+Chaos and weather prediction
+
+28 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+74, 2317-2330.
+
+Tracton, M. S., & Kalnay, E., 1993: Operational ensemble prediction at the National Meteorological Center: prac-
+
+tical aspects. Weather and Forecasting, 8, 379-398.
+
+Urban, B., 1985: Error maximum growth in simple meteorological models (in French). Meteorologie Nationale In-
+
+ternal Report.
+
+Viterbo, P., & Beljaars, C. M., 1995: An improved land surface parametrisation scheme in the ECMWF model and
+
+its validation. J. Clim., 8, 2716-2748.
+
+Von Neumann, J., & Richtmeyer, R. D., 1950: A method for the numerical calculation of hydrodynamical shocks.
+
+J. Appl. Phys., 21, 232.

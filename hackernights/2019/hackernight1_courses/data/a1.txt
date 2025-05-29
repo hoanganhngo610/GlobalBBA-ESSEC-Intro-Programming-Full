@@ -1,0 +1,501 @@
+Appendix A
+
+Review of Likelihood Theory
+
+This is a brief summary of some of the key results we need from likelihood
+theory.
+
+A.1 Maximum Likelihood Estimation
+
+Let Y1, . . . , Yn be n independent random variables (r.v.’s) with probability
+density functions (pdf) fi(yi;θ) depending on a vector-valued parameter θ.
+
+A.1.1 The Log-likelihood Function
+
+The joint density of n independent observations y = (y1, . . . , yn)′ is
+
+f(y;θ) =
+n∏
+
+i=1
+
+fi(yi;θ) = L(θ;y). (A.1)
+
+This expression, viewed as a function of the unknown parameter θ given
+the data y, is called the likelihood function.
+
+Often we work with the natural logarithm of the likelihood function, the
+so-called log-likelihood function:
+
+log L(θ;y) =
+n∑
+
+i=1
+
+log fi(yi;θ). (A.2)
+
+A sensible way to estimate the parameter θ given the data y is to maxi-
+mize the likelihood (or equivalently the log-likelihood) function, choosing the
+parameter value that makes the data actually observed as likely as possible.
+Formally, we define the maximum-likelihood estimator (mle) as the value θ̂
+such that
+
+G. Rodŕıguez. Revised November 2001
+
+
+
+2 APPENDIX A. REVIEW OF LIKELIHOOD THEORY
+
+log L(θ̂;y) ≥ log L(θ;y) for all θ. (A.3)
+
+Example: The Log-Likelihood for the Geometric Distribution. Consider a
+series of independent Bernoulli trials with common probability of success π.
+The distribution of the number of failures Yi before the first success has pdf
+
+Pr(Yi = yi) = (1− π)yiπ. (A.4)
+
+for yi = 0, 1, . . .. Direct calculation shows that E(Yi) = (1− π)/π.
+The log-likelihood function based on n observations y can be written as
+
+log L(π;y) =
+n∑
+
+i=1
+
+{yi log(1− π) + log π} (A.5)
+
+= n(ȳ log(1− π) + log π), (A.6)
+
+where ȳ =
+∑
+
+yi/n is the sample mean. The fact that the log-likelihood
+depends on the observations only through the sample mean shows that ȳ is
+a sufficient statistic for the unknown probability π.
+
+p
+
+lo
+gL
+
+0.1 0.2 0.3 0.4 0.5 0.6
+
+-7
+5
+
+-7
+0
+
+-6
+5
+
+-6
+0
+
+-5
+5
+
+-5
+0
+
+-4
+5
+
+Figure A.1: The Geometric Log-Likelihood for n = 20 and ȳ = 3
+
+Figure A.1 shows the log-likelihood function for a sample of n = 20
+observations from a geometric distribution when the observed sample mean
+is ȳ = 3.2
+
+
+
+A.1. MAXIMUM LIKELIHOOD ESTIMATION 3
+
+A.1.2 The Score Vector
+
+The first derivative of the log-likelihood function is called Fisher’s score
+function, and is denoted by
+
+u(θ) =
+∂ log L(θ;y)
+
+∂θ
+. (A.7)
+
+Note that the score is a vector of first partial derivatives, one for each element
+of θ.
+
+If the log-likelihood is concave, one can find the maximum likelihood
+estimator by setting the score to zero, i.e. by solving the system of equations:
+
+u(θ̂) = 0. (A.8)
+
+Example: The Score Function for the Geometric Distribution. The score
+function for n observations from a geometric distribution is
+
+u(π) =
+d log L
+
+dπ
+= n(
+
+1
+π
+− ȳ
+
+1− π
+). (A.9)
+
+Setting this equation to zero and solving for π leads to the maximum likeli-
+hood estimator
+
+π̂ =
+1
+
+1 + ȳ
+. (A.10)
+
+Note that the m.l.e. of the probability of success is the reciprocal of the
+number of trials. This result is intuitively reasonable: the longer it takes to
+get a success, the lower our estimate of the probability of success would be.
+
+Suppose now that in a sample of n = 20 observations we have obtained
+a sample mean of ȳ = 3. The m.l.e. of the probability of success would be
+π̂ = 1/(1 + 3) = 0.25, and it should be clear from Figure A.1 that this value
+maximizes the log-likelihood.
+
+A.1.3 The Information Matrix
+
+The score is a random vector with some interesting statistical properties. In
+particular, the score evaluated at the true parameter value θ has mean zero
+
+E[u(θ)] = 0
+
+and variance-covariance matrix given by the information matrix:
+
+var[u(θ)] = E[u(θ)u′(θ)] = I(θ). (A.11)
+
+
+
+4 APPENDIX A. REVIEW OF LIKELIHOOD THEORY
+
+Under mild regularity conditions, the information matrix can also be
+obtained as minus the expected value of the second derivatives of the log-
+likelihood:
+
+I(θ) = −E[∂
+2 log L(θ)
+∂θ∂θ′
+
+]. (A.12)
+
+The matrix of negative observed second derivatives is sometimes called
+the observed information matrix.
+
+Note that the second derivative indicates the extent to which the log-
+likelihood function is peaked rather than flat. This makes the interpretation
+in terms of information intuitively reasonable.
+
+Example: Information for the Geometric Distribution. Differentiating the
+score we find the observed information to be
+
+−d
+2 log L
+dπ2
+
+= −du
+dπ
+
+= n(
+1
+π2
+
++
+ȳ
+
+(1− π)2
+). (A.13)
+
+To find the expected information we use the fact that the expected value of
+the sample mean ȳ is the population mean (1− π)/π, to obtain (after some
+simplification)
+
+I(π) =
+n
+
+π2(1− π)
+. (A.14)
+
+Note that the information increases with the sample size n and varies with
+π, increasing as π moves away from 23 towards 0 or 1.
+
+In a sample of size n = 20, if the true value of the parameter was π = 0.15
+the expected information would be I(0.15) = 1045.8. If the sample mean
+turned out to be ȳ = 3, the observed information would be 971.9. Of course,
+we don’t know the true value of π. Substituting the mle π̂ = 0.25, we
+estimate the expected and observed information as 426.7. 2
+
+A.1.4 Newton-Raphson and Fisher Scoring
+
+Calculation of the mle often requires iterative procedures. Consider expand-
+ing the score function evaluated at the mle θ̂ around a trial value θ0 using
+a first order Taylor series, so that
+
+u(θ̂) ≈ u(θ0) +
+∂u(θ)
+
+∂θ
+(θ̂ − θ0). (A.15)
+
+Let H denote the Hessian or matrix of second derivatives of the log-likelihood
+function
+
+H(θ) =
+∂2 log L
+∂θ∂θ′
+
+=
+∂u(θ)
+
+∂θ
+. (A.16)
+
+
+
+A.2. TESTS OF HYPOTHESES 5
+
+Setting the left-hand-size of Equation A.15 to zero and solving for θ̂ gives
+the first-order approximation
+
+θ̂ = θ0 −H−1(θ0)u(θ0). (A.17)
+
+This result provides the basis for an iterative approach for computing the
+mle known as the Newton-Raphson technique. Given a trial value, we use
+Equation A.17 to obtain an improved estimate and repeat the process until
+differences between successive estimates are sufficiently close to zero. (Or
+until the elements of the vector of first derivatives are sufficiently close to
+zero.) This procedure tends to converge quickly if the log-likelihood is well-
+behaved (close to quadratic) in a neighborhood of the maximum and if the
+starting value is reasonably close to the mle.
+
+An alternative procedure first suggested by Fisher is to replace minus
+the Hessian by its expected value, the information matrix. The resulting
+procedure takes as our improved estimate
+
+θ̂ = θ0 + I−1(θ0)u(θ0), (A.18)
+
+and is known as Fisher Scoring.
+
+Example: Fisher Scoring in the Geometric Distribution. In this case setting
+the score to zero leads to an explicit solution for the mle and no iteration is
+needed. It is instructive, however, to try the procedure anyway. Using the
+results we have obtained for the score and information, the Fisher scoring
+procedure leads to the updating formula
+
+π̂ = π0 + (1− π0 − π0ȳ)π0. (A.19)
+
+If the sample mean is ȳ = 3 and we start from π0 = 0.1, say, the procedure
+converges to the mle π̂ = 0.25 in four iterations. 2
+
+A.2 Tests of Hypotheses
+
+We consider three different types of tests of hypotheses.
+
+A.2.1 Wald Tests
+
+Under certain regularity conditions, the maximum likelihood estimator θ̂
+has approximately in large samples a (multivariate) normal distribution with
+mean equal to the true parameter value and variance-covariance matrix given
+by the inverse of the information matrix, so that
+
+
+
+6 APPENDIX A. REVIEW OF LIKELIHOOD THEORY
+
+θ̂ ∼ Np(θ, I−1(θ)). (A.20)
+
+The regularity conditions include the following: the true parameter value
+θ must be interior to the parameter space, the log-likelihood function must
+be thrice differentiable, and the third derivatives must be bounded.
+
+This result provides a basis for constructing tests of hypotheses and con-
+fidence regions. For example under the hypothesis
+
+H0 : θ = θ0 (A.21)
+
+for a fixed value θ0, the quadratic form
+
+W = (θ̂ − θ0)′var−1(θ̂)(θ̂ − θ0) (A.22)
+
+has approximately in large samples a chi-squared distribution with p degrees
+of freedom.
+
+This result can be extended to arbitrary linear combinations of θ, includ-
+ing sets of elements of θ. For example if we partition θ′ = (θ′1,θ
+
+′
+2), where θ2
+
+has p2 elements,then we can test the hypothesis that the last p2 parameters
+are zero
+
+Ho : θ2 = 0,
+
+by treating the quadratic form
+
+W = θ̂2
+′
+var−1(θ̂2) θ̂2
+
+as a chi-squared statistic with p2 degrees of freedom. When the subset has
+only one element we usually take the square root of the Wald statistic and
+treat the ratio
+
+z =
+θ̂j√
+
+var(θ̂j)
+
+as a z-statistic (or a t-ratio).
+These results can be modified by replacing the variance-covariance matrix
+
+of the mle with any consistent estimator. In particular, we often use the
+inverse of the expected information matrix evaluated at the mle
+
+v̂ar(θ̂) = I−1(θ̂).
+
+Sometimes calculation of the expected information is difficult, and we
+use the observed information instead.
+
+
+
+A.2. TESTS OF HYPOTHESES 7
+
+Example: Wald Test in the Geometric Distribution. Consider again our
+sample of n = 20 observations from a geometric distribution with sample
+mean ȳ = 3. The mle was π̂ = 0.25 and its variance, using the estimated
+expected information, is 1/426.67 = 0.00234. Testing the hypothesis that
+the true probability is π = 0.15 gives
+
+χ2 = (0.25− 0.15)2/0.00234 = 4.27
+
+with one degree of freedom. The associated p-value is 0.039, so we would
+reject H0 at the 5% significance level. 2
+
+A.2.2 Score Tests
+
+Under some regularity conditions the score itself has an asymptotic nor-
+mal distribution with mean 0 and variance-covariance matrix equal to the
+information matrix, so that
+
+u(θ) ∼ Np(0, I(θ)). (A.23)
+
+This result provides another basis for constructing tests of hypotheses and
+confidence regions. For example under
+
+H0 : θ = θ0
+
+the quadratic form
+Q = u(θ0)′ I−1(θ0)u(θ0)
+
+has approximately in large samples a chi-squared distribution with p degrees
+of freedom.
+
+The information matrix may be evaluated at the hypothesized value θ0
+or at the mle θ̂. Under H0 both versions of the test are valid; in fact, they
+are asymptotically equivalent. One advantage of using θ0 is that calculation
+of the mle may be bypassed. In spite of their simplicity, score tests are rarely
+used.
+
+Example: Score Test in the Geometric Distribution. Continuing with our
+example, let us calculate the score test of H0 : π = 0.15 when n = 20 and
+ȳ = 3. The score evaluated at 0.15 is u(0.15) = −62.7, and the expected
+information evaluated at 0.15 is I(0.15) = 1045.8, leading to
+
+χ2 = 62.72/1045.8 = 3.76
+
+with one degree of freedom. Since the 5% critical value is χ21,0.95 = 3.84 we
+would accept H0 (just). 2
+
+
+
+8 APPENDIX A. REVIEW OF LIKELIHOOD THEORY
+
+A.2.3 Likelihood Ratio Tests
+
+The third type of test is based on a comparison of maximized likelihoods
+for nested models. Suppose we are considering two models, ω1 and ω2, such
+that ω1 ⊂ ω2. In words, ω1 is a subset of (or can be considered a special
+case of) ω2. For example, one may obtain the simpler model ω1 by setting
+some of the parameters in ω2 to zero, and we want to test the hypothesis
+that those elements are indeed zero.
+
+The basic idea is to compare the maximized likelihoods of the two models.
+The maximized likelihood under the smaller model ω1 is
+
+max
+θ∈ω1
+
+L(θ,y) = L(θ̂ω1 ,y), (A.24)
+
+where θ̂ω1 denotes the mle of θ under model ω1.
+The maximized likelihood under the larger model ω2 has the same form
+
+max
+θ∈ω2
+
+L(θ,y) = L(θ̂ω2 ,y), (A.25)
+
+where θ̂ω2 denotes the mle of θ under model ω2.
+The ratio of these two quantities,
+
+λ =
+L(θ̂ω1 ,y)
+L(θ̂ω2 ,y)
+
+, (A.26)
+
+is bound to be between 0 (likelihoods are non-negative) and 1 (the likelihood
+of the smaller model can’t exceed that of the larger model because it is nested
+on it). Values close to 0 indicate that the smaller model is not acceptable,
+compared to the larger model, because it would make the observed data very
+unlikely. Values close to 1 indicate that the smaller model is almost as good
+as the large model, making the data just as likely.
+
+Under certain regularity conditions, minus twice the log of the likelihood
+ratio has approximately in large samples a chi-square distribution with de-
+grees of freedom equal to the difference in the number of parameters between
+the two models. Thus,
+
+−2 log λ = 2 log L(θ̂ω2 , y)− 2 log L(θ̂ω1 , y) → χ2ν , (A.27)
+
+where the degrees of freedom are ν = dim(ω2) − dim(ω1), the number of
+parameters in the larger model ω2 minus the number of parameters in the
+smaller model ω1.
+
+
+
+A.2. TESTS OF HYPOTHESES 9
+
+Note that calculation of a likelihood ratio test requires fitting two mod-
+els (ω1 and ω2), compared to only one model for the Wald test (ω2) and
+sometimes no model at all for the score test.
+
+Example: Likelihood Ratio Test in the Geometric Distribution. Consider
+testing H0 : π = 0.15 with a sample of n = 20 observations from a geometric
+distribution, and suppose the sample mean is ȳ = 3. The value of the like-
+lihood under H0 is log L(0.15) = −47.69. Its unrestricted maximum value,
+attained at the mle, is log L(0.25) = −44.98. Minus twice the difference
+between these values is
+
+χ2 = 2(47.69− 44.99) = 5.4
+
+with one degree of freedom. This value is significant at the 5% level and we
+would reject H0. Note that in our example the Wald, score and likelihood
+ratio tests give similar, but not identical, results. 2
+
+The three tests discussed in this section are asymptotically equivalent,
+and are therefore expected to give similar results in large samples. Their
+small-sample properties are not known, but some simulation studies suggest
+that the likelihood ratio test may be better that its competitors in small
+samples.

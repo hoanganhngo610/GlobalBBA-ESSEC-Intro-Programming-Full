@@ -1,0 +1,2700 @@
+Atmospheric_waves
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+Atmospheric waves
+
+By Martin Miller
+
+European Centre for Medium-Range Weather Forecasts
+
+1. INTRODUCTION
+
+In order to understand the many and varied approximations and assumptions which are made in designing a nu-
+
+merical model of the earths atmosphere (whether of small-scale features such as individual clouds, or mesoscale,
+
+regional, global weather prediction or climate models), it is necessary to study the various wave motions which can
+
+be present. The identification and appreciation of the mechanisms of these waves will allow us to isolate or elim-
+
+inate certain wave types and to better understand the viability and effectiveness of commonly made approximations
+
+such as assuming hydrostatic balance.
+
+Here we will attempt to identify the basic atmospheric wave motions, to emphasise their most important properties
+
+and their physical characteristics. Basic textbooks such as 'An Introduction to Dynamic Meteorology' by Holton
+
+or 'Numerical Prediction and Dynamic Meteorology' by Haltiner and Williams provide a good introduction and
+
+complement this short course well. Whereas these textbooks treat each wave motion separately starting from dif-
+
+ferent simplified equation sets, we will separate waves from a more complete equation set by various approxima-
+
+tions made at later stages thus making it easier to relate the impact of a particular approximation on several wave
+
+types. Nevertheless, to retain all wave types in the initial equation set is unmanageable and we will introduce sub-
+
+sets of equations later.
+
+We will restrict ourselves to neutral (non-amplifying, non-decaying) waves in which energy exchanges are oscil-
+
+latory.
+
+While the exact equations have been considerably simplified into a useful form for studies of atmospheric dynam-
+
+ics, these simplified equations cannot be solved analytically except in certain special cases. The main difficulty aris-
+
+es through the non-linear advective terms , etc. Although these terms can considerably modify the
+
+linear solutions and are also physically significant because they represent transfer and feedback between different
+
+scales of motion, the linearized equations (obtained by removing second-order advective terms) are useful for iden-
+
+tifying the origin of distinct types of wave (acoustic, gravity and cyclone) in the equations. It should be understood
+
+that although nonlinearity will modify the acoustic, gravity and long waves it will not introduce any additional
+
+wave types. Since the origin of waves can be identified in the linearized equations and these can be solved analyt-
+
+ically, useful methods for filtering individual modes can be determined.
+
+2. BASIC EQUATIONS
+
+The following mathematical analysis requires a choice of vertical coordinate. While it is common to use pressure
+
+or a pressure-based vertical coordinate in large-scale modelling, this is not a necessary theoretical restriction and
+
+we can write the equations in  (height),  (pressure) or ( ), as follows:
+
+-coordinates
+
+v ∇⋅( )v v
+�
+
+∇⋅
+
+� � σ ��� *⁄=
+� �����	�, , ,( )
+
+
+
+Atmospheric waves
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(1)
+
+(2)
+
+(3)
+
+(4)
+
+(5)
+
+where  and
+
+All source/sink terms are omitted.
+
+-coordinates
+
+An exact transformation of (1)–(5) to -coordinates gives:
+
+(6)
+
+(7)
+
+(8)
+
+(9)
+
+(10)
+
+where
+
+(11)
+
+and , , and
+
+D 
+
+D �-------- ��–
+
+1
+ρ
+---∂
+�
+
+∂�------–=
+
+D �
+D �------- �
++
+
+1
+ρ
+---∂
+�
+
+∂�------–=
+
+D �
+D �--------- �+
+
+1
+ρ
+---∂
+�
+
+∂�------–=
+
+∂ 
+
+∂�------
+
+∂ �
+∂�------
+
+∂ �
+∂�-------+ +
+
+D
+D �------ ρln( )=
+
+D
+D �------
+
+�
+ln( ) κ D
+
+D �------
+�ln( )=
+
+D
+D �------
+
+∂
+∂ �----- 
+
+
+∂
+∂�------ �
+
+∂
+∂�------ �
+
+∂
+∂�------+ + += κ
+
+�
+���-----=
+
+� �������, , ,( )
+�
+
+D 
+
+D �-------- ���– 1 ε+( )
+
+∂Φ
+∂�-------–=
+
+D �
+D �------- ��
++ 1 ε+( )
+
+∂Φ
+∂�-------–=
+
+���
+�--------- 1 ε+( )∂Φ∂�-------–=
+
+∂ 
+
+∂�------
+
+∂ �
+∂�------
+
+∂ω
+∂�-------+ +
+
+D
+D �------ 1 ε+( )ln{ }=
+
+D
+�
+
+D �---------
+κω
+�
+�------------=
+
+ε 1�---
+D �
+D �---------
+
+1
+
+� 2------
+D
+D �------
+
+Dφ
+D �-------= =
+
+ω
+� �� �--------= Φ � �= DD �------
+
+∂
+∂ �----- 
+
+
+∂
+∂�------ �
+
+∂
+∂�------ ω
+
+∂
+∂�------+ + +=
+
+
+
+Atmospheric waves
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+-coordinates
+
+Either by transforming (1)(5) or (6)–(11) we can obtain the exact -coordinate set:
+
+(12)
+
+(13)
+
+(14)
+
+(15)
+
+(16)
+
+where , and .
+
+All partial derivatives respect their coordinate system.
+
+Note that putting in (3), and elsewhere gives the familiar large-scale equation sets, but we
+
+will not make this approximation at present. In principle the following linearized analysis can be done in any co-
+
+ordinate; we will use height but much of this analysis has been done in pressure and sigma coordinates elsewhere
+
+(e.g. Kasahara, 1974; Miller, 1974; Miller and White, 1984).
+
+For simplicity we will suppose that the motion is independent of and neglect the variation of the Coriolis param-
+
+eter with latitude ( ). Also we will consider small disturbances on an initially motionless atmos-
+
+phere. A non-zero basic flow and restoration of  and non-zero  will be considered later.
+
+In order to trace the effect of individual terms we will use ‘tracer parameters' which have the value
+
+1 but can be set to zero to eliminate the relevant term.
+
+We define ,where  and  is a reference pressure (e.g. 105 Pa), and write
+
+where denote small perturbations on a mean state and define the
+
+basic horizontally stratified atmosphere with . Since we consider small perturbations such that prod-
+
+ucts of perturbations can be negelcted and that , ,  we can write (1)–(5) as:
+
+σ ��� σ, , ��� *⁄ �,=( )
+σ
+
+D 
+
+D �-------- ��– 1 ε+( )
+
+∂Φ
+∂�-------–
+
+��� ∂
+∂�------
+
+�
+*ln( )–=
+
+D �
+D �------- �
++ 1 ε+( )
+
+∂Φ
+∂�-------–
+
+��� ∂
+∂�------
+
+�
+*ln( )–=
+
+���
+σ
+
+--------- 1 ε+( )∂Φ∂σ
+-------–=
+
+∂ 
+
+∂�------
+
+∂ �
+∂�------
+
+∂σ̇
+∂σ
+------+ +
+
+D
+D �------
+
+�
+*ln( )
+
+D
+D �------+– 1 ε+( )ln{ }=
+
+D
+�
+
+D �--------- κ
+� σ̇
+
+σ
+---
+
+D
+D �------
+
+�
+*ln( )+
+
+ 
+ 
+ 
+
+=
+
+σ̇
+�
+
+σ� �--------= DD �------
+∂
+∂ �----- 
+
+
+∂
+∂�------ �
+
+∂
+∂�------ σ̇
+
+∂
+∂σ
+------+ + +=
+
+D � D �⁄ 0= ε 0=
+
+�
+β ∂� ∂�⁄ 0= =
+
+β ∂ ∂�⁄
+�
+
+1
+�
+
+2
+�
+
+3
+�
+
+4, , ,
+
+Θ θln≡ θ
+� � 00�--------  
+
+κ
+= � 00
+
+
+ = 
+ 0 δ 
+ = δ 
++
+� = � 0 δ � = δ �+
+� = � 0 δ � = δ �+
+ρ = ρ0
+
+�( ) δρ+
+� = � 0 �( ) δ�+
+Θ = Θ0
+
+�( ) δΘ+
+
+δ 
+ , δ � , δ � , δρ, δ� , δΘ ρ0 �( ) � 0 �( ) Θ0 �( ),,∂� 0
+∂�--------- � ρ0–=
+
+δ� /p0 1« δρ /ρ0 1« δΘ /Θ0 1«
+
+
+
+Atmospheric waves
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(17)
+
+(18)
+
+(19)
+
+(20)
+
+(21)
+
+where  and .
+
+EXERCISE:
+
+Derive Eq. (19)
+
+The coefficients � ��� in (17)–(21) are independent of and , so these equations are linear and, in an
+unbounded region, admit solutions of the separable form where can be a complex func-
+
+tion, and and are the -wavenumber and the frequency respectively. Complex values of would imply am-
+
+plifying/decaying waves which are not considered here.
+
+The full solution is the appropriate Fourier sum of terms of this form over all wavenumbers. Since we shall be
+
+looking at individual waves we choose to discuss individual wave components rather than the Fourier sum.
+
+Inserting , , and the corresponding expressions for ,
+
+, , and into (17)-(21), and noting that the operators , can be replaced by and , re-
+
+spectively, yields the following set of ordinary differential equations in the unknowns :
+
+(22)
+
+(23)
+
+(24)
+
+(25)
+
+(26)
+
+Then (22) and (23) give:
+
+∂δ 
+
+∂ �---------- � δ �–
+
+∂
+∂�------
+
+δ�
+ρ0
+------ 
+
+ + 0=
+
+∂δ �
+∂ �--------- � δ 
++ 0=
+
+�
+4
+∂δ �
+∂ �-----------
+
+∂
+∂�------
+
+δ�
+ρ0
+------ 
+
+  �
+3 � δ
+�
+
+ρ0
+------– � δΘ–+ 0=
+
+�
+2
+
+∂
+∂ �-----
+
+δρ
+ρ0
+------ 
+
+  ∂δ 
+
+∂�----------
+
+∂δ �
+∂�-----------
+
+�
+1δ ��
+
+0
+--------------–+ + 0=
+
+∂
+∂ �-----δΘ δ � �+ 0=
+
+� ∂∂�------ θ0ln( )=
+1�
+
+0
+-------
+
+∂
+∂�------ ρ0ln( )–=
+
+� � � 1 � 0⁄ � �� �( ) �! � σ �+( )( )exp �
+ σ � σ
+
+δ 
+ 
+ ˆ �( ) �! � σ �+( )( )exp= δ � � ˆ �( ) �! � σ �+( )( )exp= δ �
+δ� δρ δΘ ∂ ∂�⁄ ∂ ∂ �⁄ �" � σ
+
+
+ ˆ � ˆ � ˆ � ˆ ρ0⁄ ρ̂ ρ0⁄ Θ̂, , , , ,
+
+� σ 
+ ˆ �#� ˆ– �" � ˆρ0-----+ 0=
+
+� σ � ˆ �#
+ ˆ+ 0=
+
+�
+4 � σ � ˆ �d
+
+d � ˆ
+ρ0
+----- 
+
+  �
+3�
+� ˆ
+ρ0
+-----– � Θ̂–+ 0=
+
+�
+2 � σ ρ̂ρ0----- �" #
+ ˆ �d
+
+d � ˆ
+�
+
+1 � ˆ�
+0
+
+-----------–+ + 0=
+
+� σΘ̂ � ˆ �+ 0=
+
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+(27)
+
+(28)
+
+Eliminating  between (25) and (27), and using (26) and the relation:
+
+where  is the Laplacian speed of sound, gives:
+
+(29)
+
+Using (30)
+
+to eliminate  from (24) yields:
+
+(31)
+
+In general , , are functions of � so and are obtained by simultaneous solution of the two first
+order equations (29) and (31) and the , , , fields obtained from (27), (28), (30) and (25), respectively.
+
+However, for our present purposes it is sufficient to consider constant (mean) values of , and which are
+
+related by . Then the differential equation for the height variation of  is:
+
+(32)
+
+3. EXACT SOLUTIONS OF THE LINEARIZED EQUATIONS
+
+The exact linearized equation for , obtained by setting  in (32), is:
+
+(33)
+
+
+ ˆ σ  
+σ2 � 2–-----------------
+
+� ˆ
+ρ0
+-----–=
+
+� ˆ �$� 
+σ2 � 2–-----------------
+
+� ˆ
+ρ0
+-----–=
+
+
+ ˆ
+
+δΘ̂ 1γ
+---
+� ˆ�
+
+0
+------ ρ̂
+
+ρ0
+-----–
+
+1
+� 2----
+� ˆ
+ρ0
+----- ρ̂
+
+ρ0
+-----–= =
+
+� γ��� 0=
+
+�d
+d � ˆ � � 2
+
+�
+1�
+0
+
+-------– 
+  � ˆ � σ
+
+�
+2� 2-----
+
+ 2
+σ2 � 2–-----------------–  
+
+  � ˆ
+ρ0
+-----+ + 0=
+
+Θ̂ �"� ˆ �σ----=
+
+Θ̂
+
+� σ �d
+d � � 3–
+
+� ˆ
+ρ0
+----- � � � 4σ2–( ) � ˆ+ 0=
+
+� 1 � 0⁄ � � � ˆ � ˆ ρ0⁄
+
+ ˆ � ˆ Θ̂ ρ̂ ρ0⁄
+
+� 1 � 0⁄ �
+� � � 2⁄+ 1 � 0⁄= � ˆ
+
+σ � 2
+2
+
+d
+
+d � � 2 � 3–( )
+�
+
+1�
+0
+
+-------–+ �d
+d
+
+
+
+
+
++ � � � 4σ2–( )  
+2
+
+σ2 � 2–-----------------
+�
+
+2� 2-----–  
+ 
+
+– � � 3 � � 2
+�
+
+1�
+0
+
+-------– 
+ 
+
+
+
+ � ˆ =  0
+
+� ˆ � 1 � 2 � 3 � 4 1= = = =
+
+σ � 2
+2
+
+d
+
+d 1�
+0
+
+------- �d
+d
+
+– � � σ2–( )  
+2
+
+σ2 � 2–-----------------
+1
+� 2----–  
+
+  �%� 1�
+0
+
+-------– 
+ –+
+
+ 
+ 
+  � ˆ 0=
+
+
+
+Atmospheric waves
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+One solution of (33) is , and the corresponding dynamical structure can be determined by setting in
+
+(22)–(26) to give and . This is geostrophic motion in the -direction and is also
+
+exactly hydrostatic. More detail of this solution will be considered later.
+
+If  in (33) then:
+
+(34)
+
+Setting  leads to the differential equation:
+
+(35)
+
+In general, if the wave motion is confined between physical boundaries, then (35) must be solved with respect to
+
+boundary conditions—that is must satisfy the differential equation (35) and the prescribed values of on
+
+these boundaries. It is reasonable to suppose that only waves of a certain frequency and wavenumber can satisfy
+
+all these constraints. For such waves the permissible values of the (characteristic) function
+
+are called eigenvalues and the solutions corresponding to these eigenvalues are called eigenfunctions.
+
+For simplicity we shall suppose that the fluid is unbounded (the bounded problem with at
+
+(say) can be attempted as an exercise) and in this case it is readily seen that is a solution to (35) provided
+
+that:
+
+(36)
+
+This frequency or 'dispersion' relationship is of fourth order in :
+
+(37)
+
+and contains two pairs of waves moving in the  and  directions, with:
+
+(38)
+
+σ 0= σ 0=
+
+ ˆ � ˆ 0= = � ˆ �" &�⁄( ) � ˆ ρ0⁄( )= �
+
+σ 0≠
+
+� 2
+2
+
+d
+
+d � ˆ 1�
+0
+
+------- �d
+d � ˆ–  
+
+2 � � σ2–( )
+σ2 � 2–-------------------------------
+
+σ2
+� 2-----+  
+
+  � ˆ+ 0=
+
+� ˆ � * �( ) � 2� 0⁄( )exp=
+
+� 2
+2
+
+d
+
+d � *  2 � � σ2–( )
+σ2 � 2–-------------------------------
+
+σ2
+
+� 2-----
+1
+
+4
+�
+
+0
+2
+
+-----------–+
+ 
+ 
+ � *+ 0=
+
+� * � *
+
+'  σ � � � � � 0, , ,, ,( )  
+2 � � σ2–( )
+
+σ2 � 2–-------------------------------
+σ2
+� 2-----
+
+1
+
+4
+�
+
+0
+2
+
+-----------–+=
+
+� * 0= � � 2⁄±=
+� * e (*),+∝
+
+- 2  2 � � σ2–( )
+σ2 � 2–-------------------------------
+
+σ2
+� 2-----
+
+1
+
+4
+�
+
+0
+2
+
+-----------–+=
+
+σ
+
+σ4 σ2 � 2 � 2  2 - 2 1
+4
+�
+
+0
+2
+
+-----------+ + 
+ +– � 2  2 � � � 2 - 2 1
+
+4
+�
+
+0
+2
+
+-----------+ 
+ ++ 0=
+
+�+ �–
+
+σg
+2 1
+
+2
+--- � 2 � 2  2 - 2 1
+
+4
+�
+
+0
+2
+
+-----------+ + 
+ + 1 1
+
+4 � 2  2 � � � 2 - 2 1
+4
+�
+
+0
+2
+
+-----------+ 
+ +
+
+� 2 � 2  2 - 2 1
+4
+�
+
+0
+2
+
+-----------+ + 
+ +
+
+2
+-----------------------------------------------------------------------–
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+1
+2
+---
+
+–=
+
+
+
+Atmospheric waves
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+(39)
+
+The first pair of roots represent inertial–gravity waves and the second pair represent acoustic waves. This is not
+
+obvious, especially with the degree of complication represented in these two relationships, so it is useful to look at
+
+extreme cases (i.e. short/long waves) to clarify the above classification.
+
+In such dispersion relations a basic unsheared zonal flow ( ) can be included by replacing by ( ), i.e.
+
+Doppler shifted.
+
+3.1  Gravity Waves
+
+In the troposphere, the inertial frequency is small compared with the Brunt–Väisälä frequency (a global
+
+average of ). Moreover their magnitudes together with those of and satisfy the following
+
+inequalities:
+
+(40)
+
+Using relation (40) and considering short waves such that , then (38) reduces to:
+
+(41)
+
+This is the dispersion relation for short internal gravity waves (wavelength km say). Since the waves are rel-
+
+atively short they are not modified significantly by rotation (no �  in (41)).
+(41) defines an upper limit to the frequency, i.e.  for , with a period of about 10 minutes.
+
+Since , the propagation is primarily in the vertical , with propagation speeds of approx-
+
+imately 10m/s.
+
+We can substitute  back into (22)–(26) and obtain the ‘geometry'.
+
+EXERCISE:
+
+Show that these oscillations are transverse (particle paths parallel to wave fronts). Derive from (41) a relationship
+
+between group velocity and phase velocity and consider its geometric interpretation.
+
+Gravity waves act as a signal to the surrounding fluid of localised changes in potential temperature. Short gravity
+
+waves are dispersive since their phase velocity  is a function of  and they radiate energy.
+
+Internal gravity waves are excited by local diabatic or mechanical forcing. A particularly interesting, important,
+
+and ubiquitous type of gravity wave is generated when there is stably stratified flow over orography. These are know
+
+as lee waves, a stationary wave pattern over and downstream of the obstacle. Relative to the mean wind the phase
+
+σa
+2 1
+
+2
+--- � 2 � 2  2 - 2 1
+
+4
+�
+
+0
+2
+
+-----------+ + 
+ + 1 1
+
+4 � 2  2 � � � 2 - 2 1
+4
+�
+
+0
+2
+
+-----------+ 
+ +
+
+� 2 � 2  2 - 2 1
+4
+�
+
+0
+2
+
+-----------+ + 
+ +
+
+2
+-----------------------------------------------------------------------–
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+1
+2
+---
+
++=
+
+
+ σ σ  .
++
+
+� � �
+� � �⁄ 10 2–∼ � � 0
+
+�
+0
+2 � 2
+� 2-------------
+
+� 2
+� �--------
+
+� � � 02� 2---------------- 1« « «
+
+ 2 � � � 2⁄( )»
+
+σg
+2 � �  2
+
+ 2 - 2 1 4 � 02⁄+ +( )
+-------------------------------------------------≅
+
+50≤
+
+σg
+2 � �∼  2 - 2»
+
+ 2 - 2» σ2  2⁄ σ2 - 2⁄«( )
+
+σg � �=
+
+σ  ⁄  
+
+
+
+
+
+
+Atmospheric waves
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+lines slope upstream; energy must be propagated upward hence the phase velocity must have a downward compo-
+
+nent (this follows from the previous exercise). Since the waves are stationary :
+
+.
+
+This can be solved for (given ) to give the phase slopes. For vertical propagation , i.e.
+
+, hence favourable lee wave conditions require suitable local combinations of mountain/hill geometry
+
+and large-scale flow.
+
+The importance of vertically propagating gravity waves, especially lee waves, in forecast and climate models has
+
+attracted recent attention and their associated vertical momentum fluxes appear to be a significant factor in the dy-
+
+namics of the large-scale circulation and of the stratosphere in particular.
+
+As we move towards the long wave limit of (38) the influence of rotation (through ) is increasingly felt and these
+
+long inertial gravity waves have frequencies tending towards / Their horizontal phase speeds become large, of
+relevance in the design of time-integration schemes and in the problem of initialisation. The limiting case of
+
+ represents a pure inertial wave with neither buoyancy or pressure forces important.
+
+EXERCISE:
+
+Substitute  back into (22)–(26).
+
+3.2  Acoustic waves
+
+In a similar manner we can examine (39). The inequalities in (40) are independent of the character of the oscillation
+
+and considering short waves such that  it follows that:
+
+(42)
+
+Also if , then:
+
+(43)
+
+The structure of these short waves may be found by substituting Eq. (43) back into (22)–(26).
+
+EXERCISE:
+
+Show that these waves are longitudinal with negligible temperature changes.
+
+The motion transmits pressure perturbations with a speed c, the speed of sound, for all wavelengths—i.e. the mo-
+
+tion is nondispersive.
+
+For long acoustic waves i.e. ,  and  it is readily deduced that:
+
+��0 0=
+
+
+ � �
+ 2 - 2 1 4� 02⁄+ +( )1 2⁄
+
+--------------------------------------------------------=
+
+-  1
+ �, , - 2 0>
+
+ � �  ⁄<
+
+�
+�
+
+σ �=
+
+σ �=
+
+ 2 � � � 2⁄»
+
+σa
+2 � 2  2 - 2 1 4� 02⁄+ +( )≅
+
+ 2 - 2 1 4 � 02⁄+( )»
+
+σa
+2 � 2  2≅
+
+σ2 � 2» σ2 � �»  0→
+
+
+
+Atmospheric waves
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+(44)
+
+Since , are horizontal and vertical phase speeds, respectively, we can deduce that short acoustic waves
+
+propagate with wave fronts almost vertical and vice-versa for long waves.
+
+4. SIMPLIFIED SOLUTIONS TO THE LINEARIZED EQUATIONS—FILTERING APPROXIMATIONS
+
+It is useful to simplify the exact linearized equations since we can then extend the physical principles behind these
+
+approximations to simplify the much more complicated non-linear equations.
+
+In particular, in this section we shall show how sound waves and gravity waves can be filtered, and determine con-
+
+ditions under which the static approximation to the pressure field is valid.
+
+It is not obvious ‘a priori' how an approximation made in one equation feeds through to affect terms in other equa-
+
+tions and hence modify the mathematical and physical solutions. We therefore carry out the necessary elimination
+
+rather carefully and for this purpose we retain the parameters to trace the effects of an approxima-
+
+tion. However, we see from (32) that and occur in the combination which vanishes in the exact
+
+equations . Consequently, a spurious term will arise if we neglect but retain , or
+
+vice-versa. We therefore must either retain both and or neglect both. We therefore have to set in
+
+(32).
+
+For reasons already discussed, the acoustic and inertial-gravity solutions to (32) are proportional to
+
+, provided that the oscillations obey the following frequency equation:
+
+(45)
+
+4.1  The elimination of acoustic waves
+
+It is helpful to discuss the physical origin of acoustic waves in order to indicate the mathematical approximations
+
+necessary for their elimination. Acoustic waves will occur in any elastic medium, and the elastic compressibility
+
+of a fluid is represented by in the continuity equation, so it is reasonable to suppose that the removal of
+
+this term will filter acoustic waves. Moreover, since we want to use these simplified (anelastic) equations in, for
+
+example, a later analysis of gravity waves, we hope that the effect of filtering sound waves will not distort the grav-
+
+ity waves in the anelastic equations
+
+So setting ,  in the general frequency equation (45) gives:
+
+(46)
+
+(46) has only two roots in , contrasting with the corresponding exact frequency equation (36) which has four
+
+roots, representing two inertial-gravity waves and two acoustic waves. Rearranging (46) and noting that
+
+,
+
+σ2 � 2 - 2 1 4 � 02⁄+( )≅
+
+σ  ⁄ σ -⁄
+
+�
+1
+�
+
+2
+�
+
+3
+�
+
+4, , ,�
+2
+
+�
+3
+
+�
+2
+�
+
+3–( )�
+1
+�
+
+2
+�
+
+3
+�
+
+4 1= = = =( )
+�
+
+2
+�
+
+3�
+2
+
+�
+3
+
+�
+3
+
+�
+2=
+
+� -
+�
+
+1
+
+2
+�
+
+0
+-----------+ 
+
+  �exp
+
+ 2 - 2
+�
+
+1
+2
+
+4
+�
+
+0
+2
+
+-----------
+ 2 � 2 � �– σ2 � 4 1–( )+[ ]
+
+σ2 � 2–---------------------------------------------------------------
+�
+
+2
+�
+
+4
+σ2
+� 2-----– � � 2
+
+1 � 1–( )�
+0
+
+------------------- � � 3 1–( )++ + + + 0=
+
+∂ρ ∂ �⁄
+
+�
+3
+
+�
+2 0= =
+
+�
+1
+
+�
+4 1= =
+
+ 2 � � σ2–( )
+σ2 � 2–-------------------------------
+
+- 2 1
+4
+�
+
+0
+2
+
+-----------+=
+
+σ
+
+� 2 � �⁄ 1«
+
+
+
+Atmospheric waves
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(47)
+
+The short-wave approximation ( ) to (47) is:
+
+(48)
+
+which by comparison with the short-wave approximation to the exact equation (41) clearly represents an (undis-
+
+torted) gravity-wave oscillation. Similarly the long inertial waves represented by  are undistorted.
+
+The basic criterion for neglect of , viz , is obtained by comparing (46) and (36) and this
+
+criterion can be seen to be that:
+
+That is, that the frequency of inertial-gravity waves must be much smaller than the acoustic frequency, a condition
+
+always well satisfied.
+
+From these considerations we can use the acoustically filtered equations with confidence in any detailed examina-
+
+tion of gravity waves in the atmosphere.
+
+Putting in the fully non-linear equations defines a set of equations which do not support acoustic
+
+waves. Although local elastic density changes are absent, variations in density are included through the vertical
+
+density variation  and where multiplied by  in the vertical momentum equation.
+
+4.2  The hydrostatic approximation
+
+The hydrostatic approximation to the pressure field ( ) can be made if in the ver-
+
+tical component of the momentum equation (19). However, neither the precise circumstances under which this ap-
+
+proximation is valid nor its dynamical feedback on wave structure is obvious.
+
+Referring to (45) it is clear that the criteria for the neglect of the terms involving  are:
+
+(a)
+
+(b)
+
+The first criterion is always well satisfied by inertial-gravity and geostrophic waves, since these are of low frequen-
+
+cy by comparison with the acoustic oscillations. The second criterion is well satisfied by inertial waves but not by
+
+very short gravity waves, since from (41) we established that is their approximate frequency. We therefore
+
+examine this second criterion a little more carefully. From (41) we see that the frequency of pure gravity waves is
+
+given by:
+
+σ2 � 2 � �  
+2
+
+ 2 - 2 1
+4
+�
+
+0
+2
+
+-----------+ +
+-------------------------------------+=
+
+ 2 � 2 � �⁄( )  2 1 4 � 02⁄+( )»
+
+σ2 � �  
+2
+
+ 2 - 2 1
+4
+�
+
+0
+2
+
+-----------+ +
+-------------------------------------=
+
+σ2 � 2∼
+∂ ∂ � δρ ρ0⁄( )⁄ � 2 0=
+
+σ2 � 2  2 - 2 1
+4
+�
+
+0
+2
+
+-----------+ + 
+ «
+
+�
+2
+
+�
+3 0= =
+
+�
+0( ) �
+
+� � � �⁄ 0= ∂ δ �( ) �∂⁄ � δΘ«
+
+�
+4
+
+σ2 � 2  2 - 2 1 4 � 02⁄+ +( )«
+σ2 � �«
+
+� �
+
+σ2 � �  
+2
+
+ 2 - 2 1 4� 02⁄+ +
+--------------------------------------------≅
+
+
+
+Atmospheric waves
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+in which case only if . We can therefore only set for systems with flow
+
+'geometry' satisfying this criterion, i.e. the horizontal wavelength must be much greater than the vertical
+
+wavelength.
+
+To demonstrate this more clearly we set ,  in (45), showing that:
+
+(49)
+
+Comparing this equation with (41) it is obvious that unless , the gravity wave will be consider-
+
+ably distorted if the pressure field is hydrostatic. The inertial wave is, however, unaffected. So in particular, if the
+
+system being analysed has comparable vertical and horizontal wavelength, the hydrostatic assumption should not
+
+be used - for example in convective scale models. If however , that is km for disturbances of
+
+depth  km, the hydrostatic approximation will not appreciably distort the gravity waves.
+
+Acoustic frequencies do not appear in (49) and at first sight it would appear that all acoustic oscillations have been
+
+filtered from the equations of motion by making the pressure fields hydrostatic. This is not the case however, since
+
+oscillations characterised by everywhere are not represented in (49); since this equation was obtained from
+
+(32) by assuming that was not identically zero. Vertically propagating acoustic waves ( )are, however, fil-
+
+tered by demanding that the pressure field should by hydrostatic.
+
+4.3  The Lamb wave
+
+We now examine the case where everywhere. In this case (32) is clearly redundant, and we must refer back
+
+to (29) and (31) to obtain the frequency of possible oscillations. From these equations with
+
+(50)
+
+(51)
+
+Now is a trivial solution because with , it follows that the fluid must be motionless and hydro-
+
+static  i.e. the initial state.
+
+The root  is the geostrophic mode previously examined.
+
+The remaining oscillation is represented by:
+
+(52)
+
+with
+
+Since trace the elastic compressibility this type of motion is a form of acoustic wave, and can be eliminated
+
+by setting  in the continuity equation and  in the vertical momentum equation (19).
+
+Note that, if  but , a spurious pressure perturbation  will arise.
+
+σ2 � �«  2 - 2 1 4 � 02⁄+« � 4 0=
+
+�
+4 0=
+
+�
+1
+
+�
+2
+
+�
+3 1= = =
+
+σ2 � 2 � �  
+2
+
+- 2 1 4� 02⁄+
+--------------------------------+=
+
+ 2 - 2 1 4 � 02⁄+«
+
+2 0 2
++»
+
+2 0 100≥
+10∼
+
+� ˆ 0=
+� ˆ � ˆ 0≠
+
+� ˆ 0=
+� ˆ 0=
+
+σ
+�
+
+2� 2-----
+ 2
+
+σ2 � 2–-----------------–  
+  � ˆ
+
+ρ0
+----- 0=
+
+σ �d
+d � � 3–  
+
+� ˆ
+ρ0
+----- 0=
+
+� ˆ ρ0⁄ 0= � ˆ 0=
+δ 
+ δ � δ � δρ δΘ δ� 0= = = = = =( )
+
+σ 0=
+
+ 2
+σ2 � 2–-----------------
+
+�
+2� 2-----=
+
+�d
+d � � 3–  
+
+� ˆ
+ρ0
+----- 0=
+
+�
+2
+�
+
+3,
+∂δρ ∂ �⁄ 0= � δ� /ρ 0=
+�
+
+2 0=
+�
+
+3 1=
+� ˆ ρ⁄ e 3 +∝
+
+
+
+Atmospheric waves
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+To discuss the structure of the oscillation more carefully set , in which case:
+
+(53)
+
+Referring back to the equations of motion in the usual way we obtain for the rest of the variables
+
+The oscillation is therefore a pressure pulse propagating horizontally at the speed of sound. This type of oscillation
+
+is known as a Lamb wave; it has negligible physical significance and is removed by the anelastic approximation.
+
+The Lamb wave can also be eliminated by appropriate upper- or lower-boundary conditions. For large-scale fore-
+
+cast models these methods of elimination are not usually appropriate. However the longest gravity waves have
+
+comparable phase speeds to the Lamb wave (see Section 7).
+
+It is worth stressing that the presence of the elastic term in the continuity equation is rather concealed in the pres-
+
+sure- and sigma-coordinate forms of the continuity equation, however both (9) and (15) are elastic (even with the
+
+hydrostatic approximation, ).
+
+Although the hydrostatic approximation filters vertically propagating sound waves it is unnecessarily restrictive
+
+and it has been shown that a small approximation to the vertical acceleration can achieve the same effect (Miller,
+
+1974; Miller and White, 1984).
+
+4.4  Filtering of gravity waves
+
+For the theoretical study of large-scale dynamics and also for the earlier large-scale numerical models, the presence
+
+of gravity waves is of little significance (and a nuisance!). The following analysis demonstrates that requiring the
+
+local rate of change of divergence to be zero is a sufficient filter.
+
+Taking (17)–(21), setting  and eliminating  and  leads to the equations:
+
+where we have introduced an additional tracer, , on . These equations have the
+
+dispersion relation:
+
+�
+2
+
+�
+3 1= =
+
+σ2 � 2  2 � 2+=
+� ˆ
+ρ0
+----- e 3 +  � σ �+( )cos=
+
+� ˆ � ˆ 0= =
+Θ̂ 0=
+
+
+ ˆ σ � 2--------
+� ˆ
+ρ0
+----- 
+
+ –=
+
+ε 0=
+
+�
+1
+
+�
+2
+
+�
+3
+
+�
+4 0= = = = δΘ δ �
+
+�
+5
+
+∂
+∂ �-----
+
+∂δ 
+
+∂�----------   �
+
+∂δ �
+∂�---------–
+
+∂2
+
+∂� 2--------
+δ�
+ρ0
+------ 
+
+ + 0=
+
+∂
+∂ �-----
+
+∂δ �
+∂�---------   �
+
+∂δ 
+
+∂�----------  + 0=
+
+∂
+∂ �-----
+
+∂2
+
+∂ � 2--------
+δ�
+ρ0
+------ 
+
+ 
+ 
+ 
+  � � ∂δ 
+∂�----------  – 0=
+
+�
+5
+
+∂
+∂ �-----
+
+∂δ 
+
+∂�----------  
+
+
+
+Atmospheric waves
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+(54)
+
+It can readily be seen that setting eliminates the inertial–gravity wave solution. Use of the rotational or
+
+geostrophic wind clearly achieves this.
+
+4.5  Filtered Rossby wave (previously the  solution)
+
+Using the previous filtering approximations and now retaining the variation of Coriolis parameter with latitude
+
+leads to the following equation for the pressure perturbation ( ):
+
+(55)
+
+Putting  proportional to  gives the dispersion relation:
+
+and for a uniform basic zonal current  (i.e. replacing  by ):
+
+(56)
+
+Thus these waves, known as Rossby waves, must propagate westward relative to the mean zonal flow since:
+
+Clearly Rossby waves are dispersive and long zonal and meridional wavelengths will propagate fastest. However
+
+typical values show that large-scale Rossby waves move quite slowly (10 m s-1). From (56) we can deduce that
+
+short zonal wavelengths have a group velocity opposite in direction to their phase velocity.
+
+Equation (55) is a form of the barotropic vorticity equation which states that the vertical component of absolute
+
+vorticity is conserved following the horizontal motion. A useful physical appreciation of the westward propagation
+
+is shown in Fig. 1  (from Holton).
+
+σ � 2 � 5σ2–( ) � �  
+2
+
+- 2-------+ 0=
+
+�
+5 0=
+
+σ 0=
+
+δ� ρ0⁄( ) � ˜≡
+
+∂
+∂ �-----
+
+∂2� ˜
+∂ � 2---------
+
+∂2� ˜
+∂ � 2---------
+
+� 02
+� �--------
+
+∂2� ˜
+∂� 2---------+ +  
+
+ 
+β∂
+� ˜
+
+∂�-------+ 0=
+
+� ˜ i  � 4$� -5� σ �–+ +( )[ ]exp
+
+σ β  
+ 2 4 2 - 2 � 0
+
+2
+
+� �--------+ + 
+ 
+--------------------------------------------–=
+
+6
+σ σ  6–( )
+
+σ  6 β  
+ 2 4 2 - 2 � 0
+
+2
+
+� �--------+ + 
+ 
+--------------------------------------------–=
+
+��0 6 β
+ 2 4 2 - 2 � 0
+
+2
+
+� �--------+ + 
+ 
+--------------------------------------------–=
+
+
+
+Atmospheric waves
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  1. Perturbation vorticity field and induced velocity field (dashed arrows) for a meridionally displaced
+
+chain of fluid parcels. The heavy wavy line shows the original perturbation position, and the light line shows the
+
+westward displacement of the pattern due to advection by the induced velocity field.
+
+By considering a chain of fluid parcels along a latitude circle and requiring that is conserved then, if
+
+initially, a meridional displacement  results in:
+
+but
+
+A sinusoidal displacement therefore gives positive (cyclonic) vorticity for southward displacements and negative
+
+(anticyclonic) vorticity for northward displacements. It is then clear from the diagram that this induced flow field
+
+advects the chain of fluid parcels such that the wave pattern propagates westwards.
+
+5. SURFACE GRAVITY WAVES
+
+So far we have considered periodic oscillations in unbounded fluids, and the question of appropriate boundary con-
+
+ditions has not arisen. We now examine waves in a region bounded below by a smooth, horizontal, rigid boundary
+
+and above by a free surface. A “free” surface as the name implies means that the surface shape responds to the
+
+motion within the fluid and cannot be determined ‘a priori' i.e. the fluid motion and the boundary shape must be
+
+determined simultaneously for a complete solution of a free-boundary problem.
+
+Any smooth surface, either free or rigid, must be a material boundary. That is, particles adjoining the surface follow
+
+the surface contours. It follows that at , where is the surface profile, defines this (kin-
+
+ematic) condition. So , a condition with reduces to on a horizontal, rigid boundary. How-
+
+ever, this kinematic condition alone is not sufficient to determine the shape of a free surface, and an additional
+
+(dynamical) boundary condition must be specified to determine a solution. This extra boundary condition is con-
+
+tinuity of pressure. In practice this condition has to be re-expressed in terms of kinematic quantities by using either
+
+the momentum or Bernoulli equations.
+
+We will consider the simplest example of surface gravity waves and isolate their physical origin. For this purpose
+
+we suppose the fluid to be unstratified . Acoustic waves can be eliminated for reasons given earlier, but
+
+this has to be done rather carefully so we retain  at present.
+
+With these assumptions (32) reduces to:
+
+ζ �+ ζ 0=
+δ�
+
+� 0 � 1 ζ1 (conservation)+=
+
+ζ1 � 0 � 1– βδ� (definition)–= =
+
+D � 7–( ) D �⁄ 0= � 7= 7
+� D 7 D �⁄= � 0=
+
+� 0=( ) �
+2
+
+
+
+Atmospheric waves
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 15
+
+(57)
+
+For simplicity we will look at the behaviour of small amplitude waves in a fluid with a free surface
+
+above which the pressure is assumed constant (e.g. air–sea interface, model of waves
+
+on inversion). The lower boundary is assumed to be a rigid horizontal surface at .
+
+With the above comments in mind the (non linear) boundary conditions are:
+
+(i)  at
+
+(ii)  at
+
+(iii) pressure continuous at the free surface, which in this example is equivalent to at
+
+.
+
+The linearized forms of these conditions are:
+
+(i)  at
+
+(ii)  at
+
+(iii) at which, by using (29) and the condition that ,
+
+can be shown to be equivalent to
+
+(58)
+
+From (58) we see that if we eliminate acoustic waves by setting , we must also set in the
+
+boundary condition otherwise an oscillation, spurious in the sense that it cannot occur in the exact equations, will
+
+arise through an inconsistent approximation.
+
+Equation (57), with the above boundary conditions, can readily be solved for all wavelengths but it is
+
+instructive to consider long and short waves independently.
+
+5.1  Long waves
+
+If waves are long to the extent that and , then the non-hydrostatic term containing the term in
+
+(57) can be neglected by comparison with  and the solution is seen to be:
+
+(59)
+
+where .
+
+� 2
+2
+
+d
+
+d � ˆ
+�
+
+1�
+0
+
+------- �d
+d � ˆ– � 4σ2  
+
+2
+
+σ2 � 2–-----------------
+�
+
+2� 2-----–  
+  � ˆ– 0=
+
+7����,( ) �  � σ �+( )cos= � 0=
+
+� 0= � 0=
+� D 7 D �⁄= � 7=
+
+D� D �⁄ 0=� 7=
+
+δ � 0= � 0=
+δ � ∂ 7 ∂ �⁄= � 7=
+∂ δ� ρ0⁄( ) ∂ �⁄ � δ �= � 7= � � � 2⁄+ 1 � 0⁄=
+
+�d
+d � ˆ
+
+�
+1
+�
+
+2–( )�
+0
+
+---------------------- �  
+2
+
+σ2 � 2–-----------------+ � ˆ– 0 at
+� 7= =
+
+�
+2
+
+�
+3 0= =
+
+�
+1 0=
+
+ � 0 1«  7 1« � 4
+1
+�
+
+0⁄( ) 8,� ˆ 8 �⁄( )
+
+δ � σ�
+1 e
+
+9
+1 +:
+
+0
+-------
+
+–
+ 
+ 
+ 
+
+e
+
+9
+1 ;:
+
+0
+-------
+
+1–
+ 
+ 
+ 
+---------------------------  � σ �+( )sin=
+
+σ2 � 2 � � 0  2 1 e
+9
+
+1 ;:
+0
+
+-------–
+
+–
+ 
+ 
+ 
+
++=
+
+
+
+Atmospheric waves
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+If the height scale is negligible by comparison with the density scale height left( )
+
+and is, therefore, the propagation speed of long surface waves in a liquid or an atmospheric layer which is much
+
+shallower than 7 km. For instance, long waves on the boundary-layer inversion,  km and so  m s-1.
+
+If, on the other hand,  (for example in a deep gas) then .
+
+It is easy to show that the earths rotation only becomes important for synoptic scales or longer. For the earths at-
+
+mosphere these deep long waves propagate at about 270 m s-1. These long waves are often referred to as “shallow
+
+water” waves and the equation set resulting from (17)–(21) with the relevant approximations (normally with
+
+) form the “shallow water equations”. These provide a popular equation set for analytical/dynamical
+
+studies and also for testing and designing numerical integration schemes.
+
+5.2  Short waves
+
+When and the term involving cannot be neglected whereas rotation can obviously be so. The
+
+solution can be shown to be:
+
+(60)
+
+where . Hence for , , a much slower phase speed than the long waves.
+
+If desired, free-surface waves can be eliminated by imposing rigid upper and lower boundary conditions.
+
+6. EQUATORIAL WAVES
+
+Near the Equator atmospheric waves acquire a rather different character and what were clearly distinct mechanisms
+
+cease to be so. Following Matsuno (1966) we will study equatorial waves using the shallow water equations with
+
+, known as the equatorial beta-plane, and including , and linearize again about a state of no mo-
+
+tion.  Hence:
+
+(61)
+
+EXERCISE:
+
+7 �
+0«
+
+σ
+ ---
+
+� 2
+ 2----- �
+
+7+
+ 
+ 
+ 
+
+O
+7�
+
+0
+------- 
+
+ +=
+
+7 1≈ � 100≈
+
+7 �
+0»
+
+σ
+ ---
+
+� 2
+ 2----- �
+
+�
+0+
+
+ 
+ 
+ 
+
+=
+
+∂ ∂�⁄ 0≠
+
+ � 0 1»  7 1» � 4
+
+δ � σ�  �( )sinh  7( )sin----------------------
+�
+
+1
+
+� 7–( )
+2
+�
+
+0
+-----------------  � σ �+( )sinexp–=
+
+σ2 �,  7( )tanh=  7 1» σ  ⁄ �< ⁄≈
+
+� β�= ∂ ∂�⁄ 0≠
+
+∂ 
+ '
+∂ �-------- β
+
+� � '– � ∂ 7 '∂�--------+ = 0
+∂ � '
+∂ �------- β
+
+� 
+ ' � ∂
+7 ′
+
+∂�--------+ + = 0
+∂ 7 ′
+∂ �--------
+
+� ∂ 
+ '
+∂�--------
+
+∂ � '
+∂�-------+  + = 0
+
+
+
+Atmospheric waves
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 17
+
+Derive the above equations from (1)–(5).
+
+Assuming wavelike forms for in the east–west direction, but retaining the
+
+-variation explicitly leads to the differential equation:
+
+(62)
+
+It is convenient to non-dimensionalize the equation using:
+
+(62) then becomes:
+
+(63)
+
+This equation is a form of Schrödinger equation with solutions, if
+
+, (64)
+
+of the form ,
+
+where  is an th order Hermite polynomial ( ).
+
+Clearly the solutions are 'trapped' near the Equator by the Gaussian function .
+
+The dispersion or frequency relationship (64) is cubic in :
+
+(65)
+
+The three distinct roots represent a pair of inertial gravity waves and one Rossby wave. The solutions can conven-
+
+iently be studied by considering the cases (a)  and (b)  ( large), hence:
+
+(66)
+
+(67)
+
+Returning to dimensional variables, we obtain for the phase velocities (defined by ):
+
+,
+
+
+ ' � ' 7 ', ,( ) 
+ ˆ � ˆ 7 ˆ, ,( ) �! � σ �+( )[ ]exp=�
+
+d2 � ˆ
+d � 2---------
+
+σ2
+
+� �---------  
+2–  β
+
+σ
+------
+
+β2
+
+� �--------- y
+2–+ 
+
+  � ˆ+ 0=
+
+� 2 � �
+β
+
+-------------λ2  2; β� �-------------µ
+2 σ2; � � βω2= = =
+
+8 2 � ˆ
+8 λ2--------- ω
+
+2 µ2– µ
+ω
+---- λ2–+ 
+
+  � ˆ+ 0=
+
+ω2 µ2– µ
+ω
+----+ 2 � 1 ( �+ 0 1 2 … ), , ,= =
+
+� ˆ � 0 λ2 2⁄–( ) = 9 λ( )exp=
+= 9 � = 0 1 = 1, 2λ = 2, 2 2λ2 1–( )= = =
+
+λ2 2⁄–( )exp
+
+ω
+
+ω3 µ2 2 � 1+ +( )ω– µ+ 0=
+
+ω2 µ2∼ ω µ«  
+
+ω1 2, µ
+2 2 � 1+ ++−=
+
+ω3
+µ
+
+µ2 2 � 1+ +----------------------------=
+
+� σ  ⁄–≡
+
+�
+1 2, � � 1 β 2
+
+� 1+( )
+ 2 � �------------------------++
+
+−=
+
+�
+3
+
+β
+
+ 2 β 2 � 1+( )� �------------------------+ 
+ 
+------------------------------------------–=
+
+
+
+Atmospheric waves
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Obviously are a pair of eastward and westward propagating inertial gravity waves while is a westward
+
+propagating Rossby wave.
+
+For  these three solutions are distinct but for , (65) can be factorized:
+
+The root is unacceptable (show) but the root is an eastward propagating in-
+
+ertial gravity wave and the root omega is called a mixed Rossby gravity wave; this is
+
+because, as (the limiting case of gravity waves (see (66)), while, as , the limit-
+
+ing case of Rossby waves (see (67)).
+
+One other important special case is when . This corresponds to a wave with identically zero. This has
+
+solutions (see (61)) , where only the positive root is acceptable (the negative root violates
+
+the equatorial beta-plane assumption. See also (65) with ). This fast-moving eastward propagating wave
+
+is the Kelvin wave (see Fig. 2 ). These waves occur commonly in the ocean as waves along coastlines (decaying
+
+exponentially away from the coast).
+
+Figure 2. Velocity and pressure distributions in the horizontal plane for (a) Kelvin waves, and (b) Rossby–gravity
+
+waves (from Matsuno “Quasi-geostrophic motions in the equatorial area”, J. Meteorol. Soc. Japan, 1966).
+
+Data studies of the equatorial stratosphere have identified both very long wavelength Kelvin and mixed Rossby–
+
+gravity waves. Considerable recent interest has been shown in these tropical waves in studies of diabatic forcing in
+
+the tropics and its impact on higher latitudes (Gill, 1980 etc.). Fig. 3 summarises these equatorial wave character-
+
+istics.
+
+�
+1 2,
+
+�
+3
+
+� 1≥ � 0=
+
+ω µ–( ) ω2 ωµ 1–+( ) 0=
+
+ω µ= ω1 µ 2⁄– µ 2⁄( )
+2 1+–=
+
+ω2 µ 2⁄– µ 2⁄( )
+2 1++=
+
+µ 0 ω2 1→,→ µ ∞ ω2 0→,→
+
+� 1–= � ˆ� σ  ⁄– � �±= = � 1–=
+
+
+
+Atmospheric waves
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 19
+
+Figure 3. Non-dimensional frequencies from (65) as a function of wavenumber. The lines indicate the following
+
+types of waves: Eastward propagating inertial–gravity wave (thin solid line); westward propagating inertial–
+
+gravity wave (thin dashed line); Rossby wave (thick solid line); Kelvin wave (thick dashed line). (After Matsuno
+
+1966)
+
+
+
+Atmospheric waves
+
+20 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+7. SUMMARY DIAGRAM AND MODELLING IMPLICATIONS
+
+Figure  4. Waves in a compressible atmosphere (from J. S. A. Green — Dynamics lecture notes)
+
+Fig. 4 summarises the basic wave types. It is a dispersion diagram of horizontal phase speed plotted against hori-
+
+zontal wavelength (both logarithmic scales) so isopleths of wave period are straight lines of unit slope with inter-
+
+cept . Some points of interest are:
+
+(i) The short vertical wavelength acoustic waves which, while having phase speeds normal to their
+
+wave fronts equal to , have very large horizontal phase speeds (with wave fronts almost
+
+parallel to the ground).
+
+(ii) Mesoscale gravity waves are almost non-dispersive.
+
+(iii) Rossby waves for long wavelengths vary like while the shorter wavelengths include the mixed
+
+Rossby-gravity mode.
+
+In previous sections we have identified several wave types with a wide range of frequencies. The choice of time
+
+step in a numerical model is dominated by the highest frequency waves (see Lecture Note 1.4). Thus for example,
+
+acoustic waves have a frequency and for a typical large-scale model .
+
+Hence is dominated by the vertically propagating acoustic waves and it is desirable to filter out these verti-
+
+cally propagating waves by assuming hydrostatic balance.
+
+σlog
+
+� γ���=
+
+ 2–
+
+σ �  2 - 2+=  -⁄ ∆� ∆�⁄ 10 2–∼=
+σMAX
+
+
+
+Atmospheric waves
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 21
+
+Horizontally propagating acoustic waves (Lamb) pose less of a problem since their frequencies are not much higher
+
+than the long gravity waves discussed earlier left ( ). Nevertheless various numerical
+
+techniques have been devised to ease this restriction (see Lecture Note 1.4).
+
+We could make the anelastic approximation ( in the continuity equation) but retain the non-hydrostat-
+
+ic terms. An equation set based on (17)–(21) with then allows us to predict , and ; however
+
+these components must satisfy the continuity equation. Differentiating (20) with respect to time and substituting
+
+from (17), (18) and (19) gives a diagnostic Poisson-type equation for the pressure of the form
+
+which must be inverted each time step. This is a relatively expensive procedure
+
+and not justifiable for large-scale models because the hydrostatic approximation is well-satisfied. For much smaller
+
+scale models where the decision is no longer straightforward and generally either the anelastic approxi-
+
+mation is made or sound waves are retained and treated by some sophisticated numerical technique.
+
+REFERENCES
+
+Gill, A. E., 1980: Some simple solutions for heat-induced tropical circulation. Quart. J. Roy. Meteor. Soc., 106, 447
+
+- 462.
+
+Haltiner, E. and Williams, R. T., 1980: Numerical Prediction and Dynamic Meteorology. 2nd Edition. Wiley, 477
+
+pp.
+
+Holton, J. R., 1972: An introduction to dynamic meteorology. International Geophysical Series, Vol. 16, Academic
+
+Press, 319 pp.
+
+Kasahara, 1974: Various vertical coordinate systems used for numerical weather prediction. Mon. Wea. Rev., 102,
+
+509 - 522.
+
+Matsuno, 1966: Quasi-geostrophic motions in the equatorial area.  J. Met. Soc. Japan, 44, 25 - 43.
+
+Miller, M. J. 1974: On the use of pressure as vertical coordinate in modelling convection. Quart. J. Roy. Meteor.
+
+Soc., 100, 155 - 162.
+
+Miller, M. J. and White, A. A. 1984: On the non-hydrostatic equations in pressure and sigma coordinates. Quart.
+
+J. Roy. Meteor. Soc., 110, 515 - 535.
+
+ACKNOWLEDGEMENTS
+
+These notes rely heavily on unpublished lecture notes written by J. S. A. Green with subsequent modifications by
+
+M. W. Moncrieff.  Additional material was gleaned from a number of referenced sources.
+
+σa( ) σg⁄ γ
+��� � �⁄ 1≥∼
+
+∂ρ ∂ �⁄ 0=�
+2
+
+�
+3 0= = 
+ � �
+
+∇2 δ� ρ0⁄( ) >?
+@�A� …, , ,( )=
+
+∆ � ∆�≥

@@ -1,0 +1,1407 @@
+()
+
+
+Data Assimilation
+
+Observation Impact on the Short
+Range Forecast
+
+C. Cardinali
+
+Research Department
+
+June 2013
+
+
+
+Series: ECMWF Lecture Notes
+
+A full list of ECMWF Publications can be found on our web site under:
+http://www.ecmwf.int/publications/
+
+Contact: library@ecmwf.int
+
+c©Copyright 2013
+
+European Centre for Medium-Range Weather Forecasts
+Shinfield Park, Reading, RG2 9AX, England
+
+Literary and scientific copyrights belong to ECMWF and are reserved in all countries. This publication
+is not to be reprinted or translated in whole or in part without the written permission of the Director-
+General. Appropriate non-commercial use will normally be granted under the condition that reference
+is made to ECMWF.
+
+The information within this publication is given in good faith and considered to be true, but ECMWF
+accepts no liability for error, omission and for loss or damage arising from its use.
+
+http://www.ecmwf.int/publications/
+
+
+Observation Impact on Forecast
+
+Abstract
+
+The concept and the use of the forecast error sensitivity to observations for diagnostic purposes are
+illustrated in this paper. The tool computes the contribution of all observations to the forecast error:
+a positive contribution is associated with forecast error increase and a negative contribution with
+forecast error decrease. The forecast range investigated is 24 hour. It can be seen that globally, the
+assimilated observations decrease the forecast error; locally however also poor performance can be
+found. The forecast deterioration can be related either to the data quality or to the data assimilation
+and forecast system. The data impact on the forecast is spatially and also temporally variable. It
+depends on atmospheric regimes, which may be well or not well represented by the model or by
+the data. An example of a routine diagnostic assessment of observational impact on the short-range
+forecast performance is shown. The example also illustrates the tools flexibility to represent different
+degrees of detail of forecast improvement or deterioration.
+
+1 Introduction
+
+The ECMWF four-dimensional variational system (4D-Var, Rabier et al. 2000) handles a large variety
+of both space and surface-based meteorological observations (more than 30 million a day) and combines
+the observations with the prior (or background) information on the atmospheric state. A comprehensive
+linearized and non-linear forecast model is used, counting 108 the order of degrees of freedom.
+
+The assessment of the observational contribution to analysis (Cardinali et al. 2004, Chapnick et al. 2004,
+Lupu et al. 2011) and forecast is among the most challenging diagnostics in data assimilation and nu-
+merical weather prediction. For the forecast, the assessment of the forecast performance can be achieved
+by adjoint-based observation sensitivity techniques that characterize the forecast impact of every mea-
+surement (Baker and Daley 2000, Langland and Baker 2004, Cardinali and Buizza, 2004, Morneau et
+al., 2006, Xu and Langlang, 2006, Zhu and Gelaro 2008, Cardinali 2009). The technique computes the
+variation in the forecast error due to the assimilated data. In particular, the forecast error is measured by
+a scalar function of the model parameters, namely wind, temperature, humidity and surface pressure that
+are more or less directly related to the observable quantities.
+
+In general, the adjoint methodology can be used to estimate the sensitivity measure with respect to any
+assimilation system parameter of importance. For example, Daescu (2008) derived a sensitivity equation
+of an unconstrained variational data assimilation system from the first-order necessary condition with
+respect to the main input parameters: observation, background, and observation and background error
+covariance matrices.
+
+The forecast sensitivity to observation technique (FSO) is complementary to the Observing System Ex-
+periments (OSEs) that have been the traditional tool for estimating data impact in a forecasting system
+(Bouttier and Kelly, 2001; English et al., 2004; Lord et al., 2004; Kelly 2007 and Radnoti et al., 2010
+and 2012). Very important is the use of OSEs in complement to FSO to highlight the contribution e.g. of
+a particular data set and to address the causes of degradation or improvement which FSO measures.
+
+The main differences between adjoint-based and OSE techniques are:
+
+• The adjoint-based observation sensitivity measures the impact of observations when the entire ob-
+servational dataset is present in the assimilation system, while the observing system is modified in
+
+Lecture Notes: Data Assimilation 1
+
+
+
+Observation Impact on Forecast
+
+the OSE. In fact, each OSE experiment differs from the others in terms of assimilated observations.
+
+• The adjoint-based technique measures the impact of observations separately at every analysis cycle
+versus the background, while the OSE measures the total impact of removing data information
+from both background and analysis.
+
+• The adjoint-based technique measures the response of a single forecast metric to all perturbations
+of the observing system, while the OSE measures the effect of a single perturbation on all forecast
+metrics.
+
+• The adjoint-based technique is restricted by the tangent linear assumption and therefore it is valid
+for forecasts up to 2-days, while the OSE can measure the data impact on longer range forecast
+and in non linear regimes.
+
+The aim of this paper is to introduce the mathematical concept and the application of the forecast sensi-
+tivity to the observation tool. The general ECMWF system performance in the 24 hour range forecast is
+shown as derived by the diagnostic tool.
+
+In 2, the theoretical background of the FSO and the calculation of the forecast error contribution (FEC)
+from observations are shown. The ECMWF forecast performance is illustrated in 3 and conclusions are
+drawn in 4.
+
+2 Observational Impact on the Forecast
+
+(a) Linear analysis equation
+
+Data assimilation systems for numerical weather prediction (NWP) provide estimates of the atmospheric
+state x by combining meteorological observations y with prior (or background) information xb. A simple
+Bayesian normal model provides the solution as the posterior expectation for x, given y and xb. The
+same solution can be achieved from a classical frequentist approach, based on a statistical linear analysis
+scheme providing the Best Linear Unbiased Estimate (Talagrand 1997) of x, given y and xb. The optimal
+general least square solution to the analysis problem (see Lorenc 1986) can be written as:
+
+xa = Ky+(I−KH)xb (1)
+
+The vector xa is called the ‘analysis’. The gain matrix K (of dimension n × p with n being the state vector
+and p the observation vector dimensions) takes into account the respective accuracies of the background
+vector xb and the observation vector y as defined by the (n× n)-dimensioned covariance matrix B and
+the (p× p)-dimensioned covariance matrix R, with:
+
+K = (B−1 + HTR−1H)−1HTR−1 (2)
+
+2 Lecture Notes: Data Assimilation
+
+
+
+Observation Impact on Forecast
+
+and I is the (n × n) identity matrix. Here, H is a (p × n)-dimensioned matrix interpolating the background
+fields to the observation locations, and transforming the model variables to observed quantities (e.g.
+radiative transfer calculations transforming the models temperature, humidity, ozone etc. to brightness
+temperatures as observed by satellite instruments). In the 4D-Var context introduced above, H is defined
+to also include the propagation of the atmospheric state vector by the forecast model to the time at which
+the observations were recorded.
+From (1) the sensitivity of the analysis system with respect to the observations can be derived from:
+
+δxa
+δy
+
+= KT (3)
+
+(3) provides the observational influence in the analysis (Cardinali et al. 2004).
+
+(b) Sensitivity equation
+
+Baker and Daley (2000) derived the forecast sensitivity equation with respect to the observations in the
+context of variational data assimilation. Let us consider a scalar J-function of the forecast error. The
+sensitivity of J with respect to the observations can be obtained using a simple derivative chain as:
+
+δJ
+δy
+
+=
+δJ
+δxa
+
+δxa
+δy
+
+(4)
+
+where δJ/δxa is the sensitivity of the forecast error to the initial conditions (Rabier et al. 1996, Gelaro et
+al., 1998). The forecast error is mapped onto the initial conditions by the adjoint of the model providing,
+for example, regions that are particularly sensitive to forecast error growth (see 2(c)). By using (2) and
+(3) the forecast sensitivity to the observations becomes:
+
+δJ
+δy
+
+= KT
+δJ
+δxa
+
+= R−1H(B−1 + HTR−1H)−1
+δJ
+δxa
+
+(5)
+
+where (B−1 + HTR−1H)−1 is the analysis error covariance matrix A.
+In practice, a second-order sensitivity gradient is needed (Langland and Baker, 2004; Errico 2007) to ob-
+tain the information related to the forecast error because the first-order sensitivity gradient only contains
+information on the sub-optimality of the assimilation system (see 2(c) and Cardinali 2009).
+The forecast error is defined by J = 1/2 〈 et ,Cet〉 where t stands for the truth. e denotes the forecast error
+with respect to temperature, vorticity and divergence as well as surface pressure. In practice, the forecast
+error is computed as the difference between the 24-hour forecast and the analysis valid at the same time.
+This implies that the verifying analysis is considered to be the truth:
+
+• The verifying analysis is only a proxy of the truth and thus errors in the analysis can obscure the
+observation impact in the short-range forecast.
+
+Lecture Notes: Data Assimilation 3
+
+
+
+Observation Impact on Forecast
+
+C is a matrix of weighting coefficients that integrate the elements of the forecast error to a dry energy
+norm that is a scalar:
+
+• Energy norm is a suitable choice because it directly depends on the most relevant model param-
+eters also contained in the control vector x (the vectors used in the minimization process in e.g
+4D-Var). Nevertheless, alternative functions of model parameters can be used.
+
+Equation (5) can be solved (Krylov-method, Van der Vorst 2003) and the forecast error sensitivity to all
+assimilated observations is then derived. The numerical method used is shown is 2(d) (see also Cardinali
+2009)
+
+(c) Sensitivity gradient
+
+Lets consider two forecasts of length f starting from xa and length g starting from xb, being xb the
+background field used in the xa analysis. Both forecasts verify at time t. Following Langland and Baker
+(2004) and Errico (2007) the second-order sensitivity gradient is defined as:
+
+δJ
+δxa
+
+=
+δJ f
+δxa
+
++
+δJg
+δxb
+
+(6)
+
+Where J f =〈 ( x f - xt ), C(x f - xt ) 〉 /2 and Jg =〈 ( xg - xt ), C(xg - xt ) 〉 /2 are a quadratic measure of the
+two forecast errors (xt the verifying analysis), and C is the matrix of dry energy weighting coefficients.
+It is clear that from (4) the adjoint model maps the sensitivity (with respect to the forecast) of J f into δ
+J f / δ xa along the trajectory f and the sensitivity of Jg into δ Jg/δ xa along the trajectory g (see Rabier et
+al. 1996, Gelaro et al., 1998 for the first-order sensitivity gradient definition and computation). Equation
+(6) is schematically represented
+
+observations
+
+assimilated
+
+t + 24ht – 12h t + 0
+
+xt
+
+Jf
+
+Jg
+
+x
+b
+
+x
+a
+
+g
+
+J
+
+f
+
+Figure 1: Geometrical representation of the sensitivity gradient calculation expressed in (6).
+
+Lets now compare the first-order sensitivity gradient with the second-order one. Lets define J1(e) =
+‖e,Ce‖ , J1 (e), express the variation of the forecast error due to the assimilation of observations, that
+
+4 Lecture Notes: Data Assimilation
+
+
+
+Observation Impact on Forecast
+
+is J(ea) - J(eb) where the ea and eb are the analysis and the background error. Following Langland and
+Baker, the second-order Taylor series decomposition (see also Errico 2007) is used to map such variation:
+
+J(eb)− J(ea) = (eb − ea)T J′ea +
+1
+2
+(eb − ea)T J′′ea(eb − ea) (7)
+
+Because the error cost function is quadratic, (7) reduces to
+
+J(eb)− J(ea) = 2(eb − ea)T ea +(eb − ea)T (eb − ea) (8)
+
+which at the first order is
+J(eb)− J(ea) = 2dTKTea (9)
+
+In an optimal assimilation system, the right hand side of the equation is on average zero (Talagrand,
+2002) since statistically, the innovation vector, d=y-Hxb, and the analysis error are orthogonal. There-
+fore, it is clear that the results obtained by using the first-order sensitivity gradient, only provides the
+measure of the sub-optimality of the analysis system. The second-order term appears necessary to be
+included in the FSO calculation.
+
+(d) Numerical solution
+
+In an optimal variational analysis scheme, the analysis error covariance matrix A is approximately the
+inverse of the matrix of second derivatives (the Hessian) of the analysis cost function Ja (Rabier et al.
+2000), i.e. A=(Ja′′)−1 (Rabier and Courtier 1992). Given the large dimension of the matrices involved,
+Ja′′ and its inverse cannot be computed explicitly. The minimization is performed in terms of a trans-
+formed variable χ , χ=L−1(x-xb), with L chosen such that B=LLT . The transformation L thus reduces
+the covariance of the prior to the identity matrix. In variational data assimilation, L is referred to as the
+change-of-variable operator (Courtier et al. 1998). Lets apply the change-of-variable in the analysis cost
+function and write:
+
+Ja(x) =
+1
+2
+(x−xb)T B−1(x−xb)+
+
+1
+2
+(Hx−y)TR−1(Hx−y)
+
+=
+1
+2
+
+χTχ+
+1
+2
+(HLχ −y)TR−1)(HLχ −y) = Ja(χ) (10)
+
+The Hessian becomes:
+Ja′′(χ) = I+ LTHTR−1HL (11)
+
+By applying the change-of-variable in (7) and by using (8), the forecast sensitivity to the observations is
+expressed as:
+
+δJ
+δy
+
+= R−1HL(I+ LTHTR−1HL)−1LT
+δJ
+δxa
+
+(12)
+
+Using the conjugate gradient algorithm, first the following equation for δJ/δy = R−1Hz is solved:
+
+(I+ LTHTR−1HL)z = Lza
+
+za =
+δJ
+δxa
+
+(13)
+
+Lecture Notes: Data Assimilation 5
+
+
+
+Observation Impact on Forecast
+
+The solution z lies in the Krylov-subspace generated by the vector LT za and the matrix (I+LTHTR−1HL).
+The Krylov-subspace dimension is the degree of the minimal polynomial of (I+ LTHTR−1HL). There-
+fore if the degree is low, the Krylov-method searches the solution on a small dimensioned space. The
+method is very efficient in an iterative solution of a linear system with large and sparse matrices (Van
+der Vorst 2003). The forecast sensitivity to observations is then given by interpolating z (using the H
+operator) in the observation space and by normalizing with respect to the observation error covariance
+matrix R.
+
+(e) Observation impact measure
+Once the forecast sensitivity is computed, the variation δJ of the forecast error expressed by J can be
+found by rearranging (1) and by using the adjoint property for the linear operator:
+
+δJ = 〈
+δJ
+δxa
+
+,δxa〉 = 〈
+δJ
+δxa
+
+,K(y−Hxb)〉
+
+= 〈KT
+δJ
+δxa
+
+,y−Hxb〉
+
+= 〈KT
+δJ
+δxa
+
+,δy〉 = 〈
+δJ
+δy
+
+,δy〉 (14)
+
+where δxa = xa − xb are the analysis increments and δy = y− Hxb is the innovation vector. δJ is
+computed across the 12 hour window; the sensitivity gradients δJ/δxa , valid at the starting time of the
+4D-Var window (09 and 21 UTC in the ECMWF system), are distributed by KT , which incorporates the
+temporal dimension, over the 12-hour window. From Eq. (14), few considerations should be taken into
+account:
+
+• The forecast impact δJ (hereafter called Forecast Error Contribution, FEC) of all observations
+assimilated depends on the forecast error (J(e) → δJ/δxa), the assimilation system (KT ) and the
+difference between the observations and the model (y−Hxb).
+
+• Positive forecast error variation δJ > 0 is synonymous of forecast degradation. Negative forecast
+error variation δJ < 0 is synonymous of forecast improvement.
+
+• The verifying analysis is only a proxy of the truth. Therefore, errors in the analysis can mask the
+observation impact in the forecast.
+
+• Biases in the model can result on forecast degradation that erroneously is interpreted as an obser-
+vation related degradation.
+
+• Since the computation is performed with the linearized model, only errors in the short-range
+forecast can be diagnosed.
+
+• The forecast error is measured using a dry energy norm that depends on wind, temperature and
+surface pressure. Therefore, observables depending on these parameters are rather well assessed.
+Moreover, the dependency of the forecast error on humidity is represented by the linearized moist
+process so that also forecast impact of humidity observations are fully assessed (Janiskova and
+Cardinali 2012 in preparation).
+
+• The variation of the forecast error due to a specific measurement can be summed up over time
+and space in different subsets to compute the average contribution of different components of the
+
+6 Lecture Notes: Data Assimilation
+
+
+
+Observation Impact on Forecast
+
+observing system to the forecast error. For example, the contribution of all AMSU-A satellites, s,
+and channels, i, over time T will be:
+
+δJAMSU−A = ∑
+s⊂S
+
+∑
+i⊂channel
+
+∑
+t⊂T
+
+= δJsit
+
+This is one of the most important characteristics of the tool because it allows any necessary level
+of granularity in analysis for a comprehensive investigation.
+
+Given all the points above it is clear that a full diagnostic assessment is necessary to establish the causes
+for a forecast error increase.
+
+3 Results
+
+The routinely computed observational impact from the operational ECMWF 4D-Var system (Rabier et
+al 2000; Janiskova et al. 2002; Lopez and Moreau, 2005) is shown in Fig. 2 for September and October
+2011. At ECMWF, the ‘observation impact’-suite runs one day behind the model-suite, in time to recover
+the actual verifying analysis for the forecast error computation. The 24-hour forecast error contribution
+(FEC) of all the observing system components is computed and shown in the top panel of Fig. 2 for
+different observation types as defined in Table 1. Due to technical reasons, microwave imagers (SSMIS
+and TMI) have not been considered in this study. The largest contribution to decreasing the forecast error
+is provided by AMSU-A (∼ 25 %), IASI, AIRS, AIREP (aircraft data and GPS-RO observations account
+for 10% of the total impact, respectively. TEMP and SYNOP surface pressure observations contribute
+by 5% followed by AMVs and HIRS (∼4%), then by ASCAT and DRIBU (3%). All other observations
+contribute to less than 3%.
+
+0 5 10 15 20 25
+
+SYNOP
+Aircraft
+DRIBU
+TEMP
+DROP
+PILOT
+
+PROFILER
+
+GOES-AMV
+Meteosat-AMV
+
+MTSAT-AMV
+MODIS-AMV
+
+SCAT
+HIRS
+
+AMSU-A
+AIRS
+IASI
+
+GPS-RO
+AMSR-E
+
+SSMIS
+TMI-1
+
+MERIS
+MHS
+
+AMSU-B
+Meteosat-Rad
+
+MTSAT-Rad
+GOES-Rad
+
+O3
+
+FEC %
+
+October September
+
+0 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2
+
+SYNOP
+AIREP
+
+DRIBU
+TEMP
+DROP
+PILOT
+
+PROFILER
+GOES-AMV
+
+Meteosat-AMV
+
+MTSAT-AMV
+MODIS-AMV
+
+SCAT
+HIRS
+
+AMSU-A
+AIRS
+IASI
+
+GPS-RO
+AMSR-E
+
+SSMIS
+
+TMI-1
+MERIS
+
+MHS
+
+AMSU-B
+Meteosat-Rad
+
+MTSAT-Rad
+GOES-Rad
+
+O3
+
+Mean FEC (J)
+
+October September
+
+Figure 2: Observation contribution to the global forecast error reduction grouped by observation type as defined in
+1. The measure is given in percent and for the months of September and October. Left panel is total forecast error
+contribution and the error bars are computed using the standard error measure. In the right panel the average
+forecast error contribution (normalized by the number of observations used) is shown.
+
+The error of the observation impact measure is also displayed in Fig. 2 (top panel) which depend on the
+standard error and on the number of observation assimilated in that period. If the FEC measures vari-
+ability is within the error range, the variation is not considered to be significant. In the bottom panel of
+
+Lecture Notes: Data Assimilation 7
+
+
+
+Observation Impact on Forecast
+
+Data
+name
+
+Data kind Information
+
+OZONE
+(O3)
+
+Backscattered solar UV radiation, re-
+trievals
+
+Ozone, stratosphere
+
+GOES-
+Radiance
+
+US geostationary satellite infrared
+sounder radiances
+
+Moisture, mid/upper troposphere
+
+MTSAT-
+Rad
+
+Japanese geostationary satellite in-
+frared sounder radiances
+
+Moisture, mid/upper troposphere
+
+MET-rad EUMETSAT geostationary satellite in-
+frared sounder radiances
+
+Moisture, mid/upper troposphere
+
+AMSU-B Microwave sounder radiances Moisture, troposphere
+MHS Microwave sounder radiances Moisture, troposphere
+MERIS Differential reflected solar radiation,
+
+retrievals
+Total column water vapour
+
+GPS-RO GPS radio occultation bending angles Temperature, surface pressure
+IASI Infrared sounder radiances Temperature, moisture, ozone
+AIRS Infrared sounder radiances Temperature, moisture, ozone
+AMSU-
+A
+
+Microwave sounder radiances Temperature
+
+HIRS Infrared sounder radiances Temperature, moisture, ozone
+ASCAT Microwave scatterometer backscatter
+
+coefficients
+Surface wind
+
+MODIS-
+AMV
+
+US polar Atmospheric Motion Vectors,
+retrievals
+
+Wind, troposphere
+
+Meteosat-
+AMV
+
+EUMETSAT geostationary Atmo-
+spheric Motion Vectors, retrievals
+
+Wind, troposphere
+
+MTSAT-
+AMV
+
+Japanese geostationary Atmospheric
+Motion Vectors, retrievals
+
+Wind, troposphere
+
+GOES-
+AMV
+
+US geostationary Atmospheric Motion
+Vectors, retrievals
+
+Wind, troposphere
+
+PROFILER American, European and Japanese
+Wind profiles
+
+Wind, troposphere
+
+PILOT Radiosondes at significant level from
+land stations
+
+Wind, troposphere
+
+DROP Dropsondes from aircrafts Wind, temperature, moisture, pressure,
+troposphere
+
+TEMP Radiosondes from land and ships Wind, temperature, moisture, pressure,
+troposphere
+
+AIREP Aircraft measurements Wind, temperature, troposphere
+DRIBU Drifting buoys Surface pressure, temperature, mois-
+
+ture, wind
+SYNOP Surface Observations at land stations
+
+and on ships
+Surface pressure, temperature, mois-
+ture, wind
+
+Table 1: Observation type assimilated in September and October 2011. Number of observations per assimilation
+cycle is ∼5 106.
+
+8 Lecture Notes: Data Assimilation
+
+
+
+Observation Impact on Forecast
+
+Fig. 2, the mean impact per individual observation is shown. In this case, the impact is independent from
+the observation number. The largest mean contribution is provided by DROP and DRIBU (surface pres-
+sure) observations, followed by the contribution of a second group of observations comprising MERIS,
+AMVs, ASCAT, GPS-RO, SYNOP, TEMP, AMSU-B and AIREP. Contrary to the total forecast impact
+that is largely provided by satellite observations, the largest per-observation impact is obtained from con-
+ventional observations. The difference between the two impact measures is mainly due to difference in
+observation accuracy through which a single conventional observation is on average more influential in
+the analysis than a single satellite measurement.
+
+0
+
+9
+
+18
+
+27
+
+S
+Y
+
+N
+O
+
+P
+
+A
+ir
+
+cr
+a
+
+ft
+
+D
+R
+
+IB
+U
+
+T
+E
+
+M
+P
+
+D
+R
+
+O
+P
+
+P
+IL
+
+O
+T
+
+G
+O
+
+E
+S
+
+-A
+M
+
+V
+
+M
+e
+
+te
+o
+
+sa
+t-
+
+A
+M
+
+V
+
+M
+O
+
+D
+IS
+
+-A
+M
+
+V
+
+S
+C
+
+A
+T
+
+H
+IR
+
+S
+
+A
+M
+
+S
+U
+
+-A
+
+A
+IR
+
+S
+
+IA
+S
+
+I
+
+G
+P
+
+S
+-R
+
+O
+
+M
+E
+
+R
+IS
+
+M
+H
+
+S
+
+A
+M
+
+S
+U
+
+-B
+
+M
+e
+
+te
+o
+
+sa
+t-
+
+R
+a
+
+d
+
+M
+T
+
+S
+A
+
+T-
+R
+
+a
+d
+
+G
+O
+
+E
+S
+
+-R
+a
+
+d
+
+O
+3
+
+F
+E
+
+C
+ m
+
+o
+n
+
+th
+ly
+
+ v
+a
+
+ri
+a
+
+ti
+o
+
+n
+ (
+
+%
+)
+
+June
+
+July
+
+August
+
+September
+
+October
+
+Figure 3: Variation of total Forecast Error Contribution in June, July, August, September and October 2011 for
+the different observation types.
+
+The monthly variation of forecast impact is shown in Fig. 3 per observation type and for June -October
+2011. The only significant temporal variation is observed for AMSU-A with the largest forecast impact
+in August and September, and for GPS-RO and IASI in July and August, respectively.
+
+The AMSU-A forecast impact has been analyzed in more detail. In 4 the contribution of all channels
+to the forecast error decrease is shown. Channel 8 has the largest overall impact and the stratospheric
+channels (11-14) the smallest. There is no significant difference in performance between September and
+October. The geographical distribution of mean forecast improvement or deterioration from channel 8
+is shown in Fig. 5 for September-October 2011. The METOP-A AMSU-A performance is compared
+with that of NOAA-15 since they have a similar satellite orbit; nevertheless, there is a difference in the
+measurement time since METOP-A crosses the equator at around 9:30 and NOAA-15 at 16:30. The
+overall impact of the instrument on the two satellites is comparable. The geographical location of the
+improvement instead differs quite substantially with the exception of the polar and central Southern
+Hemisphere regions where both are performing similarly well. In the western part of the Southern
+Hemisphere, METOP-A reduces the forecast error whilst NOAA-15 increases it; on the contrary, in the
+eastern part, NOAA-15 shows a large and consistent improvement whereas METOP-A shows small areas
+
+Lecture Notes: Data Assimilation 9
+
+
+
+Observation Impact on Forecast
+
+14
+
+13
+
+12
+
+11
+
+10
+
+9
+
+8
+
+7
+
+6
+
+5
+
+0 5 10 15
+
+AMSU-A FEC (%)
+
+C
+h
+
+a
+n
+
+n
+e
+
+l
+
+20 25 30
+
+September
+October
+
+Figure 4: Total Forecast Error Contribution for all AMSU-A instruments in percent. The impact is shown for all
+assimilated channels and for September and October 2011.
+
+of degradation. A similar impact pattern is observed for the Tropics and Northern Hemisphere.
+
+0°N
+
+30°S
+
+60°S
+
+30°N
+
+60°N
+
+150°W 120°W 90°W 60°W 30°W 0°E 30°E 60°E 90°E 120°E 150°E 150°W 120°W 90°W 60°W 30°W 0°E 30°E 60°E 90°E 120°E 150°E
+-5.04
+-1.78
+-1.56
+-1.33
+-1.11
+-0.89
+-0.67
+-0.44
+-0.22
+-0
+0
+0.22
+0.44
+0.67
+0.89
+1.11
+1.33
+1.56
+1.78
+2
+
+Figure 5: Mean Forecast Error Contribution for AMSU-A channel 8 onboard METOP-A (left panel) and NOAA-15
+(right) for the whole globe. Unit is Joule.
+
+Once the area of degradation or improvement and the periods of interest are determined, the addition of
+OSEs can help to determine the possible causes. For example, can be necessary to identify the explicit
+contribution of AMSU-A channel 8 to the degradation over the Atlantic (METOP-A) or central Africa
+(NOAA-15). The comparison between the experiment where channel 8 is not assimilated and the control
+experiment (in which it s assimilated) will add information for the specific case and will help in evaluat-
+ing suitability of the assimilation procedure for this data.
+
+The variation of forecast impact with time for AMSU-A channel 8 is shown for the North Atlantic re-
+gion in Fig. 6 (top panel). Again METOP-A (left panel) and NOAA-15 (right panel) are compared.
+METOP-A shows much larger temporal variability than NOAA-15 and displays more events of detri-
+
+10 Lecture Notes: Data Assimilation
+
+
+
+Observation Impact on Forecast
+
+-2
+
+-1
+
+0
+
+[J
+/k
+
+g
+]
+
+FEC
+
+0
+
+0.1
+
+0.2
+
+[K
+]
+
+OBS-FG OBS-AN
+
+     0
+
+   800
+
+  1600
+
+  2400
+
+  3200
+
+  4000
+
+N
+u
+
+m
+b
+
+e
+r
+
+n_used
+
+-0.4
+
+-0.2
+
+0
+
+0.2
+
+0.4
+
+[J
+/k
+
+g
+]
+
+21 24 27 30 2 5 8 11 14 17 20 23 26 29 2 85 11 14 17 20 23 26 29 1 4 7 10 13 16
+September October November
+
+21 24 27 30 2 5 8 11 14 17 20 23 26 29 2 85 11 14 17 20 23 26 29 1 4 7 10 13 16
+September October November
+
+21 24 27 30 2 5 8 11 14 17 20 23 26 29 2 85 11 14 17 20 23 26 29 1 4 7 10 13 16
+September October November
+
+21 24 27 30 2 5 8 11 14 17 20 23 26 29 2 85 11 14 17 20 23 26 29 1 4 7 10 13 16
+September October November
+
+21 24 27 30 2 5 8 11 14 17 20 23 26 29 2 85 11 14 17 20 23 26 29 1 4 7 10 13 16
+September October November
+
+21 24 27 30 2 5 8 11 14 17 20 23 26 29 2 85 11 14 17 20 23 26 29 1 4 7 10 13 16
+September October November
+
+FEC
+
+-0.2
+
+-0.1
+
+0
+
+0.1
+
+0.2
+
+[K
+]
+
+OBS-FG OBS-AN
+
+     0
+
+   600
+
+  1200
+
+  1800
+
+  2400
+
+  3000
+
+N
+u
+
+m
+b
+
+e
+r
+
+n_used
+
+Figure 6: Daily variation of mean FEC (top panel), background (black line) and analysis (grey line) departure
+(middle panel) and observation number (bottom panel) over the Atlantic region from September to mid November
+2011 for METOP-A (left panel) and NOAA-15 (right panel) AMSU-A channel 8.
+
+a)
+
+b)
+
+–150 –120 –90 –60 –30 0 30 60 90 120 150
+
+60
+
+30
+
+0
+
+–30
+
+–60
+
+–150 –120
+
+21 00 03 06 09 UTC
+
+–90 –60 –30 0 30 60 90 120 150
+
+60
+
+30
+
+0
+
+–30
+
+–60
+
+Figure 7: Data coverage for METOP-A (top panel) and NOAA-15 (bottom panel) AMSU-A. The swath colour is
+related to the measurement time from 21 UTC to 9 UTC.
+
+Lecture Notes: Data Assimilation 11
+
+
+
+Observation Impact on Forecast
+
+mental impact (positive values) than NOAA-15 that, except for a few occasions, performs rather well
+over the entire period. The observation departures are also different: the departures with respect to the
+background (black line middle panel) is smaller for METOP-A (on average 0.05 K) until the beginning
+of October when the assimilation of METOP-A restarted after a break of three days due to routine satel-
+lite maintenance. After the 2nd of October, METOP-A background departures become smaller but the
+largest absolute decrease (0.025 K) is observed instead for NOAA-15. And, from October onwards, the
+observation departure from the analysis (grey line middle panel) becomes very similar (close to zero on
+average) while before that day, NOAA-15 shows a small positive bias. Interestingly, the forecast reduc-
+tion also changes: METOP-A shows larger variability than before and to a less extent also NOAA-15.
+However, on average, as shown in Fig. 5, the impact of the two satellites is quantitatively similar though
+different in terms of location. Over the Pacific, for example, METOP-A and NOAA-15 time series of
+the forecast performance are more similar, with METOP-A showing also few large improvements (not
+shown). The number of measurements provided by the two satellites is very similar (bottom panel). The
+larger forecast error reduction of NOAA-15 with respect to METOP-A over the North Atlantic is due
+to the measurement time ( Fig. 7). In fact, NOAA-15 satellite cross the Atlantic close to 9 UTC which
+corresponds to the end of the 12 hour assimilation window in the 4D-Var system used (Fig. 7 light grey)
+whilst the METOP-A platform is observing the Atlantic at the beginning of the assimilation window
+(Fig. 7 dark grey). Due to the evolution of the model error covariance matrix B across the assimilation
+window, observations assimilated towards the end of the window are more influential than observations
+assimilated at the beginning of the window.
+
+4 Conclusion
+
+Over the last few years, the potential of using derived adjoint-based diagnostic tools has been largely
+exploited. Recently, a compact derivation of the 4D-Var sensitivity equations by using the theoretical
+framework of the implicit function has been derived (Daescu 2008). The analytical formulation of the
+sensitivity equations with respect to an extended set of input parameters has been shown and numerical
+applications will soon follow. This paper illustrates the use of the forecast sensitivity with respect to
+time-distributed observational data, first time in a 12-hour 4D-Var assimilation system, as a diagnostic
+tool to monitor the observation performance in the short-range forecast. The fundamental principles, on
+which the forecast sensitivity diagnostic tool is based, are illustrated and an example of a routine diag-
+nostic is provided.
+
+The forecast sensitivity to observations can only be used to diagnose the impact on the short-range fore-
+cast, namely for periods of 24 to 48 hours, given the use of the adjoint model and the implied linearity
+assumption. The tool allows the computation and visualization of the impact for each assimilated mea-
+surement and therefore the diagnostic can be performed from local to global scales and for any period of
+interest. The use the second-order sensitivity gradient is necessary to identify the forecast impact of the
+observations; in fact, the projected first-order sensitivity gradient only contains information on the sub-
+optimality of the assimilation system. The tools characteristics have been explained: in particular, the
+dependency of the tool on the verifying analysis used to compute the forecast error and the dependency
+of the sensitivity tool on the scalar function representing the global forecast error (energy norm). The
+function of the global forecast error is first mapped onto the initial conditions (using the adjoint operator
+of the model forecast) and then into the observation space (using the adjoint operator of the analysis sys-
+tem). The forecast error sensitivity of a specific measurement is transformed on forecast error variation
+
+12 Lecture Notes: Data Assimilation
+
+
+
+Observation Impact on Forecast
+
+via a scalar product with the innovation vector.
+
+The global impact of observations is found to be positive and the forecast errors decrease for all data
+type when monthly averaged. In fact, due to statistical nature of the assimilation procedure, the observa-
+tion impact must be averaged over a long enough period to be significant.
+
+An example of observation impact monitoring has been shown and from the global performance as-
+sessment the specific performance of one AMSU-A channel has been illustrated for two polar orbiting
+satellites, namely METOP-A and NOAA-15 covering a similar orbit. The causes of degradation or im-
+provement can be further investigated using Observing System Experiments.
+
+Given the dependency of some observation types on the meteorological situation, it is suggested to run
+the forecast sensitivity to the observation diagnostic tool on an operational basis and in relation to the
+operational suite error. A constant monitoring of the performance of the model forecast would allow
+the use of the observation network in an adaptive way where observations with negative impact can be
+investigated and potentially denied in real time.
+
+Acknowledgements
+
+The author thanks Mohamed Dahoui, Anne Fouilloux and Fernando Prates for their continued support
+to monitor, display and diagnose the forecast performance of all observations assimilated at ECMWF.
+
+References
+
+Baker N.L. and R. Daley, 2000: Observation and background adjoint sensitivity in the adaptive observa-
+tion targeting problem. Q. J. R. Meteorol. Soc, 126,1431-1454
+
+Bouttier, F, and Kelly, G., 2001: Observing system experiments in the ECMWF 4D-Var data assimilation
+system. Q. J. R. Meteorol . Soc, 127,1469-1488
+
+Cardinali, C., S. Pezzulli and E. Andersson, 2004: Influence matrix diagnostics of a data assimilation
+system. Q. J. R. Meteorol. Soc, 130, 2767-2786
+
+Cardinali, C., and R. Buizza, 2004. Observation sensitivity to the analysis and the forecast: a case study
+during ATreC targeting campaign. Proceedings of the First THORPEX International Science Sympo-
+sium, 6-10 December 2004, Montreal, Canada, WMO TD 1237 WWRP/THORPEX N. 6.
+
+Cardinali, C., 2009: Monitoring the observation impact on the short-range forecast. Q. J. R. Meteorol.
+Soc., 135, 239-250
+
+Chapnik, B., G.Desnrozier, F. Rabier and O. Talagrand, 2006: Diagnosis and tuning of observation error
+
+Lecture Notes: Data Assimilation 13
+
+
+
+Observation Impact on Forecast
+
+in a quasi-operational data assimilation setting. Q. J. R. Meteorol. Soc., 132, 543-565.
+
+Courtier P., E. Andersson, W. Heckley, J. Pailleux, D. Vasiljevic, M. Hamrud, A. Hollingsworth, F.
+Rabier and M. Fisher, 1998: The ECMWF implementation of three-dimension variational assimilation
+(3D-Var). Part I: Formulation. Q. J. R. Meteorol. Soc., 124, 1783-1807
+
+Daescu, D.N., 2008: On the sensitivity equations of 4D-Var data assimilation. Mon. Wea. Rev., accepted
+for publication.
+
+English, S., R. Saunders, B. Candy, M. Forsythe, and A. Collard, 2004: Met Office satellite data OSEs.
+Third WMO Workshop on the impact of various observing systems on numerical weather prediction,
+Alpbach, Austria, WMO/TD, 1228, 146-156
+
+Errico, R., 2007: Interpretation of an adjoint-derived observational impact measure. Tellus, 59A, 273-
+276.
+
+Gelaro R, Buizza, R., Palmer T.N. and Klinker E., 1998: Sensitivity analysis of forecast errors and the
+construction of optimal perturbations using singular vectors. J. Atmos. Sci., 55, 1012-1037.
+
+Kelly, G., 2007: Evaluation of the impact of the space component of the Global Observation System
+through Observing System Experiments. ECMWF Newsletter Autumn.
+
+Langland R. and N.L Baker., 2004: Estimation of observation impact using the NRL atmospheric varia-
+tional data assimilation adjoint system. Tellus, 56A, 189-201.
+
+Lorenc, A., 1986: Analysis methods for numerical weather prediction. Q. J. R. Meteorol. Soc., 112,
+1177-1194.
+
+Lopez, P. and E. Moreau, 2005: A convection scheme for data assimilation: Description and initial tests.
+Q.J.R.Meteorol.Soc., 131, 409-436
+
+Lord, S., T. Zapotocny, and J. Jung, 2004: Observing system experiments with NCEPs global forecast
+system.Third WMO Workshop on the impact of various observing systems on numerical weather pre-
+diction, Alpbach, Austria, WMO/TD, 1228, 56-62.
+
+Lupu, C., P. Gauthier and S. Laroche, 2011: Evaluation of the impact of observations on analyses in 3D-
+and 4D-Var based on information content. Mon. Wea. Rev., 139, 726-737.
+
+Janiskova, M., J.-J. M. J.-F. Mahfouf, and F. Chevallier, 2002: Linearized radiation and cloud schemes
+in the ECMWF model: Development and evaluation, Q. J. R. Meteorol. Soc., 128, 1505-1527.
+
+14 Lecture Notes: Data Assimilation
+
+
+
+Observation Impact on Forecast
+
+Rabier, F. and Courtier, P., 1992: Four-dimensional assimilation in the presence of baroclinic instability.
+Q. J. R. Meteorol. Soc., 118, 649-672.
+
+Rabier, F., Klinker, E., Courtier, P. and Hollingsworth A. 1996: Sensitivity of forecast errors to initial
+condition. Q. J. R. Meteorol. Soc. 122, 121-150
+
+Rabier, F., Jrvinen, H., Klinker, E., Mahfouf J.F., and Simmons, A., 2000: The ECMWF operational
+implementation of four-dimensional variational assimilation. Part I: experimental results with simplified
+physics. Q. J. R. Meteorol. Soc. 126, 1143-1170.
+
+Radnoti, G., P. Bauer, A. P. McNally, C. Cardinali, S. Healy and P. deRosnay, 2010: ECMWF study
+on the impact of future developments of the space-based observing system on Numerical Weather Pre-
+diction. ECMWF Technical Memorandum, No. 638, 117 pp. Available from European Centre for
+Medium-Range Weather Forecasts, Shinfield Park, Reading RG2 9AX, United Kingdom.
+
+Radnoti, G., P. Bauer, A. P. McNally and A. Horanyi, 2012: ECMWF study to quantify the interaction
+between terrestrial and space-based observing systems on Numerical Weather Prediction skill. Project
+report, available from ECMWF.
+
+Talagrand, O., 1997: Assimilation of observations, an Introduction. J. Meteorol. Soc. Japan, Vol 75,
+N.1B,191-209.
+
+Talagrand O., 2002: A posteriori validation of assimilation algorithms. Proceding of NATO Advanced
+Study Institute on Data Assimilation for the Earth System, Acquafreda, Maratea, Italy.
+
+Tompkins, A.M. and M. Janiskova: 2004, A cloud scheme for data assimilation: Description and initial
+tests. Q.J.R.Meteorol.Soc, 130, 2495-2517
+
+Van der Vorst, H.A., 2003: Iterative Krylov methods for large linear systems. Cambridge Accademic
+Press
+
+Zhu, Y. and Gelaro, R., 2008: Observation Sensitivity Calculations Using the Adjoint of the Gridpoint
+Statistical Interpolation (GSI) Analysis System. Mon. Wea. Rev., 136, 335-351.
+
+Lecture Notes: Data Assimilation 15
+
+
+	1 Introduction
+	2 Observational Impact on the Forecast 
+	3 Results
+	4 Conclusion

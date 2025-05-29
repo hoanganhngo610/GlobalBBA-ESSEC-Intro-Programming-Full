@@ -1,0 +1,995 @@
+Assimilation_techniques_RRKF
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+Assimilation Techniques (5): Approximate
+Kalman Filters and Singular Vectors
+April 2001
+
+By Mike Fisher
+
+European Centre for Medium-Range Weather Forecasts.
+
+Table of contents
+
+1 . Introduction
+
+2 . Why is the Kalman filter impractical for very large systems?
+
+3 . The ensemble Kalman filter
+
+4 . Subspaces, projections and Hessian singular vectors
+
+5 . The ECMWF reduced-rank Kalman filter
+
+5.1 The subspace
+
+5.2 Theinner product
+
+5.3 The background cost function
+
+6 . Examples
+
+REFERENCES
+
+1. INTRODUCTION
+
+For a perfect, linear model and linear observation operators, both 4dVar and the Kalman filter give the same values
+
+for the model variables at the end of the 4dVar assimilation window, provided that both systems start with the same
+
+covariance matrices at the beginning of the window. The fundamental difference between the Kalman filter and
+
+4dVar is that the former explicitly evolves the covariance matrix, whereas the covariance evolution in 4dVar is im-
+
+plicit. This means that when we come to perform another cycle of analysis, the Kalman filter provides us with both
+
+a model state (background) and its covariance matrix. 4dVar does not provide the covariance matrix.
+
+The aim of this lecture is to describe some approaches to Kalman filterering for very large systems. Particular em-
+
+phasis is placed on describing the ECMWF “reduced rank” Kalman filter. This is under development as a possible
+
+replacement for the current 4dVar system.
+
+2. WHY IS THE KALMAN FILTER IMPRACTICAL FOR VERY LARGE SYSTEMS?
+
+The Kalman filter augments the usual equations for the analysis and propagation of the model state:
+
+(1)x� x� P
+�
+HT R HP
+
+�
+HT+( )
+
+1–
+y Hx�–( )+=
+
+x � � x�( )=
+
+
+
+Assimilation Techniques (5): Approximate Kalman Filters and Singular Vectors
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+with equations which analyse and propagate the covariance matrix:
+
+(2)
+
+(Note: To avoid confusing integer subscripts denoting analysis cycle, the background and forecast states and
+
+covariance matrices have been distinguished in Eqs. (1) and (2) by subscripts and superscripts, and . Of
+
+course, the forecast quantities and form the background state and covariance matrix for the next
+
+analysis cycle. The matrix  represents the effect of model error.)
+
+For large systems, the computational expense of the Kalman filter is in the analysis and the propagation of the co-
+
+variance matrix. There are two expensive operations. First, to calculate the analysis error covariance matrix, we
+
+must invert the matrix . Second, the covariance matrix has to be propagated in time according to the
+
+dynamics of the tangent linear model. This requires the application of the tangent linear model to each column and
+
+the adjoint model to each row of the (typically ) covariance matrix. In additional to the prohibitive com-
+
+putational expense of these operations, the covariance matrices are too large to store in current computer memories.
+
+A full Kalman filter has been run at ECMWF for a three-level T21 quasi-geostrophic model. This is more or less
+
+the largest system for which a full Kalman filter is computationally feasible on current computers. The computa-
+
+tional cost rises rapidly with the dimension of the problem since higher resolution increases both the computational
+
+cost of the model, and the number of model integrations which are required.
+
+For the forseeable future, therefore, the full Kalman filter will remain too expensive for use as a meteorological
+
+analysis sytem for numerical weather prediction. We are forced to approximate. In particular, we must find ways
+
+to reduce the number of integrations of the tangent linear model by several orders of magnitude.
+
+3. THE ENSEMBLE KALMAN FILTER
+
+The ensemble Kalman filter (Evensen 1994, Houtekamer and Mitchell 1998) takes a statistical approach to the so-
+
+lution of the Kalman filter equations for the covariance matrices of analysis and background error. The idea of the
+
+method is to generate a statistical sample of analyses. This is done by running the analysis system several times for
+
+a given date, each time using backgrounds which differ by an amount characteristic of background error, and ob-
+
+servations which have been perturbed by adding random noise drawn from the distribution of observation error.
+
+(The backgrounds are produced by running short forecasts from each member of the preceding ensemble of anal-
+
+yses.)
+
+The differences between the analyses form a statistical sample of analysis error, which may be used to estimate the
+
+covariance matrix of analysis error, without the need for expensive matrix inversions:
+
+(3)
+
+where  represents an average over the ensemble.
+
+By running a short forecast from each ensemble analysis, we get an ensemble of backgrounds which give an esti-
+
+mate of the covariance matrix of background error:
+
+(4)
+
+P
+�
+
+P
+�
+
+P
+�
+HT R HP
+
+�
+HT+( )
+
+1–
+HP
+�
+
+–=
+
+P
+�
+
+MP
+�
+
+MT Q+=
+
+� �
+
+x � P � x � P�
+
+Q
+
+R HP
+�
+HT+
+
+106 106×
+
+P
+�
+
+x � x�( )T〈 〉≈
+
+.〈 〉
+
+P
+�
+
+x� x�( )T〈 〉≈
+
+
+
+Assimilation Techniques (5): Approximate Kalman Filters and Singular Vectors
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+The estimated covariance matrices have rank equal to the size of the ensemble (i.e. several orders of magnitude
+
+smaller than the dimension of the matrix). This rank deficiency means that if we try to use the estimated background
+
+covariance matrix directly in the analysis, we will generate analysis increments which lie strictly in the space
+
+spanned by the ensemble members. One solution to this problem is to split the analysis increment into a part which
+
+projects onto the subspace spanned by the ensemble members, and a part which is orthogonal. Then, we may use
+
+the statistically estimated covariance matrix for the projected part of the analysis increment, and a static covariance
+
+matrix for the orthogonal part.
+
+A second way to avoid the problem of rank-deficiency of the covariance matrix is to modify the covariance matrix
+
+in a way which increases its rank. Houtekamer and Mitchell 2000 suggest modifying the estimated covariances by
+
+removing spurious covariances at large distance. This has the effect of greatly increasing the rank of the estimated
+
+covariance matrix.
+
+The ensemble Kalman filter has several attractive features. It is very well suited to modern parallel computers, since
+
+the members of the analysis ensemble are essentially independent and may therefore be run simultaneously. The
+
+method works by trying to diagnose the actual covariance matrix of background error rather than by explicitly prop-
+
+agating an approximate analysis error covariance matrix. This may be an advantage. On the other hand, the random
+
+errors in the statistically-estimated covariances decrease only as the square-root of the ensemble size. Also, random
+
+vectors do not provide an optimal subspace for explaining forecast errors.
+
+4. SUBSPACES, PROJECTIONS AND HESSIAN SINGULAR VECTORS
+
+The most general way to reduce the number of tangent linear model integrations required to propagate the covari-
+
+ance matrix, is to choose some low-dimensional subspace, and to propagate the projection of the covariance matrix
+
+onto the subspace. (In the case of the Ensemble Kalman Filter, the subspace is defined by the ensemble of analyses.)
+
+For the rest of the phase space, we should do something sensible but cheap. For example, we could decide to use
+
+a static (flow-independent) covariance matrix.
+
+The most general way to choose a subspace is to choose a set of vectors which span it. However, this is not
+
+enough. We must also decide what we mean by projection onto the subspace. That is, we must choose an inner
+
+product .
+
+Given any vector , we can define a part which projects onto the subspace:
+
+(5)
+
+and a part which is orthogonal:
+
+(6)
+
+The coefficients of the projection are completely determined by the requirement that is orthogonal to the
+
+subspace according to our chosen inner product (i.e. that  for ).
+
+Particularly interesting for the analysis is the set of vectors at the analysis time , which evolve into the
+
+leading eigenvectors of the forecast error covariance matrix at some future time . (Typically, we might
+
+take to be 48 hours after the analysis time.) These vectors are interesting, because for a fixed number of vectors,
+
+the leading eigenvectors of are the vectors which account for a maximum variance of forecast error. The vectors
+
+define precisely the directions in which we want to do a good job of analysis if we are to minimize the fore-
+
+�
+s�
+
+. .,〈 〉
+
+x
+
+xS α � s�� 1=
+
+�
+∑=
+
+x
+S
+
+x xS–=
+
+α � x
+S
+
+x
+S
+
+s�,〈 〉 0= 	 1…�=
+s��
+ 0( ) 
+ 0
+
+s���( ) P � �
+�
+
+P
+�
+
+s��
+ 0( )
+
+
+
+Assimilation Techniques (5): Approximate Kalman Filters and Singular Vectors
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+cast error two days later.
+
+Now, we want the vectors to be eigenvectors of the forecast error covariance matrix. But, it is meaningless
+
+to perform an eigendecomposition of a matrix whose elements are not all of the same dimension. We therefore need
+
+to non-dimensionalize things. Let us define non-dimensional vectors:
+
+(7)
+
+where  is a matrix which non-dimensionalizes the variables.
+
+The corresponding non-dimensional forecast error covariance matrix is:
+
+(8)
+
+We want the non-dimensional vectors to be the leading eigenvectors of the non-dimensional forecast error
+
+covariance matrix. That is:
+
+(9)
+
+In terms of the dimensional vectors, we have:
+
+(10)
+
+where .
+
+Note that the eigenvector problem depends on our choice of non-dimensionalization. The choice amounts to decid-
+
+ing a way to compare the relative magnitudes of forecast errors. Different choices give different eigenvectors.
+
+Having chosen a set of vectors at time , we can turn our attention to the analysis time . We want small pertur-
+
+bations in the directions of the vectors at analysis time , to evolve into perturbations in the directions of the
+
+vectors . That is, we want:
+
+(11)
+
+where  represents the tangent linear model. Substituting this into the eigenvector equation gives:
+
+(12)
+
+Now suppose that model error is negligible over the period to . In this case, the forecast error covariance
+
+matrix is related to the analysis error covariance matrix  through:
+
+(13)
+
+Substituting this into Eq. (12) gives:
+
+(14)
+
+If we now cancel the leading from both sides of the equation, and then multiply by , we get the
+
+s���( )
+
+ŝ � �( ) W1 2⁄ s � �( )=
+
+W1 2⁄
+
+W1 2⁄ P
+�
+
+W1 2⁄( )
+T
+
+ŝ � �( )
+
+W1 2⁄ P
+�
+
+W1 2⁄( )
+T
+
+ŝ� �( ) λ� ŝ� �( )=
+
+P
+�
+W s ���( ) λ � s���( )=
+
+W W1 2⁄( )
+T
+W1 2⁄=
+
+� 
+ 0
+s�
+ 0( )
+
+s���( )
+
+s��( ) M�
+0 �→ s�
+ 0( )=
+
+M�
+0 �→
+
+P
+�
+W M�
+
+0 �→ s� 
+ 0( ) λ � M� 0 �→ s��
+ 0( )=
+
+
+ 0 �
+P
+�
+
+P
+�
+
+M�
+0 �→ P
+
+�
+MT� 0 �→=
+
+M �
+0 �→ P
+
+�
+MT� 0 �→ W M� 0 �→ s� 
+ 0( ) λ � M� 0 �→ s� 
+ 0( )=
+
+M �
+0 �→ P
+
+�
+( )
+
+1–
+
+
+
+Assimilation Techniques (5): Approximate Kalman Filters and Singular Vectors
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+following generalized eigenvector equation:
+
+(15)
+
+This is an equation we can solve to determine a few of the leading eigenvectors using a variant of the Lanczos
+
+algorithm (Barkmeijer et al. 1998). The algorithm requires the ability to calculate the products of the matrices on
+
+both sides of the equation with arbitrary vectors. This is clearly possible for the left hand side of the equation. It
+
+requires one integration of the tangent linear and adjoint models. On the right hand side, we use the fact that in a
+
+variational analysis system, is equal to the Hessian matrix of the analysis cost function, . So, for any
+
+vector , we can calculate the product  as
+
+(16)
+
+The vectors  are known as Hessian singular vectors (Barkmeijer et al. 1999).
+
+Another interpretation of Hessian singular vectors is that they are the vectors which maximize the ratio:
+
+(17)
+
+(Another way to derive the generalized eigenvector equation, 15, is to take the gradient of with respect to
+
+, and to note that if  is at a maximum, then its gradient is zero.)
+
+The numerator, is a measure of the “size” of the vector . The denominator, is a measure of
+
+the likelihood of an analysis error , since for Gaussian errors:
+
+(18)
+
+In other words, the Hessian singular vectors are the vectors which for a given initial likelihood grow to maximum
+
+“size” at time  (where “size” is measured by ).
+
+5. THE ECMWF REDUCED-RANK KALMAN FILTER
+
+5.1  The subspace
+
+The ECMWF reduced-rank Kalman filter is an approximate Kalman filter which uses Hessian singular vectors to
+
+define a subspace. The filter is based on the observation that if we define
+
+(19)
+
+then, by equation 15, we have . That is, the vector gives the action of the inverse
+
+analysis error covariance matrix on the Hessian singular vector at initial time.
+
+More generally, for any time , we may define vectors at time : and
+
+. It is easy to show that these vectors satisfy
+
+MT� 0 �→ W M� 0 �→ s� 
+ 0( ) λ� P
+�
+
+( )
+1–
+s��
+ 0( )=
+
+P
+�
+
+( )
+1– �
+
+″
+x P
+
+�
+( )
+
+1–
+x
+
+P
+�
+
+( )
+1–
+x
+�
+
+″x 1ε
+---
+�
+
+x0 εx+( )∇
+�
+
+x0( )∇–( )==
+
+s��
+ 0( )
+
+λ� s �
+T �( )Ws ���( )
+
+s�T 
+ 0( ) P
+�
+
+( )
+1–
+s � 
+ 0( )
+
+---------------------------------------------=
+
+λ�
+s��
+ 0( ) λ�
+
+s�T �( )Ws ���( ) s ���( )
+s��
+ 0( )
+
+prob s ��
+ 0( )( )( )log const
+1
+2
+---s�T 
+ 0( ) P
+
+�
+( )
+
+1–
+s� 
+ 0( )–=
+
+� W
+
+z ��
+ 0( )
+1
+λ�-----M
+
+T�
+0 �→ W M� 0 �→ s� 
+ 0( )=
+
+z�
+ 0( ) P
+�
+
+( )
+1–
+s��
+ 0( )= z��
+ 0( )
+
+
+�
+ 0> 
+ s ��
+( ) M� 0 �→ s�
+ 0( )=
+z ��
+( ) 1 λ�⁄( )MT� �→ W M� �→ s � 
+( )=
+
+
+
+Assimilation Techniques (5): Approximate Kalman Filters and Singular Vectors
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(20)
+
+where  is the forecast error covariance matrix at time .
+
+In particular, by chosing to be the time at which the background for the next analysis cycle is valid, we get a set
+
+of vectors which we may use to define a subspace, and a set of vectors which define the action of the
+
+inverse of the next cycle’s background error covariance matrix on the subspace.
+
+Once the Hessian singular vectors are known, the vectors  and  are easily calculated.
+
+5.2  Theinner product
+
+Having chosen a set of vectors with which to define a subspace, we must now consider which inner product to use
+
+to define projection onto the subspace. This will allow us to partition any vector into a part which lies
+
+in the subspace spanned by the Hessian singular vectors, and a part  which is orthogonal to the subspace.
+
+Consider how the the initial orthogonal component evolves in time. At time , we have:
+
+(21)
+
+We would like to be orthogonal to the vectors with respect to some suitable inner product. The
+
+obvious inner product is defined by the matrix . The vectors are orthogonal in the sense that for
+
+we have:
+
+(22)
+
+Unfortunately, this does not lead to a convenient inner product for use at the analysis time.
+
+However, the Hessian singular vectors satisfy a second orthogonality condition. For any time and ,
+
+it can be shown that:
+
+(23)
+
+This allows us to define an inner product:
+
+(24)
+
+Suppose we require for . Now, and
+
+. So, at time T, we will have:
+
+(25)
+
+Thus, the evolved vector is orthogonal to the evolved Hessian singular vectors with respect to the inner
+
+product defined by the inverse of the evolved covariance matrix.
+
+In fact, we do not know the covariance matrix , so we cannot use it to define an inner product. However, we
+
+do have an approximation to it, in the form of the the static background error covariance matrix . The ECMWF
+
+reduced rank Kalman filter therefore uses the inner product:
+
+z��
+( ) P � 
+( )( ) 1– s��
+( )=
+
+P
+� 
+( ) 
+
+
+
+
+s�
+( ) z��
+( )
+
+z ��
+( ) s ��
+( )
+
+x 
+( ) xS 
+( )
+x
+
+S
+
+( )
+�
+
+x
+S
+�( ) M� �→ xS 
+( )=
+
+x
+S
+�( ) s���( )
+
+W s���( ) � 	≠
+
+s ���( )( )TW s���( )( ) 0=
+
+
+ 0 
+��≤ ≤ � 	≠
+
+s ��
+( )( )T P � 
+( )( ) 1– s��
+( )( ) 0=
+
+x
+S
+
+( ) s�
+( ),〈 〉 x
+
+S
+
+( )( )T P � 
+( )( ) 1– s��
+( )( )≡
+
+x
+S
+
+( ) s��
+( ),〈 〉 0= 	 1…�= x
+
+S
+�( ) M� �→ xS 
+( )=
+
+P
+� �( ) M� �→ P
+
+� 
+( )M� �→=
+
+x
+S
+�( )( )T P � �( )( ) 1– s���( )( ) 0=
+
+x
+S
+�( )
+
+P
+� 
+( )
+
+B
+
+
+
+Assimilation Techniques (5): Approximate Kalman Filters and Singular Vectors
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+Figure 1. Streamfunction on model level 39 (approx. 500 hPa) for the 3 leading Hessian singular vectors for 03z
+
+15 October 1999. (a) Vectors at initial time. (b) Vectors at final time, 48 hours later.
+
+
+
+Assimilation Techniques (5): Approximate Kalman Filters and Singular Vectors
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(26)
+
+5.3  The background cost function
+
+The ECMWF reduced rank Kalman filter uses 4dVar to perform the analysis, but modifies the background cost
+
+function to use a flow dependent covariance matrix for the subspace defined by the Hessian singular vectors. If we
+
+partition the background departure into its projection onto the supspace and its orthogonal component, the
+
+modified background cost function may be written as:
+
+(27)
+
+Now, we have chosen to use the inner product defined by Eq. (26). Hence, the second term on the right hand side
+
+vanishes. The background cost function is therefore positive definite. To evaluate the first term, note that:
+
+(28)
+
+where are the projection coefficients. (In fact, the ECMWF reduced rank Kalman filter implements the
+
+modified background cost function in a somewhat different, but algebraically equivalent way. The details of the
+
+implementation will not be described here. They are described by Fisher 1998.)
+
+6. EXAMPLES
+
+Fig. 1 shows the streamfunction at model level 39 (approximately 500 hPa) for the leading three Hessian singular
+
+vectors for initial time 03z 15 October 1999. A 4dVar Hessian was used, and the optimization time was 48
+
+hours. The matrix  was equivalent to a dry energy inner product.
+
+In the lecture on 4dVar, it was shown that the increment generated by an observation at the start of the assimilation
+
+window is completely determined by the static background error covariance matrix. For the reduced-rank Kalman
+
+filter, the increment for such an observation is determined by the modified background cost function, and therefore
+
+includes a flow-dependent component. Fig. 2 illustrates that this is indeed the case. Fig. 2 (a) shows a cross-section
+
+of the temperature increment generated in 4dVar by a pair of geopotential height observations at 500 hPa at the
+
+beginning of the assimilation window. The slight asymmetry of the increment on the left of the figure is due to the
+
+effect of orography (vertical correlations are defined with respect to model levels, whereas the vertical coordinate
+
+in Fig. 2 (a) is pressure). The increments generated by the same observations in the reduced-rank Kalman filter are
+
+shown in Fig. 2 (b). The increment to the left of the figure is clearly modified. The observation in this case was
+
+close to a front, as is shown by a cross-section of potential temperature (Fig. 3 ). The negative contours extend along
+
+the frontal zone, and the positive contours are tilted westward with height.
+
+x
+S
+
+( ) s� 
+( ),〈 〉 x
+
+S
+
+( )( )TB 1– s� 
+( )( )≡
+
+δx
+
+� � 1
+2
+--- δxS( )
+
+T
+P
+�
+
+( )
+1–
+δxS δxS( )
+
+TB 1– δx
+S
+
+1
+2
+--- δx
+
+S
+( )
+
+T
+B 1– δx
+
+S
++ +=
+
+P
+�
+
+( )
+1–
+δxS α� P
+
+�
+( )
+
+1–
+s� 
+( )
+
+� 1=
+
+�
+∑ α� z��
+( )� 1=
+
+�
+∑= =
+
+α �
+
+� 
+ 0–
+W
+
+
+
+Assimilation Techniques (5): Approximate Kalman Filters and Singular Vectors
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+Figure  2. Temperature increments along latitude 40 N generated by two 500 hPa height observations at the
+
+beginning of the assimilation window (a) in 4dvar, (b) in the reduced-rank Kalman filter.
+
+Figure 3. Cross-section of potential temperature along latitude 40 N corresponding to Fig. 2 . Values larger than
+
+400 K have not been contoured.
+
+
+
+Assimilation Techniques (5): Approximate Kalman Filters and Singular Vectors
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+REFERENCES
+
+Evensen G., 1994, Sequential data assimilation with a nonlinear quasi-geostrophic model using Monte Carlo meth-
+
+ods to forecast error statistics. J. Geophys. Res., 99(C5), 10143-10162.
+
+Houtekamer P.L. and H.L. Mitchell, 1998, Data assimilation using an ensemble Kalman filter technique. Mon.
+
+Wea. Rev. 126, 796-811.
+
+Houtekamer P.L. and H.L. Mitchell, 2000, A sequential Ensemble Kalman Filter for atmospheric data assimilation,
+
+submitted to Mon. Wea. Rev.
+
+Barkmeijer J., M. Van Gijzen and F. Bouttier, 1998, Singular vectors and estimates of the analysis error covariance
+
+metric. Q. J. Roy. Meteor. Soc. 124, 1695-1713.
+
+Barkmeijer J., R. Buizza and T.N. Palmer, 1999, 3D-Var Hessian singular vectors and their potential use in the EC-
+
+MWF Ensemble Prediction System, Q. J. Roy. Meteor. Soc. 125, 2333-2351.
+
+Fisher M., 1998, Development of a simplified Kalman filter, ECMWF Technical memorandum 260.

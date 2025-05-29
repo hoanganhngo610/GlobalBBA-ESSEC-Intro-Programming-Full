@@ -1,0 +1,2774 @@
+Lecture notes on assimilation algorithms
+
+Eĺıas Valur Hólm
+European Centre for Medium-Range Weather Forecasts
+
+Reading, UK
+
+April 18, 2008
+
+1 Basic concepts
+
+1.1 The analysis
+
+In meteorology and other branches of geophysics the process of approximating the
+true state of a physical system at a given time is called analysis. The information on
+which the analysis is based includes observational data and a model of the physical
+system, together with some background information on initial and boundary condi-
+tions and possibly additional constraints on the analysis. The analysis is useful in
+itself as a description of the physical system, but it can also be used for example as
+an initial state for studying the further time evolution of the system.
+
+• Example: Classical analysis methods. Meteorologists were producing meteoro-
+logical analyses by hand long before the advent of the computer (and some do it
+still today). The observations were all made roughly simultaneously (12UTC
+surface pressure reports from ships for example), and bore on the physical
+model variables like temperature, wind and pressure. These hand analyses ac-
+tually contained far more than just a spatial interpolation of observations, and
+[6] and others formalized this approach for use in the early numerical weather
+prediction models. The approach is the following. First-guess fields defined
+at the gridpoints of the forecasting model are interpolated to the observation
+location. The difference between the observation and the interpolated value
+are then interpolated back onto the gridpoints to define a correction (which
+decreases with the distance from the observation). The important step here
+is to use a first-guess to guide the eye (or the computer) when interpreting
+observational information. These early works lead to optimal interpolation
+which in different guises still are widely used analysis methods (see [8] for a
+comprehensive discussion of classical analysis methods).
+
+• Example: Ozone analysis. Total ozone is measured by remote sensing from
+space, and one days worth of data covers the Earth with some gaps. An
+analysis will fill in all gaps and produce a global map of total ozone. We can
+make a rather poor analysis by interpolating the observations in space, not
+least because the observations are up to 24 hours apart and the total ozone
+
+
+
+1 BASIC CONCEPTS 2
+
+field may have changed significantly at some locations in that time. A better
+analysis would take the dynamic evolution of ozone and the distribution of
+observations in time into account, and in that way produce a picture of total
+ozone which is consistent with the dynamic state of the whole atmosphere.
+
+• Example: Weather forecasts. The analysis prepares the initial conditions for
+weather forecasts. In addition to the newly arrived observations, a background
+estimate of the state of the atmosphere is available as a forecast from the
+previous analysis. In the preparation of the analysis, a particular effort is
+usually made to damp gravity waves in the analysis by additional constraints.
+
+A particular challenge in the forecasts of the time-evolution of geophysical systems is
+the nonlinearity of the system and the corresponding sensitivity to initial conditions.
+It is well known that even if we had a perfect forecast model, all forecasts start to
+diverge from the truth after a finite time. This is illustrated in Fig. 1 which shows
+how integrations of a nonlinear equation starting from slightly different initial states
+follow each other for some time and then start to diverge from each other. If we
+take one of the integrations to be the truth and interpret the difference in initial
+conditions as the analysis error, we can see that increasing the analysis error reduces
+the time period for which the forecast remains close to the truth.
+
+0 10 20 30 40 50
+t
+
+−4
+
+−3
+
+−2
+
+−1
+
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+x(
+t)
+
+x(0) = 3.00, dx/dt(0) = 4.00
+x(0) = 3.01, dx/dt(0) = 4.01
+
+0 10 20 30 40 50
+t
+
+−4
+
+−3
+
+−2
+
+−1
+
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+x(
+t)
+
+x(0) = 3.00, dx/dt(0) = 4.00
+x(0) = 3.02, dx/dt(0) = 4.02
+
+Figure 1: Integrations of Duffing’s equation, ẍ + 0.05ẋ + x3 = 7.5 cos t, from slightly
+different initial conditions. We take x(0) = 3 and ẋ(0) = 4 to be the true initial
+state and interpret differences in initial conditions as ‘analysis errors’. In the left
+figure, with ‘analysis errors’ of ca. 0.3%, the ‘forecast’ is good until t ≈ 35, whereas
+in the right figure with ‘analysis errors’ of ca. 0.6% the forecast starts to diverge
+already at t ≈ 20. See [20] for this and other interesting nonlinear systems.
+
+1.2 The assimilation
+
+As discussed above, an analysis can be very simple, for example a spatial interpo-
+lation of observations. However, much better results can be obtained by including
+the dynamic evolution of the physical system in the analysis. An analysis which
+combines time distributed observations and a dynamic model is called assimilation
+or data assimilation.
+
+
+
+1 BASIC CONCEPTS 3
+
+The assimilation problem can be discussed from many angles, depending on
+background and preferences (control theory, estimation theory, probability theory,
+variational analysis, etc.). A few excellent introductions to data assimilation from
+different points of view are given by [1, 2, 5, 13, 15, 16, 17, 18, 19]. A discrete formu-
+lation is the most common basis for developing the algorithms in numerical models.
+However, in this introduction I want to show how different assimilation algorithms
+can be derived from one common source, and what the approximations are which
+lead to each algorithm (OI, 3DVAR, 4DVAR and Kalman filters in particular). One
+attractive way to achieve this is to consider the continuous assimilation problem
+from the point of view of variational analysis. Following [1] and [2] a generalized
+inverse solution to the assimilation problem will be derived, which has many of the
+common assimilation algorithms as special cases. See [14] for an introduction to
+variational analysis.
+
+It is illustrative to see how the assimilation problem differs from the familiar
+initial value problem. The assimilation problem can be seen as an initial value
+problem with some added features: the model equations for the model state ~x are
+approximate with model errors ~εm; the initial condition is approximate with error
+~εb (background error); and there are observations yn present with observation errors
+εo,n. Expressed in mathematical form,
+
+∂~x
+
+∂t
++ ~M(~x) = ~εm (1)
+
+~x(0) = ~xb(0) + ~εb (2)
+
+yn = Hn(~x) + εo,n n = 1, . . . , N (3)
+
+In Eq. 3 we have introduced the observation operator Hn, which calculates the
+model equivalent of the observation yn. Even if yn measures an explicit model
+state variable (say temperature), the observation operator will still be needed to
+interpolate the model state, which always has finite resolution, to the position of
+the observation. When the measurement is indirect, like radiances measured by
+satellites from space, the observation operator can be a radiative transfer model
+which takes a whole model column and calculates the radiance emitted to space from
+Earth in the particular waveband measured. Observation operators are central to
+data assimilation, and much of the work in developing data assimilation algorithms
+is related to the observation operators.
+
+Frequently ~M(~x) is used to denote the total model operator, but here we keep
+the time derivative of the model state separate to better distinguish the dynamic
+evolution within the assimilation.
+
+Most of the discussion could also have been made in terms of the discrete state
+vector x, and it is good to keep this in mind and try to figure out discrete equivalents
+of some of the material we will go through.
+
+1.3 Formulation in terms of probability
+
+1.3.1 Probability density functions
+
+The assimilation problem outlined above includes unknown errors, so it is obvious
+that the solution we aim at is statistical. Before we can go any further, we need to
+
+
+
+1 BASIC CONCEPTS 4
+
+know something about the statistics of the errors. Characterizing the errors of the
+particular model and observations of the system under study is another one of the
+cornerstones of data assimilation. In the best of worlds, we have a full description
+of the probability density function P (~εm, ~εb, ~εo, t) and include the equation for the
+time-evolution of P in the formulation of our assimilation system,
+
+∂P (~ε, t)
+
+∂t
++
+
+∂
+
+∂~ε
+
+(
+
+∂~ε
+
+∂t
+P (~ε, t)
+
+)
+
+= 0 (4)
+
+This is the Liouville equation, which in this case says that the total probability of
+all errors integrated over the phase space is conserved (= 1 by definition). Note how
+similar this is to a continuity equation, with the ‘error’ transporting ‘probability’.
+In practical applications, we have a very limited knowledge of P , for example only
+the mean and covariances.
+
+We can in most cases assume model, background, and observation errors to be
+independent. In that case the total probability density function (pdf) is a product
+of the component pdf’s for the observations, Po(~εo, t), the background, Pb(~εb, t), and
+the model, Pm(~εm, t),
+
+P = PmPbPo = exp(log Pm + log Pb + log Po) (5)
+
+It may seem obvious that the optimal analysis corresponds to the maximum of the
+pdf, that is, the maximum value of the exponent in Eq. 5. However, this is not
+always the case as the following example shows.
+
+• Example: Non-Gaussian P . Let us consider a ‘one-dimensional’ pdf, say the
+conditional probability P (x|y), that is the probability of finding the system
+at x given the observation y. A Gaussian and a non-Gaussian pdf are shown
+in Fig. 2. In the Gaussian case, the maximum likelihood point and the mean
+of x coincide, so choosing the maximum of the pdf as our analysis seems the
+best solution. In the particular non-Gaussian case shown here, the mean and
+the maximum likelihood estimate are different, and it is not obvious what the
+best analysis is. The lesson is that we need to study the actual pdf enough
+to be sure that a maximum likelihood solution really gives us the analysis we
+want.
+
+1.3.2 The costfunction
+
+The maximizing of the probability is often expressed in terms of minimizing the
+negative of the exponent of the pdf, which is called the costfunction J ,
+
+min J = min(− log Pm − log Pb − log Po) = min(Jm + Jb + Jo) (6)
+
+where we have introduced the model, background and observation costfunctions.
+In passing we note that when additional constraints are added to the assimilation,
+these also appear as additional terms in the costfunction, for example Jc is frequently
+used to denote the costfunction for gravity wave constraints (‘reduction of small scale
+noise in the meteorological fields’).
+
+
+
+1 BASIC CONCEPTS 5
+
+Gaussian
+
+xML = xMEAN
+
+P
+ (
+
+x
+ | 
+
+y
+)
+
+x
+xML xMEAN
+
+P
+ (
+
+x
+ | 
+
+y
+)
+
+x
+
+Figure 2: Representativeness of maximum likelihood solutions for a Gaussian and
+a non-Gaussian pdf P (x|y), that is the conditional probability of finding the model
+state at x, given an observation y. In the non-Gaussian case, the maximum likelihood
+point may be a poor representative of the best solution.
+
+• Example: Quadratic costfunction. A costfunction which appears frequently in
+meteorological and oceanographic applications is the following. Assume that
+the model errors can be neglected, and that the observation and background
+errors can be modelled by a Gaussian (also called normal) unbiased distribu-
+
+tion. Using the definitions ~εb = ~x−~xb and ~εo = ~y− ~H(~x) from the formulation
+of the assimilation problem, Eqs. 1– 3, we get
+
+Pb =
+1
+
+√
+
+2π| ~B|
+e−
+
+1
+
+2
+(~x(0)−~xb(0))
+
+T ~B−1(~x(0)−~xb(0)) (7)
+
+Po =
+1
+
+√
+
+2π|~R|
+e−
+
+1
+
+2
+(~y− ~H(~x))T ~R−1(~y− ~H(~x)) (8)
+
+where ~B and ~R are matrices of background and observation covariance func-
+tions, which reduce to the covariance matrices B and R in the discrete formu-
+lation, and (·)T is the transpose of (·). The costfunction is then
+
+J =
+1
+
+2
+(~x(0)−~xb(0))
+
+T ~B−1(~x(0)−~xb(0))+
+1
+
+2
+(~y− ~H(~x))T ~R−1(~y− ~H(~x))+C (9)
+
+We do not need to consider the constant C further, since it has no effect
+on finding the minimum of the costfunction. There are some very nice conse-
+quences of having a Gaussian pdf. First, we only need to know the covariances
+of the errors instead of the whole pdf to completely characterize the errors (if
+the errors are biased, we also need the mean of the errors, which we can sub-
+tract before doing the analysis). Second, if the observation operators and the
+model are linear, the costfunction is quadratic in ~x, and there is only one
+minimum, which simplifies the analysis. We will show how we can deal with
+nonlinearities in the next example. Third, there are very effective methods for
+minimizing quadratic problems. This is very important, since the main fea-
+ture of meteorological and oceanographic assimilation problems is their large
+dimension (≈ 107).
+
+
+
+1 BASIC CONCEPTS 6
+
+• Example: Nonlinear costfunctions. In real applications we always have nonlin-
+ear model and very often the observation operators Hn are nonlinear. In the
+example above, Eq. 9, a nonlinear ~H(~x) will make the costfunction nonlinear
+in ~x. The nonlinearity of the model can also contribute to the nonlinearity
+of J in the following way. The observations used in the analysis are collected
+over a short time window (the assimilation window), usually 6–12 hours long.
+Instead of minimizing J with respect to ~x in the whole assimilation window,
+we only minimize it with respect to ~x(0), which greatly reduces the dimension
+of the problem. Since the model is perfect in this example, a forward model
+integration from ~x(0) gives ~x(t), and in this way the nonlinearity of the model
+
+enters ~H(~x) when the observations are compared with the model at appropri-
+ate time (as in 4DVAR). Figure 3 shows the approach which we can follow
+in this case. First, linearize the costfunction around the background state ~xb
+and minimize the quadratic costfunction Ji to get an estimate ~xi. Repeat
+the procedure by linearizing around ~xi, until the procedure has converged to
+required accuracy. This approach is widely used in assimilation applications.
+We see that in general there is no guarantee that we find the minimum of the
+costfunction. First of all, we need an accurate background estimate in order
+to end up in the right valley of the costfunction. Otherwise we may end up in
+a local minimum which is far away from the optimum solution. Second, the
+accuracy required of the background estimate really depends on the nonlinear-
+ity of the costfunction. In meteorological and oceanographic applications the
+costfunction is not more nonlinear than that forecasts from previous analysis
+are in most cases a good enough background to reach a good analysis (not
+always though, there is the odd bad forecast).
+
+Nonlinear J
+
+x
+x
+
+∞
+x
+
+i
+
+Ji
+
+J
+
+x
+b
+
+Figure 3: Iterative solution for a nonlinear costfunction. In each iteration the cost-
+function is linearized around a previous estimate ~xi, which gives a quadratic cost-
+function Ji. The convergence depends on the accuracy of the first estimate of ~x (the
+background ~xb) and the nonlinearity of J .
+
+
+
+2 VARIATIONAL DATA ASSIMILATION 7
+
+1.3.3 Illustrations with some special cases
+
+We can now use the knowledge about the statistical distribution of the errors to
+solve the assimilation problem. The relative magnitude of different errors tells us
+which aspects of the information provided to the assimilation algorithm to give
+most weight. For example, if the background errors are larger than the observation
+errors, then the analysis will most probably be closer to the observations than the
+background. In Figs. 4– 8 we will illustrate the effect of a single observation yn,
+with observation operator Hn, on the analysis ~xa in different cases which can arise
+in applications. The figures are adapted from [17].
+
+Here x
+b 
+
+is x
+a
+
+Case 1: Useless (or no) model
+
+x
+
+y
+
+y
+n
+
+x
+a 
+= x
+
+b
+
+Figure 4: Useless (or no) model. There is no background information available, and
+the analysis is at the maximum of P (x|y).
+
+2 Variational data assimilation
+
+In this section we will show how the assimilation problem, Eqs. 1– 3, can be solved
+for the special case of Gaussian probability density functions. Gaussian error dis-
+tributions take a special place in applications because of their abundance in nature.
+From studying the error characteristics of background and observation errors arising
+in meteorological applications for example, we know that the Gaussian distribution
+is very often a good approximation. We have also mentioned that nonlinear assimi-
+lation problems with Gaussian error distributions can be formulated as an iteration
+of linear problems minimizing a quadratic costfunctions, for which very efficient nu-
+merical algorithms exist. Even non-Gaussian error distributions can in most cases be
+transformed to Gaussian error distributions by a suitable change of variable (see [18]
+for interesting examples). For these reasons most assimilation algorithms developed
+for atmospheric and oceanographic applications take the assumption of Gaussian
+errors as their starting point, and we will devote the rest of these notes to this case.
+
+Below we will apply variational analysis to the nonlinear assimilation problem,
+and arrive at a full nonlinear solution which includes the Euler-Lagrange equation
+
+
+
+2 VARIATIONAL DATA ASSIMILATION 8
+
+M(x) = O
+
+Case 2: Perfect model (Q=O) 
+
+x
+
+y
+
+yn
+Hn(xa)
+
+xb xa
+
+Figure 5: Perfect model. In this case the model error is zero, and the analysis
+is constrained to lie along the model trajectory. We see that because of this the
+maximum probability has moved to a state consistent with the model.
+
+Accurate background
+
+      Large analysis residuals yn – Hn(xa)
+
+Case 2: Perfect model (Q=O) 
+
+y
+
+M(x) = O
+
+x
+
+yn
+
+xb xa
+
+Hn(xa)
+
+Case 2: Perfect model (Q=O) 
+
+y
+
+Hn(xa)
+
+Accurate observations
+
+      Small yn – Hn(xa)
+
+M(x) = O
+
+x
+
+yn
+
+xb xa
+
+Figure 6: The relative accuracy of background and observations. If the background
+is more accurate than the observation (left), then the analysis will be closer to the
+background, giving large analysis residuals yn − H(~xa). Conversely, if the observa-
+tions are more accurate (right), the analysis will be closer to the observation, giving
+small analysis residuals.
+
+for the assimilation problem (see [1], which uses the term generalized inverse for the
+solution). From this theoretical solution, we will see how different assumptions and
+simplifications can be made to arrive at some common data assimilation algorithms.
+It is worth pointing out that different theoretical approaches to the assimilation
+problem often end up with similar assimilation algorithms once all the assumptions
+necessary to achieve fast and accurate algorithms have been made (see for example
+[16, 7]).
+
+
+
+2 VARIATIONAL DATA ASSIMILATION 9
+
+Model error PDF
+
+Case 3: Imperfect model (Q≠O) 
+
+x
+
+y
+
+y
+n
+
+x
+b
+
+Figure 7: Imperfect model. Now the analysis does no longer have to lie exactly on the
+model trajectory, but can deviate from the model. How much depends on the relative
+size of the model error. The model error pdf shown has a maximum at the model
+trajectory (the same as in previous examples), and isolines of smaller probability run
+parallel to the trajectory.
+
+Case 4: Perfect model (Q=O), but nonlinear 
+
+x
+
+y
+
+yn
+
+xb
+
+M(x) Nonlinear
+
+x
+
+Figure 8: Nonlinear model. With nonlinear models, the extremes of the pdf are
+not unique, and convergence of iterative methods is not guaranteed. We need to
+linearize and solve nonlinear assimilation problems as a series of approximate linear
+assimilation problems. Alternatively, apply nonlinear methods like the Monte Carlo
+method (see for example [12, 11]).
+
+We will start by discussing covariances and biases, then formulate the assim-
+ilation problem variationally and derive the solution, followed by discussions and
+examples.
+
+
+
+2 VARIATIONAL DATA ASSIMILATION 10
+
+2.1 Error covariances and biases
+
+2.1.1 Covariances
+
+As we have seen, the pdf of an unbiased Gaussian distribution is completely charac-
+terized by its covariance function, or its covariance matrix in the discrete case. The
+common notations for the covariances we will encounter are:
+
+• ~Q(ξ, t, ξ′, t′) or Q: Model error covariance. In the continuous case ~Q describes
+the covariances between errors in the model at any two locations ξ and ξ ′, and
+any two time instances t and t′. The model errors can be caused by processes
+not described by the model equations, or by an inaccurate estimate of some
+model parameters. If there are M model variables, then ~Q is a matrix with
+dimension M ×M , where each element is a covariance function. ~B and ~A have
+the same dimension as ~Q.
+
+• ~B(~ξ, ~ξ′) or B: Background error covariance. Most geophysical systems remain
+close to some approximate dynamic (or other) balances. This translates into
+a correlation between the errors of different model variables. For example, in
+large scale atmospheric flow, the geostrophic balance translates into a strong
+correlation between wind and temperature errors. These cross correlations be-
+tween variables always need to be included in ~B. Otherwise the assimilation
+will produce an unbalanced analysis, which is not useful as an initial condi-
+tion for forecasts, since the correction added by the analysis will be lost in
+transient noise caused by the model adjusting itself to a more balanced state.
+In most assimilation algorithms the formulation is much simpler if these cross
+correlations can be avoided. One widely used method is to use an analyti-
+cal or statistical description of the balance between errors to transform the
+model variables into another set of variables which are uncorrelated. This is
+an example of a so called control variable, which is a term used to describe
+the variables which are actually used in the minimization step of an analysis.
+The control variable can even be a completely different set of variables (vortic-
+ity and divergence instead of wind) or a different representation can be used
+(spectral instead of gridpoint). See [10] for an introduction.
+
+– Example: Uncorrelated control variable. Let ~x = (u, ϕ)T with background
+error covariance functions Buu, Bϕϕ and Buϕ. To eliminate the cross-
+correlation between errors of different control variables, a transform is
+chosen so that
+
+(
+
+u − ub
+ϕ − ϕb
+
+)
+
+=
+
+(
+
+δu
+δϕ
+
+)
+
+−→
+
+(
+
+δ̃u
+
+δ̃ϕ
+
+)
+
+(10)
+
+(
+
+Buu Buϕ
+Bϕu Bϕϕ
+
+)
+
+−1 (
+
+δu
+δϕ
+
+)
+
+−→
+
+(
+
+Bũũ 0
+0 Bϕ̃ϕ̃
+
+)
+
+−1 (
+
+δ̃u
+
+δ̃ϕ
+
+)
+
+(11)
+
+• R: Observation error covariance. The dimension of the observation error
+covariance matrix is N × N . In R are included the effects of measurement
+errors, errors in the design of the observation operators and representativeness
+errors (this is just saying that a model can not represent all the small scale
+
+
+
+2 VARIATIONAL DATA ASSIMILATION 11
+
+variations of say temperature measured by a thermometer somewhere within
+a model gridpoint of say 50 km square).
+
+• ~A(~ξ, ~ξ′) or A: Analysis error covariance. Some measure of ~A(~ξ, ~ξ′) is always
+useful to diagnose how much of an improvement the analysis is upon the
+background.
+
+– Example: The Hessian J ′′ as a measure of ~A. The probability density
+function for the analysis error ~εa is for the case of uncorrelated obser-
+vation, background, and model errors discussed above Pa(~εa) = PmPbPo.
+The corresponding costfunction Ja = − log Pa has a minimum at the anal-
+ysis, so the gradient is zero, J ′a = −P
+
+′
+
+a/Pa = ~0. The second derivative
+(the Hessian) is J ′′a = −P
+
+′′
+
+a /Pa + P
+′
+
+a/P
+2
+a = −P
+
+′′
+
+a /Pa. For the Gaussian
+case we are considering
+
+Pa =
+1
+
+√
+
+2π| ~A|
+e−
+
+1
+
+2
+~εTa
+
+~A−1~εa (12)
+
+and we get P ′′a = −
+~A−1Pa− ~A
+
+−1~εaP
+′
+
+a = −
+~A−1Pa where we have used that
+
+P ′a = ~0 for the optimal analysis (the maximum of the pdf). Collecting
+together these results, we see that for the Gaussian case, the analysis
+error covariance matrix is the inverse of the Hessian of the costfunction,
+
+~A = (J ′′a )
+−1 (13)
+
+2.1.2 Biases
+
+Biases are the black sheep of the data assimilation family. Including biases in ad-
+dition to covariances in the formulation of an assimilation algorithm is possible in
+principle, but in practice it is extremely difficult to determine the bias. We may find
+that a given set of observations and a model forecast (the background) are biased
+with respect to each other, but is it the observation or the model forecast that is bi-
+ased? How to include biases in assimilation algorithms and how to estimate the bias
+in different components of an assimilation system is a challenging area of research.
+
+Biases must be dealt with in one way or another for the error characterization
+to be acceptable for an assimilation system. The following methodology is often
+used. If the bias of an observation is known, subtract it from the observation,
+and feed the unbiased estimate of the observation to the analysis. This process
+is called bias removal. Much research is usually needed to characterize the bias
+for different observation types, giving rise to different bias correction parameters
+for each observation type, where the parameters ~β are a function of the measuring
+geometry and the model state.
+
+Once the bias correction models with parameters ~β are known, these parameters
+can alternatively be estimated by including them in the assimilation ([9]). The bias
+parameters are assumed slowly varying (which is different from the biases being
+slowly varying!) and are added to the costfunction by modifying the observation
+
+operator from ~H(~x) to ~H(~x) +~b(~x, ~β), where ~b(~x, ~β) is the bias. If the pdf of the
+
+
+
+2 VARIATIONAL DATA ASSIMILATION 12
+
+bias parameters is Gaussian with covariance matrix ~C and previous estimate ~β0 is
+given, then the costfunction (without the model error term) is
+
+J =
+1
+
+2
+(~x(0) − ~xb(0))
+
+T ~B−1(~x(0) − ~xb(0)) (14)
+
++
+1
+
+2
+(~y −~b(~x, ~β) − ~H(~x))T ~R−1(~y −~b(~x, ~β) − ~H(~x)) (15)
+
++
+1
+
+2
+(~β − ~β0)
+
+T ~C−1(~β − ~β0) (16)
+
+But there still remains the fact that the model may be biased. This bias is often
+ignored or simply absorbed into the observation bias. Alternatively, the model
+bias can also be estimated as part of the assimilation by including its statistical
+description in the model error term. This is an area of active research.
+
+In the remainder of these notes we will emphasize assimilation algorithms without
+bias, assuming that appropriate bias removal techniques are used, and just note that
+bias removal remains one of the hardest aspects of the assimilation.
+
+2.2 Formulation of the variational assimilation problem
+
+From the discussion on probability density functions we know that the most likely
+solution is also the best solution for a Gaussian pdf. The most likely solution also
+gives the minimum of the costfunction defined by a pdf. This costfunction actually
+defines what norm best measures the accuracy of the solution (see [17, 16, 18]).
+For a Gaussian pdf the costfunction is quadratic, which implies the L2, or least
+square, norm. So the optimum solution minimizes the sum of the errors in the
+model, background and observations as measured by the L2 norm integrated over
+the model volume V and the assimilation time window [0, τ ] (which is just a fancy
+way of saying that the optimum solution minimizes the following costfunction),
+
+J(~x) =
+1
+
+2
+
+∫
+
+V
+dξ
+∫ τ
+
+0
+dt
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′(
+
+∂~x
+
+∂t
++ ~M(~x))T ~Q−1(ξ, t, ξ′, t′)(
+
+∂~x
+
+∂t
++ ~M(~x))
+
++
+1
+
+2
+
+∫
+
+V
+dξ
+∫
+
+V
+dξ′(~x(ξ, 0) − ~xb(ξ, 0))
+
+T ~B−1(ξ, ξ′)(~x(ξ′, 0) − ~xb(ξ
+′, 0))
+
++
+1
+
+2
+
+∫
+
+V
+dξ
+∫ τ
+
+0
+dt
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′(~y − ~H(~x))T ~R−1(~y − ~H(~x)) (17)
+
+First a couple of clarifications. The double integration over time and space just
+expresses all possible correlations between errors at (ξ, t) (terms to the left of the
+correlation functions) and errors at (ξ ′, t′) (terms to the right). The observation
+error in particular may look odd, but we have to express precisely where and when
+to evaluate the departures yn − Hn(~x). We do this by multiplying yn − Hn(~x) by a
+
+‘localization function’ φn(ξ, t) so that element n of (~y − ~H(~x)) is
+
+(~y − ~H(~x))n = φn(ξ, t)(yn − Hn(~x)) (18)
+
+The localization function, which has the following property,
+
+∫
+
+V
+dξ
+∫ τ
+
+0
+dtφn(ξ, t) = 1 (19)
+
+
+
+2 VARIATIONAL DATA ASSIMILATION 13
+
+can be anything from a delta function at the observation time and location to more
+advanced averaging in space or time, say over a satellite footprint. A particular form
+of the localization function, which is often used to simplify assimilation algorithms,
+is to evaluate all the departures at the same time (the analysis time) irrespective of
+when the observations were made within the assimilation window.
+
+Now the standard tools of variational analysis can be used to obtain the optimum
+solution (see e. g. [14]). Let ~xa (our analysis) be the model state which gives the
+minimum of J with respect to a variation of ~x. Define
+
+~x(ξ, t) = ~xa(ξ, t) + γ~η(ξ, t) (20)
+
+where γ is a constant and ~η(ξ, t) is an arbitrary vector (with dependent components
+however). The minimum of Eq. 17 is found from
+
+lim
+γ→0
+
+dJ
+
+dγ
+= 0 (21)
+
+In Fig. 9 an interpretation of the variational procedure is shown.
+
+(ξ,t)
+
+x
+
+xa+γη
+xa
+
+Figure 9: Variation of ~x(ξ, t) to get the minimum of J(~x).
+
+
+
+2 VARIATIONAL DATA ASSIMILATION 14
+
+2.3 Solution of the variational problem
+
+Using Eq. 20 in Eq. 17 we get the following condition at the minimum of J ,
+
+lim
+γ→0
+
+d
+
+dγ
+(
+
+1
+
+2
+
+∫
+
+V
+dξ
+∫ τ
+
+0
+dt(
+
+∂~xa
+∂t
+
++ γ
+∂~η
+
+∂t
++ ~M(~xa + γ~η))
+
+T
+
+×
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′ ~Q−1(
+
+∂~xa
+∂t
+
++ γ
+∂~η
+
+∂t
++ ~M(~xa + γ~η))
+
++
+1
+
+2
+
+∫
+
+V
+dξ
+∫
+
+V
+dξ′(~xa + γ~η − ~xb)
+
+T ~B−1(~xa + γ~η − ~xb)
+
++
+1
+
+2
+
+∫
+
+V
+dξ
+∫ τ
+
+0
+dt
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′(~y − ~H(~xa + γ~η))
+
+T ~R−1(~y − ~H(~xa + γ~η)))
+
+=
+∫
+
+V
+dξ
+∫ τ
+
+0
+dt(
+
+∂~η
+
+∂t
++
+
+∂ ~M
+
+∂~xa
+~η)T~λ(ξ, t)
+
++
+∫
+
+V
+dξ
+∫
+
+V
+dξ′~ηT (ξ, 0) ~B−1(~xa(ξ
+
+′, 0) − ~xb(ξ
+′, 0))
+
+−
+∫
+
+V
+dξ
+∫ τ
+
+0
+dt
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′(
+
+∂ ~H
+
+∂~xa
+~η)T ~R−1(~y − ~H(~xa))
+
+= 0 (22)
+
+where we have introduced the ‘adjoint variable’ ~λ as
+
+~λ(ξ, t) =
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′ ~Q−1(ξ, t, ξ′, t′)(
+
+∂~xa(ξ
+′, t′)
+
+∂t
++ ~M(~xa(ξ
+
+′, t′))) (23)
+
+and the jacobians ∂
+~M
+
+∂~xa
+and ∂
+
+~H
+∂~xa
+
+of the model and the observation operators, which
+are defined by
+
+lim
+γ→0
+
+d ~M(~xa + γ~η)
+
+dγ
+= lim
+
+~x→~xa
+
+∂ ~M (~x)
+
+∂~x
+~η =
+
+∂ ~M
+
+∂~xa
+~η (24)
+
+and the same for ~H.
+
+• Example: Model errors. From Eq. 1 we recognize the model error ~εm as the
+term to the right of ~Q in the definition of the adjoint variable. By inverting the
+relationship we get an explicit expression for the model errors at the minimum
+of the costfunction
+
+~εm(ξ, t) =
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′ ~Q(ξ, t, ξ′, t′)~λ(ξ′, t′) (25)
+
+• Example: The jacobian of an advection operator. In the one-dimensional ad-
+vection equation ∂ϕ
+
+∂t
++ u∂ϕ
+
+∂ξ
+= 0, the jacobian of the operator Mϕ = u
+
+∂ϕ
+∂ξ
+
+is,
+
+with the state vector ~x = (u, ϕ),
+
+∂Mϕ
+∂~xa
+
+~η =
+
+(
+
+0 0
+∂ϕa
+∂ξ
+
+ua
+∂
+∂ξ
+
+)(
+
+ηu
+ηϕ
+
+)
+
+=
+∂ϕa
+∂ξ
+
+ηu + ua
+∂ηϕ
+∂ξ
+
+(26)
+
+We note that the jacobian of a nonlinear operator acts linearly on ~η. The
+jacobian also appears when operators are linearized, and is then referred to as
+the tangent linear operator.
+
+
+
+2 VARIATIONAL DATA ASSIMILATION 15
+
+If we can rearrange the expression for the minimum in Eq. 22 so that ~η only ap-
+pears as a multiplicative factor, then the remaining expressions must be zero at the
+minimum of J , since ~η is arbitrary. This can be achieved by integration by parts.
+Term by term we get
+
+∫
+
+V
+dξ
+∫ τ
+
+0
+dt(
+
+∂~η
+
+∂t
+)T~λ =
+
+∫
+
+V
+dξ~ηT (ξ, τ)~λ(ξ, τ) −
+
+∫
+
+V
+dξ~ηT (ξ, 0)~λ(ξ, 0)
+
+−
+∫
+
+V
+dξ
+∫ τ
+
+0
+dt~ηT (ξ, t)
+
+∂~λ
+
+∂t
+(27)
+
+∫
+
+V
+dξ
+∫ τ
+
+0
+dt(
+
+∂ ~M
+
+∂~xa
+~η)T~λ =
+
+∫
+
+V
+dξ
+∫ τ
+
+0
+dt~ηT (ξ, t)(
+
+∂ ~M
+
+∂~xa
+)∗~λ (28)
+
+∫
+
+V
+dξ
+∫ τ
+
+0
+dt
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′(
+
+∂ ~H
+
+∂~xa
+~η)T ~R−1(~y − ~H(~xa)) =
+
+∫
+
+V
+dξ
+∫ τ
+
+0
+dt
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′~ηT (ξ, t)(
+
+∂ ~H
+
+∂~xa
+)∗ ~R−1(~y − ~H(~xa)) (29)
+
+Here we have introduced a compact notation for the integration by parts of the
+
+jacobians, namely the adjoint operators ( ∂
+~M
+
+∂~xa
+)∗ and ( ∂
+
+~H
+∂~xa
+
+)∗.
+
+• Example: The adjoint of ∂
+∂t
+
+. We have already seen an example of an adjoint
+operator in Eq. 27. If we use the simplified notation < ·, · > for the integration
+of the product of the two vectors over time and space (that is, we define a scalar
+product in this way) we see that
+
+<
+∂
+
+∂t
+~η, ~λ >=< ~η, (
+
+∂
+
+∂t
+)∗~λ > (30)
+
+where the adjoint operator ( ∂
+∂t
+
+)∗ is
+
+(
+∂
+
+∂t
+)∗ = δ(t − τ) − δ(t) −
+
+∂
+
+∂t
+(31)
+
+and δ(t − τ) and δ(t) are Dirac delta functions.
+
+• Example: The adjoint of the advection jacobian. We assume that the one-
+dimensional advection takes place in a periodic domain [0, L]. Integration by
+parts in ξ gives
+
+∫ L
+
+0
+dξ
+∫ τ
+
+0
+dt
+
+((
+
+0 0
+∂ϕa
+∂ξ
+
+ua
+∂
+∂ξ
+
+)(
+
+ηu
+ηϕ
+
+))T (
+
+λu
+λϕ
+
+)
+
+=
+∫ L
+
+0
+dξ
+∫ τ
+
+0
+dt(
+
+∂ϕa
+∂ξ
+
+ηuλu + ua
+∂ηϕ
+∂ξ
+
+λϕ)
+
+=
+∫ τ
+
+0
+dt[uaηϕλϕ]
+
+L
+0 +
+
+∫ L
+
+0
+dξ
+∫ τ
+
+0
+dt(ηu
+
+∂ϕa
+∂ξ
+
+λu − ηϕ
+∂
+
+∂ξ
+(uaλϕ))
+
+=
+∫ L
+
+0
+dξ
+∫ τ
+
+0
+dt
+
+(
+
+ηu
+ηϕ
+
+)T
+
+
+
+
+
+
+
+
+
+∂ϕa
+∂ξ
+
+0
+
+0 −(∂ua
+∂ξ
+
++ ua
+∂
+∂ξ
+
+)
+
+
+
+
+
+
+
+
+
+(
+
+λu
+λϕ
+
+)
+
+(32)
+
+Because of the periodicity, all boundary terms disappear, but it is straightfor-
+ward to allow for any boundary conditions.
+
+
+
+2 VARIATIONAL DATA ASSIMILATION 16
+
+The rearranged expression for the minimum of J is now
+
+0 =
+∫
+
+V
+dξ
+∫ τ
+
+0
+dt~ηT (ξ, t)(−
+
+∂~λ
+
+∂t
++ (
+
+∂ ~M
+
+∂~xa
+)∗~λ −
+
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′(
+
+∂ ~H
+
+∂~xa
+)∗ ~R−1(~y − ~H(~xa)))
+
++
+∫
+
+V
+dξ~ηT (ξ, 0)(
+
+∫
+
+V
+dξ′ ~B−1(~xa(ξ
+
+′, 0) − ~xb(ξ
+′, 0)) − ~λ(ξ, 0))
+
++
+∫
+
+V
+dξ~ηT (ξ, τ)~λ(ξ, τ) (33)
+
+2.4 Summary of the variational solution
+
+The final equations now follow from that the arbitrary vector function ~η can be varied
+independently in each of the three integrals in Eq. 33, so the expressions following
+~η in each of the integrals must be identically zero. Add to this the definition of the
+adjoint variable ~λ in Eq. 23 and we have the generalized inverse solution consisting of
+the forward model equation with initial conditions and the Euler-Lagrange (adjoint)
+equation with end conditions
+
+~λ(ξ, τ) = ~0 (34)
+
+−
+∂~λ
+
+∂t
++ (
+
+∂ ~M
+
+∂~xa
+)∗~λ =
+
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′(
+
+∂ ~H
+
+∂~xa
+)∗ ~R−1(~y − ~H(~xa)) (35)
+
+∫
+
+V
+dξ′ ~B−1(ξ, ξ′)(~xa(ξ
+
+′, 0) − ~xb(ξ
+′, 0)) − ~λ(ξ, 0) = ~0 (36)
+
+∂~xa
+∂t
+
++ ~M(~xa) =
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′ ~Q(ξ, t, ξ′, t′)~λ(ξ′, t′) (37)
+
+These are the equations fulfilled by the optimum solution ~xa at the minimum of
+the Gaussian costfunction. The solution includes an estimate of the model errors in
+terms of the adjoint variable. An inverse problem of this form, where the model is not
+assumed to be exact, is called a weak constraint problem. The forward and adjoint
+equations are coupled, since ~λ appears in the forward equation and ~xa appears in
+the adjoint equation. This makes it harder to construct assimilation algorithms for
+this general case, but it can be done (see [3, 4]).
+
+A simplification is to assume the model to be exact ( ~Q = ~0) which gives a strong
+constraint problem. Now the adjoint only influences the initial condition of the so-
+lution, and the forward model integration is simplified. This assumption is made in
+the formulation of most assimilation algorithms. This is fine when it can be demon-
+strated that the model error is small relative to observation and background errors.
+Even when model errors are not quite negligible, they are often not included in the
+assimilation either because they are too difficult to characterize or too expensive to
+calculate.
+
+The solution for the generalized inverse problem is sketched in Fig. 10.
+The generalized solution can be translated directly onto a discrete form, replacing
+
+continuous fields and operators by corresponding vectors and matrices. For the
+discrete case it is often an advantage to let the model operator include the time
+derivatives. One particular simplification in the discrete case is that the adjoint of a
+linear operator, expressed as a matrix, is equal to the transpose of that matrix. This
+property is very useful when coding the adjoints of discrete operators.
+
+
+
+2 VARIATIONAL DATA ASSIMILATION 17
+
+t
+tMt10 τ
+
+Cm·(ym-Hm(xa))
+
+λ(ξ,t)
+
+xb+ B λ
+
+xa(ξ,t)
+
+t
+
+tMt10 τ
+
+Figure 10: The solution of the generalized inverse problem. Observations are a
+source term in the backward-in-time integration of the adjoint ~λ. This gives a jump
+at each observation which translates into a change in the forcing in the forward
+integration of ~xa. The initial condition receives a contribution ~B~λ. For the strong
+constraint problem the adjoint solution is unchanged, but there is no contribution to
+the forcing of the forward integration. When error correlations in time are included,
+the changes in ~λ and ~xa go via smooth transitions.
+
+• Example: Observations in the Euler-Lagrange equation. The right hand side
+of the Euler-Lagrange equation Eq. 35 contains observations as source terms
+in the backward-in-time integration. Going back to the steps in the solution
+above, we recall that everything to the right of ~R−1 is a function of the primed
+coordinates (ξ′, t′), and everything to the left is a function of (ξ, t), so we
+should have written
+
+r.h.s. = (
+∂ ~H
+
+∂~xa
+)∗ ~R−1
+
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′(~y − ~H(~xa))
+
+A departure
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′φn(ξ
+
+′, t′)(yn − Hn(~xa))
+
+is spread by ~R−1 to give departures at all (correlated) observation points. Then
+
+( ∂
+~H
+
+∂~xa
+)∗ moves the resulting departures at observation points to a continuous
+
+increment in the model variables. In the discrete case the right hand side
+would become HTR−1(y − H(xa)).
+
+• Example: Observation and model space. In observation space all quantities
+are comparable with the observations: yn and Hn(~x) are both in observation
+space. In model space all quantities are comparable with the state vector:
+~x and (∂Hn
+
+∂~xa
+)∗(yn − Hn(~xa)) are examples. Assimilation algorithms can be
+
+formulated in either model or observation space: for each model space algo-
+rithm there is a corresponding dual form of the algorithm in observation space
+(see [7]). The link between the two spaces are the observation operators. In
+observation space, the assimilation problem dimension is determined by the
+number of observations. This can be an advantage when there are relatively
+
+
+
+3 COMMON ASSIMILATION ALGORITHMS 18
+
+few observations, like in some oceanographic applications. In model space,
+the assimilation problem is determined by the model dimension. This can be
+an advantage when more and more observations are assimilated, like satellite
+data in meteorological assimilation systems.
+
+• Example: Implementation of assimilation algorithms. The generalized inverse
+gives the exact relation for the analysis in the continuous case. When imple-
+menting assimilation algorithms we are always working with discrete models.
+The discrete equivalent of the generalized inverse must be coded so that it is
+internally consistent. For example, the adjoint of a linear operator must be
+exactly the transpose of the matrix for that operator. This we cannot guaran-
+tee by discretizing the continuous form of the generalized inverse directly. A
+practical approach is to derive the discrete tangent linear equivalents of all op-
+erators, and then derive the adjoint operators as the transpose of the tangent
+linear operators.
+
+3 Common assimilation algorithms
+
+We will now turn our attention to specific assimilation algorithms: optimal interpo-
+lation (OI), three-dimensional variational assimilation (3DVAR), four-dimensional
+variational data assimilation (4DVAR) and the Kalman filter. We will interpret
+each of the algorithms in terms of the generalized inverse solution, in particular
+what aspects of the generalized inverse they capture and what the approximations
+are. Starting from the generalized inverse, we will translate the terms remaining
+after approximations into commonly encountered expressions for the algorithms,
+moving to discrete notation where appropriate.
+
+3.1 Optimal interpolation and 3DVAR
+
+OI and 3DVAR are the simplest algorithms of the above – they do not include
+the dynamic evolution of the model in the assimilation. While OI and 3DVAR
+are similar in this respect, there are significant differences which are important in
+applications.
+
+3.1.1 Relation to the generalized inverse
+
+• Approximation 1: No model errors, ~Q = ~0.
+
+• Approximation 2: The evolution of ~xa is described perfectly by
+∂~xa
+∂t
+
+= ~0, i. e.
+~M = ~0.
+
+• Approximation 3: Evaluate all observation operators at t = τ/2. This means
+the localization function for an observation yn is φn(ξ)δ(t−τ/2), with δ(t−τ/2)
+a Dirac delta function at τ/2.
+
+All that now remains of the generalized inverse solution is the following (see Fig. 11)
+
+~λ(ξ, τ) = ~0
+
+
+
+3 COMMON ASSIMILATION ALGORITHMS 19
+
+t
+
+0 ττ/2
+
+x
+
+t
+0 ττ/2
+
+λ
+
+}HTR-1(y-H(xa))
+
+Figure 11: The OI/3DVAR analysis as seen by the generalized inverse. All depar-
+tures are evaluated at τ/2 and the model operator is identity.
+
+−
+∂~λ
+
+∂t
+= δ(t − τ/2)
+
+∫
+
+V
+dξ′(
+
+∂ ~H
+
+∂~xa
+)∗ ~R−1(~y − ~H(~xa))
+
+∫
+
+V
+dξ′ ~B−1(ξ, ξ′)(~xa(ξ
+
+′, 0) − ~xb(ξ
+′, 0)) − ~λ(ξ, 0) = ~0
+
+∂~xa
+∂t
+
+= ~0
+
+Integrating the adjoint equation backward in time from the zero end condition we
+get a jump in ~λ at t = τ/2 time where all the observation operators are evaluated,
+
+~λ(ξ, τ/2) =
+∫
+
+V
+dξ′(
+
+∂ ~H
+
+∂~xa
+)∗ ~R−1(~y − ~H(~xa)) (38)
+
+Here the time dimension of the covariance function has disappeared, since all depar-
+tures are evaluated at the same time. The solution then remains constant between
+t = 0 and t = τ/2 (~λ(ξ, 0) = ~λ(ξ, τ/2) and ~xa(ξ, 0) = ~xa(ξ, τ/2)) so the initial
+condition is also valid at t = τ/2. By defining the analysis time in the middle of
+the assimilation window we use background ~xb which is never further away than τ/2
+from any observation,
+
+∫
+
+V
+dξ′( ~B−1(ξ, ξ′)(~xa(ξ
+
+′, τ/2) − ~xb(ξ
+′, τ/2)) − (
+
+∂ ~H
+
+∂~xa
+)∗ ~R−1(~y − ~H(~xa))) = ~0 (39)
+
+3.1.2 Discrete formulation
+
+We now continue the description of OI and 3DVAR using the discrete formulation
+in which they are mostly expressed. Converting the above expression to the discrete
+case gives
+
+B−1(xa − xb) − H
+TR−1(y − H(xa)) = ~0 (40)
+
+We need to solve for xa, but H(xa) is nonlinear in xa, and the adjoint operator
+HT contributes to the nonlinearity as well (remember adjoints and transposes are
+equivalent in the discrete case).
+
+
+
+3 COMMON ASSIMILATION ALGORITHMS 20
+
+• Approximation 4: Let H be a linear approximation to the jacobian of H
+(a tangent linear approximation). Replace H(xa) by the linear expression
+H(xb) + H(xa − xb) and the (nonlinear) adjoint H
+
+T of the jacobian by the
+(linear) adjoint HT of the tangent linear approximation.
+
+The linearized equation is
+
+B−1(xa − xb) − H
+TR−1(y − H(xb) − H(xa − xb)) = ~0 (41)
+
+After some rearrangement we arrive at the following equivalent expressions (see [5])
+for the optimal solution xa,
+
+xa = xb + K(y − H(xb)) (42)
+
+K = BHT (HBHT + R)−1 (43)
+
+where K is the gain or weight matrix. A measure of the accuracy of the analysis is
+given by the analysis error covariance matrix A (see [5])
+
+A = (I − KH)B (44)
+
+• Example: Interpretation of the gain matrix. HBHT is just the background
+error covariance expressed in observation space. HT takes the departures
+divided by the sum of observation and background covariances back to model
+space, where it is multiplied by the background error. This is analogous to
+the factor σ2b/(σ
+
+2
+b + σ
+
+2
+o) which arises in the optimal least square solution of
+
+a single direct observation y with error variance σ2o of a quantity x, given a
+background estimate xb with error variance σ
+
+2
+b ,
+
+xa = xb +
+σ2b
+
+(σ2b + σ
+2
+o)
+
+(y − xb) (45)
+
+We see here again how the observation operators translate between observa-
+tion and model space, making it possible to compare matrixes of different
+dimensions (e. g. R which is in observation space and B, which is in model
+space).
+
+We have thus shown that the solution of the variational assimilation problem under
+approximations 1–4 is equivalent to Eqs. 42– 43 for the solution at the minimum.
+This suggests two types of algorithms for solving the assimilation problem on this
+form. We can solve the expression for xa directly by matrix inversions. But we
+can also solve the variational problem which leads to xa iteratively, starting from
+xb. We now briefly discuss optimal interpolation and three-dimensional variational
+assimilation as examples of these two approaches.
+
+3.1.3 Optimal interpolation – OI
+
+In optimal interpolation the analysis equation is solved directly by inversion. In
+the inversion the gain matrix K is simplified by assuming that only the closest
+observations determine the analysis increment at ξ. The global analysis problem
+is thus divided into blocks, and a local optimal analysis is found for each block
+
+
+
+3 COMMON ASSIMILATION ALGORITHMS 21
+
+(see Fig. 12). This reduces the size and the time it takes to solve the analysis
+problem numerically. However, this is not a global solution, and jumps can occur
+in the analysis when solutions from different blocks are joined together. Another
+disadvantage of optimal interpolation is that it is difficult to use observations with
+complex observation operators. This is because background errors need to be formed
+for the model equivalent of each observation. For this reason only observations with
+simple observation operators are used in OI.
+
+ξ
+1
+
+ξ
+2
+
+Figure 12: An example of data selection in OI. There is some overlap between ob-
+servations used to determine the analysis at ξ1 and ξ2.
+
+• Example: Satellite radiances The observation operator for satellite radiances
+includes a radiative transfer model. The model equivalent background error
+has to take into account the effect of the radiative transfer model on a col-
+umn of temperature, humidity, ozone and many more parameters. Instead of
+radiances, retrievals of temperature, humidity and ozone are used in OI. This
+brings other problems, since retrievals use background estimates of the mete-
+orological fields, leading to correlations between observation and background
+errors.
+
+3.1.4 Three-dimensional variational assimilation – 3DVAR
+
+In 3DVAR the analysis equation is solved iteratively, starting from ~x 6= ~xa,
+
+B−1(x − xb) − H
+TR−1(y − H(xb) − H(x − xb)) 6= ~0 (46)
+
+We recognize this expression as the gradient J ′(x) of the (linearized) costfunction
+J(x),
+
+J(x) =
+1
+
+2
+(y − H(xb) − H(x− xb))
+
+TR−1(y − H(xb) − H(x − xb))
+
++
+1
+
+2
+(x − xb)
+
+TB−1(x − xb) (47)
+
+The linearized analysis problem has thus a quadratic costfunction, and we can use
+J and J ′ in a minimization algorithm to approach the unique minimum of J where
+J ′ = 0. This gives us the analysis xa (see Fig. 13).
+
+
+
+3 COMMON ASSIMILATION ALGORITHMS 22
+
+Compared with OI, 3DVAR gives a global analysis and it is easy to use any
+observation. We only need the observation operator and its tangent linear and
+adjoint in the analysis. However, it requires significant effort to develop observation
+operators for complex observations. For satellite radiances for example, a ‘fast’
+radiative transfer model together with its tangent linear and adjoint need to be
+developed.
+
+J(x)
+J(xb)
+
+xb
+
+x2
+
+x1
+
+xa
+
+Figure 13: Minimization of a quadratic costfunction J(x). The gradient of the
+costfunction and the costfunction itself are supplied to a minimization algorithm
+which works out how to change x to obtain a smaller value of the costfunction.
+
+3.1.5 Dual formulation of OI/3DVAR
+
+In the above analysis equation K(y − H(xb)) is an analysis increment in model
+space. An alternative way to solve the problem is to find analysis increments in
+observation space and then map them back to model space. This dual formulation
+(often referred to as ‘PSAS’) is obtained by rewriting the analysis equation as follows
+
+wa = (HBH
+T + R)−1(y − H(xb)) (48)
+
+xa − xb = BH
+Twa (49)
+
+This system can be solved directly or iteratively, leading to the dual formulation of
+OI and 3DVAR. See [7] for a further discussion.
+
+3.2 Four-dimensional variational assimilation – 4DVAR
+
+In contrast to 3DVAR and OI, 4DVAR includes the dynamic evolution of the model
+in the assimilation. The 4DVAR algorithm is very close to the generalized inverse
+– only model errors are neglected. The essential difference between 3DVAR and
+4DVAR is illustrated in Fig. 14.
+
+
+
+3 COMMON ASSIMILATION ALGORITHMS 23
+
+x
+b
+
+x
+a
+
+t
+
+0 τ
+3DVAR
+
+t
+
+0 τ
+4DVAR
+
+x
+b
+
+x
+a
+
+Figure 14: The difference between 3DVAR and 4DVAR – 4DVAR is a time/model
+consistent interpolator of departures.
+
+3.2.1 Relation to the generalized inverse
+
+• Approximation 1: No model errors, ~Q = ~0.
+
+The only change to the generalized inverse solution is that the forward model equa-
+tion no longer depends on the adjoint variable ~λ,
+
+∂~xa
+∂t
+
++ ~M(~xa) = ~0 (50)
+
+This makes the assimilation problem much easier to solve. Although ~xa still appears
+in the adjoint equation, an iterative scheme can be designed to arrive at the analysis.
+To see this, let us rewrite the equations in terms of ~xb and the analysis increment
+δ~xa,
+
+δ~xa = ~xa − ~xb (51)
+
+Inserting this in the model and observation operators, we get
+
+~M(~xa) = ~M(~xb) +
+∂ ~M
+
+∂~xa
+δ~xa (52)
+
+and similar for ~H(~xa), with the nonlinear jacobians
+∂ ~M
+∂~xa
+
+and ∂
+~H
+
+∂~xa
+of the model and
+
+observation operators appearing. This gives
+
+~λ(ξ, τ) = ~0 (53)
+
+−
+∂~λ
+
+∂t
++ (
+
+∂ ~M
+
+∂~xa
+)∗~λ =
+
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′(
+
+∂ ~H
+
+∂~xa
+)∗ ~R−1(~y − ~H(~xb) −
+
+∂ ~H
+
+∂~xa
+δ~xa) (54)
+
+∫
+
+V
+dξ′ ~B−1(ξ, ξ′)δ~xa(ξ
+
+′, 0) − ~λ(ξ, 0) = ~0 (55)
+
+∂δ~xa
+∂t
+
++
+∂ ~M
+
+∂~xa
+δ~xa = ~0 (56)
+
+∂~xb
+∂t
+
++ ~M(~xb) = ~0 (57)
+
+Here the evolution of the background ~xb is determined by the model operator ~M ,
+
+whereas the (nonlinear) jacobian ∂
+~M
+
+∂~xa
+of the model operator determines the evolution
+
+of the analysis increment δ~xa. The 4DVAR integration is shown in Fig. 15.
+
+
+
+3 COMMON ASSIMILATION ALGORITHMS 24
+
+t
+0 τ
+
+xb
+
+y1
+
+y2
+
+}
+
+}
+
+}
+
+x
+
+xa
+
+y1-H1(x)
+
+y2-H2(x)
+
+Bλ(0)
+
+t
+
+0 τ
+
+λ
+
+λ(0)
+
+Figure 15: 4DVAR adjoint and forward integration.
+
+3.2.2 Iterative solution of 4DVAR
+
+An iterative procedure for solving the generalized inverse problem without model
+errors could be formulated as follows:
+
+1. Integrate ~xb forwards 0 → τ , and evaluate the departures ~y − ~H(~xb) along the
+way at the proper time.
+
+2. Integrate ~λ backwards τ → 0, with δ~xa = 0 on the first iteration.
+
+3. Update δ~xa(ξ, 0).
+
+4. Integrate δ~xa forwards 0 → τ , and evaluate
+∂ ~H
+∂~xa
+
+δ~xa along the way at the proper
+time.
+
+5. Repeat the iteration of δ~xa until the solution converges.
+
+The problem with this iterative procedure is that it will normally fail to converge
+to the optimal analysis for nonlinear systems. For linear problems however, this
+procedure will always converge. We discussed earlier, see Fig. 3, that the nonlinear
+problem has a non-quadratic costfunction with multiple minima, which we can try
+to solve as a sequence of linear problems with quadratic costfunctions by linearizing
+each problem in the sequence around the solution of the preceding problem. This is
+the approach which we do apply for solving the 4DVAR problem.
+
+• Approximation 2: Solve the nonlinear analysis problem as a sequence of linear
+analysis problems.
+
+Although there is still no formal guarantee that we will converge towards the optimal
+analysis, we know that with a good initial estimate of the background and for weakly
+nonlinear systems we stand a good chance to arrive at a solution which is accurate
+enough.
+
+3.2.3 4DVAR solved as a sequence of linear problems
+
+We will now show how 4DVAR is solved as a sequence of problems linear in δ~x. Let
+us assume ~xi−1 is the solution to linear problem i − 1, starting from ~x0 = ~xb. To
+
+
+
+3 COMMON ASSIMILATION ALGORITHMS 25
+
+obtain ~xi = ~xi−1 +δ~xi we formulate a linearized problem for the solution of δ~xi. The
+model and observation operator and their jacobians are made linear in δ~xi by using
+~xi−1 instead of ~xa in their expression, giving the following
+
+~λi(ξ, τ) = ~0 (58)
+
+−
+∂~λi
+∂t
+
++ (
+∂ ~M
+
+∂~xi−1
+)∗~λi =
+
+∫
+
+V
+dξ′
+
+∫ τ
+
+0
+dt′(
+
+∂ ~H
+
+∂~xi−1
+)∗ ~R−1(~y − ~H(~xi−1) −
+
+∂ ~H
+
+∂~xi−1
+δ~xi) (59)
+
+∫
+
+V
+dξ′ ~B−1(ξ, ξ′)δ~xi(ξ
+
+′, 0) − ~λi(ξ, 0) = ~0 (60)
+
+∂δ~xi
+∂t
+
++
+∂ ~M
+
+∂~xi−1
+δ~xi = ~0 (61)
+
+∂~xi−1
+∂t
+
++ ~M(~xi−1) = ~0 (62)
+
+Now we can apply the iterative procedure outlined above and converge to a minimum
+for this linear analysis problem as follows:
+
+1. Integrate ~xi−1 forwards 0 → τ , and evaluate the departures ~y − ~H(~xi−1) along
+the way at the proper time.
+
+2. Solve δ~xi iteratively, using δ~x 6= δ~xi in the remaining equations. This is the
+same approach as used in 3DVAR, and again we can interpret finding δ~xi as
+minimizing a costfunction Ji whose gradient is given by the initial condition
+of the equation system,
+
+J ′i(δ~x) =
+∫
+
+V
+dξ′ ~B−1(ξ, ξ′)δ~x(ξ′, 0) − ~λ(ξ, 0) 6= ~0 (63)
+
+Here ~λ(ξ, 0) is the result of transporting all departures (~y− ~H(~xi−1)−
+∂ ~H
+
+∂~xi−1
+δ~x)
+
+back in time to t = 0 with linear operators. An important observation is that
+~λ(ξ, 0) is a linear function of δ~x(ξ, t), and even stronger, it can be expressed
+as a linear function of δ~x(ξ, 0) only through the linear forward and backward
+integrations of the system. This simplifies the costfunction to only depend on
+δ~x(ξ, 0).
+
+When we interpret the above iterative procedure as a minimization of the cost-
+function Ji with respect to δ~xi(ξ, 0), the forward–backward integrations of δ~x and
+~λ are seen only as means to calculate the gradient J ′i. One advantage of looking
+at the 4DVAR problem from the generalized inverse point of view is that we see
+the adjoint model integration as transporting observational information back to the
+analysis time. The adjoint integration, followed by the forward integration, spreads
+the influence of a single observation to all times within the assimilation window (see
+Fig. 16).
+
+• Example: Inner and outer loops. In the iterative solution of the 4DVAR prob-
+lem we often use the terms inner and outer loops. Outer loop refers to the
+sequence of linear problems which give ~xi. Inner loops refer to the iterations
+performed to find the solution to each linear problem. Usually only a few
+
+
+
+3 COMMON ASSIMILATION ALGORITHMS 26
+
+t
+
+0
+0
+
+L
+
+τ
+
+ξ
+
+λ≠0 δx≠0Observationyn
+x
+
+Figure 16: Each observation influences the solution at all times within the assimi-
+lation window in 4DVAR.
+
+outer loops are enough (2–3), and for each outer loop a few tens of inner loops
+are performed. Compared to 3DVAR, the consistent use of observations in
+4DVAR thus comes at a considerable extra computational cost. The com-
+putational cost can be reduced considerably by solving the inner loops (or
+equivalently, the iterations of the costfunction) at a lower resolution. This
+procedure is referred to as the incremental method. It can of course also be
+applied to the iterations of the costfunction in 3DVAR.
+
+3.3 The Kalman filter
+
+3.3.1 Cycling the analysis
+
+In the generalized inverse solution of the analysis problem the background field and
+its error covariance matrix were given to the analysis without any reference to how
+they were obtained. A more general view of the analysis problem is to include the
+production of the background field. This process is referred to as cycling the analysis.
+Since background fields are usually obtained as model forecasts from a previous
+analysis, their error characteristics depend on the errors in the previous analysis
+as well as the model errors in the forecast. In other words, the background error
+covariance matrices are evolving from one analysis to the other. The time evolution
+of the background errors can be important in three ways. First, we can distinguish
+regions where the background errors were reduced by the use of observations in
+the previous analysis. Second, we can distinguish regions where the background
+errors grew because of model errors. Third, the physics and dynamics of the model
+integration can both amplify and attenuate the background errors. Below we will
+discuss the Kalman filter which includes the time evolution of the background errors.
+
+As an aside, it is worth pointing out that there are hybrid assimilation algorithms
+which combine features of 4DVAR and the Kalman filter, for example by including
+the evolution of the background error in a 4DVAR framework.
+
+
+
+3 COMMON ASSIMILATION ALGORITHMS 27
+
+3.3.2 Relation to the generalized inverse
+
+Although the Kalman filter is formulated quite differently from the generalized in-
+verse, we can use the present framework to interpret the Kalman filter. The Kalman
+filter allows for model errors and is in that way close to the generalized inverse. An
+important difference is that the Kalman filter performs an analysis at each timestep
+of the (discrete) model, using only the observations available during that timestep
+[ti, ti+1]. In the generalized inverse all observations in the assimilation window were
+used simultaneously. If we compare the Kalman filter integration and the 4DVAR
+integration inside the assimilation window [0, τ ] of 4DVAR, the 4DVAR solution
+is a continuous curve, whereas the Kalman filter has jumps at each timestep (see
+Fig. 17). We can interpret the Kalman filter as solving the generalized inverse
+problem at each timestep of the model, so that the assimilation window shrinks to
+[ti, ti+1]. In practice, the 4DVAR and the Kalman filter solutions are close to each
+other at the end of the 4DVAR assimilation window. The solutions are identical in
+the case of a linear system if there are no model errors and the background errors
+are the same at the beginning of the assimilation window.
+
+t
+
+t
+i
+
+t
+i+1
+
+0 τ
+
+KALMAN FILTER
+
+t
+
+0 τ
+
+4DVAR
+
+x
+b
+
+x
+a
+
+Figure 17: The difference between the Kalman filter and 4DVAR. The Kalman filter
+performs an analysis at each model timestep. 4DVAR analyses all observations
+within a larger assimilation window simultaneously.
+
+Let us now consider a single timestep of the (discrete) model as the assimilation
+window, replacing [ti, ti+1] by [0, τ ]. All departures are evaluated at the begin of
+the timestep t = 0. This means the localization function for an observation yn is
+φn(ξ)δ(t), with δ(t) a Dirac delta function at t = 0. This eliminates the adjoint
+
+equation from the generalized inverse and ~λ(ξ, 0) is obtained directly by evaluating
+all observation departures at t = 0. This gives an equation for the analysis at t = 0
+which is identical to the OI/3DVAR case with t = τ/2 replaced by t = 0,
+
+∫
+
+V
+dξ′( ~B−1(ξ, ξ′)(~xa(ξ
+
+′, 0) − ~xb(ξ
+′, 0)) − (
+
+∂ ~H
+
+∂~xa
+)∗ ~R−1(~y − ~H(~xa))) = ~0 (64)
+
+As background for the next analysis at t = τ we make a forecast ~xf(ξ, t) 0 → τ
+starting from the analysis ~xa(ξ, 0). In the forecast step of the Kalman filter, the
+
+
+
+3 COMMON ASSIMILATION ALGORITHMS 28
+
+model error estimate given by the generalized inverse is not used,
+
+~xf (0) = ~xa(0) (65)
+
+∂~xf
+∂t
+
++ ~M(~xf ) = ~0 (66)
+
+Here we have written ~x(0) instead of ~x(ξ, 0) to emphasize the time dimension.
+
+3.3.3 Evolution of the forecast error
+
+The forecast error evolution is obtained by writing ~xf = x̂ + ~εf , where x̂ is the true
+(but unknown) state of the system, whose evolution is given by
+
+∂x̂
+
+∂t
++ ~M(x̂) = −δ(t)~εm (67)
+
+Inserting this in the forecast equations gives
+
+~εf(0) = ~εa(0) (68)
+
+∂~εf
+∂t
+
++
+∂ ~M
+
+∂x̂
+~εf = δ(t)~εm (69)
+
+We notice that the forecast errors are propagated as perturbations on top of the true
+model state by the jacobian of the model operator. In the Kalman filter the forecast
+errors are considered to evolve linearly during a single timestep of the model. Thus
+the jacobian is linearized by replacing x̂ by ~xa,
+
+∂εf
+∂t
+
++
+∂ ~M
+
+∂~xa
+~εf = δ(t)~εm (70)
+
+Now introduce the following notation for the integration of the model equations over
+one timestep 0 → τ ,
+
+~xf(τ) = M0→τ (~xa(0)) (71)
+
+~εf(τ) = M0→τ~εa(0) + ~εm(0) (72)
+
+where M0→τ stands for the nonlinear integration and M0→τ stands for the linearized
+tangent linear integration. The forecast error covariance at τ , which is the new
+background error covariance, is obtained by multiplying Eq. 72 by its transpose and
+making the assumption that analysis and forecast errors are uncorrelated. This gives
+
+~B(τ) = M0→τ ~A(0)M
+T
+0→τ + ~Q(0) (73)
+
+Here we have used that ~εf~ε
+T
+f = ~B and analogous definitions of ~A and ~Q.
+
+
+
+4 ACKNOWLEDGEMENTS 29
+
+3.3.4 The discrete formulation of the Kalman filter
+
+We now come to the proper formulation of the Kalman filter as a discrete assimilation
+algorithm. The equation for the initial condition is similar to the OI/3DVAR case,
+with t = τ/2 replaced by t = 0. As before, replace H(xa) by H(xb) + H(xa −
+xb), where H is a a linear approximation to the jacobian of H (the tangent linear
+approximation of H). The analysis equations for the Kalman filter are then identical
+to the 3DVAR/OI case. To emphasize the cycling nature of the Kalman filter, we
+replace 0 → τ by i → i + 1 in the notation,
+
+xa(i) = xb(i) + K(i)(y(i) − H(xb(i))) (74)
+
+K(i) = B(i)HT (i)(H(i)B(i)HT (i) + R(i))−1 (75)
+
+A(i) = (I − K(i)H(i))B(i) (76)
+
+where K is the Kalman gain matrix. The analysis error covariance matrix A gives
+an a posteriori estimate of the quality of the analysis. The forecast to the next step
+of the analysis gives
+
+xb(i + 1) = Mi→i+1(xa(i)) (77)
+
+B(i + 1) = Mi→i+1A(i)M
+T
+i→i+1 + Q(i) (78)
+
+The Kalman filter is very expensive to evaluate directly, but several approximations
+and simplifications can be made to achieve practical assimilation algorithms.
+
+4 Acknowledgements
+
+Thanks to Anabel Bowen and Rob Hine for the artwork.
+
+References
+
+[1] A. F. Bennett. Inverse Methods in Physical Oceanography. Cambridge Univer-
+sity Press, 1992.
+
+[2] A. F. Bennett. Inverse Modeling of the Ocean and Atmosphere. Cambridge
+University Press, 2002.
+
+[3] A. F. Bennett., B. S. Chua and L. M. Leslie. Generalized inversion of a global
+numerical weather prediction model. Meteor. Atmos. Phys., 60:165–178, 1996.
+
+[4] A. F. Bennett., B. S. Chua and L. M. Leslie. Generalized inversion of a global
+numerical weather prediction model, II: Analysis and implementation. Meteor.
+Atmos. Phys., 62:129–140, 1997.
+
+[5] F. Bouttier and P. Courtier. Data Assimilation Concepts and Methods. Lecture
+Notes, ECMWF, 1999.
+
+[6] P. Bergthórsson and B. Döös. Numerical weather map analysis. Tellus, 5:329–
+340, 1955.
+
+
+
+REFERENCES 30
+
+[7] P. Courtier. Dual formulation of four-dimensional variational assimilation.
+Quart. J. Roy. Meteor. Soc., 123:2449–2461, 1997.
+
+[8] R. Daley. Atmospheric Data Analysis. Cambridge University Press, 1991.
+
+[9] D. Dee. Bias and data assimilation. Quart. J. Roy. Meteor. Soc., 131:3323–
+3343, 2005.
+
+[10] J. Derber and F. Bouttier. A reformulation of the background error covariance
+in the ECMWF global data assimilation system. Tellus, 51A:195–221, 1999.
+
+[11] M. Ehrendorfer. Prediction of the uncertainty of numerical weather forecasts:
+problems and approaches. Proceedings ECMWF Workshop on Predictability,
+27–99, 1997.
+
+[12] G. Evensen. Sequential data assimilation with a nonlinear quasi-geostrophic
+model using Monte Carlo methods for forecast error statistics. J. Geophys.
+Res., 99(C5):10143–10162, 1994.
+
+[13] J. R. Eyre Variational Assimilation of Remotely-Sensed Observations of the
+Atmosphere. ECMWF Tech. Mem. 221, 1995
+
+[14] H. Goldstein. Classical Mechanics. Second Edition. Addison-Wesley, 1980.
+
+[15] X. Y. Huang and X. Yang. Variational Data Assimilation with the Lorenz
+Model. Hirlam Technical Report Number 26, 1996.
+
+[16] A. C. Lorenc. Analysis methods for numerical weather prediction. Mon. Wea.
+Rev., 112:1177–1194, 1986.
+
+[17] W. Menke. Geophysical Data Analysis: Discrete Inverse Theory. Academic
+Press, Inc., 1984.
+
+[18] A. Tarantola. Inverse Problem Theory. Methods for data fitting and model
+parameter estimation. Elsevier, 1987.
+
+[19] A. Tarantola and B. Valette. Inverse problems = Quest for information. J.
+Geophys., 50:159–170, 1982.
+
+[20] J. M. T. Thompson and H. B. Stewart. Nonlinear Dynamics and Chaos. John
+Wiley and Sons, 1986.

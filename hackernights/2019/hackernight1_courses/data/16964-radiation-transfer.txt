@@ -1,0 +1,7756 @@
+Radiation_transfer
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+Radiation Transfer
+March 2000
+
+By Jean-Jacques Morcrette
+
+European Centre for Medium-range Weather Forecasts, Shinfield Park, Reading Berkshire RG2 9AX, United Kingdom
+
+Table of contents
+
+1 . Introduction: An historical perspective
+
+2 . The Earth’s radiative balance and its implications
+
+2.1 The need for parametrization
+
+2.2 Global mean considerations
+
+2.3 Time and space variations of the solar zenith angle and their consequences
+
+3 . The theory of radiation transfer
+
+3.1 Terminology
+
+3.2 Derivation of the monochromatic radiative transfer equation (RTE)
+
+3.3 Basic laws
+
+3.4 The spectral absorption by gases
+
+3.5 The spectral scattering by particles
+
+4 . Radiation schemes in use at ECMWF
+
+4.1 The operational longwave scheme (as of March 2000)
+
+4.2 The operational SW scheme
+
+5 . Comparisons with observations
+
+6 . Conclusions and perspectives
+
+REFERENCES
+
+Abstract
+
+These notes aim at fulfilling two different and somewhat contradictory objectives:
+
+1) to give a general introduction to the parametrization of radiation transfer (RT) in numerical weather prediction and climate
+models. This might be useful to people who wish to look at general circulation model (GCM) outputs and to understand
+qualitatively how radiation transfer in clear and cloudy atmospheres is linked to the other physical processes, and how it can
+influence the atmospheric motions. In that case, the internal behaviour of the radiation scheme might remain a black box.
+
+2) to provide a reasonably complete description of the RT parametrizations presently used in the ECMWF model to help
+understand the specific properties of the ECMWF forecasts. While the former task requires only basic knowledge of physics,
+the latter requires much more insight in how a RT scheme works.
+
+The following pages somehow attempt to tackle these two tasks. After an introduction, the second chapter discusses the
+radiation budget at the top, and within the atmosphere, both globally and more regionally in relation with the other terms of the
+atmospheric energy balance. The third chapter is devoted to the derivation of the RT equation from an observational and
+
+
+
+Radiation Transfer
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+qualitative point of view and to the introduction to the basic laws of physics necessary to understand the RT. The
+simplifications that can be used when dealing with RT in the Earth’s atmosphere, and the various approximations needed to
+make the RT a problem tractable for a numerical model of the atmosphere are also presented in chapter 3. The main aspects of
+the various RT parametrizations presently used in the ECMWF forecasting system are presented in chapter 4, together with the
+specification of the cloud optical properties. Examples of validation of various aspects of the parametrization of cloud-
+radiation interactions with observed radiation fields are presented in chapter 5. As a matter of conclusion, some comments on
+the future of RT calculations, and on some other radiation-related hot topics are given in chapter 6.
+
+1. INTRODUCTION: AN HISTORICAL PERSPECTIVE
+
+Among the various processes responsible for the diabatic heating of the atmosphere (convection, turbulence, large-
+
+scale condensation, heat, moisture and momentum transfer at the surface, radiation transfer), which have to be de-
+
+scribed by physical parametrizations in a general circulation model (GCM), this last one stands because its impact
+
+is felt at all times and over the whole 3-D domain. Compared to other processes, radiation transfer (RT) also stands
+
+as having a long history of theoretical developments. From the statistical and quantum mechanics at the end of the
+
+19th and beginning of the 20th century, Boltzmann, Stefan, Wien, Planck and Einstein made pioneering advances
+
+in the spectral description of the radiation emitted by a black body. Afterwards, spectroscopic studies of the gases
+
+important for the radiative budget of the atmosphere, and the development of various approximations made the cal-
+
+culation of the radiation transfer in the atmosphere a tractable problem.
+
+The very first such approximation is the separation between shortwave (SW) and longwave (LW) schemes due to
+
+the obvious wavelength difference between a black-body at Sun’s temperature (around 5800 K, with most of its
+
+energy below 4 microns, and the energy source outside the atmosphere) and that of the atmosphere (globally aver-
+
+aged equivalent temperature of about 255 K as seen from the top of the atmosphere, with most of its energy above
+
+4 microns, and the sources being the surface, the radiatively active gases (mostly H2O, CO2, O3), and the clouds
+
+within the atmosphere). Chandrasekhar (1935, 1958, 1960) provided the first approximations to the radiation
+
+transfer in a scattering atmosphere. Elsasser (1938, 1942), Goody (1952, 1964), Curtis (1952, 1956), Godson
+
+(1953), Malkmus (1967) defined the first usable simplifications to the spectral representation of the radiation trans-
+
+fer including its dependence on two key atmospheric parameters, pressure and temperature, allowing atmospheric
+
+heating/cooling rates to be computed (Rodgers and Walshaw, 1966).
+
+To the point, that in the mid-70s, it was said (WMO/Global Atmospheric Research Program, 1975) that radiation
+
+transfer was a solved problem, provided big enough computers were available. The only developments required
+
+were for fast parametrizations. A good description of the various approximations used in the 80’s at the different
+
+stages in the development of computer-efficient radiation schemes (and of the necessary trade-offs between accu-
+
+racy and efficiency, two contradictory arguments) is given in Stephens (1984) and Fouquart (1987).
+
+Unfortunately, the InterComparison of Radiation Codes for Climate Models (ICRCCM) at the end of the 80s (El-
+
+lingson et al., 1991; Fouquart et al., 1991, Baer et al., 1996) showed that, if an overall good agreement in clear-
+
+sky longwave computations by line-by-line models existed, large discrepancies were found in the results of both
+
+the LW parametrized schemes and all types of SW schemes. Hereafter, at least for clear-sky atmospheres, these
+
+were tracked down to deficiencies, mainly in the implementation of the approximations used to deal with the spec-
+
+tral and vertical integrations.
+
+Since ICRCCM, a number of parametrized RT schemes have been developed from line-by-line (LbLs) models so
+
+that their accuracy, at least in clear-sky atmospheres, should be very close from that of LbLs (e.g., Ramaswamy and
+
+Freidenreich, 1992; Edwards and Slingo, 1996; Mlawer et al., 1997, to name just a few. As far as clouds are con-
+
+cerned, the situation is much more complex with an ongoing debate whether or not clouds might absorb more than
+
+what current parametrizations account for, with the somewhat related role of the spatial inhomogeneities in the 3-
+
+dimensional distribution of water condensates on the radiation fields within and at the boundaries of a cloud, with
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+the role that the overlapping of cloud layers plays on the vertical distribution of the radiative fluxes and heating
+
+rates. Also the computational environment of a general circulation model might also impose some external limita-
+
+tions on the quality of the representation of the cloud-radiation interactions. In the following sections, an overview
+
+of these different questions will be provided.
+
+2. THE EARTH’S RADIATIVE BALANCE AND ITS IMPLICATIONS
+
+2.1  The need for parametrization
+
+The need for a parametrization of the radiation transfer in a large-scale numerical model of the atmosphere stems
+
+for two reasons:
+
+• first, like the other physical processes (condensation, surface processes, turbulence, ...) the radiation
+
+transfer actually occurs at spatial scales much smaller than the scales (e.g., interaction with cloud
+
+droplets) explicitly resolved by the model in its treatment of the adiabatic part of the prognostic
+
+equations;
+
+• second, although the theory of radiation transfer has been well known for decades, the complexity
+
+of the governing equation is such that it cannot be used starightforwardly in a large-scale model. A
+
+much more computationally efficient scheme has to be designed to account for the effect of the
+
+radiative processes.
+
+2.2  Global mean considerations
+
+The importance of the radiation transfer processes for the Earth’s atmosphere system is obvious: Radiation is the
+
+only way through which the Earth-atmosphere system can exchange energy with the rest of the universe. The im-
+
+portance of a proper representation of the radiative processes in climate modelling or weather forecasting (after a
+
+few days) comes from this simple consideration;
+
+A zero-dimensional energy balance model describes the global annual mean equilibrium of the Earth-atmosphere
+
+system as
+
+where is the planetary albedo (the ratio between reflected and incident solar energy at the top of the
+
+atmosphere, ToA), is the “solar constant” (the flux of energy from the Sun at the mean Sun–Earth distance),
+
+is the outgoing terrestrial longwave radiation, is the radiometric temperature of the Earth, and σ is the
+Stefan-Boltzmann constant ( W m-2 K-4 ). The factor 0.25 (= 1/4) arises from the Earth
+
+intercepting solar radiation proportionally to its cross-section and emitting terrrestrial radiation proportionally to
+
+its surface. According to the latest available satellite measurements (ERBE, Earth Radiation Budget Experiment,
+
+Barkstrom and Smith, 1986) W m-2 and . Thus is 237 W m-2 and
+
+K. The discrepancy between this value and the mean climatological surface temperature ( K) is
+
+explained by the so-called “greenhouse” effect, which will be discussed later.
+
+Fig. 1 presents the various radiative streams within the atmosphere after Ramanathan (1987). Out of the 343 W m-
+
+2 of solar energy available at ToA in the 0.2 to 4 wavelength range, about 30% is reflected back to the outer
+
+space without change of wavelength after scattering in the atmosphere and/or reflection at the Earth’s surface.
+
+There the true solar imput to the atmosphere is about 237 W m-2. A large fraction of this reaches the surface and
+
+is absorbed by land masses and oceans; only roughly one quarter of this solar radiation is absorbed within the at-
+
+mosphere and creates a mean heating of about 0.6 K/day. The exact fractions being absorbed within clouds and by
+
+0.25 1 α–( )
+�
+
+0
+
+�
+σ � e4= =
+
+α �
+0� � e
+
+σ 5.67 10 8–×=
+
+�
+0 1372= α 0.295 0.010±=
+
+� � e 255=� s 288=
+
+µm
+
+
+
+Radiation Transfer
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+the “clear” atmosphere are presently debated (Cess et al., 1995; Ramanathan et al., 1995; Pilewskie and Valero,
+
+1995; Stephens, 1996) with the role of aerosols in clear sky atmosphere and of cloud inhomogeneities recently
+
+coming to the forefront to explain this excess absorption not properly accounted by the current generation of radi-
+
+ation schemes in GCMs (e.g., Cairns et al., 2000). Part of the solar energy input to the surface (between 155 and
+
+180 W m-2 depending on how much is actually absorbed within the atmosphere) is returned to the atmosphere by
+
+emission of terrestrial longwave radiation in the 4 to 100 wavelength range, but this emission (about 63 W m-
+
+2, difference between 390 W m-2, the longwave upward emission of the surface and 327 W m-2, the longwave
+
+downward emission of the atmosphere) does not fully compensate for the solar flux into the surface. The deficit of
+
+about 106 W m-2 is compensated by turbulent transport of latent heat (for about 90 W m-2) and sensible heat (for
+
+about 16 W m-2) from the surface to the atmosphere. The existence of a radiative balance at ToA and of a radiative
+
+imbalance at the surface implies that the atmosphere itself is a net source of terrestrial longwave radiation to com-
+
+pensate for the warming by the solar heating, latent heat release and sensible heat flux. Thus the atmosphere cools
+
+through emssion of longwave radiation by about 1.6 K/day.
+
+In the above discussion, only the figures of the radiation budget at ToA are known with some degree of accuracy
+
+thanks to some decades of satellite measurements. Estimates of the components of the energy budget at the surface
+
+are more difficult to obtain due to the lack of global coverage by conventional observation systems and to the alrge
+
+uncertainties in the ongoing tentative determination of these quantities from satellite measurements.
+
+2.3  Time and space variations of the solar zenith angle and their consequences
+
+The solar zenith angle is the angle between the vertical at a given point on the Earth and the Sun’s direction. Its
+
+cosine, , which is the relevant parameter for radiative computations can be computed knowing the latitude, the
+
+longitude, the time of the year, and the time of the day.  influences the radiation transfer in two ways:
+
+• the amount of energy received at ToA is the product of the solar constant by a factor depending on
+
+the time of the year ( ) and by if is positive and zero otherwise (see Fig. 2 );
+
+• the atmospheric mass encountered by a solar beam is proportional to  (for ).
+
+Therefore, a diminishing means not only less input at ToA but also more scattering and absorption within the
+
+atmosphere, therefore an even smaller solar flux at the surface. The time variations of are the daily cycle and
+
+the yearly aseasonal cycle, which induce cyclic temperature variations and many specific patterns in the instanta-
+
+neous weather. But the most important factor of influence of radiation on the weather is linked to its spece varia-
+
+tions. Due to a better insolation of the equatorial belt than of the polar regions, which is not compensated by the
+
+terrestrial longwave output, the equatorial region is warmer than the polar ones. This situation has two major con-
+
+sequences for the weather:
+
+• the same pressure layers are thicker at the equator than at the poles; since the sea level pressure is
+
+observed to be uniformly distributed due to friction in the planetary boundary layer, and according
+
+to Buys–Ballot’s law, the zonal mean wind regime is of zonal westerlies, therefore the atmosphere
+
+precedes the Earth in its rotation;
+
+• there is a need to transport heat from the equatorial to the polar regions. This transport is partly
+
+realized by the oceans, partly by the atmosphere, But a simple zonal circulation does not allow the
+
+atmosphere to fulfill this role and disturbances have to develop.
+
+These last two points clearly indicate what is required from a radiation scheme in a large-scale numerical model of
+
+the atmosphere: first a good estimate of the pole–equator radiative imbalance, second an accurate partition of the
+
+poleward transport of heat between oceans and atmosphere.
+
+In the tropics, the mean annual net heating of about 60 W m-2 is the sum of a 320 W m-2 heating by absorption of
+
+solar radiation and a 260 W m-2 cooling by emission of longwave radiation. This net heating of only about 20% of
+
+µm
+
+θ0
+µ0
+
+µ0
+
+1.0000 0.0035± µ0 µ0
+1 µ0⁄ µ0 0>
+
+µ0
+µ0
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+the available solar input (the remaining 80% heat the tropical surface) is the driving force for the general circulation
+
+of the atmosphere and oceans. Therefore a 10% systematic error in the column absorbed solar radiation or in the
+
+longwave emission may potentailly translate into a factor 5 larger (i.e., 50%) change in the poleward transport of
+
+heat.
+
+Also important is the dipole-like deposit of radiative energy in the earth–atmosphere system. As a whole, the trop-
+
+osphere is subject to a net radiative cooling (of about 106 W m-2, Ramanathan, 1987), whereas the surface is subject
+
+to a net radiative heating of the same amplitude. Here again a 10% systematic error in the amplitude of this dipole
+
+will directly affect the destabilization of the troposphere, i.e., the fundamental drive for the tropospheric convec-
+
+tion.
+
+These questions may seem mainly related to climate studies, especially those performed with coupled ocean–at-
+
+mosphere models. However the previous argument is also relevant to NWP modelling. NWP models are integrated
+
+with an analysed non-interactive sea-surface temperature, which provides the right oceanic heat transport. In the
+
+past, most NWP (and climate) models were using cloudiness fixed and/or zonally averaged to get the right answer
+
+for the pole-equator radiative gradient. Nowadays, NWP and climate GCMs have interactive cloudiness and cloud-
+
+radiation processes, as early satellite observations have shown the longitudinal gradients of radiative heating to be
+
+of the same magnitude as the latitudinal gradients, due to the cloud distribution (Stephens and Webster, 1979).
+
+Such gradients are illustrated in Figs. 3 to 6 , which present averaged over the summer 1987 (June–July–August)
+
+the different components of the radiation budget derived from ERBE measurements. Fig. 3 displays the total and
+
+clear-sky absorbed SW radiation whereas Fig. 4 presents the reflected SW radiation. The clear-sky fields obtained
+
+by retaining the data only when clouds were found to be absent from the field of view of the satellite are highly
+
+zonal over the oceans, with only the land surface albedo differing with the various land types introducing marked
+
+departures. In comparison, the total fields clearly show the impact of the cloudiness with higher albedo (smaller
+
+absorption) in the ITCZ, the Indian monsoon and over the storm track. Minimum albedo (maximum absorption) is
+
+found over the relatively clear-sky subtropics, except over the extended low-level (stratocumulus) cloud decks on
+
+the western facades of the continents (California, Peru, Namibia). Fig. 5 presents the total and clear-sky outgoing
+
+longwave radiation for the same months. This field also displays the impact of the clouds, this time mainly of the
+
+high-level cloudiness usually linked to convection in the ITCZ or over the Indian monsoon area. Over the equatorial
+
+Pacific, the clear-sky OLR is less zonal than its SW counterpart indicating the role of moister atmospheres over the
+
+west part than over the eastern part of the basin. Fig. 6 presents the shortwave and longwave cloud forcing, i.e.,
+
+the difference between clear-sky and total fluxes. In the shortwave, clouds with their reflecting effect are responsi-
+
+ble for a cooling of the atmosphere-surface system, through a decrease of the energy available for heating. On the
+
+opposite, in the longwave, clouds contribute to a heating of the atmosphere by trapping the radiation coming from
+
+the surface and the lower layers of the atmosphere and by emitting at the cold temperatures representative of the
+
+higher clouds.
+
+Cloud-radiation interactions are now thought to be of importance not only for mesoscale phenomena (the sea
+
+breeze is the best but not the only example of intercation between radiation and surface discontinuities to create
+
+local dynamical circulations), but also for synoptic scale phenomena such as the onset of the Indian monsoon
+
+(Webster and Stephens, 1980).
+
+Finally, some systematic errors of a NWP model can be traced back to a deficient radiation transfer parametrization
+
+and at least partially corrected by an improved representation of the cloud-radiation interactions in the model
+
+(Morcrette, 1990).
+
+
+
+Radiation Transfer
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  1. The global energy balance for annual mean conditions. The top-of-the-atmosphere estimates of solar
+
+insolation (343 W m-2), solar radiation reflected by the whole atmosphere-surface system (106 W m-2), and
+
+outgoing longwave radiation (237 W m-2) are obtained from satellite data (Ramanathan, 1987). The other
+
+quantites in the figure are obtained from various published mode and empirical estimates, and might still be
+
+fraught with uncertainties. The quantities include: absorption of solar radiation at the surface (169 W m-2),
+
+downward longwave radiation at the surface emitted by the atmosphere (327 W m-2), upward longwave radiation
+
+emitted by the surface (390 W m-2), and the turbulent heat fluxes from the surface,  the latent heat flux (90 W
+
+m-2) and  the sensible heat flux (16 W m-2).
+
+�
+�
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+Figure  2. The daily variation of insolation at the top of the atmosphere as a function of latitude and day of the
+
+year in units of cal cm-2 day-1 ( 1 cal cm-2 day-1 = 0.4844 W m-2)  (after Paltridge and Platt, 1976).
+
+
+
+Radiation Transfer
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 3. The absorbed shortwave radiation (top) and the clear-sky absorbed shortwave radiation (bottom) (W m-
+
+2) derived from Earth Radiation Budget Experiment (ERBE) measurements for the summer 1987.
+
+100� 100�150� 150�
+200� 200	250
+ 250�
+
+300�
+
+300
+
+erbe_nfov ASW                       Area Mean:  0.258E+03
+ERBE Narrow FOV on (2.5 deg)^2 grid for 198706-08
+
+198706-08
+�
+
+60°S60°S
+
+30°S 30°S
+
+0°0°
+
+30°N 30°N
+
+60°N60°N
+
+30°E
+
+30°E 60°E
+
+60°E 90°E
+
+90°E 120°E
+
+120°E� 150°E�
+
+150°E 180°
+
+180° 150°W�
+
+150°W 120°W
+
+120°W� 90°W
+
+90°W 60°W
+
+60°W 30°W
+
+30°W
+
+25 - 50 50 - 75 75 - 100 100 - 125 125 - 150 150 - 175 175 - 200 200 - 225 225 - 250 250 - 275 275 - 300 300 - 325
+
+325 - 350 350 - 375 375 - 400 400 - 417.18
+
+200� 200�250� 250�
+300� 300�350� 350�
+
+400�
+400�
+
+erbe_nfov CSASW                     Area Mean:  0.317E+03
+ERBE Narrow FOV on (2.5 deg)^2 grid for 198706-08
+
+198706-08
+
+60°S60°S
+
+30°S 30°S
+
+0°0°
+
+30°N 30°N
+
+60°N60°N
+
+30°E
+
+30°E 60°E
+
+60°E 90°E
+
+90°E 120°E
+
+120°E� 150°E�
+
+150°E 180°
+
+180° 150°W�
+
+150°W 120°W
+
+120°W� 90°W
+
+90°W 60°W
+
+60°W 30°W
+
+30°W
+
+75 - 100 100 - 125 125 - 150 150 - 175 175 - 200 200 - 225 225 - 250 250 - 275 275 - 300 300 - 325 325 - 350 350 - 375
+
+375 - 400 400 - 419.7
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+Figure  4. As in Fig. 3 , but in terms of the reflected shortwave radiation at the top of the atmosphere (W m-2).
+
+90�
+130�170�
+
+erbe_nfov REF                       Area Mean:  0.100E+03
+ERBE Narrow FOV on (2.5 deg)^2 grid for 198706-08
+
+198706-08
+�
+
+60°S60°S
+
+30°S 30°S
+
+0°0°
+
+30°N 30°N
+
+60°N60°N
+
+30°E
+
+30°E 60°E
+
+60°E 90°E
+
+90°E 120°E
+
+120°E� 150°E�
+
+150°E 180°
+
+180° 150°W�
+
+150°W 120°W
+
+120°W� 90°W
+
+90°W 60°W
+
+60°W 30°W
+
+30°W
+
+30 - 50 50 - 70 70 - 90 90 - 110 110 - 130 130 - 150 150 - 170 170 - 190 190 - 210 210 - 230 230 - 250 250 - 264.9
+
+40�
+40�
+
+erbe_nfov CSREF                     Area Mean:  0.519E+02
+ERBE Narrow FOV on (2.5 deg)^2 grid for 198706-08
+
+198706-08
+�
+
+60°S60°S
+
+30°S 30°S
+
+0°0°
+
+30°N 30°N
+
+60°N60°N
+
+30°E
+
+30°E 60°E
+
+60°E 90°E
+
+90°E 120°E
+
+120°E� 150°E�
+
+150°E 180°
+
+180° 150°W�
+
+150°W 120°W
+
+120°W� 90°W
+
+90°W 60°W
+
+60°W 30°W
+
+30°W
+
+18.765 - 25 25 - 40 40 - 55 55 - 70 70 - 85 85 - 100 100 - 115 115 - 130 130 - 145 145 - 160 160 - 175 175 - 190
+
+190 - 205 205 - 220
+
+
+
+Radiation Transfer
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  5. As in Fig. 3 , but for the outgoing longwave radiation at the top of the atmosphere (W m-2).
+
+-270 
+-270!-270"
+
+-270#-270$
+
+-240%
+-240&
+
+-240'
+-240( -240)
+
+-210*
+-210+
+
+-180,-180-
+
+erbe_nfov TTR                       Area Mean: -0.243E+03
+ERBE Narrow FOV on (2.5 deg)^2 grid for 198706-08
+
+198706-08
+�
+
+60°S60°S
+
+30°S 30°S
+
+0°0°
+
+30°N 30°N
+
+60°N60°N
+
+30°E
+
+30°E 60°E
+
+60°E 90°E
+
+90°E 120°E
+
+120°E� 150°E�
+
+150°E 180°
+
+180° 150°W�
+
+150°W 120°W
+
+120°W� 90°W
+
+90°W 60°W
+
+60°W 30°W
+
+30°W
+
+-329.74 - -315 -315 - -300 -300 - -285 -285 - -270 -270 - -255 -255 - -240 -240 - -225 -225 - -210 -210 - -195 -195 - -180 -180 - -165 -165 - -150
+
+-150 - -136.28
+
+-290.
+-290/
+
+-2900 -2901
+-2902
+
+-2703-2704
+
+erbe_nfov CSTTR                     Area Mean: -0.278E+03
+ERBE Narrow FOV on (2.5 deg)^2 grid for 198706-08
+
+198706-08
+
+60°S60°S
+
+30°S 30°S
+
+0°0°
+
+30°N 30°N
+
+60°N60°N
+
+30°E
+
+30°E 60°E
+
+60°E 90°E
+
+90°E 120°E
+
+120°E� 150°E�
+
+150°E 180°
+
+180° 150°W�
+
+150°W 120°W
+
+120°W� 90°W
+
+90°W 60°W
+
+60°W 30°W
+
+30°W
+
+-330 - -320 -320 - -310 -310 - -300 -300 - -290 -290 - -280 -280 - -270 -270 - -260 -260 - -250 -250 - -240 -240 - -230 -230 - -220 -220 - -210
+
+-210 - -200 -200 - -190 -190 - -180 -180 - -170 -170 - -160 -160 - -158.03
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+Figure  6. As in Fig. 3 , but for the shortwave (top) and longwave (bottom) radiative cloud “forcing” (W m-2).
+
+3. THE THEORY OF RADIATION TRANSFER
+
+3.1  Terminology
+
+Generally, radiation is considered to be the process of electromagnetic waves propagating through a medium (nor-
+
+mally a planetary atmosphere). Some of the associated processes like absorption and thermal emission cannot be
+
+erbe_nfov SWCF                      Area Mean: -0.477E+02
+ERBE Narrow FOV on (2.5 deg)^2 grid for 198706-08
+
+198706-08
+�
+
+60°S60°S
+
+30°S 30°S
+
+0°0°
+
+30°N 30°N
+
+60°N60°N
+
+30°E
+
+30°E 60°E
+
+60°E 90°E
+
+90°E 120°E
+
+120°E� 150°E�
+
+150°E 180°
+
+180° 150°W�
+
+150°W 120°W
+
+120°W� 90°W
+
+90°W 60°W
+
+60°W 30°W
+
+30°W
+
+-165 - -150 -150 - -135 -135 - -120 -120 - -105 -105 - -90 -90 - -75 -75 - -60 -60 - -45 -45 - -30 -30 - -15 -15 - 0 0 - 15
+5
+
+206
+
+20
+798
+
+40
+
+erbe_nfov LWCF                      Area Mean:  0.288E+02
+ERBE Narrow FOV on (2.5 deg)^2 grid for 198706-08
+
+198706-08
+�
+
+60°S60°S
+
+30°S 30°S
+
+0°0°
+
+30°N 30°N
+
+60°N60°N
+
+30°E
+
+30°E 60°E
+
+60°E 90°E
+
+90°E 120°E
+
+120°E� 150°E�
+
+150°E 180°
+
+180° 150°W�
+
+150°W 120°W
+
+120°W� 90°W
+
+90°W 60°W
+
+60°W 30°W
+
+30°W
+
+0 - 10
+:
+
+10 - 20 20 - 30 30 - 40 40 - 50 50 - 60 60 - 70 70 - 80 80 - 90 90 - 100 100 - 100.67
+
+
+
+Radiation Transfer
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+adequately described by classical theory and require the use of quantum mechanics, which treats radiation as the
+
+propagation and interaction of photons. One characteristic property of radiation is its wavelength, A classification
+
+of radiation according to wavelength is presented in Fig. 7  (from Liou, 1980).
+
+Wavelength , frequency , and wavenumber are related through the relation , where is
+the speed of light ( m s-1 ). The sensitivity of the human eye is confined to a rather small interval
+
+from 0.4 to 0.7 (micrometres) known as the visible region. However, most of the atmospheric exchange of
+
+radiative energy  occurs from the ultraviolet (from about 0.2 ) to the infrared (around 100 ).
+
+In atmospheric studies, two quantities are generally used, the flux per unit area in W m-2 and the specific intensity
+
+or radiance, i.e., the radiative energy per time through unit area into a given solid angle, in W m-2 sr-1.
+
+3.2  Derivation of the monochromatic radiative transfer equation (RTE)
+
+The following discussion concerns the transfer equation for monochromatic radiation in its basic form for a plane-
+
+parallel, horizontally homogeneous atmosphere (Chandrasekhar, 1960).
+
+In GCM applications, the radiation field is computed without accounting for polarization effects, and assuming sta-
+
+tionarity (no explicit dependence on time). Only the point where radiation is considered, the direction of propaga-
+
+tion, and the frequency matter for the problem. Fig. 8 presents schematically the different contributions to the
+
+specific intensity at a given point P enclosed by an infinitesimally small cyclindrical element of length , of cross-
+
+section , and of an orientation expressed in terms of two angles, i.e., , with respect to the -axis and , the
+
+angle between the projection of the direction onto the plane and the -axis itself. For a horizontally homo-
+
+geneous atmospheric slice, the location of point P is given by its height above ground (or any other suitable co-
+
+ordinate). Let us consider the various sources and sinks of radiative energy in this cyclindrical element:
+
+3.2 (a)  Extinction. The radiance entering the cylinder at one end will be partially extinguished
+
+within the volume, proportionally to the amount of matter encountered, thus contributing a negative increment of
+
+radiative energy
+
+where is the monochromatic extinction coefficient (units m-1) and is the solid angle differential
+
+element.
+
+3.2 (b)  Scattering. Another contribution to a change in radiative energy in the volume is caused by the scat-
+
+tering of radiation from any other direction into the direction of the considered beam, i.e.,
+
+,
+
+where is the monochromatic scattering coefficient, is the solid angle differential element for the
+
+originating beam, is the normalized phase function, which represents the probability for a
+
+photon incoming from direction to be scattered in direction . Since scattered radiation may
+
+originate from any direction, we have to integrate over all possible angle combinations of  and .
+
+.
+
+λ ν ; λ < ν⁄ 1 ;⁄= = <
+< 2.99792458=
+
+µm
+µm µm
+
+d =
+d > θ ? φ@ – A @
+
+?
+
+B
+ν ? θ φ, ,( )
+
+d C ν ext, ? θ φ, ,( ) βν ext, B ν ? θ φ, ,( )d > d = dω–=
+D
+
+ν ext, dω
+
+d C ′ν scat, ? θ φ, ,( ) βν scat, E ν ? θ φ θ′ φ′,, , ,( ) 4π⁄{ } B ν ? θ′ φ′, ,( )d > d = dω dω′=
+βν scat, dω′
+
+E ν ? θ φ θ′ φ′,, , ,( )
+θ′ φ′,( ) θ φ,( )
+
+θ′ φ′
+
+d C ν scat, ? θ φ, ,( ) βν scat, d > d = dω B ν ? θ′ φ′, ,( ) E ν ? θ φ θ′ φ′,, , ,( ) 4π⁄{ }
+ω′
+∫ dω′=
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+The direct (unscattered) solar beam is generally considered separately and not contained in the intensity of the
+
+direction considered. Thus scattering of the solar beam into the direction of interest is as well separate from the
+
+scattering of diffuse radiation
+
+,
+
+where is the specific intensity of incident solar radiation, and define the direction of the incident solar
+
+radiation at ToA, is the cosine of the solar zenith angle, and if is the height of the top of the atmosphere,
+
+ is the optical thickness defined as
+
+.
+
+3.2 (c)  Emission. The last contribution to the change in the radiative energy in the volume is the thermal emis-
+
+sion:
+
+,
+
+where  is the monochromatic absorption coefficient, and  is the monochromatic Planck function.
+
+3.2 (d)  Total. The total change of radiative energy in the cyclinder can be written as the sum of the individual
+
+contributions
+
+Replacing the length dl of the cylindrical element by the geometrical relation where
+
+, it follows from the expression of the optical thickness that
+
+If we define as the ratio of the absorption to the extinction coefficient and the single scat-
+
+tering albedo , we finally obtain the monochromatic RTE for a plane parallel, hori-
+
+zontally homogeneous atmosphere in the coordinate system given by (  as
+
+In principle, the RTE derived above allows the complete problem of the radiative transfer in a NWP to be solved if
+
+the specific intensities are known for all model layers, i.e., including the surface, all directions and all wave-
+
+numbers of the spectrum. But in this present form, the RTE is much too complicated to be used as such in a NWP
+
+or climate GCM. We will now consider various simplications linked either to the basic laws of physics or to the
+
+very specific circumstances prevailing in the Earth’s atmosphere.
+
+d C 0ν scat, ? θ φ, ,( ) βν scat, E ν ? θ φ θ0φ0, , ,( ) 4π⁄{ } F ν0 δνµ0-----– 
+  d > d = dωexp=
+
+F ν0 θ0 φ0
+µ0 ? ToA
+
+δν
+
+δν βν ext, d ?G
+G
+
+ToA
+
+∫=
+
+d C ν emis, ? θ φ, ,( ) βν abs, D ν �H?( )( ) d > d = dω=
+βν abs,
+
+D
+ν
+
+d C ν ? θ φ, ,( ) d C ν ext, d C ν scat, d C ν scat,0 d C ν emis,+ + + d B ν ? ω φ, ,( ) d > d = dω= =
+d = d? θcos⁄ d? µ⁄= =
+
+µ θcos= dδν βν ext, d ?–=
+κν κν βν abs, βν ext,⁄=
+
+ω 1 κν– βν scat, βν ext,⁄= =
+δν µ, θ φ,cos=( )
+
+µ
+d
+B
+
+ν
+
+dδν
+-----------
+
+B
+ν δν µ φ, ,( ) 1 κν–( ) dφ′
+
+B
+ν δν µ′ φ′,,( ) E ν δν µ φ µ′ φ′,, , ,( ) 4π⁄{ } dµ′
+
+1–
+
++ 1
+
+∫
+0
+
+2π
+
+∫–=
+
+1 κν–( )F ν0 δνµ0-----– 
+  E ν δν θ φ θ0 φ0, , , ,( ) 4π⁄{ }exp–
+
+κν
+D
+
+ν δν( ).–
+
+B
+ν
+
+
+
+Radiation Transfer
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+3.3  Basic laws
+
+3.3 (a)  Planck’s law. The energy of an atomic oscillator is quantized, as is any change of energy state. The
+
+change of the energy state by one quantum number corresponds to an amount of energy (either radiated or ab-
+
+sorbed) of where is the frequency of the atomic oscillator and J s
+
+is Planck’s constant. For a large sample of atomic oscillators where the distribution of energy levels follows Boltz-
+
+mann statistics, one can derive Planck’s function for the emission of radiant energy by a black body (see details in
+
+Liou, 1980)
+
+,
+
+where is the wavelength of emission, is Boltzmann constant, J K-1, is the velocity
+
+of light in a vacuum, and  is the absolute temperature of the black body (in K).
+
+3.3 (b)  Wien’s law. The dependence of on for various temperatures is shown in Fig. 9 . The dotted
+
+line in the diagram marks the wavelength of the maximum intensity. It increases with the temperature of the black
+
+body and its variation follows Wien’s displacement law. Extreme values of the Planck function are defined by
+
+.
+
+With and , and defining and , the previous condition
+
+can be rewritten as
+
+.
+
+After some manipulation (see, e.g., Liou, 1980), we obtain a transcendental equation ,which
+
+can be shown to give  provided that .
+
+This translates into .
+
+Wien’s displacement law considerably simplifies the radiation transfer problem in the Earth’s atmosphere. Atmos-
+
+pheric and surface temperatures are typically in the 200–300 K range and the maximum emission occurs in the 10
+
+to 15 wavelength range. On the other hand, the Sun, the Earth’s external source of radiative energy emits most
+
+of its energy at wavelengths around about 0.5 corresponding to an equivalent black body at about 6000 K. At
+
+the mean Earth–Sun distance of km, the monochromatic radiant intensity received from the Sun over a
+
+wide range of the spectrum is much less than the emission by the Earth’s atmosphere system at equivalent wave-
+
+lengths. The cross-over point is approximately at 3.5 . For wavelengths lower than 3.5 , the terrestrial emis-
+
+sion is negligible and so is the energy received from the Sun at ToA for wavelengths larger than 3.5 . For this
+
+reason, when designing a radiation scheme for application to the Earth’s atmosphere, one may separate the transfer
+
+problem in two parts, the shortwave and longwave radiative transfer, by dealing independently with the sources and
+
+sinks that are important for each part of the spectrum.
+
+3.3 (c)  Stefan-Boltzmann law. The total radiant intensity of a black body follows from a spectral integration
+
+of the Planck function over all wavelengths, i.e.,
+
+∆F I ν= ν < λ⁄= I 6.6260755 10 34–×=
+
+D
+λ �( ) 2 IJ<
+
+2
+
+λ5
+------------
+
+IJ<
+λ KL�-----------  exp 1–  
+
+ 
+W m 2– µm 1–=
+
+λ K K 1.380658 10 23–×= <
+�
+
+D
+λ �( ) λ
+
+d
+D
+
+λmax
+dλ
+
+---------------- 0=
+
+< 1 2 IJ< 2= < 2 IJ<MK⁄= @ < 2 λ �( )⁄= λ5 < 25 @ 5 � 5( )⁄=
+
+d
+d @------
+
+< 1 � 5 @ 5< 2 @( ) 1–exp( )------------------------------------ln  
+ 
+
+0=
+
+5 5 @–( )exp– @=@ 4.9651= 5 @( ) 1<exp
+λmax � max 2897 µm K=
+
+µm
+µm
+
+1.5 108×
+
+µm µm
+µm
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 15
+
+.
+
+Using the same substitutions as when deriving Wien’s displacement law, we get
+
+.
+
+The integral term has the value , so we finally obtain Stefan–Boltzmann law
+
+,
+
+where W m-2 K-4 is Stefan’s constant. The total emitted flux given by this equation already
+
+implies that the angular integration over the total radiant intensity is performed assuming an isotropic emission by
+
+the black body (which is verified), leading to the factor .
+
+3.3 (d)  Kirchhoff’s law. The emissivity of a medium is the ratio of the emitted energy to the Planck func-
+
+tion at the temperature of the medium for a given wavelength . If the absorptivity is defined as the amount of
+
+energy absorbed at that wavelength divided by the appropriate Planck function, Kirchhoff’s law states that the two
+
+quantites are equal, i.e.,
+
+.
+
+A black body is defined by its ability to absorb all the incoming radiation at a given wavelength and therefore to
+
+emit isotropically according to Planck function; then for a black body . In contrast, grey bodies
+
+absorb and emit only partially with values of  and being less than unity.
+
+The Earth’s atmosphere is far from being a medium with a uniform temperature distribution. However, the assump-
+
+tion of a thermodynamic equilibrium ( ) is still valid in a local sense, since at least for the lower part of the
+
+atmosphere (approximately below 40 km), collision between molecules is a process efficient enough to maintain a
+
+local thermodynamic balance.
+
+D �( ) D λ �( ) dλ
+0
+
+∞
+
+∫=
+
+D �( ) 2 K 4 � 4I 3 < 2----------------
+@ 3@( ) 1–( )exp------------------------------- d @
+
+0
+
+∞
+
+∫=
+
+@ 4 15⁄
+�
+
+π
+D �( ) σ � 4 W m 2–= =
+
+σ 5.6697 10 8–×=
+
+π
+
+ελ
+λ > λ
+
+ελ > λ=
+
+ελ > λ 1= =
+ελ > λ
+
+ελ > λ=
+
+
+
+Radiation Transfer
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  7. The electromagnetic spectrum
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 17
+
+Figure  8.Processes contributing to the radiative transfer in a cylindrical volume
+
+Figure  9. The dependence of the Planck function on wavelength and temperature. Wavelengths of maximum
+
+emssion are connected by a dotted line
+
+
+
+Radiation Transfer
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+In Subsection 3.2, the derivation of the RTE and its formal solution were carried out monochromatically. It is now
+
+necessary to consider the spectral variations of the various parameters (scattering and extinction coefficients, single
+
+scattering albedo and phase function). By contrast with the emission of a black body which displays smooth var-
+
+iations with temperature and wavelength, the absorption, emission and scattering by particles and gases give rise
+
+to highly variable spectra of parameters.
+
+3.4  The spectral absorption by gases
+
+Any moving particle has kinetic energy as a result of its motion in space. This energy is equal to and is not
+
+quantized. However molecules have other radiative energy types, which can be described from a mechanical model
+
+of the molecules. The absorption of radiative energy by gases is an interaction process between molecules and pho-
+
+tons and thus obey quantum mechanics laws. Absorption and emission take place when the atoms and molecules
+
+undergo transitions from one energy state to another. In contrast to “grey” absorbers such as solid particles and liq-
+
+uids, which absorb radiation fairly uniformly with respect to wavelengths (a consequence of the dense packing of
+
+molecules and atoms in these), the absorption and emission by atmospheric gases are highly selective with regards
+
+to wavelength, due to the selection rules that govern the transitions.
+
+The gaseous absorption spectrum can be categorized in three parts according to the total (radiative) energy of the
+
+molecules:
+
+The molecule may rotate or revolve about an axis through its centre of gravity. The relatively low rotational energy
+
+of the molecules is associated with wavelengths in the far infrared (i.e., mm). In this spectral region absorp-
+
+tion lines are well separated and are related to the transformation from one discrete rotational state into another.
+
+The atoms of the molecule are bounded by certain forces, but the individual atoms can vibrate about their equilib-
+
+rium position relative to each other. A combination of rotational and vibrational energy transformations causes ab-
+
+sorption lines in the 1 to 20 µm region. The coexistence of both types leads to very complex structures (e.g., the
+the vibration-rotation band of H2O around 6.3 ) as an enormous number of lines are involved, which partially
+
+overlap each other.
+
+Towards shorter wavelengths, the third form of energy transformation, the change of the energy level of electrons,
+
+occurs and this change in the electronic levels of energy increases further the complexity of the spectrum (e.g., O2
+bands in the ultraviolet).
+
+3.4 (a)  Line width. Each spectral line corresponds exactly to one form of energy transformation and should
+
+in principle be discontinuous due to the discrete energy levels. However, due to Heisenberg’s uncertainty principle
+
+(natural broadening), the collision between molecules (Lorentz or pressure broadening), and Doppler effects (re-
+
+sulting from the thermal velocity of atoms and molecules), absorbed and emitted emission is not strictly monochro-
+
+matic, but is rather associated with spectral lines of finite width. Whereas the natural broadening affects the line
+
+width only marginally, the other two have a marked impact on the shape of the spectral lines and therefore on the
+
+absorption process itself.
+
+The Doppler broadening occurs due to the thermal agitation within the gas. For a molecule of mass radiating at
+
+frequency , with a velocity component in the line of sight following a Maxwell–Boltzmann probability dis-
+
+tribution
+
+,
+
+the absorption coefficient of such a Doppler broadened line is
+
+KL� 2⁄
+
+λ 20>
+
+µm
+
+N
+ν0 ;
+
+O ;( ) d ; N
+2π KP�---------------  
+
+0.5 N ; 2
+2 KP�-----------–  exp= d ;
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 19
+
+,
+
+with .
+
+The pressure broadening is due to collisions between the molecules, which modify their energy levels. The result-
+
+ing absorption coefficient is
+
+,
+
+with making it proportional to the frequency of collisions.
+
+Fig. 10  compares typical Lorentz and Doppler line shapes.
+
+3.4 (b)  Line intensity. The intensity of a line varies with temperature, due to the variation with of the sta-
+
+tistical population of the energy levels of a molecule.
+
+,
+
+where is the energy of the lower state of the transition, is an exponent the value of which depends on the
+
+shape of the molecule (1 for CO2, 3/2 for H2O, 5/2 for O3) and is the reference temperature at which the line
+
+intensities are known (and compiled, usually 296 K).
+
+An example of the fine scales involved is given in Fig. 11 taken from Fisher (1985). The figure shows the 15
+
+band of CO2 at varying spectral resolution. Even on a wavenumber interval as small as 0.01 cm
+-1 (the 15 band
+
+covers roughly 450 to 800 cm-1), the absorption varies over the full range from total absorption to total transmis-
+
+sion. It is this extreme spectral dependency of gaseous absorption that makes an explicit integration of the mono-
+
+chromatic RTE and subsequent spectral integration of fluxes quite a lengthy task, even on the fast super-computers,
+
+and renders it impossible for operational use in a NWP model. Very detailed models of the radiation transfer exist,
+
+which performs the spectral integration over wavenumber intervals the width of which is typically smaller than the
+
+half-width of an individual line. These so-called “line-by-line” calculations can serve as reference for more approx-
+
+imate methods. At present the number of known spectral lines for gases existing in the Earth’s atmosphere is of the
+
+order of 300,000 (Rothman et al., 1998).
+
+Figs. 12 to 14 show the spectral dependency of the gaseous absorption coefficient for the three main atmospheric
+
+absorbers H2O, CO2 and O3 over the longwave part of the spectrum. The values are derived from an evaluation of
+
+spectroscopic data over 5 cm-1 intervals between 0 and 1110 cm-1, 10 cm-1 between 1110 and 2200 cm-1, and 20
+
+cm-1 beyond 2200 cm-1, with the narrow-band model of Morcrette and Fouquart (1985). Similarly, Figs. 15 to 17
+
+show the temperature dependency of the absorption coefficients for the same absorbers in terms of
+
+and , with corresponding to ,
+
+the absorption coefficient at 250 K.
+
+Fig. 18 shows the spectral dependency of the gaseous absorption coefficient for the three main absorbers over the
+
+whole range of wavenumbers relevant for atmospheric energy budget. To put the importance of of the absorption
+
+lines for the atmospheric transfer in perspective, the normalized Planck function for 6000 K (solar emission) and
+
+255 K (terrestrial emission) are plotted underneath. It is obvious that H2O is the most important absorber in the
+
+terrestrial spectrum leaving a transparent region only around 10 . The so called 9.6 band of ozone partially
+
+K D ν( )
+�
+
+D
+
+> D π( )0.5
+--------------------
+
+ν ν0–( )> D-------------------
+2
+
+–
+ 
+ 
+ 
+
+exp=
+
+> D ν0 <⁄ 2 KP� N⁄( )0.5=
+
+K L ν( )
+�
+
+αL
+π ν ν0–( )
+
+2 αL
+2+[ ]
+
+-------------------------------------------=
+
+αL αL0
+OQO
+
+0⁄ �SRT�⁄( )0.5=
+
+�
+
+� �
+0
+
+� 0�------  
+em F K---- 1�---- 1� 0------– 
+
+ –
+ 
+ 
+ 
+
+exp=
+
+F em
+� 0
+
+µm
+µm
+
+log10 K 300 K( ) K 250 K( )⁄[ ] log10 K 200 K( ) K 250 K( )⁄[ ] 0 log10 1( )= K 250 K( )
+
+µm µm
+
+
+
+Radiation Transfer
+
+20 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+fills this gap. However, as the amount of O3 in the atmosphere is not very large and is concentrated in the strato-
+
+sphere, the atmosphere is fairly transparent (with respect to gaseous absorption) in this region of the spectrum
+
+called the atmospheric window. Absorption effect of trace gases such as methane (CH4), nitrous oxide (N2O) and
+
+chlorofluorocarbons (CFC-11 and CFC-12) are mainly felt in this spectral region due to the small background ab-
+
+sorption.
+
+Towards longer wavelengths this window is bounded by CO2 absorption (the 15 band) and the H2O rotation
+
+band. Towards shorter wavelengths but still in the terrestrial radiation, we find the vibration-rotation of H2O around
+
+6.3 . At very short wavelengths (in the ultraviolet region below 0.25 ), ozone absorbs almost completely
+
+the solar radiation penetrating the atmosphere. However, in the so called visible (0.4–0.7 ) and near-infrared
+
+(0.7–4 ) regions of the solar spectrum, solar radiation is weakened only by H2O and more modestly by CO2
+and other trace gases (NO2, O2, CH4, N2O, not shown in Fig. 18 )
+
+Figure  10. Transmission in the 15 µm band of CO2 at various spectral resolutions (after Fisher, 1985)
+
+µm
+
+µm µm
+µm
+
+µm
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 21
+
+Figure  11. Lorentz and Doppler line shapes for similar intensity and line width (after Liou, 1980)
+
+Figure 12. The absorption coefficient for H2O at 250 K as a function of the wavenumber. The
+
+abscissa is given by the fraction of the black body function between 0 and  (in cm-1) divided by the integral of
+
+ between 0 and 2500 cm-1.
+
+K δ⁄ �JU ∆ν⁄∑=
+νD
+
+ν 250 K( )
+
+
+
+Radiation Transfer
+
+22 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  13. As in Fig. 11 , but for CO2.
+
+Figure  14. As in Fig. 12 , but for O3.
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 23
+
+Figure  15. Effect of the temperature of the absorption coefficient for H2O. The upper curve is for 300 K, the
+
+lower one for 200 K.
+
+Figure  16. As in Fig. 14 , but for CO2.
+
+
+
+Radiation Transfer
+
+24 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  17. As in Fig. 14 , but for O3.
+
+Figure  18. Absorption coefficients of H2O, O3 and uniformly mixed gases (indexed as CO2) at different
+
+wavelengths and the normalized Planck functions at 6000 K and 255 K (bottom panel).
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 25
+
+3.5  The spectral scattering by particles
+
+A primary electromagnetic wave encountering a particle will excite a secondary wave originating at the particle’s
+
+location. Such process can occur at all wavelengths covering the whole electromagnetic spectrum. The scattering
+
+efficiency will depend on the size, the geometrical shape and on the real part of its complex refractive index, where-
+
+as the absorption efficiency will essentially depends on the imaginary part of the refractive index. Particles in the
+
+atmosphere are generally at such distances from each other that the radiation originating from individual particles
+
+is incoherent (i.e., no interference betwwen scattered radiation from different particles). Therefore the field of scat-
+
+tered radiation due to an ensemble of particles is the sum of the fields from the individual scattering processes. At-
+
+mospheric constituents can be separated into different broad categories according to their size: Molecules have a
+
+typical radius of 10-4 µm, the so called aerosols range from 0.01 to 10 , cloud particles from 5 to 200 , rain
+drops and hail particles up to 10-2 m.
+
+The relative intensity of the scattering pattern depends on the so-called Mie parameter where is the
+
+radius of the particle (assumed spherical) and is the wavelength.
+
+3.5 (a)  Rayleigh scattering. The size of air molecules is small compared to the wavelength of radiation in the
+
+Earth’s atmosphere. So in a simple model one can assume that molecules interacting with an electromagnetic wave
+
+start to vibrate and thereby radiate as linear oscillators. By considering spherical air molecules statistically distrib-
+
+uted in a volume, Lord Rayleigh derived (1871) the phase function of such molecules
+
+Rayleigh scattering being conservative ( ), the integral over the phase function is unity, i.e.,
+
+.
+
+It is completely symmetric ( ) (see Fig. 19 ), and the scattering coefficient, i.e., the probability of a photon
+
+being scattered in a volume is for Rayleigh scattering proportional to the density of air and inversely proportional
+
+to the fourth power of the wavelength. The visible consequence of this spectral dependency is the blueness of the
+
+sky, caused by the preferential scattering of shorter wavelengths in a clear atmosphere. The rapid decrease of the
+
+Rayleigh scattering coefficient with wavelength simplifies the transfer problem for the Earth’s atmosphere, since
+
+Rayleigh scattering can be completely neglected for the terrestrial part of the spectrum.
+
+3.5 (b)  Mie scattering. The size of aerosols and or cloud droplets is comparable to the wavelengths at which
+
+the radiative energy is dominant in the Earth’s atmosphere. Rayleigh scattering is not applicable anymore. Photons
+
+encountering a particle off such size will excite secondary waves in various parts of the particles. These waves are
+
+coherent and therefore interference causes partial extinction in some directions and enhancement in others. For this
+
+reason, scattering by aerosols and cloud particles is far from being isotropic, with a pronounced preference for the
+
+forward direction. Under the assumption of spherical particle shape, Mie theory can be used to derive the phase
+
+function (see Subsection 3.2 (b)) for a given size distribution of particles. Unfortunately, there is no analytical so-
+
+lution and the result is obtained in the form of an infinite series of Bessel functions. A normalized phase function
+
+for a standard aerosol model (after Quenzel, 1985) is shown in Fig. 20 .
+
+For detailed calculations involving radiances (e.g., in remote sensing applications) the phase function is usually
+
+developed into Legendre polynomials with up to several hundred terms to get the true angular representation
+
+µm µm
+
+α 2π V λ⁄= V
+λ
+
+O
+R
+
+3
+4
+--- 1 cos2θ+( )=
+
+ω 1=
+
+O
+θ( ) dθ
+
+4π
+∫ 1=
+
+W 0=
+
+
+
+Radiation Transfer
+
+26 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+.
+
+When dealing with the impact of scatterers on fluxes, only the very few terms necessary for an adequate
+
+description of the hemispherically integrated fluxes are required and one can use some analytic formula such as
+
+Henyey–Greenstein function
+
+where  is the asymmetry factor, the first moment of the expansion
+
+.
+
+When , all the energy is backscattered, all energy appears in the forward direction, and
+
+corresponds to an equipartition between the forward and backward spaces defined by a plane perpendicular to the
+
+incoming direction
+
+In large-scale atmospheric models, a scattering medium (cloud or aerosols) is usually characterized by its single
+
+scattering albedo (see Subsection 3.2 (d)) and its phase function (see Subsection 3.2 (b)) and its optical thickness
+
+(see Subsection 3.2 (b)). For very large droplets the laws of geometric optics apply making the calculations very
+
+simple. In the Earth’s atmosphere a large variety of droplet sizes can be found depending very much on the type
+
+of cloud they are embedded in. Stephens (1979) quotes radii ranging from 2.25 for stratus clouds to 7.5
+
+for stratocumulus. Han et al. (1994) derived radii for water clouds from satellite measurements between 6 and 15
+
+. Most radiative transfer schemes in use in GCMs reuiqre only the volume extinction coefficient (related to the
+
+optical thickness), the single scattering albedo and the forward scattered fraction of radiation (or asymmetry fac-
+
+tor). All these quantities as given by Stephens (1979) are plotted in Figs. 21  to 24  for various cloud types.
+
+The most complex calculation of the phase function is required for the treatment of ice crystals. The application
+
+of Mie theory is not possible since the assumption of a spherical shape is certainly invalidated in this case. Ice crys-
+
+tals take all sorts of shapes ranging from thin needles to complex combinations of hollow prisms forming snow-
+
+flakes. If a specific shape is assumed for the ice crystals, geometrical optics may be used for particles that are large
+
+compared to the wavelength (Takano and Liou, 1989; Ebert and Curry, 1992; Fu and Liou, 1993; Fu et al., 1999,
+
+1988, 1999). However, the results depend very much on the orientation of the crystals relative to the direction of
+
+propagation of the radiation. At present, it is almost impossible for a GCM-type radiation scheme to take into ac-
+
+count such detailed and complicated dependencies of the optical properties, specially as the GCM is still far from
+
+providing the reuiqred information necessary to initiate such calculations.
+
+In the cruder form of parametrization currently used, the ice water loading of the clouds is prognosed by the cloud
+
+scheme and thus provides an interactive optical thickness. The effective dimension of the particles is diagnosed
+
+from temperature and/or the type of process from which the cloud is originating (large-scale condensation or con-
+
+vection), but the single scattering albedo and asymmetry factor are specified.
+
+E ν δ µ µ′, ,( ) ω0 2 = 1+( )ψ X O X µ( ) O X µ′( )∑=
+
+E ν δ µ µ′, ,( ) 1
+W 2–
+
+1 W 2 2 W µµ′+ +--------------------------------------=
+W
+
+W 1
+2
+--- E δ µ µ′, ,( )µ dµ
+
+1–
+
++ 1
+
+∫=
+
+W 1–= W 1= W 0=
+
+µm µm
+
+µm
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 27
+
+Figure  19. Rayleigh phase function for a molecule located at the origin of the polar coordinate system. The
+
+probability of scattering in a certain direction is proportional to the length of the arrow for the outgoing beam.
+
+Figure  20. Normalized phase function in polar coordinates with logarithmic axis for a standard aerosol model.
+
+Note that the scattering is strongly dominated by the forward peak.
+
+
+
+Radiation Transfer
+
+28 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  21. The droplet distribution of eight cloud models (after Stephens, 1979) [top left]
+
+Figure  22. Wavelength dependency of the total extinction coefficient [top right]
+
+Figure  23. Wavelength dependency of the single scattering albedo [bottom left]
+
+Figure  24. Wavelength dependency of the asymmetry factor [bottom right]
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 29
+
+4. RADIATION SCHEMES IN USE AT ECMWF
+
+4.1  The operational longwave scheme (as of March 2000)
+
+The longwave radiation is an upgrade from the original scheme defined by Morcrette et al. (1986), Morcrette (1990,
+
+1991, 1993).
+
+Assuming a non-scattering atmosphere in local thermodynamic equilibrium,  is given by
+
+(1)
+
+where is the monochromatic radiance at wavenumber at level , propagating in a direction (the
+
+angle that this direction makes with the vertical), where and is the monochromatic
+
+transmission through a layer whose limits are at and seen under the same angle , with . The
+
+subscript ‘surf’ refers to the earth’s surface.
+
+After separating the upward and downward components (indicated by superscripts + and –, respectively), and in-
+
+tegrating by parts, we obtain the radiation transfer equation as it is actually estimated in the longwave part of the
+
+radiation code
+
+(2)
+
+where, taking benefit of the isotropic nature of the longwave radiation, the radiance of (5.3) has been replaced
+
+by the Planck function in units of flux, (here, and elsewhere, is assumed to always includes
+
+the factor). is the surface temperature, that of the air just above the surface, is the temperature
+
+at pressure-level , that at the top of the atmospheric model. The transmission is evaluated as the
+
+radiance transmission in a direction to the vertical such that is the diffusivity factor (Elsasser, 1942).
+
+The integrals in (2) are evaluated numerically, after discretization over the vertical grid, considering the atmosphere
+
+as a pile of homogeneous layers. As the cooling rate is strongly dependent on local conditions of temperature and
+
+pressure, and energy is mainly exchanged with the layers adjacent to the level where fluxes are calculated, the con-
+
+tribution of the distant layers is simply computed using a trapezoidal rule integration, but the contribution of the
+
+adjacent layers is evaluated with a two-point Gaussian quadrature, thus at the  level,
+
+(3)
+
+Y
+
+Y µ µ ν Z ν E surf µ,( ) [ ν E surf E µ, ,( ) Z ν E ′ µ,( ) [ νd
+E ′ E surf=
+
+0
+
+∫+
+ 
+ 
+ 
+ 
+ 
+
+d
+
+0
+
+∞
+
+∫d
+1–
+
+1
+
+∫=
+
+\
+ν ] µ,( ) ν E θ
+
+µ θcos= ^ ν ]_] ′ ;̀,( )E E ′ θ ` θsec=
+
+Y
+ν
++ E( ) D ν � surf( ) D ν � 0+( )–[ ] [ ν E surf E ; V,( ) D ν � E( )( ) [ ν EaE ′; V,( ) D νdb ′ b surf=
+
+b
+∫+ +=
+
+Y
+ν
+
+– E( ) D ν � ∞( ) D ν � top( )–[ ] [ ν E 0; V,( ) D ν � E( )( ) [ ν E ′ E ; V,( ) D νdb ′ b=
+0
+
+∫+ +=
+
+Z νD
+ν �( ) W m 2– D ν
+
+π � surf � 0+ � E( )
+E � top [ ν
+
+θ V θsec=
+
+c
+-th
+
+[ ν EaE ′; V,( ) D ν =db ′ b surf=
+
+b U
+∫
+
+d
+D
+
+νX 1=
+2
+
+∑ =( ) deXf[ ν E U E X ; V,( ) 12---
+D
+
+ν g( ) [ ν E U Eeh ; V,( ) [ ν E U Eeh 1– ; V,( )+[ ]dh 1=
+
+U
+2–
+
+∑+
+
+
+
+Radiation Transfer
+
+30 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+where is the pressure corresponding to the Gaussian root and is the Gaussian weight. and
+
+are the Planck function gradients calculated between two interfaces, and between mid-layer and interface,
+
+respectively.
+
+The longwave spectrum is divided into six spectral regions.
+
+1) 0 – 350  & 1450 – 1880
+
+2) 500 – 800
+
+3) 800 – 970  & 1110 – 1250
+
+4) 970 – 1110
+
+5) 350 – 500
+
+6) 1250 – 1450 & 1880 – 2820
+
+corresponding to the centres of the rotation and vibration-rotation bands of H2O, the 15 band of CO2, the
+
+atmospheric window, the 9.6 band of O3, the 25 “window” region, and the wings of the vibration-
+
+rotation band of H2O, respectively.
+
+Integration of (2) over wavenumber within the spectral region gives the upward and downward fluxes as
+
+(4)
+
+(5)
+
+The formulation accounts for the different temperature dependencies involved in atmospheric flux calculations,
+
+namely that on , the temperature at the level where fluxes are calculated, and that on , the temperature that
+
+governs the transmission through the temperature dependence of the intensity and half-widths of the lines
+
+absorbing in the concerned spectral region.
+
+The band transmissivities are non-isothermal accounting for the temperature dependence that arises from the wav-
+
+enumber integration of the product of the monochromatic absorption and the Planck function. Two normalized
+
+band transmissivities are used for each absorber in a given spectral region: the first one for calculating the first right-
+
+hand-side. term in (2), involving the boundaries; it corresponds to the weighted average of the transmission func-
+
+tion by the Planck function
+
+E X deX d D ν g( ) dD ν =( )
+
+cm 1– cm 1–
+
+cm 1–
+
+cm 1– cm 1–
+
+cm 1–
+
+cm 1–
+
+cm 1– cm 1–
+
+µm
+µm µm
+
+ν K th–
+
+YSi + E( ) D i � surf( ) D i � 0+( )–{ } [kj i Vml E surf E,( ) �on E surf E,( ),{ } D i � b( )+=
+
++ [ dBi Vpl EqE ',( ) �on, EaE ',( ){ } D idb ′ b surf=
+b
+∫
+
+YSi – E( ) D i � 0( ) D i � ∞( )–{ } [rj i Vpl E 0,( ) �sn E 0,( ),{ } D i � b( )–=
+[ dBi Vpl E ' E,( ) �on E ' E,( ),{ } D idb ′ b=
+
+0
+
+∫–
+
+� b �on
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 31
+
+(6)
+
+the second one for calculating the integral term in (2) is the weighted average of the transmission function by the
+
+derivative of the Planck function
+
+(7)
+
+where  is the pressure weighted amount of absorber.
+
+In the scheme, the actual dependence on is carried out explicitly in the Planck functions integrated over the
+
+spectral regions. Although normalized relative to or , the transmissivities still depend on ,
+
+both through Wien’s displacement of the maximum of the Planck function with temperature and through the tem-
+
+perature dependence of the absorption coefficients. For computational efficiency, the transmissivities have been de-
+
+veloped into Pade approximants
+
+(8)
+
+where is an effective amount of absorber which incorporates the diffusivity factor ,
+
+the weighting of the absorber amount by pressure , and the temperature dependence of the absorption
+
+coefficients.
+
+The function  takes the form
+
+(9)
+
+The temperature dependence due to Wien’s law is incorporated although there is no explicit variation of the
+
+coefficients and with temperature. These coefficients have been computed for temperatures between 187.5
+
+and 312.5 K with a 12.5 K step, and transmissivities corresponding to the reference temperature the closest to the
+
+pressure weighted temperature  are actually used in the scheme.
+
+The effect on absorption of the Doppler broadening of the lines (important only for pressure lower than 10 hPa) is
+
+included simply using the pressure correction method proposed by Fels (1979) and incorporated by Giorgetta and
+
+Morcrette (1995).
+
+The incorporation of the effects of clouds on the longwave fluxes follows the treatment discussed by Washington
+
+and Williamson (1977). Whatever the state of the cloudiness of the atmosphere, the scheme starts by calculating
+
+[kjHl E � b �on, ,( )
+D
+
+ν � b( ) [ ν l E �sn,( ) νd
+ν1
+
+ν2
+
+∫
+
+D
+ν � b( ) νd
+
+ν1
+
+ν2
+
+∫
+
+------------------------------------------------------------=
+
+[ d jHl E � b �on, ,( )
+D � b( )d �d⁄{ } [ ν l E �on,( ) νd
+
+ν1
+
+ν2
+
+∫
+
+D � b( )d �d⁄{ } νd
+ν1
+
+ν2
+
+∫
+
+-------------------------------------------------------------------------------=
+
+l E
+� b D � b( ) dD � b( )/dT �on
+
+[tl E �vu,( )
+< c l eff
+
+U
+/2U
+
+0=
+
+2
+
+∑
+w h l effh /2h 0=
+
+2
+
+∑
+--------------------------=
+
+l eff VTl E( )Ψ �onxl E,( )= Vl E
+
+Ψ �on , l E( )
+Ψ �snyl E,( ) >ql E( ) �sn 250–( ) zxl E( ) �on 250–( )2+[ ]exp=
+
+< U w h
+�on
+
+
+
+Radiation Transfer
+
+32 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+the fluxes corresponding to a clear-sky atmosphere and stores the terms of the energy exchange between the differ-
+
+ent levels (the integrals in (5.4) Let and be the upward and downward clear-sky fluxes. For any cloud
+
+layer actually present in the atmosphere, the scheme then evaluates the fluxes assuming a unique overcast cloud of
+
+emissivity unity. Let and the upward and downward fluxes when such a cloud is present in the
+
+layer of the atmosphere. Downward fluxes above the cloud, and upward fluxes below the cloud, are assumed
+
+to be given by the clear-sky values
+
+(10)
+
+Upward fluxes above the cloud ( for ) and downward fluxes below it ( for )
+
+can be expressed with expressions similar to (3) provided the boundary terms are now replaced by terms
+
+corresponding to  possible temperature discontinuities between the cloud and the surrounding air
+
+(11)
+
+where is now the total Planck function (integrated over the whole longwave spectrum) at level , and
+
+and are the longwave fluxes at the upper and lower boundaries of the cloud. Terms under the integrals
+
+correspond to exchange of energy between layers in clear-sky atmosphere and have already been computed in the
+
+first step of the calculations. This step is repeated for all cloudy layers. The fluxes for the actual atmosphere (with
+
+semi-transparent, fractional and/or multi-layered clouds) are derived from a linear combination of the fluxes
+
+calculated in previous steps with some cloud overlap assumption in the case of clouds present in several layers.
+
+Let be the index of the layer containing the highest cloud, the fractional cloud cover in layer , with
+
+for the upward flux at the surface, and with and to have the right
+
+boundary condition for downward fluxes above the highest cloud.
+
+The maximum-random overlap assumption is operationally used in the ECMWF model, and the cloudy upward
+
+ and downward  fluxes are obtained as
+
+(12)
+
+In case of semi-transparent clouds, the fractional cloudiness entering the calculations is an effective cloud cover
+
+equal to the product of the emissivity due to the condensed water and the gases in the layer by the horizontal
+
+coverage of the cloud layer, with the emissivity, , related to the condensed water amount by
+
+Y
+0
++ c( ) Y 0– c( )
+
+YS{ + c( ) YS{ – c( )| th
+
+YS{ + c( ) Y 0+ c( )= for c |≤YS{ – c( ) Y 0– c( )= for c |>
+YS{ + K( ) } ~ 1+≥ YS{ – K( ) K |>
+
+YS{+ K( ) Y cld+ D | 1+( )–{ } [ E i E { 1+ ; V,( ) D K( ) [ E i E ′; V,( ) Ddb ′ b { 1–=
+
+b i
+∫+ +=
+
+YS{ – K( ) Y cld– D |( )–{ } [ E i E { ; V,( ) D K( ) [ E i E ′; V,( ) Ddb ′ b i=
+
+b {
+∫+ +=
+
+D c
+( )
+
+c Y
+cldY
+
+cld
+–
+
+ 
+cld
+c
+)( )
+
+c
+
+
+cld 0( ) 1=
+
+
+cld
+
+
+1+( ) 1= Y 1+– Y 0–=
+
+Y + Y –
+
+Y + c( ) Y 0+ c( )= for c 1=
+Y – c( )  cld c 1–( ) Y U 1–+ c( )  cld| 0=
+
+c
+2–
+
+∑ |( ) YS{+ c( ) 1  cld =( )–{ }X { 1+=
+
+U
+1–
+
+∏+= for 2
+c 
+
+1+≤ ≤
+
+Y + c( )  cld ( ) Ye+ c( )  cld |( ) YS{+ c( ) 1  cld =( )–{ }X { 1+=
+
+
+∏{
+
+0=
+
+
+1–
+
+∑+= for
+c 
+
+2+≥
+
+εcld
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 33
+
+(13)
+
+where is the condensed water mass absorption coefficient (in ) following Smith and Shi (1992) for
+
+water clouds and Ebert and Curry (1992) for ice clouds.
+
+4.2  The operational SW scheme
+
+The rate of atmospheric heating by absorption and scattering of shortwave radiation is
+
+(14)
+
+where  is the net total shortwave flux (the subscript SW will be omitted in the remainder of this section).
+
+(15)
+
+is the diffuse radiance at wavenumber , in a direction given by the azimuth angle, , and the zenith angle, ,
+
+with . In (15), we assume a plane parallel atmosphere, and the vertical coordinate is the optical depth
+
+, a convenient variable when the energy source is outside the medium
+
+(16)
+
+is the extinction coefficient, equal to the sum of the scattering coefficient of the aerosol (or cloud
+
+particle absorption coefficient ) and the purely molecular absorption coefficient . The diffuse radiance
+
+is governed by the radiation transfer equation
+
+(17)
+
+is the incident solar irradiance in the direction , is the single scattering albedo ( )
+
+and is the scattering phase function which defines the probability that radiation coming from
+
+direction ( ) is scattered in direction ( ). The shortwave part of the scheme, originally developed byr
+and Bonnel (1980) solves the radiation transfer equation and integrates the fluxes over the whole
+
+shortwave spectrum between 0.2 and 4 . Upward and downward fluxes are obtained from the reflectance and
+
+transmittances of the layers, and the photon-path-distribution method allows to separate the parametrization of the
+
+scattering processes from that of the molecular absorption.
+
+Solar radiation is attenuated by absorbing gases, mainly water vapour, uniformly mixed gases (oxygen, carbon di-
+
+oxide, methane, nitrous oxide) and ozone, and scattered by molecules (Rayleigh scattering), aerosols and cloud
+
+particles. Since scattering and molecular absorption occur simultaneously, the exact amount of absorber along the
+
+photon path length is unknown, and band models of the transmission function cannot be used directly as in long-
+
+wave radiation transfer (see Subsection 4.1). The approach of the photon path distribution method is to calculate
+
+εcld 1 K abs l LWP–( )exp–=
+K abs m2kg 1–
+
+�∂ [∂-------
+W
+< b-----
+
+Y
+SW∂
+
+E∂--------------=
+Y
+
+SW
+
+Y δ( ) ν φ µ Z ν δ µ φ, ,( ) µd
+-1
+
++1
+
+∫
+ 
+ 
+ 
+
+d
+0
+
+2π
+
+∫d
+0
+
+∞
+
+∫=
+
+ν φ θ
+µ θcos=
+
+δ
+
+δ E( ) βextν E ′( ) E ′db
+0
+
+∫=
+
+βextν E( ) βνsca
+βν
+
+abs K ν B ν
+
+µ
+d Z ν δ µ φ, ,( )
+
+dδ
+------------------------------ Z ν δ µ φ, ,( ) ϖν δ( )4--------------
+
+O
+ν δ µ φ µ0 φ0, , , ,( )  ν0exp -δ µ ⁄( )–=
+
+ϖν δ( )
+4
+
+-------------- φ'd Φν δ µ φ µ' φ', , , ,( ) Z ν δ µ' φ', ,( ) µ'd
+-1
+
++1
+
+∫
+ 
+ 
+ 
+
+0
+
+2π
+
+∫–
+
+ ν0 µ0 θ0cos= ϖν = βνsca K ν⁄
+Φ δ µ φ µ' φ', , , ,( )
+
+µ' φ', µ φ,
+
+µm
+
+
+
+Radiation Transfer
+
+34 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+the probability that a photon contributing to the flux in the conservative case (i.e., no absorption,
+
+, ) has encountered an absorber amount between and .With this distribution, the radi-
+
+ative flux at wavenumber  is related to  by
+
+(18)
+
+and the flux averaged over the spectral interval can then be calculated with the help of any band model of the
+
+transmission function
+
+(19)
+
+To find the distribution function , the scattering problem is solved first, by any method, for a set of
+
+arbitrarily fixed absorption coefficients , thus giving a set of simulated fluxes . An inverse Laplace
+
+transform is then performed on (4.19) (
+r
+
+, 1974). The main advantage of the method is that the actual
+
+distribution is smooth enough that (4.19) gives accurate results even if itself is not known
+
+accurately. In fact,  need not be calculated explicitly as the spectrally integrated fluxes are
+
+where  and .
+
+The atmospheric absorption in the water vapour bands is generally strong, and the scheme determines an effective
+
+absorber amount  between  and derived from
+
+(20)
+
+where is an absorption coefficient chosen to approximate the spectrally averaged transmission of the clear
+
+sky atmosphere
+
+(21)
+
+where is the total amount of absorber in a vertical column and . Once the effective absorber
+
+amounts of and uniformly mixed gases are found, the transmission functions are computed using Pade
+
+approximants
+
+(22)
+
+Π l( )d l Y cons
+ων 1= K ν 0= l l d l+
+
+ν Y cons
+
+Y
+ν
+
+Y
+cons Π l( ) K ν l–( )exp ld
+
+0
+
+∞
+
+∫=
+
+∆ν
+[ ∆ν
+
+Y 1
+∆ν
+-------
+
+Y
+ν νd
+
+∆ν
+∫
+
+Y
+cons Π l( ) [ ∆ν l( ) νd
+
+0
+
+∞
+
+∫= =
+
+Π l( )
+K 1 YSi 1
+
+Π l( ) Π l( )
+Π l( )
+
+Y Y
+cons [ ∆ν l〈 〉( ) in the limiting case of weak absorption=Y Y
+cons [ ∆ν l 1/2〈 〉( ) in the limiting case of strong absorption=
+
+l〈 〉 Π l( ) lld
+0
+
+∞
+∫= l 1/2〈 〉 Π l( ) l 1/2 ld0
+
+∞
+∫=
+
+l e l〈 〉 l 1/2〈 〉
+l e Yi e  Y cons( )/ K eln=
+
+K e
+
+K e 1l tot µ0⁄------------------- [ ∆ν l tot/µ0( )( )ln=
+
+l tot µ0 θ0cos=
+H2O
+
+[ ∆ν l( )
+> U l
+
+U
+1–U
+
+0=
+
+
+∑
+
+z h l h 1–h 0=
+
+∑
+
+-----------------------------=
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 35
+
+Absorption by ozone is also taken into account, but since ozone is located at low pressure levels for which
+
+molecular scattering is small and Mie scattering is negligible, interactions between scattering processes and ozone
+
+absorption are neglected. Transmission through ozone is computed using (22) where  the amount of ozone is
+
+is the diffusivity factor (see Subsection 4.1), and is the magnification factor ( krr 1967) used
+instead of  to account for the sphericity of the atmosphere at very small solar elevations
+
+(23)
+
+To perform the spectral integration, it is convenient to discretize the solar spectral interval into subintervals in
+
+which the surface reflectance can be considered as constant. Since the main cause of the important spectral
+
+variation of the surface albedo is the sharp increase in the reflectivity of the vegetation in the near infrared, and
+
+since water vapour does not absorb below 0.68 , the shortwave scheme considers two spectral intervals, one
+
+for the visible (0.2–0.68 ), one for the near infrared (0.68–4.0 ) parts of the solar spectrum. This cut-off at
+
+0.68 also makes the scheme more computationally efficient, in as much as the interactions between gaseous
+
+absorption (by water vapour and uniformly mixed gases) and scattering processes are accounted for only in the
+
+near-infrared interval.
+
+4.2 (a)  Vertical integration. Considering an atmosphere where a fraction (as seen from the surface or
+
+the top of the atmosphere) is covered by clouds (the fraction depends on which cloud-overlap assumption
+
+is assumed for the calculations), the final fluxes are given as a weighted average of the fluxes in the clear sky and
+
+in the cloudy fractions of the column
+
+where the subscripts ‘ ’ and ‘ ’ refer to the clear-sky and cloudy fractions of the layer, respectively. In
+
+contrast to the scheme of  r r¡£¢ and Hollingsworth (1979), the fluxes are not obtained through the solution of a
+system of linear equations in a matrix form. Rather, assuming an atmosphere divided into homogeneous layers,
+
+the upward and downward fluxes at a given layer interface  are given by
+
+(24)
+
+where and are the reflectance at the top and the transmittance at the bottom of the th layer.
+
+Computations of ’s start at the surface and work upward, whereas those of ’s start at the top of the
+
+atmosphere and work downward.  and  account for the presence of cloud in the layer
+
+(25)
+
+l O3
+
+l O3d ¤ l O3db0∫= for the downward transmission of the direct solar beam
+l O3u V l O3 l O3d E surf( )+db
+
+s
+
+0
+
+∫= for the upward transmission of the diffuse radiation
+
+V 1.66= ¤
+V
+
+¤ 35/ µ02 1+=
+
+µm
+µm µm
+
+µm
+
+ tot
+cld tot
+
+cld
+
+Y – g( )  totcld Y cld– g( ) 1  totcld–( ) Y clr–+=
+clr cld
+
+g
+
+Y – g( ) Y 0 ¥ bot K( )i h=
+
+
+∏=
+
+Y + g( ) Y – g( ) ¦ top g 1–( )=
+¦ top g( ) ¥ bot g( ) g¦ top ¥ bot¦ top ¥ bot
+
+¦ top  cld ¦ cld 1  cld–( ) ¦ clr+=
+¥ bot  cld ¥ cld 1  cld–( ) ¥ clr+=
+
+
+
+Radiation Transfer
+
+36 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+where  is the cloud fractional coverage of the layer within the cloudy fraction  of the column.
+
+4.2 (b)  Cloudy fraction of the layer. and are the reflectance at the top and transmittance at the bot-
+
+tom of the cloudy fraction of the layer calculated with the Delta-Eddington approximation. Given , , and ,
+
+the optical thicknesses for the cloud, the aerosol and the molecular absorption of the gases, respectively, and
+
+( ), and and the cloud and aerosol asymmetry factors, and are calculated as functions
+
+of the total optical thickness of the layer
+
+(26)
+
+of the total single scattering albedo
+
+(27)
+
+of the total asymmetry factor
+
+(28)
+
+of the reflectance of the underlying medium (surface or layers below the th interface), and of the cosine of
+
+an effective solar zenith angle which accounts for the decrease of the direct solar beam and the
+
+corresponding increase of the diffuse part of the downward radiation by the upper scattering layers
+
+(29)
+
+with  the effective total cloudiness over level
+
+(30)
+
+and
+
+(31)
+
+, and are the optical thickness, single scattering albedo and asymmetry factor of the cloud in
+
+the th layer, and is the diffusivity factor. The scheme follows the Eddington approximation first proposed by§¨ r©ª 
+and Weinman (1970), then modified by « kr¬ ¨ et al. (1976) to account more accurately for the large
+
+fraction of radiation directly transmitted in the forward scattering peak in case of highly asymmetric phase
+
+functions. Eddington’s approximation assumes that, in a scattering medium of optical thickness , of single
+
+scattering albedo , and of asymmetry factor , the radiance  entering (15) can be written as
+
+(32)
+
+In that case, when the phase function is expanded as a series of associated Legendre functions, all terms of order
+
+greater than one vanish when (15) is integrated over  and . The phase function is therefore given by
+
+
+cld
+
+ tot
+cld
+
+¦ tcdy ¥ bcdy
+δc δa δg
+
+= K e ­ ® c ® a ¦ tcdy ¥ bcdy
+
+δ δc δa δg+ +=
+
+ϖ*
+δc δa+
+
+δc δa δg+ +
+----------------------------=
+
+® * δcδc δa+---------------- ® c
+δa
+
+δc δa+
+----------------ga+=
+
+¦ _ g
+µeff g( )
+
+µeff g( ) 1  cldeff g( )–( )/µ V  cldeff g( )+[ ]-1=
+
+
+cld
+eff g( ) g
+
+
+cld
+eff g( ) 1 1  cld c( ) F c( )–( )U h 1+=
+
+
+∏–=
+
+F c( ) 1 1 ϖc
+c
+
+( ) ® c c( )2–( )δc c( )
+µ
+
+-------------------------------------------------------–exp–=
+
+δ̄
+c
+
+( ) ϖ̄
+c
+
+( ) ® ¯ c( )c V
+
+δ*
+
+ω ® Z
+Z δ µ,( ) Z 0 δ( ) µ Z 1 δ( )+=
+
+µ φ
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 37
+
+where  is the angle between incident and scattered radiances. The integral in (15) thus becomes
+
+(33)
+
+where
+
+is the asymmetry factor.
+
+Using (33) in (15) after integrating over  and dividing by , we get
+
+(34)
+
+We obtain a pair of equations for  and  by integrating (34) over
+
+(35)
+
+For the cloudy layer assumed non-conservative ( ), the solutions to(4.35), for , are
+
+(36)
+
+where
+
+The two boundary conditions allow to solve the system for and ; the downward directed diffuse flux at the
+
+top of the atmosphere is zero, i.e.,
+
+O
+Θ( ) 1 β1 Θ( )µ+=
+
+Θ
+
+φ′
+O
+
+µ φ µ' φ', , ,( ) Z µ' φ',( ) µ'd
+-1
+
++1
+
+∫
+ 
+ 
+ w
+
+0
+
+2π
+
+∫ 4π Z 0 π Z 1+( )=
+
+® β13----- 12---
+O
+
+Θ( )µ µd
+-1
+
++1
+
+∫= =
+
+µ 2π
+
+µ d
+dδ
+------ Z 0 µ Z 1+( ) Z 0 µ Z 1+( )– ϖ Z 0 ® µ Z 1+( )+
+
++1/4ϖ Y 0 δ/µ0–( ) 1 3 ® µ0µ+( )exp
+=
+
+Z 0 Z 1 µ
+
+d Z 0
+dδ
+
+--------- 3 1 ϖ–( ) Z 0– 34---ϖ
+Y
+
+0 δ/µ0–( )exp+=
+
+d Z 1
+dδ
+
+--------- = – (1 – ϖ ® ) Z 1 34---ϖ® µ0
+Y
+
+0 δ/µ0–( )exp+
+
+ϖ 1< 0 δ δ*≤ ≤
+
+Z 0 δ( ) ° 1 ± δ–( ) ° 2+ + ± δ( ) α δ/µ0–( )exp–expexp=
+Z 1 δ( ) O ° 1 ± δ–( ) ° 2 + ± δ( ) β δ/µ0–( )exp–exp–exp{ }=
+
+± = 3 1 ϖ–( ) 1 ϖ®–( ){ }1 2⁄O
+= 3 1 ϖ–( ) 1 ϖ®–( )⁄{ }1 2⁄
+
+α = 3ϖ Y 0µ0 1 3 ® 1 ϖ–( )+{ } 4 1 ± 2µ20–( ){ }⁄
+β = 3ϖ Y 0µ0 1 3 ® 1 ϖ–( )µ20+{ } 4 1 ± 2µ20–( )( )⁄
+
+° 1 ° 2
+
+Y – 0( ) Z 0 0( ) 23--- Z 1 0( )+ 0= =
+
+
+
+Radiation Transfer
+
+38 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+which translates into
+
+(37)
+
+The upward directed flux at the bottom of the layer is equal to the product of the downward directed diffuse and
+
+direct fluxes and the corresponding diffuse and direct reflectance ( and , respectively) of the underlying me-
+
+dium
+
+which translates into
+
+(38)
+
+In the Delta-Eddington approximation, the phase function is approximated by a Dirac delta function forward-scat-
+
+ter peak and a two-term expansion of the phase function
+
+where is the fractional scattering into the forward peak and the asymmetry factor of the truncated phase
+
+function. As shown by Joseph et al. (1976), these parameters are
+
+(39)
+
+The solution of the Eddington’s equations remains the same provided that the total optical thickness, single
+
+scattering albedo and asymmetry factor entering (36) to (38) take their transformed values
+
+(40)
+
+Practically, the optical thickness, single scattering albedo, asymmetry factor and solar zenith angle entering (4.36)
+
+to (4.38) are , ,  and  defined in (39) and (40).
+
+4.2 (c)  Clear-sky fraction of the layers. In the clear-sky part of the atmosphere, the shortwave scheme
+
+accounts for scattering and absorption by molecules and aerosols. The following calculations are practically done
+
+1 2
+O
+
+/3+( ) ° 1 1 2 O /3–( ) ° 2+ α 2β/3+=
+
+¦ d ¦ _
+
+Y + δ*( )= Z 0 δ*( ) 23--- Z 1 δ*( )–  
+ 
+
+¦ _ Z 0 δ*( ) 23--- Z 1 δ*( )+  
+  ¦ dµ0 Y 0 δ*/µ0–( )exp+=
+
+1 ¦ _– 2– 1 ¦ _+( ) O 3⁄{ } ° 1 ±– δ*( )exp
++ 1 ¦ _ +– 2 1 ¦ _+( ) O 3⁄{ } ° 2 ±+ δ*( )
+= 1 ¦ _–( )α 2 1 ¦ _+( )β 3⁄– ¦ dµ0 Y 0+{ } δ*/µ0–( )exp
+
+P θ( ) 2² 1 µ–( ) 1 ²–( ) 1 3 ® ′µ+( )+=
+² ® ′
+
+² ® 2=
+® ′ ® ® 1+( )⁄=
+
+δ′* 1 ϖ²+( )δ*=
+ω′ 1 ²–( )ϖ
+
+1 ϖ²–----------------------=
+
+δ* ϖ* ® * µeff
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 39
+
+twice, once for the clear-sky fraction ( ) of the atmospheric column with equal to , simply
+
+modified for the effect of Rayleigh and aerosol scattering, the second time for the clear-sky fraction of each
+
+individual layer within the fraction  of the atmospheric column containing clouds, with  equal to .
+
+As the optical thickness for both Rayleigh and aerosol scattering is small, and , the reflectance
+
+at the top and transmittance at the bottom of the th layer can be calculated using respectively a first and a second-
+
+order expansion of the analytical solutions of the two-stream equations similar to that of ³ ´ r¡ and Chylek
+(1975). For Rayleigh scattering, the optical thickness, single scattering albedo and asymmetry factor are respec-
+
+tively , , and , so that
+
+(41)
+
+The optical thickness of an atmospheric layer is simply
+
+(42)
+
+where is the Rayleigh optical thickness of the whole atmosphere parametrized as a function of the solar
+
+zenith angle (µ¶r·r¸º¹£»¼e½£·  et al., 1983)
+For aerosol scattering and absorption, the optical thickness, single scattering albedo and asymmetry factor are re-
+
+spectively , , with  and , so that
+
+(43)
+
+(44)
+
+where  is the backscattering factor.
+
+Practically, and are computed using (41) and the combined effect of aerosol and Rayleigh scattering
+
+comes from using modified parameters corresponding to the addition of the two scatterers with provision for the
+
+highly asymmetric aerosol phase function through Delta-approximation of the forward scattering peak (as in (39)
+
+and (40))
+
+(45)
+
+1 ¾ totcld– µ µ0
+¾ totcld µ µe¿
+
+clr À 1–( ) Á clr À( )
+À
+
+δR ϖR 1= Â R 0=
+
+¿
+R =
+
+δR
+2µ δR+
+-------------------
+
+Á R = 2µ2µ δR+( )------------------------
+
+δR
+
+δR δR
+* Ã À( ) Ã À 1–( )–{ } Ã surf⁄=
+
+δ*R
+
+δa ϖa 1 ϖa 1«– Â a
+den 1 1 ϖa– back µe( )ϖa+{ } δa µe⁄( )+=
+
+1 ϖa–( ) 1 ϖa– 2back µe( )ϖa+{ } δ
+2
+a µ2a⁄( )+
+
+¿ µe( ) back µe( )ϖaδa( ) µa⁄den-------------------------------------------------=
+Á µ Ä( ) 1 den⁄=
+
+back µe( ) 2 3µe Â a–( ) 4⁄=¿
+clr Á clr
+
+δ+ δR δa 1 ϖa Â a2–( )+=
+Â + Â a
+
+1 Â a+---------------
+δa
+
+δR δa+( )
+----------------------=
+
+ϖ+
+δR
+
+δR δa+
+-----------------ϖR
+
+δa
+δR δa+
+-----------------
+
+ϖa 1 Â a2–( )
+1 ϖa Â a2–
+
+--------------------------+=
+
+
+
+Radiation Transfer
+
+40 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+As for their cloudy counterparts, and must account for the multiple reflections due to the layers
+
+underneath
+
+(46)
+
+and  is the reflectance of the underlying medium  and  is the diffusivity factor.
+
+Since interactions between molecular absorption and Rayleigh and aerosol scattering are negligible, the radiative
+
+fluxes in a clear-sky atmosphere are simply those calculated from (24) and (41) attenuated by the gaseous trans-
+
+missions (22).
+
+4.2 (d)  Multiple reflections between layers. To deal properly with the multiple reflections between the surface
+
+and the cloud layers, it should be necessary to separate the contribution of each individual reflecting surface to the
+
+layer reflectance and transmittances in as much as each such surface gives rise to a particular distribution of ab-
+
+sorber amount. In case of an atmosphere including cloud layers, the reflected light above the highest cloud con-
+
+sists of photons directly reflected by the highest cloud without interaction with the underlying atmosphere, and of
+
+photons that have passed through this cloud layer and undergone at least one reflection on the underlying atmos-
+
+phere. In fact, (17) should be written
+
+(47)
+
+where and are the conservative fluxes and the distributions of absorber amount corresponding to the
+
+different reflecting surfaces.
+ÅÆÇÈÇ »ÉrÊ and Bonnel (1980) have shown that a very good approximation to this problem is obtained by evaluating
+the reflectance and transmittance of each layer (using (34) and (40)) assuming successively a non-reflecting under-
+
+lying medium ( ), then a reflecting underlying medium ( ). First calculations provide the contribu-
+
+tion to reflectance and transmittance of those photons interacting only with the layer into consideration, whereas
+
+the second ones give the contribution of the photons with interactions also outside the layer itself.
+
+From those two sets of layer reflectance and transmittances ( ) and ( ) respectively, effective ab-
+
+sorber amounts to be applied to computing the transmission functions for upward and downward fluxes are then
+
+derived using (18) and starting from the surface and working the formulas upward
+
+(48)
+
+where and are the layer reflectance and transmittance corresponding to a conservative scattering
+
+medium.
+
+Finally the upward and downward fluxes are obtained as
+
+¿
+clr Á ċ lr
+
+¿
+clr
+
+¿ µe( ) ¿ – Á µÄ( ) 1 ¿ * ¿ ––( )⁄+=
+¿
+
+–
+¿
+
+–
+¿
+
+t À 1–( )= Ë
+
+Ì
+
+Í Í
+cl Î l Ï( ) Ð ∆ν Ï( ) νd
+
+0
+
+∞
+
+∫Ñ
+0=
+
+Ò
+∑=
+
+Í
+cl Î l Ï( )
+
+¿
+– 0=
+
+¿
+– 0≠
+
+Á t0 Á b0, ¿ t ≠ Á b ≠
+
+Ó
+e0
+– ln Á b0 Á bc⁄( ) Ô e⁄=Ó –
+e ≠ ln Á b ≠ Á bc⁄( ) Ô e⁄=Ó +
+e0 ln
+
+¿
+t0
+¿
+
+tc⁄( ) Ô e⁄=Ó +
+e ≠ ln
+
+¿
+t ≠
+
+¿
+tc⁄( ) Ô e⁄=
+
+¿
+tc Á bc
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 41
+
+4.2 (e)  Cloud shortwave optical properties. As seen in (36), the cloud radiative properties depend on three
+
+different parameters: the optical thickness , the asymmetry factor , and the single scattering albedo .
+
+Presently the cloud optical properties are derived from
+ÅÆÇÈÇ »ÉrÊ (1987) for the water clouds, and ÕLÖ¶rÉrÊ and Curry
+
+(1992) for the ice clouds
+
+ is related to the cloud liquid water amount  by
+
+where is the mean effective radius of the size distribution of the cloud water droplets. Presently is
+
+parametrized as a linear function of height from 10 m at the surface to 45 m at the top of the atmosphere, in an
+
+empirical attempt at dealing with the variation of water cloud type with height. Smaller water droplets are
+
+observed in low-level stratiform clouds whereas larger droplets are found in mid-level cumuliform water clouds.
+
+In the two spectral intervals of the shortwave radiation scheme, is fixed to 0.865 and 0.910, respectively, and
+
+ is given as a function of  following
+ÅÆÇÈÇ »ÉrÊ (1987)
+
+(49)
+
+These cloud shortwave radiative parameters have been fitted to in situ measurements of stratocumulus clouds
+
+(Bonnel et al., 1983).
+
+For the optical properties of ice clouds, we have
+
+(50)
+
+where the coefficients have been derived from ÕPÖ¶rÉrÊ and Curry (1992) for the two intervals of the shortwave radi-
+ation  scheme, and  is fixed at 40 m.
+
+5. COMPARISONS WITH OBSERVATIONS
+
+As for the representation of clouds, there is an imperative need to perform at least some of the validation on short-
+
+time and limited space scales, before the drift in the GCM climate makes comparison with observations very dif-
+
+ficult to interpret. Relative to other physical processes, the existence of reference models (LbLs) that have been or
+
+can be validated against highly spectrally detailed measurements (such as those of spectrometer and interferometer,
+
+present on ARM sites, or embarked on Nimbus-3) offers a very useful tool for validation. However, although cur-
+
+rently done for LW, this approach is not really used for SW, because of the relative lack of highly spectrally detailed
+
+measurements in the SW compared to LW, and therefore of carefully validated LbL models in the SW (Ramas-
+
+Í + À( ) Í 0 ¿ t0 Ð ∆ν Ï +e0( ) ¿ t ≠ ¿ t0–( ) Ð ∆ν Ï +e ≠( )+{ }=Í – À( ) Í 0 Á b0 Ð ∆ν Ï +e0( ) Á b ≠ Á b0–( ) Ð ∆ν Ï –e ≠( )+{ }=
+
+δc Â c ϖc
+
+δc Ï LWP
+
+δc
+3 Ï LWP
+
+2 Ë e-----------------=
+
+Ë e Ë e
+µ µ
+
+Â c
+ωc δc
+
+ϖc1 0.9999 5 10
+4–× 0.5δc–( )exp–=
+
+ϖc2 0.9988 2.5– 10
+3–× exp 0.05δc–( )=
+
+δci IWP × i Ø i Ë e⁄+( )=
+ϖi Ù i Ú i Ë e–=
+Â i Ù i Û i Ë e+=
+
+Ë e µ
+
+
+
+Radiation Transfer
+
+42 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+wamy and Freidenreich, 1992).
+
+The approach discussed above could also be used, albeit with more difficulties, for cloudy atmospheres. However,
+
+for years, most of the validation effort for radiation transfer in cloudy atmospheres has dealt with comparison of
+
+radiation fluxes at TOA with satellite-derived fluxes (Nimbus-7 Earth Radiation Budget, Earth Radiation Budget
+
+Experiment). More often than not, this was often done without considering at the same time a validation of the
+
+cloud characteristics so that tweaking the cloud properties (particularly, the relationships giving the cloud fraction
+
+and cloud water loading in diagnostic cloud schemes) allowed an easy agreement with TOA fluxes, specially over
+
+monthly mean time-scales. With the availability of carefully calibrated measurements of the radiation fluxes at the
+
+surface (Baseline Station Radiation Network (Ohmura et al., 1998), Global Energy Balance Archive, NOAA-ARL
+
+SURFace RADiation network), or as is the case with the ARM program, of radiation fluxes and relatively detailed
+
+information on the state of the overlying atmosphere and some information on the cloud structure, systematic ver-
+
+ification of the radiation fields produced by the ECMWF model at various stages in the forecasts can now be carried
+
+out.
+
+In the following, we present one example of such validation for a site where good quality surface radiation meas-
+
+urements are available with a high frequency (such sites are available as part of the BSRN, SURFRAD or ARM
+
+projects). For a weather forecast system, it is often preferable to use measurements not too remote in time, as the
+
+analysis and forecast system undergoes regular improvement over the years. In this respect, the NOAA-ARL SUR-
+
+Face RADiation network offers real-time availability of surface radiation measurements over 6 sites in the U.S.
+
+Figure 5.1 compares the downward and upward LW radiation over Goodwin Creek, Mississippi, over the period
+
+17 November to 15 December 1997, when a new physical parametrisation package was being tested. Fig. 26 shows
+
+the corresponding downward SW radiation. As can be seen from the LW comparisons, the model is rather success-
+
+ful at producing the observed variability in temperature at the surface (as seen from the upward LW radiation in
+
+Fig. 25 , bottom panel) and in temperature, humidity, and cloud fraction in the lowest layers of the atmosphere (as
+
+seen from the downward LW radiation in Fig. 25 , top panel). On the other hand, it appears less successful at han-
+
+dling the amount of condensed water in clouds, with too small optical thickness translating in too large downward
+
+SW radiation at the surface (Fig. 26 ). Next stage in this type of comparisons is to make sure that the fluxes are
+
+computed for the proper vertical profiles of radiatively important quantities. Albeit obvious, this statement is very
+
+difficult to be put in practice, as a comprehensive knowledge of all the atmospheric profiles is rarely attained (and
+
+attainable). The ARM program is the best try in this direction, with, over the South Great Plains site in Oklahoma,
+
+long time-series of surface radiation flux measurements, radiosoundings, synoptic observations, vertically integrat-
+
+ed water vapour and cloud water measurements from a microwave radiometer, and vertical profiles of temperature,
+
+humidity, and cloud water from the inversion of interferometer and cloud radar measurements. Figure 5.3 presents
+
+the total column water vapour and cloud liquid water in December 1997 as observed by the Microwave Radiometer
+
+and produced by the ECMWF model in a series of 31 operational forecasts all starting at 12 UTC. Between the 13
+
+and 17 December, the sky is essentially clear. Fig. 28 compares the surface downward LW radiation observed dur-
+
+ing these 5 days and computations by different radiation schemes from the forecast fields of temperature and hu-
+
+midity. A difference of 5 to 8 W m-2 is systematically found between the pre-December’97 ECMWF radiation
+
+scheme (old_EC) and the RRTM scheme. However, even this state-of-the-art radiation scheme underestimates the
+
+observed flux by 10–15 W m-2, showing that, even this thought-to-be-simple comparison exercise is not straight-
+
+forward. It is very likely that the model low-level temperature and humidity profiles are at the origin of these dis-
+
+crepancies.
+
+Another validation exercise involving the model radiation scheme is the verification of the cloud signature on TOA
+
+radiances. Fig. 29 illustrates such comparison for the ERICA storm: the longwave window channel brightness tem-
+
+perature/radiance is simulated from the model cloud, temperature and humidity fields using the methodology of
+
+Morcrette (1991a).
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 43
+
+Figure 25. Downward (top) and upward LW radiation from the ECMWF 6-hour first-guess forecasts compared to
+
+the SURFRAD measurements in Goodwin Creek, Mississippi over the period 971117 00 UTC to 971215 00
+
+UTC.
+
+0
+Ü
+
+120Ý 240Þ 360ß 480à 600Ü 720Ý
+Time since 971117  00GMT
+
+150
+
+200
+
+250
+
+300
+
+350
+
+400
+
+R
+ad
+
+ia
+tio
+
+n 
+  W
+
+/m
+2
+
+á
+
+Goodwin Creek, Mississippiâ
+Surface Down LW: SURFRAD, ECMWF First Guess
+
+Obs.
+ã
+Old
+ã
+New
+ä
+
+0
+å
+
+120æ 240ç 360è 480é 600å 720æ
+Time since 971117  00GMT
+
+250
+
+300
+
+350
+
+400
+
+450
+
+R
+ad
+
+ia
+tio
+
+n 
+  W
+
+/m
+2
+
+Goodwin Creek, Mississippiê
+Surface up LW: SURFRAD, ECMWF First Guessë
+
+Obs.
+ì
+Old
+ì
+New
+í
+
+
+
+Radiation Transfer
+
+44 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  26. As in Fig. 25 , but for the downward SW radiation at the surface averaged over 24-hour periods.
+
+0î 120ï 240ð 360ñ 480ò 600î 720ï
+Time since 971117  00GMTó
+
+0
+
+20
+
+40
+
+60
+
+80
+
+100
+
+120
+
+140
+
+160
+
+180
+
+200
+R
+
+ad
+ia
+
+tio
+n 
+
+  W
+/m
+
+2
+
+ô
+
+Goodwin Creek, Mississippiõ
+Surface Down SW: SURFRAD, ECMWF First Guessö
+
+Obs.
+Old
+New
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 45
+
+Figure  27. The total column water vapour (top) and total column cloud liquid water over the ARM-SGP site in
+
+December 1997 from a series of 31 forecasts all starting at 12 UTC. Points represent hourly averaged values of
+
+TCWV and TCCLW derived from Microwave Radiometer measurements.
+
+0÷ 120ø 240ù 360ú 480û 600÷ 720ø
+Hours since 97120100ü
+
+0
+
+10
+
+20
+
+30
+
+T
+C
+
+W
+V
+
+ (
+kg
+
+/m
+2)
+
+ý
+
+SGP − Total column water vapour
+ECMWF vs ARM−MWR − December 1997
+
+Obs
+Mod 1x2
+
+0÷ 120ø 240ù 360ú 480û 600÷ 720ø
+Hours since 97120100ü
+
+−50
+
+0
+
+50
+
+100
+
+150
+
+200
+
+250
+
+300
+
+350
+
+400
+
+450
+
+500
+
+550
+
+600
+
+650
+
+700
+
+LW
+P
+
+ (
+g/
+
+m
+2)
+
+ý
+
+SGP − Liquid water pathþ
+ECMWF vs ARM−MWR − December 1997
+
+Obs
+Mod 1x2
+
+
+
+Radiation Transfer
+
+46 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 28. The surface downward LW radiation during 5 clear-sky days over the ARM-SGP site. The upper curve
+
+is the SIRS observation, the lower curves are computed by different radiation schemes from  and  fields
+
+operationally produced from forecasts between 12 and 35 hours, all starting at 12 UTC.
+
+288ò 312ÿ 336� 360ñ 384ò 408î
+Time since 971201 00 GMT   (hours)ÿ
+
+190
+
+200
+
+210
+
+220
+
+230
+
+240
+
+250
+
+260
+
+270
+
+280
+
+290
+
+D
+ow
+
+nw
+ar
+
+d 
+LW
+
+ R
+ad
+
+ia
+tio
+
+n 
+  (
+
+W
+/m
+
+2)
+
+�
+
+ARM−SGP December 1997õ
+ICRCCM−type comparison of Surface Downward LW Flux
+
+old_EC
+new_EC
+RRTM_1a
+RRTM_3a
+EC_ZH
+obs_sirs
+
+� �
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 47
+
+Figure 29. The GOES longwave window channel brightness temperature over the ERICA storm. Top panel is the
+
+ISCCP-DX image for 18 UTC 4 January 1989, bottom is the radiance simulated from the ECMWF TL639 model
+
+after a 18 hour forecast starting at 00 UTC 4 January 1989.
+
+
+
+Radiation Transfer
+
+48 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+6. CONCLUSIONS AND PERSPECTIVES
+
+Recent studies have focussed at the direct and/or indirect radiative impact of aerosols in climate simulations (Jous-
+
+saume, 1990; Genthon, 1992; Boucher and Lohmann, 1995; Chylek et al., 1995; Mitchell et al., 1995; Lohmann
+
+and Feichter, 1997; Tegen et al., 1997; Timmreck et al., 1997; Cusack et al., 1998; Le Treut et al., 1998; Schulz et
+
+al., 1998). Since the pioneering work of Tanre et al. (1984), the ECMWF model has included an annual mean, but
+
+geographically distributed climatology of aerosols. The geographical distribution of the maritime, continental, ur-
+
+ban and desert aerosols are given in Figs. 30 and 31 , where as the vertical distribution is illustrated in Fig. 32 . As
+
+discussed in Cusack et al. (1998), the presence of these aerosols in the ECMWF model is certainly one of the rea-
+
+sons why the surface downward SW radiation is less overestimated in the ECMWF model than in other leading
+
+climate GCMs (Garratt, 1994; Garratt et al., 1998). However, a monthly specification of the aerosol distributions
+
+or better a prognosed aerosol loading is a possible future development for the ECMWF model.
+
+Recent studies by Wang and Rossow (1995, 1998) and Stubenrauch et al. (1997) have focussed at the potentially
+
+large impact on the atmospheric circulation linked to uncertainties in the vertical distribution of clouds and related
+
+radiative heating/cooling rates. Similar results were also obtained with the ECMWF model (Morcrette and Jakob,
+
+2000). Fig. 33 presents the cloud overlaps that the operational radiation scheme can handle. One-dimensional cal-
+
+culations are performed for different cloud configurations often encountered in three-dimensional simulations. The
+
+first one corresponds to a typical convective system and includes a convective tower of fractional cover 0.15 from
+
+820 to 290 hPa topped by stratiform anvil of cover 0.4 and 70 hPa thick. The second case includes three layers of
+
+stratiform cloud of cover 0.3 between 890 and 820 hPa (low-level), 640 and 545 hPa (middle-level), and 290 and
+
+220 hPa (high-level), respectively. The profiles of the cloud longwave, shortwave and net radiative forcing for these
+
+two cases are presented in Fig. 34 , left and right panels respectively. The cloud forcing term is simply the difference
+
+between the heating obtained for the cloudy atmosphere minus the clear-sky heating. The different COAs are treat-
+
+ed exactly in the LW part and only approximately in the SW part of the radiation scheme. Therefore, the LW MRN
+
+and MAX results are essentially the same for case 1, and the same holds for the LW MRN and RAN results for case
+
+2. In the SW, the agreement on the SW forcing profiles is also very good. In the first case (see Fig. 34 , left panels),
+
+the anvil produces a strong LW cooling whereas a relative heating is found in the rest of the convective tower below.
+
+Compared to MRN/MAX, the RAN LW shows a smaller cooling peak in the anvil, smaller heating below within
+
+the tower, and larger warming in the clear PBL. All these features are consistent with the larger effective cloudiness
+
+that the RAN assumption produces between any two cloudy layers. This larger effective cloudiness (i) prevents the
+
+radiation from the lower atmospheric layers from escaping to space, thus the heating in the PBL, (ii) decreases the
+
+possible radiative exchanges within the tower, thus the smaller radiative heating, and (iii) decreases the upward LW
+
+flux at the base of the anvil, hence the smaller LW divergence in the anvil. Similarly, a stronger SW heating is linked
+
+in RAN to the larger cloud fraction available to screen the downward radiation and to the more diffuse character of
+
+this radiation in the cloudy fraction of the column. Consequently a smaller amount of SW radiation is available
+
+below the cloud base and this translates into a relative cooling. The smaller heating of the anvil in RAN is linked
+
+to the smaller SW flux divergence through a larger upward radiation due to the increased reflection on the larger
+
+effective amount of lower level clouds.
+
+In the second case (see Fig. 34 , right panels), each of the three stratiform cloud layers produces a LW cooling inside
+
+and a LW heating immediately underneath. Differences between MAX and MRN/RAN results are consistent with
+
+the smaller total effective cloudiness given by MAX. The cooling in the low-level cloud is reduced in MAX because
+
+the middle- and high-level clouds prevent the radiation at the top of the low-level cloud from escaping to space.
+
+Similarly, the cooling in the high-level cloud is increased in MRN/RAN because the low- and middle-level clouds
+
+prevent the warmer radiation from the lower layers to reach the base of the high-level cloud. The smaller total
+
+cloudiness in MAX also explains the smaller LW heating below the lowest cloud. In the SW, the difference in heat-
+
+ing is very small within the clouds. The slightly larger relative cooling immediately below the clouds in MAX
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 49
+
+comes from the larger fraction of radiation being directly transmitted, as, in MRN/RAN, the radiation in the cloudy
+
+fraction of the column is more diffuse and therefore more likely to be absorbed. The smaller SW heating of the
+
+upper cloud with MRN/RAN is again linked to the increased reflection. These one-dimensional computations show
+
+the validity of the treatment of the different COAs in the ECMWF radiation scheme. They also show the larger
+
+impact of a change of COA on the LW than on the SW radiative profiles.
+
+Fig. 35 presents the total cloudiness (TCC) averaged over the last three months (DJF) of the EPR simulations with
+
+the MRN, MAX and RAN COAs. Not surprisingly, the set of MAX simulations display the minimum total cloud
+
+cover at 0.609, followed by the MRN at 0.639, whereas the RAN simulations have a much larger total cloud cover
+
+at 0.714. The increase from MRN to RAN (respectively, the decrease from MRN to MAX) is apparent over most
+
+of the globe, but is more pronounced over the sub-tropics, particularly those of the Southern hemisphere. Are these
+
+changes simply reflecting the different geometrical distribution of the cloud elements on the vertical or are they
+
+linked to actual changes in the volume of the cloud elements? A simple check whether the cloud volume is actually
+
+modified is obtained by diagnosing the total cloud cover for all sets of simulations and applying the operational
+
+maximum-random overlap assumption to the various cloud elements. Fig. 36 presents the MRN-equivalent TCC
+
+for the EPR experiments. The main result is that most of the change in TCC is not reflected in the MRN-equivalent
+
+TCC, showing that a large fraction of the signal is due to the geometrical overlapping in the radiation scheme, and
+
+not to a real significant change in the cloud volume.
+
+Radiation transfer parametrisation is generally the most expensive in computer time among the physical parame-
+
+trisations used in a GCM. In the ECMWF operational forecast model, full radiation computations are performed
+
+only every 3 hours and on a reduced grid (1 point out of 4 along the longitude direction). Even so, radiation ac-
+
+counts for about 15%t of the total cost of the model. Although such spatial and temporal sampling of the radiation
+
+forcing does not appear detrimental on the short time scales encompassed in the operational analyses of meteoro-
+
+logical observations and the 10-day forecasts made with the high resolution (TL319) ECMWF weather forecast
+
+model (Fig. 37 for the anomaly correlation of the geopotential at 500 hPa, Figs. 38 and 39 for the mean error in
+
+temperature at 850, 500, 200 and 50 hPa), the impact becomes systematic and (possibly) detrimental on seasonal
+
+time-scales and/or at lower resolution (Morcrette, 2000). For example, Figures 6.11 and 6.12 present the zonal
+
+mean cloudiness and temperature, with the operational configuration (S4T3h = spatial sampling 1 point out of 4 in
+
+the tropics, full radiation calculation only every 3 hours), and the difference with configurations for which radiation
+
+is either called at every grid point (S1) and/or for every time step (T1). When the radiation calculations are syn-
+
+chronous with the rest of the physics (and of the model), the stability in the ITCZ is decreased, with a resultant
+
+(small) increase in high-level clouds (Fig. 40 ), but a more spatially extensive decrease in stratospheric tempera-
+
+tures (Fig. 41 ).
+
+New algorithms are being tested based on the neural network approach of Cheruy et al. (1996) and Chevallier et
+
+al. (2000a, 2000b), or on the linearized approach proposed by Chou and Neelin (1996), both of which introduce
+
+major savings in computer time. They would therefore allow for more frequent and/or non spatially sampled radi-
+
+ation calculations. For example, Fig. 42 present the bias and standard deviation of the LW cooling rates computed
+
+by a neural network method relative to the operational LW scheme, whereas. Figs. 43 and 44 display standard
+
+objective scores, the anomaly correlation of the geopotential at 500 hPa (Fig. 43 ) and the mean error in temperature
+
+at various levels in the atmosphere (Fig. 44 ). Such results indicate that the neural network approach is potentially
+
+a viable replacement. for traditional LW parametrizations.
+
+Other areas of development concern the role of the cloud inhomo/heterogeneity on the model horizontal sub-grid
+
+scale, and that of the vertical overlapping of cloud layers. On the first point, (not equivalent to a full account of the
+
+three-dimensional cloud-induced radiative effects, but going away from the plane-parallel approach used over the
+
+last 25 years), Tiedtke (1996) proposed a simple parametrisation of this effect, while Barker (1996, 1998) modified
+
+a SW scheme similar to the ECMWF one and incorporated an approximate treatment of the impact of the liquid
+
+
+
+Radiation Transfer
+
+50 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+water inhomogeneities via a gamma-distribution approach. Figs. 45 and 46 present the differences in transmissiv-
+
+ity, reflectivity and absorptivity for some standard liquid and ice water clouds in the two spectral intervals of the
+
+SW scheme. The impact is important over most of the range of optical thickness and for all quantities. Such an
+
+“horizontal” effect, to be accounted for also in the LW part of the spectrum is likely to change the effect of the
+
+clouds on the radiative distribution within the whole atmospheric column. In view of the large effects of the sub-
+
+grid scale distribution of the condensed water on the radiative fluxes, it is likely that, in the coming years, GCMs
+
+will incorporate an equation to at least diagnose this sub-grid scale variability and account for its effect on the ra-
+
+diation fields.
+
+Up to now, the validation of the large-scale radiative fields produced by a climate or a weather forecast GCM has
+
+mainly consisted of checks on the total cloud cover, and related top of the atmosphere and surface longwave and
+
+shortwave radiation fields. These fields (for example, Darnell et al., 1992; Gupta et al., 1993; Laszlo and Pinker,
+
+1993; Li and Leighton, 1993; Rossow, 1993; Zhang et al., 1995) are provided by dedicated satellite observations
+
+such as ERB (Stowe et al., 1989), ERBE (Harrison et al., 1988), ScaRaB (Kandel et al., 1998), CERES (Wielicki
+
+et al., 1996) and/or operational satellite observations as part of ISCCP (Rossow et al., 1987). Although very useful,
+
+these essentially two-dimensional (3-D if time history is considered) validation efforts are only a first step towards
+
+what would really be required to ascertain the adequacy of the representation of the cloud-radiation interactions:
+
+the 4-dimensional distribution of cloud volume and cloud water loading together with relevant 4-dimensional ra-
+
+diation parameters: a real challenge for the future!
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 51
+
+Figure  30. The annual mean climatological distribution of maritime and continental aerosols in the ECMWF
+
+operational system. The relative weight has to be multiplied by the optical thickness, i.e., 0.05 for maritime, and
+
+0.2 for continental aerosols.
+
+0.2
+0.
+
+2
+
+0.4 0.4
+
+0.4
+0.4
+
+0.6
+0.6
+
+0.
+6
+
+0.6
+
+0.
+6
+
+0.8
+
+0.
+8
+
+0.8
+
+0.8
+
+0.8�
+
+ 
+Maritime
+
+Relative Weight
+Climatological Aerosols in the ECMWF Forecast System
+
+60°S60°S
+
+30°S 30°S
+
+0°0°
+
+30°N 30°N
+
+60°N60°N
+
+30°E
+
+30°E 60°E
+
+60°E 90°E
+
+90°E 120°E
+
+120°E� 150°E�
+
+150°E 180°
+
+180° 150°W�
+
+150°W 120°W
+
+120°W� 90°W
+
+90°W 60°W
+
+60°W 30°W
+
+30°W
+
+0.1 - 0.2
+�
+
+0.2 - 0.3
+�
+
+0.3 - 0.4
+�
+
+0.4 - 0.5
+�
+
+0.5 - 0.6
+�
+
+0.6 - 0.7
+�
+
+0.7 - 0.8
+�
+
+0.8 - 0.9
+�
+
+0.9 - 1
+�
+
+0.
+2
+
+�
+0.2	
+
+0.20
+.4
+
+0.4
+
+0.4
+
+
+0.
+6�
+
+0.6
+
+0.8
+
+0.8
+
+ 
+Continental
+
+Relative Weight
+Climatological Aerosols in the ECMWF Forecast System
+
+60°S60°S
+
+30°S 30°S
+
+0°0°
+
+30°N 30°N
+
+60°N60°N
+
+30°E
+
+30°E 60°E
+
+60°E 90°E
+
+90°E 120°E
+
+120°E� 150°E�
+
+150°E 180°
+
+180° 150°W�
+
+150°W 120°W
+
+120°W� 90°W
+
+90°W 60°W
+
+60°W 30°W
+
+30°W
+
+0.001996 - 0.1 0.1 - 0.2 0.2 - 0.3 0.3 - 0.4 0.4 - 0.5 0.5 - 0.6 0.6 - 0.7 0.7 - 0.8 0.8 - 0.9 0.9 - 1
+�
+
+
+
+Radiation Transfer
+
+52 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  31. As in Fig. 30 , but for the urban and desert-type aerosols. Relevant optical thickness is 0.1 for urban,
+
+and 1.9 for desert aerosols.
+
+0.2
+
+0.
+2
+
+0.2
+
+0.2�
+
+0.4
+0.6
+
+ 
+Urban
+
+Relative Weight
+Climatological Aerosols in the ECMWF Forecast System
+
+60°S60°S
+
+30°S 30°S
+
+0°0°
+
+30°N 30°N
+
+60°N60°N
+
+30°E
+
+30°E 60°E
+
+60°E 90°E
+
+90°E 120°E
+
+120°E� 150°E�
+
+150°E 180°
+
+180° 150°W�
+
+150°W 120°W
+
+120°W� 90°W
+
+90°W 60°W
+
+60°W 30°W
+
+30°W
+
+0.001013 - 0.1 0.1 - 0.2 0.2 - 0.3 0.3 - 0.4 0.4 - 0.5 0.5 - 0.6 0.6 - 0.7 0.7 - 0.8 0.8 - 0.9 0.9 - 1
+�
+
+0.2
+
+0.2
+
+0.4
+
+0.6
+
+ 
+Desert
+
+Relative Weight
+Climatological Aerosols in the ECMWF Forecast System
+
+60°S60°S
+
+30°S 30°S
+
+0°0°
+
+30°N 30°N
+
+60°N60°N
+
+30°E
+
+30°E 60°E
+
+60°E 90°E
+
+90°E 120°E
+
+120°E� 150°E�
+
+150°E 180°
+
+180° 150°W�
+
+150°W 120°W
+
+120°W� 90°W
+
+90°W 60°W
+
+60°W 30°W
+
+30°W
+
+0.000019 - 0.1 0.1 - 0.2 0.2 - 0.3 0.3 - 0.4 0.4 - 0.5 0.5 - 0.6 0.6 - 0.7 0.7 - 0.8 0.8 - 0.9 0.9 - 1
+�
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 53
+
+Figure  32. The vertical distribution of aerosols. Urban aerosols follow type 1 distribution, all other tropospheric
+
+aerosols follow type 2.
+
+0.0 0.2 0.4 0.6 0.8 1.0
+Relative Weight 
+
+1.0
+
+0.8
+
+0.6
+
+0.4
+
+0.2
+
+0.0
+
+S
+ig
+
+m
+a 
+
+Le
+ve
+
+l
+
+�
+
+Relative Vertical Distribution of Aerosol Types�
+
+Tropos. Type 1
+Tropos. Type 2
+Stratos.
+
+
+
+Radiation Transfer
+
+54 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  33. Schematics of the various cloud overlap assumptions used in this study. The clouds are shown as
+
+rectangular blocks filling the vertical extent of a layer. The total cloud fraction from the top of the atmosphere
+
+down to a given level is given by the line on the right delineating the clouds and the shaded area below them. The
+
+cloud overlap configurations are, from top to bottom, the maximum-random, maximum, and random cloud
+
+overlap.
+
+0.0 0.2 0.4 0.6 0.8 1.0
+Cloud Cover
+
+0.0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1.0
+
+1−
+S
+
+ig
+m
+
+a
+
+Maximum−Random Overlap
+
+0.0 0.2 0.4 0.6 0.8 1.0
+Cloud Cover
+
+0.0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1.0
+
+1−
+S
+
+ig
+m
+
+a
+
+Maximum Overlap�
+
+0.0 0.2 0.4 0.6 0.8 1.0
+Cloud Cover
+
+0.0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1.0
+
+1−
+S
+
+ig
+m
+
+a
+
+Random Overlap
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 55
+
+Figure  34. The longwave (top), shortwave (middle), and net cloud radiative forcing profiles for an atmosphere
+
+with a anvil-topped convective tower (left panels) and three independent stratiform cloud layers (right panels).
+
+−3� −2� −1 0� 1� 2�
+Cloud LW Radiative Forcing    K/day
+
+1.0
+
+0.8
+
+0.6
+
+0.4
+
+0.2
+
+0.0
+
+S
+ig
+
+m
+a 
+
+P
+re
+
+ss
+ur
+
+e
+
+�
+
+Convective Tower with Cirrus Anvil�
+
+Random
+Maximum
+Max−Ran
+
+−3.5� −2.5� −1.5 −0.5� 0.5 1.5
+Cloud LW Radiative Forcing    K/day�
+
+1.0
+
+0.8
+
+0.6
+
+0.4
+
+0.2
+
+0.0
+
+S
+ig
+
+m
+a 
+
+P
+re
+
+ss
+ur
+
+e
+
+Three Independent Stratiform Cloud Layers�
+Random
+Maximum
+Max−Ran
+
+−1 0
+�
+
+1� 2� 3� 4�
+Cloud SW Radiative Forcing    K/day
+
+1.0
+
+0.8
+
+0.6
+
+0.4
+
+0.2
+
+0.0
+
+S
+ig
+
+m
+a 
+
+P
+re
+
+ss
+ur
+
+e
+
+�
+
+Random
+Maximum
+Max−Ran
+
+−1 0
+�
+
+1� 2� 3� 4�
+Cloud SW Radiative Forcing    K/day
+
+1.0
+
+0.8
+
+0.6
+
+0.4
+
+0.2
+
+0.0
+
+S
+ig
+
+m
+a 
+
+P
+re
+
+ss
+ur
+
+e
+Random
+Maximum
+Max−Ran
+
+−1 0
+�
+
+1� 2� 3� 4�
+Cloud Net Radiative Forcing    K/day
+
+1.0
+
+0.8
+
+0.6
+
+0.4
+
+0.2
+
+0.0
+
+S
+ig
+
+m
+a 
+
+P
+re
+
+ss
+ur
+
+e
+
+�
+
+Random
+Maximum
+Max−Ran
+
+−1 0
+�
+
+1� 2� 3� 4�
+Cloud Net Radiative Forcing    K/day
+
+1.0
+
+0.8
+
+0.6
+
+0.4
+
+0.2
+
+0.0
+
+S
+ig
+
+m
+a 
+
+P
+re
+
+ss
+ur
+
+e
+
+Random
+Maximum
+Max−Ran
+
+
+
+Radiation Transfer
+
+56 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 35. The total cloudiness (TCC) averaged over the last three months (DJF) of the RAD simulations with the
+
+maximum-random (MRN), maximum (MAX) and random (RAN) cloud overlap assumption (COA).
+
+Figure 36. The maximum-random-equivalent total cloudiness of the simulations with the MRN, MAX and RAN
+
+COAs
+
+45
+� �
+
+45�
+45�
+
+65�65 
+
+65! 65"
+
+65#65
+
+85
+85$
+
+EPR_22 MAX                          Global Mean:  0.609E+02
+
+MAX
+
+5.1540 - 15 15 - 25 25 - 35 35 - 45 45 - 55 55 - 65 65 - 75 75 - 85 85 - 95
+
+95 - 96.318
+
+65%
+
+85&85'
+85(
+
+85)
+
+85*85
+85+
+
+EPR_33 RAN                          Global Mean:  0.714E+02
+
+RAN
+
+7.4617 - 15
+,
+
+15 - 25 25 - 35 35 - 45 45 - 55 55 - 65 65 - 75 75 - 85 85 - 95
+
+95 - 100
+
+45-65.
+65
+
+/ 0
+
+651 652
+
+85
+3 4
+
+855
+85
+
+6
+857
+
+EPR_11 MRN                          Global Mean:  0.639E+02
+
+MRN
+
+6.9888 - 15
+8
+
+15 - 25 25 - 35 35 - 45 45 - 55
+9
+
+55 - 65 65 - 75 75 - 85
+:
+
+85 - 95
+
+95 - 98.833
+;
+
+Total Cloud Cover %                      Between 3024- 720 Hours
+Impact of Cloud Overlap Assumption: EPR
+
+45<
+
+65
+
+65
+
+85=
+85>
+
+85
+
+EPR_22 MAX                          Global Mean:  0.638E+02
+
+MAX
+
+5 - 15 15 - 25 25 - 35 35 - 45 45 - 55
+?
+
+55 - 65 65 - 75 75 - 85 85 - 95
+
+95 - 99.366
+
+65
+@ A
+
+65B
+
+6565C
+
+85
+D E
+
+85F
+85G
+
+85
+
+EPR_33 RAN                          Global Mean:  0.645E+02
+
+RAN
+
+5 - 15 15 - 25 25 - 35
+H
+
+35 - 45 45 - 55 55 - 65 65 - 75 75 - 85 85 - 95
+
+95 - 99.540
+
+45I
+
+65
+
+65
+
+85J 85K L
+
+85M
+
+EPR_11 MRN                          Global Mean:  0.641E+02
+
+MRN
+
+5 - 15 15 - 25 25 - 35 35 - 45 45 - 55 55 - 65 65 - 75 75 - 85 85 - 95
+
+95 - 99.703
+
+Total Cloud Cover seen as MRN %          Between 3024- 720 Hours
+Impact of Cloud Overlap Assumption: EPR
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 57
+
+Figure  37. The anomaly correlation of the geopotential at 500 hPa for the various time-space configurations for
+
+the Northern (top panels) and Southern (middle panels) hemispheres, and the tropical region (bottom panels). Full
+
+line is S4T3h, long dash line is S4T1, dotted line is S1T3h, and dot-dash line is S1T1.
+
+0N 1O 2P 3Q 4R 5S 6T 7U 8V 9W 10
+Forecast DayX
+
+0
+
+10
+
+20
+
+30
+
+40
+
+50
+
+60
+
+70
+
+80
+
+90
+
+100
+%
+
+Y  DATE1=19970915/... DATE2=19970915/... DATE3=19970915/... DATE4=19970915/...
+AREA=N.HEM    TIME=12   MEAN OVER  12 CASES
+
+ANOMALY CORRELATION                     FORECAST
+
+500 hPa GEOPOTENTIAL
+ZFORECAST VERIFICATION TL159_18r6_S4T3h[
+
+TL159_18r6_S4T1
+
+TL159_18r6_S1T3h
+
+TL159_18r6_S1T1
+\
+
+MAGICS 6.0 styx - pam Wed Apr  7 15:07:14 1999 Verify SCOCOM
+
+0N 1O 2P 3Q 4R 5S 6T 7U 8V 9W 10
+Forecast DayX
+
+0
+
+10
+
+20
+
+30
+
+40
+
+50
+
+60
+
+70
+
+80
+
+90
+
+100
+%
+
+Y  DATE1=19970915/... DATE2=19970915/... DATE3=19970915/... DATE4=19970915/...
+AREA=S.HEM    TIME=12   MEAN OVER  12 CASES
+
+ANOMALY CORRELATION                     FORECAST
+
+500 hPa GEOPOTENTIAL
+ZFORECAST VERIFICATION
+
+]
+TL159_18r6_S4T3h
+
+TL159_18r6_S4T1
+
+TL159_18r6_S1T3h
+[
+TL159_18r6_S1T1
+
+^
+
+MAGICS 6.0 styx - pam Wed Apr  7 15:07:14 1999 Verify SCOCOM
+
+0N 1O 2P 3Q 4R 5S 6T 7U 8V 9W 10
+Forecast DayX
+
+0
+
+10
+
+20
+
+30
+
+40
+
+50
+
+60
+
+70
+
+80
+
+90
+
+100
+%
+
+Y  DATE1=19970915/... DATE2=19970915/... DATE3=19970915/... DATE4=19970915/...
+AREA=EUROPE    TIME=12   MEAN OVER  12 CASES
+
+ANOMALY CORRELATION                     FORECAST
+
+500 hPa GEOPOTENTIAL
+ZFORECAST VERIFICATION TL159_18r6_S4T3h[
+
+TL159_18r6_S4T1
+\
+TL159_18r6_S1T3h
+
+TL159_18r6_S1T1
+
+MAGICS 6.0 styx - pam Wed Apr  7 15:07:14 1999 Verify SCOCOM
+
+
+
+Radiation Transfer
+
+58 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 38. The mean error of the temperature at 850 and 500 hPa for the various time-space configurations for the
+
+Northern and Southern hemispheres, and the tropical region. Panels are read from left to right, and top to bottom.
+
+0_ 1̀ 2a 3b 4c 5d 6e 7f 8g 9h 10
+Forecast Dayi
+
+-0.15
+
+-0.1
+
+-0.05
+
+0
+
+0.05
+
+0.1
+ DATE1=19970915/... DATE2=19970915/... DATE3=19970915/... DATE4=19970915/...
+
+AREA=N.HEM    TIME=12   MEAN OVER  12 CASES
+
+MEAN ERROR                              FORECAST
+
+850 hPa TEMPERATURE/DRY BULB TEMPERATURE
+
+FORECAST VERIFICATION
+
+TL159_18r6_S4T3h
+
+TL159_18r6_S4T1
+
+TL159_18r6_S1T3h
+
+TL159_18r6_S1T1
+
+MAGICS 6.0 styx - pam Thu Apr 22 15:51:04 1999 Verify SCOCOM
+
+0_ 1̀ 2a 3b 4c 5d 6e 7f 8g 9h 10
+Forecast Dayi
+
+-0.3
+
+-0.25
+
+-0.2
+
+-0.15
+
+-0.1
+
+-0.05
+
+0
+
+0.05
+ DATE1=19970915/... DATE2=19970915/... DATE3=19970915/... DATE4=19970915/...
+
+AREA=S.HEM    TIME=12   MEAN OVER  12 CASES
+
+MEAN ERROR                              FORECAST
+
+850 hPa TEMPERATURE/DRY BULB TEMPERATURE
+
+FORECAST VERIFICATION
+
+TL159_18r6_S4T3h
+
+TL159_18r6_S4T1
+
+TL159_18r6_S1T3h
+
+TL159_18r6_S1T1
+
+MAGICS 6.0 styx - pam Thu Apr 22 15:51:04 1999 Verify SCOCOM *    1 ERROR(S) FOUND *
+
+0_ 1̀ 2a 3b 4c 5d 6e 7f 8g 9h 10
+Forecast Dayi
+
+0
+
+0.02
+
+0.04
+
+0.06
+
+0.08
+
+0.1
+
+0.12
+
+0.14
+
+0.16
+
+0.18
+ DATE1=19970915/... DATE2=19970915/... DATE3=19970915/... DATE4=19970915/...
+
+AREA=TROPICS    TIME=12   MEAN OVER  12 CASES
+
+MEAN ERROR                              FORECAST
+
+850 hPa TEMPERATURE/DRY BULB TEMPERATURE
+
+FORECAST VERIFICATION
+
+TL159_18r6_S4T3h
+
+TL159_18r6_S4T1
+
+TL159_18r6_S1T3h
+
+TL159_18r6_S1T1
+
+MAGICS 6.0 styx - pam Thu Apr 22 15:51:13 1999 Verify SCOCOM *    1 ERROR(S) FOUND *
+
+0_ 1̀ 2a 3b 4c 5d 6e 7f 8g 9h 10
+Forecast Dayi
+
+-0.35
+
+-0.3
+
+-0.25
+
+-0.2
+
+-0.15
+
+-0.1
+
+-0.05
+
+0
+ DATE1=19970915/... DATE2=19970915/... DATE3=19970915/... DATE4=19970915/...
+
+AREA=N.HEM    TIME=12   MEAN OVER  12 CASES
+
+MEAN ERROR                              FORECAST
+
+500 hPa TEMPERATURE/DRY BULB TEMPERATURE
+
+FORECAST VERIFICATION
+
+TL159_18r6_S4T3h
+
+TL159_18r6_S4T1
+
+TL159_18r6_S1T3h
+
+TL159_18r6_S1T1
+
+MAGICS 6.0 styx - pam Thu Apr 22 15:51:13 1999 Verify SCOCOM *    1 ERROR(S) FOUND *
+
+0_ 1̀ 2a 3b 4c 5d 6e 7f 8g 9h 10
+Forecast Dayi
+
+-0.7
+
+-0.6
+
+-0.5
+
+-0.4
+
+-0.3
+
+-0.2
+
+-0.1
+
+0
+ DATE1=19970915/... DATE2=19970915/... DATE3=19970915/... DATE4=19970915/...
+
+AREA=S.HEM    TIME=12   MEAN OVER  12 CASES
+
+MEAN ERROR                              FORECAST
+
+500 hPa TEMPERATURE/DRY BULB TEMPERATURE
+
+FORECAST VERIFICATION
+
+TL159_18r6_S4T3h
+
+TL159_18r6_S4T1
+
+TL159_18r6_S1T3h
+
+TL159_18r6_S1T1
+
+MAGICS 6.0 styx - pam Thu Apr 22 15:51:13 1999 Verify SCOCOM *    1 ERROR(S) FOUND *
+
+0_ 1̀ 2a 3b 4c 5d 6e 7f 8g 9h 10
+Forecast Dayi
+
+-0.1
+
+-0.05
+
+0
+
+0.05
+
+0.1
+
+0.15
+ DATE1=19970915/... DATE2=19970915/... DATE3=19970915/... DATE4=19970915/...
+
+AREA=TROPICS    TIME=12   MEAN OVER  12 CASES
+
+MEAN ERROR                              FORECAST
+
+500 hPa TEMPERATURE/DRY BULB TEMPERATURE
+
+FORECAST VERIFICATION
+
+TL159_18r6_S4T3h
+
+TL159_18r6_S4T1
+
+TL159_18r6_S1T3h
+
+TL159_18r6_S1T1
+
+MAGICS 6.0 styx - pam Thu Apr 22 15:51:22 1999 Verify SCOCOM *    1 ERROR(S) FOUND *
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 59
+
+Figure  39. As in Fig. 38 , but for the mean error of the temperature at 200 and 50 hPa.
+
+0_ 1̀ 2a 3b 4c 5d 6e 7f 8g 9h 10
+Forecast Dayi
+
+-0.7
+
+-0.6
+
+-0.5
+
+-0.4
+
+-0.3
+
+-0.2
+
+-0.1
+
+0
+
+0.1
+ DATE1=19970915/... DATE2=19970915/... DATE3=19970915/... DATE4=19970915/...
+
+AREA=N.HEM    TIME=12   MEAN OVER  12 CASES
+
+MEAN ERROR                              FORECAST
+
+200 hPa TEMPERATURE/DRY BULB TEMPERATURE
+
+FORECAST VERIFICATION
+
+TL159_18r6_S4T3h
+
+TL159_18r6_S4T1
+
+TL159_18r6_S1T3h
+
+TL159_18r6_S1T1
+
+MAGICS 6.0 styx - pam Thu Apr 22 15:51:22 1999 Verify SCOCOM *    1 ERROR(S) FOUND *
+
+0_ 1̀ 2a 3b 4c 5d 6e 7f 8g 9h 10
+Forecast Dayi
+
+-0.5
+
+-0.4
+
+-0.3
+
+-0.2
+
+-0.1
+
+0
+
+0.1
+ DATE1=19970915/... DATE2=19970915/... DATE3=19970915/... DATE4=19970915/...
+
+AREA=S.HEM    TIME=12   MEAN OVER  12 CASES
+
+MEAN ERROR                              FORECAST
+
+200 hPa TEMPERATURE/DRY BULB TEMPERATURE
+
+FORECAST VERIFICATION
+
+TL159_18r6_S4T3h
+
+TL159_18r6_S4T1
+
+TL159_18r6_S1T3h
+
+TL159_18r6_S1T1
+
+MAGICS 6.0 styx - pam Thu Apr 22 15:51:23 1999 Verify SCOCOM *    1 ERROR(S) FOUND *
+
+0_ 1̀ 2a 3b 4c 5d 6e 7f 8g 9h 10
+Forecast Dayi
+
+-0.1
+
+0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
+0.8
+ DATE1=19970915/... DATE2=19970915/... DATE3=19970915/... DATE4=19970915/...
+
+AREA=TROPICS    TIME=12   MEAN OVER  12 CASES
+j MEAN ERROR                              FORECAST200 hPa TEMPERATURE/DRY BULB TEMPERATURE
+
+FORECAST VERIFICATION
+
+TL159_18r6_S4T3h
+
+TL159_18r6_S4T1
+
+TL159_18r6_S1T3h
+
+TL159_18r6_S1T1
+
+MAGICS 6.0 styx - pam Thu Apr 22 15:51:32 1999 Verify SCOCOM *    1 ERROR(S) FOUND *
+
+0_ 1̀ 2a 3b 4c 5d 6e 7f 8g 9h 10
+Forecast Dayi
+
+-0.2
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+1.2
+
+1.4
+ DATE1=19970915/... DATE2=19970915/... DATE3=19970915/... DATE4=19970915/...
+
+AREA=N.HEM    TIME=12   MEAN OVER  12 CASES
+
+MEAN ERROR                              FORECAST
+
+50 hPa TEMPERATURE/DRY BULB TEMPERATURE
+
+FORECAST VERIFICATION
+
+TL159_18r6_S4T3h
+
+TL159_18r6_S4T1
+
+TL159_18r6_S1T3h
+
+TL159_18r6_S1T1
+
+MAGICS 6.0 styx - pam Thu Apr 22 15:51:32 1999 Verify SCOCOM *    1 ERROR(S) FOUND *
+
+0_ 1̀ 2a 3b 4c 5d 6e 7f 8g 9h 10
+Forecast Dayi
+
+0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
+0.8
+
+0.9
+
+1
+ DATE1=19970915/... DATE2=19970915/... DATE3=19970915/... DATE4=19970915/...
+
+AREA=S.HEM    TIME=12   MEAN OVER  12 CASES
+
+MEAN ERROR                              FORECAST
+
+50 hPa TEMPERATURE/DRY BULB TEMPERATURE
+
+FORECAST VERIFICATION
+
+TL159_18r6_S4T3h
+
+TL159_18r6_S4T1
+
+TL159_18r6_S1T3h
+
+TL159_18r6_S1T1
+
+MAGICS 6.0 styx - pam Thu Apr 22 15:51:32 1999 Verify SCOCOM *    1 ERROR(S) FOUND *
+
+0_ 1̀ 2a 3b 4c 5d 6e 7f 8g 9h 10
+Forecast Dayi
+
+-0.1
+
+0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
+0.8
+
+0.9
+
+1
+ DATE1=19970915/... DATE2=19970915/... DATE3=19970915/... DATE4=19970915/...
+
+AREA=TROPICS    TIME=12   MEAN OVER  12 CASES
+
+MEAN ERROR                              FORECAST
+
+50 hPa TEMPERATURE/DRY BULB TEMPERATURE
+
+FORECAST VERIFICATION
+
+TL159_18r6_S4T3h
+
+TL159_18r6_S4T1
+
+TL159_18r6_S1T3h
+
+TL159_18r6_S1T1
+
+MAGICS 6.0 styx - pam Thu Apr 22 15:51:32 1999 Verify SCOCOM *    1 ERROR(S) FOUND *
+
+
+
+Radiation Transfer
+
+60 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  40. The zonal mean distribution of the cloud fraction averaged over the last 3 months of TL95 L31
+
+simulations (in percent). Top left panel is the operational configuration (S4T3h), top right is the difference S4T1-
+
+S4T3h, bottom left is the difference S1T3h-S4T3h bottom right is the difference S1T1-S4T3h.
+
+Figure  41. As in Fig. 40 , but for the zonal mean temperature (in degrees Kelvin).
+
+-0.5
+
+-0.5 -0
+.5
+
+-0.5
+
+0.
+5
+
+0.5
+
+0.
+5
+
+0.
+5
+
+S1T3h
+k
+
+ 90.  75.  60.  45.  30.  15.   0.l -15. -30.m -45.n -60. -75. -90.o
+Latitudep 996.
+
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+P
+re
+
+ss
+ur
+
+e 
+Le
+
+ve
+l  
+
+ (
+hP
+
+a)
+
+q
+
+ 996.
+
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+-4.5 - -3.7457 -3.7457 - -3.5 -3.5 - -2.5 -2.5 - -1.5 -1.5 - -0.5 0.5 - 1.5 1.5 - 2.5 2.5 - 3.5 3.5 - 4.5
+
+4.5 - 5.5 5.5 - 6.5 6.5 - 7.5 7.5 - 7.7446
+
+-0
+.5 -0.5
+
+-0
+.5
+
+0.
+5
+
+0.5
+
+S1T1
+k
+
+ 90.  75.  60.  45.  30.  15.   0.l -15. -30. -45. -60. -75. -90.
+Latitudep 996.
+
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+P
+re
+
+ss
+ur
+
+e 
+Le
+
+ve
+l  
+
+ (
+hP
+
+a)
+
+q
+
+ 996.
+
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+-5.5 - -5.4460 -5.4460 - -4.5 -4.5 - -3.5 -3.5 - -2.5 -2.5 - -1.5 -1.5 - -0.5 0.5 - 1.5 1.5 - 2.5 2.5 - 3.5
+
+3.5 - 4.5 4.5 - 5.5 5.5 - 5.8971
+
+5
+r
+
+5
+s
+
+5t
+5
+
+u
+15
+
+15v
+
+15w 15x
+25
+
+y z
+
+35
+{ |
+
+S4T3h
+k
+
+ 90.  75.  60.  45.  30.  15.   0.l -15. -30.m -45.n -60. -75. -90.o
+Latitudep 996.
+
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+P
+re
+
+ss
+ur
+
+e 
+Le
+
+ve
+l  
+
+ (
+hP
+
+a)
+
+q
+
+ 996.
+
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+5 - 10 10 - 15 15 - 20 20 - 25 25 - 30 30 - 35 35 - 40 40 - 45 45 - 50
+
+50 - 55 55 - 60
+
+-0.5
+
+-0.5
+
+0.
+5
+
+0.5
+
+0.
+5
+
+0.5
+
+S4T1
+k
+
+ 90.  75.  60.  45.  30.  15.   0.l -15. -30. -45. -60. -75. -90.
+Latitudep 996.
+
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+P
+re
+
+ss
+ur
+
+e 
+Le
+
+ve
+l  
+
+ (
+hP
+
+a)
+
+q
+
+ 996.
+
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+-4.5 - -3.7050 -3.7050 - -3.5 -3.5 - -2.5 -2.5 - -1.5 -1.5 - -0.5 0.5 - 1.5 1.5 - 2.5 2.5 - 3.5 3.5 - 4.5
+
+4.5 - 5.5 5.5 - 6.5 6.5 - 7.5 7.5 - 8.5
+}
+
+8.5 - 8.5191
+
+8706-8708 Cloud Fraction (%) Zonal M Diff. to OPE
+~ ECMWF TL95 L31: 4/3h, 4/1, 1/3h, 1/1
+
+Time-Space Interpolation: REF
+
+
+-0
+.1
+
+-0.1
+-0.1
+
+0.
+1
+
+0.1
+
+0.1
+
+0.
+1
+
+0.
+1
+
+0.5
+
+0.5
+
+S1T3h
+k
+
+ 90.  75.  60.  45.  30.  15.   0.l -15. -30.m -45.n -60. -75. -90.o
+Latitudep 996.
+
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+P
+re
+
+ss
+ur
+
+e 
+Le
+
+ve
+l  
+
+ (
+hP
+
+a)
+
+q
+
+ 996.
+
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+-0.9 - -0.887457 -0.887457 - -0.7 -0.7 - -0.5 -0.5 - -0.3 -0.3 - -0.1 0.1 - 0.3 0.3 - 0.5 0.5 - 0.7 0.7 - 0.9
+
+0.9 - 1.1 1.1 - 1.3 1.3 - 1.4489
+
+-1.3
+-0.9 -0.5
+
+-0
+.1
+
+-0.1
+
+0.
+1
+
+0.1
+
+0.
+1
+
+0.1
+
+0.
+5
+
+0.5
+
+S1T1
+k
+
+ 90.  75.  60.  45.  30.  15.   0.l -15. -30. -45. -60. -75. -90.
+Latitudep 996.
+
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+P
+re
+
+ss
+ur
+
+e 
+Le
+
+ve
+l  
+
+ (
+hP
+
+a)
+
+q
+
+ 996.
+
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+-2.5 - -2.3646 -2.3646 - -2.3 -2.3 - -2.1 -2.1 - -1.9 -1.9 - -1.7 -1.7 - -1.5 -1.5 - -1.3 -1.3 - -1.1 -1.1 - -0.9
+
+-0.9 - -0.7 -0.7 - -0.5 -0.5 - -0.3 -0.3 - -0.1 0.1 - 0.3 0.3 - 0.5 0.5 - 0.7 0.7 - 0.762493
+
+200
+210
+
+220
+ 
+
+220
+230
+
+230
+
+240
+
+
+
+240
+250
+
+250
+260
+
+
+260
+
+270
+
+
+270
+280
+
+ 290 
+S4T3h
+
+k
+ 90.  75.  60.  45.  30.  15.   0.l -15. -30.m -45.n -60. -75. -90.o
+
+Latitudep 996.
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+P
+re
+
+ss
+ur
+
+e 
+Le
+
+ve
+l  
+
+ (
+hP
+
+a)
+
+q
+
+ 996.
+
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+174.78 - 175 175 - 180 180 - 185 185 - 190 190 - 195 195 - 200 200 - 205 205 - 210 210 - 215
+
+215 - 220 220 - 225 225 - 230 230 - 235 235 - 240 240 - 245 245 - 250 250 - 255 255 - 260
+
+260 - 265 265 - 270
+
+
+270 - 275
+
+
+275 - 280
+
+
+280 - 285
+
+
+285 - 290
+
+
+290 - 295
+
+
+295 - 300
+
+
+300 - 300.77
+
+-2.1
+-1.3-0.9
+
+-0.5 -
+0.1
+
+
+
+-0.1
+
+-0.1
+
+ -0.1
+
+0.
+10.1
+
+0.
+5
+
+S4T1
+k
+
+ 90.  75.  60.  45.  30.  15.   0.l -15. -30. -45. -60. -75. -90.
+Latitudep 996.
+
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+P
+re
+
+ss
+ur
+
+e 
+Le
+
+ve
+l  
+
+ (
+hP
+
+a)
+
+q
+
+ 996.
+
+ 959.
+
+ 891.
+
+ 807.
+
+ 717.
+
+ 626.
+
+ 538.
+
+ 453.
+
+ 374.
+
+ 302.
+
+ 237.
+
+ 181.
+
+ 132.
+
+  90.
+
+  50.
+
+  10.
+
+-2.5 - -2.3577 -2.3577 - -2.3 -2.3 - -2.1 -2.1 - -1.9 -1.9 - -1.7 -1.7 - -1.5 -1.5 - -1.3 -1.3 - -1.1 -1.1 - -0.9
+
+-0.9 - -0.7 -0.7 - -0.5 -0.5 - -0.3 -0.3 - -0.1 0.1 - 0.3 0.3 - 0.5 0.5 - 0.7 0.7 - 0.9 0.9 - 1.0868
+
+8706-8708 Temperature (K) Zonal M Difference to OPE
+~ ECMWF TL95 L31: 4/3h, 4/1, 1/3h, 1/1
+
+Time-Space Interpolation: REF
+
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 61
+
+Figure  42. The bias and standard deviation of the longwave cooling rates computed with the neural network
+
+approach with respect to those computed with the operational longwave scheme, for an ensemble of profiles
+
+sampled out of the first days of the months during one year, with the TL319 L31 operational model.
+
+Figure 43. The anomaly correlation of the geopotential at 500 hPa for a set of experiments starting on the 15th of
+
+the month for one year. EC-OPE uses the operational LW radiation scheme, Neuro-Flux the neural network
+
+version of it.
+
+5
+
+10
+
+15
+
+20
+
+25
+
+30
+
+-1 -0.8 -0.6 -0.4 -0.2 0 0.2 0.4 0.6 0.8 1
+Cooling rates (K/d)
+
+Bias
+
+polar
+mid-latitude
+
+tropical
+
+5
+
+10
+
+15
+
+20
+
+25
+
+30
+
+0 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2
+Cooling rates (K/d)
+
+Standard deviation
+
+polar
+mid-latitude
+
+tropical
+
+10
+
+20
+
+30
+
+40
+
+50
+
+60
+
+70
+
+80
+
+90
+
+100
+
+0 2 4 6 8 10
+
+A
+no
+
+m
+al
+
+y 
+co
+
+rr
+el
+
+at
+io
+
+n 
+(%
+
+)
+
+
+
+Forecast day
+
+500hPa geopotential (m)
+
+NeuroFlux
+EC-OPE
+
+
+
+Radiation Transfer
+
+62 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  44. As in Fig. 43 , but for the mean error in temperature at 850, 500, 200 and 50 hPa.
+
+-0.6
+
+-0.4
+
+-0.2
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0 2 4 6 8 10
+
+T
+em
+
+pe
+ra
+
+tu
+re
+
+ (
+K
+
+)
+
+
+
+Forecast day
+
+850hPa
+
+NeuroFlux
+EC-OPE
+
+-0.6
+
+-0.4
+
+-0.2
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0 2 4 6 8 10
+
+T
+em
+
+pe
+ra
+
+tu
+re
+
+ (
+K
+
+)
+
+ 
+
+Forecast day
+
+500hPa
+
+NeuroFlux
+EC-OPE
+
+-0.6
+
+-0.4
+
+-0.2
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0 2 4 6 8 10
+
+T
+em
+
+pe
+ra
+
+tu
+re
+
+ (
+K
+
+)
+
+¡
+
+Forecast day
+
+200hPa
+
+NeuroFlux
+EC-OPE
+
+-2
+
+-1.5
+
+-1
+
+-0.5
+
+0
+
+0.5
+
+1
+
+1.5
+
+2
+
+0 2 4 6 8 10
+
+T
+em
+
+pe
+ra
+
+tu
+re
+
+ (
+K
+
+)
+
+¡
+
+Forecast day
+
+50hPa
+
+NeuroFlux
+EC-OPE
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 63
+
+Figure  45. The transmissivity, reflectivity and absorptivity for ice clouds with optical properties from Ebert and
+
+Curry (1992), computed with Barker’s (1996) IPA, the Delta-Eddington approximation and a Delta-Eddington
+
+approximation accounting for Tiedtke’s (1996) inhomogeneity factor.
+
+0
+¢
+
+5
+£
+
+10
+¢
+
+15
+£
+
+20
+¢
+
+25
+£
+
+30
+¢
+
+35
+£
+
+40
+¢
+
+45
+£
+
+50
+¢
+
+Optical Thickness
+
+0.0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
+0.8
+
+0.9
+
+1.0
+
+R
+fe
+
+le
+ct
+
+iv
+ity
+
+, T
+ra
+
+ns
+m
+
+is
+si
+
+vi
+ty
+
+, A
+bs
+
+or
+pt
+
+iv
+ity
+
+Comparison IPA vs. Plane−Parallel / Ebert−Curry Ice Cloud¤
+Spectral Interval: 0.25 − 0.68    CSZA=1.0  Sigma= tau/sqrt(1.0)   Fmt=0.7¥
+
+Re_IPA
+Tr_IPA
+
+¦
+Ab_IPA
+
+§
+Re_hoDE
+Tr_hoDE
+
+¦
+Ab_hoDE
+
+§
+Re_MT
+Tr_MT
+
+¦
+Ab_MT
+
+§
+
+0
+¢
+
+5
+£
+
+10
+¢
+
+15
+£
+
+20
+¢
+
+25
+£
+
+30
+¢
+
+35
+£
+
+40
+¢
+
+45
+£
+
+50
+¢
+
+Optical Thickness
+
+0.0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
+0.8
+
+0.9
+
+1.0
+
+R
+fe
+
+le
+ct
+
+iv
+ity
+
+, T
+ra
+
+ns
+m
+
+is
+si
+
+vi
+ty
+
+, A
+bs
+
+or
+pt
+
+iv
+ity
+
+Comparison IPA vs. Plane−Parallel / Ebert−Curry Ice Cloud¤
+Spectral Interval: 0.68 − 4.00    CSZA=1.0  Sigma= tau/sqrt(1.0)   Fmt=0.7¥
+
+Re_IPA
+Tr_IPA
+
+¦
+Ab_IPA
+
+§
+Re_hoDE
+Tr_hoDE
+
+¦
+Ab_hoDE
+
+§
+Re_MT
+Tr_MT
+
+¦
+Ab_MT
+
+§
+
+
+
+Radiation Transfer
+
+64 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  46. As in Fig. 45 , but for water clouds with optical properties from Fouquart (1987).
+
+REFERENCES
+
+Baer, F., N. Arsky, J.J. Charney, and R.G. Ellingson, 1996: Intercomparison of heating rates generated
+by global climate model longwave radiation codes. J. Geophys. Res., 101D, 26,589-26,603.
+
+Barker, H.W., 1996: A parameterization for computing grid-averaged solar fluxes for inhomogeneous
+
+0
+¨
+
+5
+©
+
+10
+¨
+
+15
+©
+
+20
+¨
+
+25
+©
+
+30
+¨
+
+35
+©
+
+40
+¨
+
+45
+©
+
+50
+¨
+
+Optical Thickness
+
+0.0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
+0.8
+
+0.9
+
+1.0
+R
+
+fe
+le
+
+ct
+iv
+
+ity
+, T
+
+ra
+ns
+
+m
+is
+
+si
+vi
+
+ty
+, A
+
+bs
+or
+
+pt
+iv
+
+ity
+
+Comparison IPA vs. Plane−Parallel / Y.Fouquart Water Cloudª
+Spectral Interval: 0.25 − 0.68    CSZA=1.0  Sigma= tau/sqrt(1.0)   Fmt=0.7«
+
+Re_IPA
+Tr_IPA
+
+¬
+Ab_IPA
+
+­
+Re_hoDE
+Tr_hoDE
+
+¬
+Ab_hoDE
+
+­
+Re_MT
+Tr_MT
+
+¬
+Ab_MT
+
+­
+
+0
+¨
+
+5
+©
+
+10
+¨
+
+15
+©
+
+20
+¨
+
+25
+©
+
+30
+¨
+
+35
+©
+
+40
+¨
+
+45
+©
+
+50
+¨
+
+Optical Thickness®
+0.0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
+0.8
+
+0.9
+
+1.0
+
+R
+fe
+
+le
+ct
+
+iv
+ity
+
+, T
+ra
+
+ns
+m
+
+is
+si
+
+vi
+ty
+
+, A
+bs
+
+or
+pt
+
+iv
+ity
+
+Comparison IPA vs. Plane−Parallel / Y.Fouquart Water Cloudª
+Spectral Interval: 0.69 − 4.00    CSZA=1.0  Sigma= tau/sqrt(1.0)   Fmt=0.7
+
+Re_IPA
+Tr_IPA
+
+¬
+Ab_IPA
+
+­
+Re_hoDE
+Tr_hoDE
+
+¬
+Ab_hoDE
+
+­
+Re_MT
+Tr_MT
+
+¬
+Ab_MT
+
+­
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 65
+
+marine boundary layer clouds. Part I: Methodology and homogeneous biases. J. Atmos. Sci., 53, 2289-
+2303.
+
+Barker, H.W., J.-J. Morcrette, and D. Alexander, 1998: Broadband solar fluxes and heating rates for
+atmospheres with 3D broken clouds. Quart. J. Royal Meteor. Soc., 124, 1245-1271.
+
+Barkstrom, B.R., and G.L. Smith, 1986: The Earth Radiation Budget Experiment: Science and
+implementation. Rev. Geophys., 24, 379-390.
+
+Bonnel, B., Y. Fouquart, J.-C. Vanhoutte, C. Fravalo, and R. Rosset, 1983: Radiative properties of some
+African and mid-latitude stratocumulus clouds. Beitr. Phys. Atmosph., 56, 409-428.
+
+Boucher, O., and U. Lohmann, 1995: The sulfate-CCN-cloud albedo effect: A sensitivity study using two
+general circulation models. Tellus, 47B, 281-300.
+
+Cairns B., A.A. Lacis, and B.E. Carlson, 2000: Absorption within inhomogeneous clouds and its
+parameterization in general circulation models. J. Atmos. Sci., 57, 700-714.
+
+Cess, R.D., M.H. Zhang, P. Minnis, L. Corsetti, E.G. Dutton, B.W. Forgan, D.P. Garber, W.L. Gates, J.J.
+Hack, E.F. Harrison, X. Jing, J.T. Kiehl, C.N. Long, J.-J. Morcrette, G.L. Potter, V. Ramanathan, B.
+Subasilar, C.H. Whitlock, D.F. Young, Y. Zhou, 1995: Absorption of solar radiation by clouds:
+Observations versus models. Science, 267, 496-499.
+
+Chandrasekhar, S., 1935: The radiation equilibrium of the outer layer of a star with special reference to
+the blanquening effect of the reverse layer. Mon. Not. Roy. Astron. Soc., 95, 21.
+
+Chandrasekhar, S., 1958: On the diffuse reflection of a pencil of radiation by a plane parallel atmosphere.
+Proc. Nat. Acad. Sci. USA, 44, 933-940.
+
+Chandrasekhar, S., 1960: Radiative transfer. Dover Publications, New York.
+
+Cheruy, F., F. Chevallier, J.-J. Morcrette, N. A. Scott, and A. Chedin, 1996: A fast method using neural networks
+
+for computing the vertical distribution of the thermal component of the Earth radiative budget. C.R.Acad.Sci., 322,
+
+IIb (in French)
+
+Chevallier, F., A. Chedin, F. Cheruy, and J.-J. Morcrette, 2000a: TIGR-like atmospheric profile databases
+for accurate radiative-flux computation. Quart. J. Roy. Meteor. Soc., 126, 777-785. (also ECMWF
+Technical Memorandum No. 275, March 1999, 21 pp)
+
+Chevallier, F., J.-J. Morcrette, F. Cheruy, and N.A. Scott, 2000b: Use of a neural-network-based
+longwave radiative transfer scheme in the ECMWF atmospheric model. Quart. J. Roy. Meteor. Soc., 126,
+761-776. (also ECMWF Technical Memorandum No. 276, March 1999, 21 pp)
+
+Chia Chou, and J. D. Neelin, 1996: Linearization of a longwave radiation scheme for intermediate tropical atmos-
+
+pheric models. J. Geophys. Res., 101D, 15129-151146
+
+Chylek, P., G. Videen, D. Ngo, R.G. Pinnick, and J.D. Klett, 1995: Effect of black carbon on the optical
+
+
+
+Radiation Transfer
+
+66 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+properties and climate forcing of sulphate aerosols. J. Geophys. Res., 100D, 16,325-16,332.
+
+Coakley, J.A., Jr., and P. Chylek, 1975: The two-stream approximation in radiation transfer: Including
+the angle of the incident radiation. J. Atmos. Sci., 32, 409-418.
+
+Curtis, A.R., 1952: Discussion. Quart. J. Roy. Meteor. Soc., 78, 638-640.
+
+Curtis, A.R., 1956: The computation of radiative heating rates in the atmosphere. Proc. Roy. Soc., A 236,
+148-156.
+
+Cusack, S., A. Slingo, J.M. Edwards, and M. Wild, 1998: The radiative impact of a simple aerosol
+climatology on the Hadley Centre atmospheric GCM. Quart. J. Roy. Meteor. Soc., 124A, 2517-2526.
+
+Darnell, W.L., W.F. Staylor, S.K. Gupta, N.A. Ritchey, and A.C. Wilber, 1992: Seasonal variation of
+surface radiation budget derived from ISCCP-C1 data. J. Geophys. Res., 97D, 15,741-15,760.
+
+Deschamps, P.-Y., M. Herman, and D. Tanre, 1983: Modelisation du rayonnement solaire reflechi par
+l’atmosphere et la Terre, entre 0.35 et 4 microns. Rapport ESA 4393/80/F/DC(SC), 156 pp.
+
+Ebert, E.E., and J.A. Curry, 1992: A parametrisation of ice cloud optical properties for climate models.
+J. Geophys. Res., 97D, 3831-3836.
+
+Edwards, J.M., and A. Slingo, 1996: Studies with a flexible new radiation code: I: Choosing a
+configuration for a large-scale model. Quart. J. Roy. Meteor. Soc., 122A, 689-720.
+
+Ellingson, R.E., J. Ellis, and S.B. Fels, 1991: The Intercomparison of Radiation Codes used in Climate
+Models: Longwave results. J. Geophys. Res., 96D, 8929-8954.
+
+Elsasser, W.M., 1938: Mean absorption and equivalent absorption coefficient of a band spectrum. Phys.
+Rev., 54, 126-129.
+
+Elsasser, W.M., 1942: Heat transfer by infrared radiation in the atmosphere. Harvard Meteorological
+Studies No.6, 107 pp.
+
+Fels, S.B., 1979: Simple strategies for inclusion of Voigt effects in infrared cooling rate calculations.Ap-
+pl. Opt., 18, 2634-2637.
+
+Fisher, H., 1985: Absorption and emission. Promet., 15, 2/3 16-19
+
+Fouquart, Y., 1974: Utilisation des approximants de Pade pour l’etude des largeurs equivalentes de raies
+formees en atmosphere diffusante. J. Quant. Spectros. Radiat. Transfer., 14, 497-508.
+
+Fouquart, Y., and B. Bonnel, 1980: Computations of solar heating of the earth’s atmosphere: a new
+parameterization. Beitr. Phys. Atmosph., 53, 35-62.
+
+Fouquart, Y., 1987: Radiative transfer in climate models. NATO Advanced Study Institute on Physically-
+Based Modelling and Simulation of Climate and Climatic Changes. Erice, Sicily, 11-23 May 1986. M.E.
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 67
+
+Schlesinger, Ed., Kluwer Academic Publishers, 223-284.
+
+Fouquart, Y., B. Bonnel, and V. Ramaswamy, 1991: Intercomparing shortwave radiation codes for
+climate studies. J. Geophys. Res., 96D, 8955-8968.
+
+Qiang Fu, and K.-N. Liou, 1993: Parameterization of the radiative properties of cirrus clouds. J. Atmos.
+Sci., 50, 2008-2025.
+
+Qiang Fu, 1996: An accurate parameterization of the solar radiative properties of cirrus clouds for
+climate studies. J. Climate, 9, 2058-2082.
+
+Qiang Fu, P. Yang, and W.B. Sun, 1998: An accurate parameterization of the infrared radiative properties
+of cirrus clouds of climate models. J. Climate, 11, 2223-2237.
+
+Qiang Fu, W.B. Sun, and P. Yang, 1999: Modeling of scattering and absorption by nonspherical cirrus
+ice particles at thermal infrared wavelengths. J. Atmos. Sci., 56, 2937-2947.
+
+Garratt, J.R., 1994: Incoming shortwave fluxes at the surface: A comparison of GCM results with
+observations. J. Climate, 7, 72-80.
+
+Garratt, J.R., A.J. Prata, 1996: Downwelling longwave fluxes at continental surfaces - A comparison of
+observations with GCM simulations and implications for the global land-surface radiation budget. J.
+Climate, 9, 646-655.
+
+Garratt, J.R., A.J. Prata, L.D. Rotstayn, B.J. McAvaney, and S. Cusack, 1998: The surface radiation
+budget over oceans and continents. J. Climate, 11, 1951-1968.
+
+Geleyn, J.-F., and A. Hollingsworth, 1979: An economical analytical method for the computation of the
+interaction between scattering and line absorption of radiation. Beitr. Phys. Atmosph., 52, 1-16.
+
+Genthon, C., 1992: Simulations of desert dust and sea-salt aerosols in Antarctica with a general
+circulation model of the atmosphere. Telles, 44B, 371-389.
+
+Giorgetta, M.A., and J.-J. Morcrette, 1995: Voigt line approximation in the ECMWF radiation scheme.
+Mon. Wea. Rev., 123, 3381-3383.
+
+Godson, W.L., 1953: The evaluation of infrared radiative fluxes due to atmospheric water vapour. Quart.
+J. Roy. Meteor. Soc., 79, 367-379.
+
+Goody, R.M., 1952: A statistical model for water vapour absorption. Quart. J. Roy. Meteor. Soc., 78,
+165-169.
+
+Goody, R.M., 1964: Atmospheric Radiation. I: Theoretical Basis. Clarendon Press, Oxford.
+
+Gupta, S.K., A.C. Wilber, W.L. Darnell, and J.T. Suttles, 1993: Longwave surface radiation over the
+globe from satellite data: An error analysis. Intern. J. Remote Sensing, 14, 95-114.
+
+
+
+Radiation Transfer
+
+68 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Qingyuan Han, W.B. Rossow, and A. Lacis, 1994: Near-global survey of effective droplet radii in liquid
+water clouds using ISCCP data. J. Climate, 7, 465-497.
+
+Harrison, E.F., D.R. Brooks, P. Minnis, B.A. Wielicki, W.F. Staylor, G.G. Gibson, D.F. Young, F.M.
+Denn, and the ERBE Science Team, 1988: First estimates of the diurnal variation of longwave radiation
+from the multiple-satellite Erath Radiation Budget Experiment (ERBE), 1988: Bull. Amer. Meteor. Soc.,
+69, 1144-1151.
+
+Harrison, E.F., P. Minnis, B.R. Barkstrom, V. Ramanathan, R.D. Cess, and G.G. Gibson, 1990: Seasonal
+variation of cloud radiative forcing derived from the Earth Radiation Budget Experiment. J. Geophys.
+Res., 95D, 18,687-18,704.
+
+Joseph, J.H., W.J. Wiscombe, and J.A. Weinman, 1976: The Delta-Eddington approximation for
+radiative flux transfer. J. Atmis. Sci., 33, 2452-2459.
+
+Joussaume, S., 1990: Three-dimensional simulations of the atmospheric cycle of desert dust particles
+using a general circulation model. J. Geophys. Res., 95, 1909-1941.
+
+Kandel, R.S., M. Viollier, P. Raberanto, J.-Ph. Duvel, L.A. Pakhomov, V.A. Golovko, A.P. Trishchenko,
+J. Mueller, E. Raschke, R. Stuhlmann, and the International ScaRaB Scientific Working Group. 1998
+Bull. Amer. Meteor. Soc., 79, 765-783.
+
+Laszlo, I., and R.T. Pinker, 1993: Shortwave cloud-radiative forcing at the top of the atmosphere, at the
+surface and of the atmospheric column as determined from ISCCP C1 data. J. Geophys.Res., 98D, 2703-
+2718.
+
+Le Treut, H., M. Forichon, O. Boucher, and Z.-X. Li, 1998: Sulfate aerosol indirect effect and CO2 greenhouse
+
+forcing: Equilibrium response of the LMD GCM and associated cloud feedbacks. J. Climate, 11, 1673-1684
+
+Li, Zhanqing, and H.G. Leighton, 1993: Global climatologies of solar radiation budgets at the surface
+and in the atmosphere from 5 years of ERBE data. J. Geophys. Res., 98D, 4919-4930.
+
+Liou, K.-N., 1980: An Introduction to Atmospheric Radiation. International Geophysics Series, Vol. 25,
+Academic Press, 392 pp.
+
+Liou, K.-N., 1992: Radiation and cloud processes in the atmosphere Oxford University Press, Oxford,
+New York, 487 pp.
+
+Lohmann, U. and J. Feichter, 1997: Impact of sulfate aerosols on albedo and lifetime of clouds: A
+sensitivity study with the ECHAM4 GCM, J. Geophys. Res., 102, 13,685-13,700.
+
+Malkmus, W., 1967: Random Lorentz band model with exponential tailed 1/S line intensity. J. Optic.
+Soc. Amer., 57, 323-329.
+
+Mitchell, J.F.B., T.C. Johns, J.M. Gregory, and S.F.B. Tett, 1995: Climate response to increasing levels
+of greenhouse gases and sulphate aerosols. Nature, 376, 6540, 501-504.
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 69
+
+Mlawer, E.J., S.J. Taubman, P.D. Brown, M.J. Iacono, and S.A. Clough, 1997: Radiative transfer for
+inhomogeneous atmospheres: RRTM, a validated correlated-k model for the longwave. J. Geophys. Res.,
+102D, 16,663-16,682.
+
+Morcrette, J.-J. , and Y. Fouquart, 1985: On systematic errors in parametrized calculations of longwave
+radiation transfer. Quart.J.Roy.Meteor.Soc., 111, 691-708.
+
+Morcrette, J.-J., L. Smith, and Y. Fouquart, 1986: Pressure and temperature dependence of the absorption
+in longwave radiation parameterizations. Beitr. Phys. Atmosph., 59, 455-469.
+
+Morcrette, J.-J., 1990: Impact of changes to the radiation transfer parameterizations plus cloud optical
+properties in the ECMWF model. Mon. Wea. Rev., 118, 847-873.
+
+Morcrette, J.-J., 1991a: Radiation and cloud radiative properties in the ECMWF operational weather
+forecast model. J. Geophys. Res., 96D, 9121-9132.
+
+Morcrette, J.-J., 1991b: Evaluation of model-generated cloudiness: Satellite observed and model-generated diurnal
+
+variability of brightness temperature. Mon. Wea. Rev., 119, 1205-1224.
+
+Morcrette, J.-J., 1993: Revision of the clear-sky and cloud radiative properties in the ECMWF model.
+ECMWF Newsletter, 61, 3-14.
+
+Morcrette, J.-J., 2000: On the effects of the temporal and spatial sampling of radiation fields on the
+ECMWF forecasts and analyses. Mon. Wea. Rev., 128, 876-887. (also ECMWF Technical Memorandum
+No. 277)
+
+Morcrette, J.-J., and Ch. Jakob, 2000: Response of the ECMWF model to changes in cloud overlap
+assumption. Mon. Wea. Rev., 128, to appear. (also ECMWF Technical Memorandum No. 278)
+
+Ohmura, A., E.G. Dutton, B. Forgan, C. Frohlich, H. Gilgen, H. Hegner, A. Heimo, G. Konig-Langlo, B. McArthur,
+
+G. Muller, R. Philipona, R. Pinker, C.H. Whitlock, K. Dehne, and M. Wild, 1998: Baseline Surface Radiation
+
+Netweork (BSRN/WCRP): New precision radiometry for climate research. Bull. Amer. Meteor. Soc., 79, 2115-
+
+2136.
+
+Paltridge, G. W., and C. M. R. Platt, 1976: “Radiative processes in meteorology and climatology”. Elsevier, New
+
+York, 318 pp.
+
+Pilewskie, P., and F. Valero, 1995: Direct observations of excess soalr absorption by clouds. Science,
+267, 1626-1629.
+
+Quenzel, H., 1985: Radiation from molecules and aerosol particles. Promet., 15, 2/3, 7-9.
+
+Ramanathan, V., 1987: The role of Earth Radiation Budget studies in climate and general circulation
+research. J. Geophys. Res., 92D, 4075-4096.
+
+Ramaswamy, V., and S.M. Freidenreich, 1992: A study of broadband parameterizations of the solar
+radiative interactions with water vapor and water drops. J. Geophys. Res., 97D, 11,487-11,512.
+
+
+
+Radiation Transfer
+
+70 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Ramanathan, V., B. Subalisar, G.J. Zhang, W.C. Conant, R.D. Cess, J.T. Kiehl, H. Grassl, and L. Shi,
+1995: Warm pool heat budget and short wave cloud forcing. A missing physics. Science, 267, 499-503.
+
+Rodgers, C.D., 1967: The use of emissivity in atmospheric radiation calculations. Quart. J. Roy. Meteor.
+Soc., 93, 43-54.
+
+Rodgers, C.D., and C.D. Walshaw, 1966: The computation of the infrared cooling rate in planetary
+atmospheres. Quart. J. Roy. Meteor. Soc., 92, 67-92.
+
+Rossow, W.B., 1993: Satellite observations of radiation and clouds to diagnose energy exchanges in the
+climate. in Energy and Water Cycles in the Climate System. E. Raschke, D. Jacob, Eds., NATA ASI Vol.
+15, Springer-Verlag Berlin Heidelberg, 123-141 (Part I); 143-164 (Part II).
+
+Rossow, W.B., E. Kinsella, A. Wolf, and L. Garder, 1987: International Satellite Cloud Climatology
+Project (ISCCP): Description of Reduced Resolution Radiance Data. July 1985 (revised July 1987).
+WMO/TD-No.58, World Meteorological Organization, Geneva, 143 pp.
+
+Rothman, L.S., et al., 1998: The HITRAN molecular spectroscopic database and HAWKS: 1996 Edition.
+J.Quant. Spectros. Radiat. Transfer, 60, 665-710.
+
+Schulz, M., Y.J. Balkanski, W. Guelle, and F. Dulac, 1998: Role of aerosol size distribution and source
+location in a three-dimensional simulation of a Saharan dust episode tested against satellite-derived
+optical thickness. J. Geophys. Res., 103D, 10,579-10,592.
+
+Schultz, F.M., K. Stamnes, and J.J. Stamnes, 1999: Shape dependence of the optical properties in size-
+shape distributions of randomly oriented prolate spheroids, including highly elongated shapes. J.
+Geophys. Res., 104D, 9413-9422.
+
+Shettle, E.P., and J.A. Weinman, 1970: The transfer of solar irradiance through inhomogeneous turbid
+atmospheres evaluated by Eddington’s approximation. J. Atmos. Sci., 27, 1048-1055.
+
+Smith, E. A., and Lei Shi, 1992: Surface forcing of the infrared cooling profile over the Tibetan plateau.
+Part I: Influence of relative longwave radiative heating at high altitude. J. Atmos. Sci., 49, 805-822.
+
+Stephens, G.L., 1979: Optical properties of eight water cloud types. C.S.I.R.O. Div. Atmos. Phys., Tech.
+Paper No. 36, 1-36.
+
+Stephens, G.L., 1988: Radiative transfer through arbitrarily shaped optical media: Part I: A general
+method of solution. J. Atmos. Sci., 45, 1818-1836. Part II: Group theory and simple closures. J. Atmos.
+Sci., 45, 1837-1848.
+
+Stephens, G.L., 1984: The parameterization of radiation for numerical weather prediction and climate
+models. Mon. Wea. Rev., 112, 826-867.
+
+Stephens, G.L., 1996: How much solar radiation do clouds absorb? Science, 271, 1131-1134.
+
+
+
+Radiation Transfer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 71
+
+Stephens, G.L., and P.J. Webster, 1979: Sensitivity of radiative forcing to variable cloud and moisture. J.
+Atmos. Sci., 36, 1542-1556.
+
+Stowe, L.L., et al., 1989: Nimbus-7 Global Cloud Climatology. Part II: First year results. J. Climate, 2,
+671-709.
+
+Stubenrauch, C.J., A.D. Del Genio, and W.B. Rossow, 1997: Implementation of subgrid cloud vertical
+structure inside a GCM and its effect on the radiation budget. J. Climate, 10, 273-287.
+
+Takano, Y., and K.-N. Liou, 1989: Solar radiative transfer in cirrus clouds. Part I: Single scattering and
+optical properties of hexagonal ice crystals. J. Atmos. Sci., 46, 3-19. Part II: Theory and computations
+of multiple scattering in an anisotropic medium. J. Atmos. Sci., 46, 20-36. Radiative transfer in cirrus
+clouds. Part III: Light scattering by irregular ice crystals. J. Atmos. Sci., 52, 818-837.
+
+Tanre, D. J.-F. Geleyn, and J. Slingo, 1984: First results of the introduction of an advanced aerosol-
+radiation interaction in the ECMWF low resolution global model. in Aerosols and Their Climatic
+Effects, H.E. Gerber and A. Deepak, Eds., A. Deepak Publ., Hampton, Va., 133-177.
+
+Tegen, I., P. Hollrigl, M. Chin, I. Fung, D. Jacob, and J. Penner, 1997: Contribution of different aerosol
+species to the global aerosol extinction optical thickness: Estimates from model results, J. Geophys.
+Res., 102, 23,895-23.915.
+
+Tiedtke, M., 1996: An extension of cloud-radiation parameterization in the ECMWF model: The
+representation of sub-grid scale variations of optical depth. Mon. Wea. Rev., 124, 745-750.
+
+Timmreck, C., J. Feichter, H-F. Graf, I. Kirchner and E. Manzini, 1997: Interactive simulations of Mt.
+Pinatubo stratospheric aerosol, J. Aerosol. Sci., 28, Suppl. 1, 5723-5724.
+
+Wang Junhong, and W.B. Rossow, 1995: Determination of cloud vertical structure from upper-air
+observations. J. Appl. Meteor., 34, 2243-2258.
+
+Washington, W.M., and D.L. Williamson, 1977: A description of the NCAR GCMs. "GCMs of the
+atmosphere". J. Chang, Ed., Methods in computational physics, Vol. 17, Academic Press, 111-172.
+
+Webster, P.J., and G.L. Stephens, 1980: Tropical upper tropospheric extended clouds: Inferences from
+Winter MONEX. J. Atmos. Sci., 37, 1521-1541.
+
+Wielicki, B.A., et al., 1996: Clouds and the Earth’s Radiation Energy System (CERES): An Earth
+Observing System experiment. Bull. Amer. Meteor. Soc., 77, 853-868.
+
+Wyser, K., 1998: The effective radius of ice clouds. J. Climate, 11, 1793-1802.
+
+Zhang, Y.-C., W.B. Rossow, and A.A. Lacis, 1995: Calculation of surface and top of the atmosphere
+radiative fluxes from physical quantities based on ISCCP data sets, 1: Method and sensitivity to input
+data uncertainties. J. Geophys. Res., 100, 1149-1166.
+
+
+
+Radiation Transfer
+
+72 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002

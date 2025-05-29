@@ -1,0 +1,1817 @@
+Remote_sensing
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+Principles of remote sensing of atmospheric
+parameters from space
+February 1998
+
+By R. Rizzi and updated by R. Saunders
+
+European Centre for Medium-Range Weather Forecasts, Shinfield Park, Reading RG2 9AX, U.K.
+
+Table of contents
+
+1 . Introduction
+
+2 . Absorption and transmission of monochromatic radiation
+
+3 . Black Body radiation
+
+4 . Emissivity, Kirchhoff Law and Local Thermodynamical Equilibrium.
+
+5 . The equation for Radiative Transfer
+
+6 . Spectral distribution of radiance leaving the atmosphere
+
+7 . Modelling the interaction
+
+7.1 The molecule as a rigid quantized rotator.
+
+7.2 The molecule as a quantized vibrator.
+
+7.3 Vibro-rotational bands.
+
+8 . Line shapes and the absorption coefficient.
+
+8.1 Natural broadening.
+
+8.2 Collisional broadening.
+
+8.3 Doppler broadening.
+
+9 . Continuum Absorption
+
+10 . Integration over frequency
+
+10.1 Line-by-line methods
+
+10.2 Fast-transmittance models.
+
+11 . The direct problem.
+
+1. INTRODUCTION
+
+The interaction of electromagnetic radiation with matter modifies to some extent the incident wave. The medium
+
+therefore produces a signature in the amplitude, phase or spectral composition which depends on composition and
+
+structure of the medium. The basic principle associated with remote sensing of the atmospheric temperature and
+
+humidity structure involves the interpretation of radiometric measurements of electromagnetic radiation in specific
+
+spectral intervals which are sensitive to some physical aspects of the medium. More specifically, at any wavenum-
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+ber (or wavelength) in the infrared or microwave regions where an atmospheric constituent absorbs radiation, it
+
+also emits thermal radiation according to Kirchhoff's Law. Since the radiance leaving the atmosphere is a function
+
+of the distribution of the emitting gases and of temperature throughout the atmosphere, measurements of radiance
+
+contain some information on both these quantities.
+
+These lectures will start with an introduction to the basic radiometric quantities and laws to be used, then will derive
+
+and discuss the equation of radiative transfer for an absorbing and emitting medium. No scattering is included so
+
+the results will be applicable only to situations in which scattering phenomena play a secondary role, as is the case
+
+for the energy transfer in the clear atmosphere in the infrared and at microwave frequencies, provided no clouds
+
+are involved in which precipitation is taking place nor ice phase is present. The concepts outlined below are de-
+
+scribed in more detail in Goody and Yung (1989) to which the interested reader is referred.
+
+2. ABSORPTION AND TRANSMISSION OF MONOCHROMATIC RADIATION
+
+Referring to Fig. 1 , radiance is the amount of energy crossing, in a time interval and in the wavenumber interval
+
+to , a differential area at an angle to the normal to , the beam being confined to a solid angle
+
+. In other words
+
+(1)
+
+and the unit is W(m2 sr cm-1)-1.
+
+Sometimes different units are used, like mW(m2 sr cm-1)-1 whose numerical values are the same as in CGS units.
+
+Radiance can also be defined for a unit wavelength or frequency interval (in units of inverse centimetres) the
+
+relation among these quantities being
+
+Figure  1. Illustrating a pencil of radiation through an element of area  in direction confined to an element of
+
+solid angle  (figure taken from Liou, 1980).
+
+d
+�
+
+ν ν dν+ d� θ d�
+dΩ
+
+�
+ν
+
+d � ν
+θ d� d � dΩ dνcos-------------------------------------------------=
+
+λ ν
+
+d�
+dΩ
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+where is the speed of light in vacuum and is frequency (in units of Hz). Spectroscopists have adopted the wav-
+
+enumber as the normal unit for frequency and this is used throughout this report. However at microwave frequen-
+
+cies the true frequency (in GHz) is often employed.
+
+Whenever a beam of monochromatic radiation, whose radiance is enters an absorbing medium (see Fig. 2 ),
+
+the fractional decrease experienced is:
+
+(2)
+
+where is the density of the medium at and is a proportionality factor called the (spectral) absorp-
+
+tion coefficient. Integrating Eq. (2) between 0 and  yields
+
+(3)
+
+where is the boundary value, i.e. the radiance entering the medium at . The ratio is
+
+called the (spectral) transmittance of the Black Body radiation medium.and is the optical depth. An
+
+example of the use of Eq. (3) is the modelling of attenuation of the solar direct beam due to atmospheric constitu-
+
+ents. The real problem lies, as always, in the knowledge of  the absorption coefficient of the gases.
+
+Figure  2. (figure taken from McCartney, 1983).
+
+3. BLACK BODY RADIATION
+
+To explain the spectral distribution of radiance emitted by solid bodies, Planck found that the radiance per unit fre-
+
+quency emitted by a blackbody at temperature is expressed by
+
+λ
+�
+ν̃
+--- 1
+
+ν
+---= =
+
+� ν̃
+
+�
+ν
+
+�
+νd�
+
+ν
+--------- � νρ �d–=
+
+ρ ρ �( )= � � ν�
+�
+
+ν �( ) � ν 0( ) � νρ �d
+0
+
+�
+∫–  exp=
+
+�
+ν 0( ) � 0= � ν �( ) � ν⁄ 0( )� νρ �d
+
+0
+
+�
+∫–
+
+� ν
+
+�
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(4)
+
+where is Planck’s constant and is Boltzmann’s constant. An equivalent formula in terms of radiance per unit
+
+wavelength is
+
+(5)
+
+The above two equations can be simplified by defining:
+
+Figure  3. Spectral radiance of a blackbody, per unit wavenumber interval and per unit frequency interval, at the
+
+Kelvin temperatures shown in each curve (taken from Valley, 1965).
+
+as the first and second radiation constant respectively. Figures 3 and 4 show curves of versus wave number
+
+and  versus wavelength.
+
+	
+ν
+�
+
+( ) 2 
+ ν3 �
+ ν �
+κ
+�----------   1–exp
+
+----------------------------------=
+
+
+ κ
+
+	
+λ
+�
+
+( ) 2 
+ � 2
+λ5 
+ �κλ �-----------   1–exp
+-----------------------------------------------=
+
+�
+1 2π 
+ � 2=
+
+�
+2
+
+ �
+κ
+
+------=
+
+	
+ν
+�
+
+( )	
+λ
+�
+
+( )
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+Equation (4) implies that, as long as a cavity is in thermodynamic equilibrium (TE) at a given temperature, the spec-
+
+tral distribution of radiance emitted by the cavity depends only on its temperature, whatever spectral distribution
+
+of radiance is entering the cavity. This is because quanta entering a perfect black cavity undergo a succession of
+
+internal reflections and absorptions until all the energy is absorbed within the cavity.
+
+4. EMISSIVITY, KIRCHHOFF LAW AND LOCAL THERMODYNAMICAL EQUILIBRIUM.
+
+In general a medium that absorbs radiation may also emit radiation at the same wavenumber. If we enclose the vol-
+
+ume of gas in Fig. 2 in a black box in thermodynamic (TE) with the gas, the temperature of its walls being the
+
+same as that of the gas, then the radiance emitted from the walls of the box in all directions will be and the
+
+amount of energy absorbed in the any direction (say for convenience) by a layer deep of gas is
+
+.
+
+Figure  4. Spectral radiance of a blackbody, per unit wavelength interval, at the Kelvin temperatures shown in
+
+each curve (taken from Valley, 1965).
+
+The same amount of gas will emit in the -direction an amount of energy where is a proportion-
+
+ality constant called the (spectral) emissivity of the gas. Now the amount of emitted energy must be equal to the
+
+amount of energy absorbed in the same direction, for equilibrium conditions; otherwise equilibrium would not be
+
+�
+	
+
+ν
+�
+
+( )
+� d�	
+
+ν
+�
+
+( ) � νρd�
+
+� 	 ν �( )ενρd� εν
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+possible and the second law of thermodynamics would be violated. This in turn implies the equality of the absorp-
+
+tion and emission coefficients when TE is achieved, which is a way of stating Kirchhoff’s Law.
+
+The radiation field of the earth atmosphere, as a whole, is not in TE. However, below about 40 to 60 km, a volume
+
+of gas behaves approximately as a black cavity so that the emission from the volume is dependent only on its tem-
+
+perature, whatever the spectral distribution of radiance entering the volume from outside may be. In fact, as soon
+
+as a molecule absorbs a quantum of energy, some is lost by collisional exchange with nearby molecules, before
+
+emission takes place. These collision exchanges spread the energy of the initial quantum throughout the volume of
+
+air. When emission finally occurs, it takes place from an upper energy level which is lower than the level reached
+
+after the initial absorption. When the mean time between collisions (relaxation time) is much smaller than the time
+
+interval between the initial absorption and final emission (natural lifetime), then a single kinetic temperature char-
+
+acterizes, to a good approximation, the gas. This (lucky) circumstance is denoted by the term Local Thermodynam-
+
+ic Equilibrium. At STP the ratio of relaxation time to natural lifetime is about 10-10 for a rotational transition and
+
+ for a vibrational transition.
+
+5. THE EQUATION FOR RADIATIVE TRANSFER
+
+Consider the volume of gas in Fig. 2 in which emission as well as absorption now takes place, but not scattering.
+
+The equation of energy transfer can be written, for monochromatic radiation,
+
+where the -direction is the direction of propagation of the incident wave, can now take values from 0 to .
+
+The first term on the right-hand side is the effect of absorption within , and is the source of radiant
+
+emission within . We are interested in computing the value of radiance at . Dropping for simplicity the
+
+subscript  and applying the Kirchhoff law we get:
+
+(6)
+
+where is the temperature of the gas at . We define the monochromatic optical depth of the medium
+
+between points  and  as
+
+(7)
+
+Equation (6) can then be written
+
+(8)
+
+Noting that
+
+� ν εν=
+
+10 5– 10 4–×
+
+d
+�
+
+ν
+�
+
+ν � νρ d�– � νρ d�+=
+� � 
+
+d� � ν
+d� � =
+
+ν
+
+1
+� ρ------
+
+d
+� �( )
+d�---------------
+
+� �( )– 	�� �( )+=
+� � � σ ��,( )
+
+� 
+
+σ ��,( ) � ρ � ′d�
+�
+∫=
+
+dσ ��,( ) dσ ��,( )
+d�---------------------d� � ρ d�–= =
+
+d
+� �( )
+
+dσ ��,( )---------------------–
+� �( )– 	�� �( )+=
+
+d
+�
+
+σ ��,( )–( )exp[ ] d� σ ��,( )–( ) � dσ– σ ��,( )–( )expexp=
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+we can multiply Eq. (8) by  and then integrate the resultant equation between 0 and
+
+to obtain finally
+
+(9)
+
+The first term on right-hand side of (9) is analogous to the one in Eq. (3) and represents the radiance at the boundary
+
+multiplied by the transmittance from the boundary up to . The second term is the contribution due to emission
+
+from the medium in the direction of the incident wave. Each slab around a generic point radiates depending
+
+on the amount of gas ( ) on its emissivity ( ) and on its temperature. The energy is depleted in its way
+
+from  to  by a factor given by the transmittance from to
+
+A similar equation is obtained when computing the radiance emitted by the atmosphere in any upward direction
+
+toward space. Denoting by the zenith axis ( represents the top of the atmosphere) and by the zenith angle
+
+of the emitted radiation the solution is (dropping the spectral index):
+
+The term  is the increase of optical depth with zenith angle for a plane parallel atmosphere.
+
+One may note that
+
+and that the contribution from the lower radiating surface (either land or sea) can be expressed as
+
+ where is its emissivity; so that finally
+
+(10)
+
+σ ��,( )–[ ]exp 
+�
+
+σ ��,( )–( )exp[ ]d
+0
+
+�
+∫–
+
+	�� �( ) σ ��,( )–( )exp σ ��,( )d
+0
+
+�
+∫=
+
+�
+ν ( ) � ν 0( ) � νρ �d0
+
+�
+∫–( ) � νρ 	 ν � �( ) � νρ �d��∫–( )exp �d0
+
+�
+∫+exp=
+
+
+d� �
+
+ρ �( ) � ν=�  � 
+
+τν ��,( ) � νρ �d��∫–( )exp=
+
+� � � θ
+
+� � � θ,( ) � 0 θ,( )τ 0 � � θ, ,( ) � ρθcos------------
+	����
+
+( )τ ��� � θ, ,( ) �d
+0
+
+���
+∫+=
+
+τ �� θ, ,( ) � ρθcos------------ �d�
+�
+∫–  exp=
+
+d� θcos⁄
+
+�
+ν
+��� � θ, ,( ) dτν ��� � θ, ,( )
+
+d�-------------------------------
+� νρ
+
+θcos
+------------τ ��� � θ, ,( )=≡
+
+�
+ν 0( ) εs ν,
+
+	
+ν
+�
+
+0( )= εs ν,
+
+�
+ν
+� � θ,( ) ε � ν, 	 ν � 0( )τ 0 � � θ, ,( ) 	 ν ���( ) � ν ��� � θ, ,( ) �d
+
+0
+
+���
+∫+=
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  5. The simulated upward radiance at 56 hPa height for a mid-latitude temperature and moisture profile.
+
+The contribution of each layer of the atmosphere, centred at , to the integrated upward radiance emerging to
+
+space, is hence expressed by a blackbody contribution weighted according to ; layers for which attains larg-
+
+est
+
+values are the ones who contribute most to the integral value at the top. is often called the weighting function.
+
+Equation (10) can also be expressed using pressure, or , as vertical coordinate. Examples can be found in Sec-
+
+tion 10.
+
+6. SPECTRAL DISTRIBUTION OF RADIANCE LEAVING THE ATMOSPHERE
+
+Radiance, defined in Section 2, can be expressed in terms of the temperature that a perfect black body would have
+
+to emit the same radiance in the same wavenumber interval. The latter quantity is referred to as brightness temper-
+
+ature ( ).
+
+Figure 5 shows simulated upward radiance at 56 hPa height for a mid-latitude temperature and moisture profile.
+
+Fig. 6 shows the same data converted to . The spectral resolution (see section 10 for the definition) of the two
+
+data set is .It may be noticed that a constant corresponds to diminishing values of radiance as we
+
+move to higher wavenumbers since the maximum value for the Planck function at 300 K is around 600 cm-1.
+
+d� � � �
+
+�
+�log
+
+�
+B
+
+�
+( )
+
+�
+B
+
+0.67 cm 1–≈
+�
+
+B
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+Figure  6. The data in Fig. 5  converted to .
+
+The spectral range shown in the two figures covers an important domain used for atmospheric sounding purposes,
+
+namely the whole CO2 absorption band centred at 672 cm-1 (15 µm) and the window region from 1050 to 770 cm–
+1 (about 9.5 to 13 µm). Another important feature is the ozone absorption band around 1040 cm-1 (9.6 µm). Figure
+7 shows two emission spectra of the earth and atmosphere as measured from the IRIS interferometer on board
+
+NIMBUS 3 (taken from Hanel, 1971). The upper figure is radiance measured over Antarctica while the lower one
+
+is measured over the Sahara desert.
+
+�
+B
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  7. Two emission spectra of the earth and atmosphere as measured from the IRIS interferometer on board
+
+NIM
+
+Recalling that low values of are associated with low numeric values of radiances, it appears that some complex
+
+interaction is taking place within the atmosphere producing large variations in energy emitted upwards. An expla-
+
+nation for this requires some knowledge of basic spectroscopy, the principles of which will be dealt with in the next
+
+section. It will be shown that the presence of sharp variations in brightness temperature (or radiance, or absorption
+
+properties) is due to the nature of the interaction which is quantized.
+
+7. MODELLING THE INTERACTION
+
+For interaction to take place a force must act on a molecule in the presence of an external electromagnetic field.
+
+The existence of such a force depends on the presence of an electric or magnetic instantaneous dipole moment. The
+
+polarizability of a molecule is related to the extent to which a molecule has a permanent dipole moment or can
+
+acquire an oscillating one produced by its vibrational motion. If we consider a molecule as a rigid rotator, radiative
+
+interaction can take place only if the molecules possess a permanent dipole moment. Thus CO, N2O, H2O and O3
+(see Fig. 8 ) interact with the field by changing their “rotation vector” while N2, O2, CO2 and CH4 do not. However
+
+�
+B
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+as a molecule like CO2 vibrates, an oscillating electrical dipole moment is produced and rotational interaction can
+
+take place. Hence CO2 and CH4 possess vibration-rotational couplings with the incident wave.
+
+In what follows only interaction through electric dipole moments will be considered, the main aim of this section
+
+being to show some examples of how molecular absorption and emission spectra can be explained (and computed).
+
+7.1  The molecule as a rigid quantized rotator.
+
+Diatomic or linear triatomic molecule (Fig. 10 ) have two equal moments of inertia and two degrees of rotational
+
+freedom. Asymmetric top molecules, like H2O have three unequal moments of inertia and three degrees of free-
+
+dom.
+
+The kinetic energy of a rigid rotator is . While for a classical rotator and hence can
+
+take any value, a quantized rotator is subject to quantum restrictions on angular momentum
+
+where , the quantum number for rotation, can assume only integer values. The quantized rotational energy can
+
+therefore be written
+
+Recalling that is the rotational energy associated to a rotational state around a specific principal axis and
+
+calling rotational constant the quantity
+
+where  is the moment of inertia around that axis, we may write
+
+For asymmetric top molecules we will have three moments of inertia and three rotational constants
+
+(namely ,  and ). The rotational energy can be expressed in terms of the rotational term
+
+which is measured in the energy unit cm-1. is the rotational constant associated to the axis with moment of inertia
+
+. In Table 1 values of the molecular electrical dipole and rotational constants for some of the most important
+
+active atmospheric species are given.
+
+� rot � rot 12--- � ω2= ω � rot
+
+� ω 
+
+2π
+------ � � 1+( )[ ]1 2⁄=
+
+�
+
+�"! � rot !, 12---
+� ω( )2�-------------- 
+
+
+2
+
+8π2 �------------ � � 1+( )= = =
+
+�"! �
+
+� 
+
+8π2 � � A
+------------------=
+
+�$#
+�"! �%
+ � � � 1+( )=
+
+�$#&�(')�+*, ,( )
+� 	 � , �( )
+
+, �( ) �"!
+ �-------
+	 � � 1+( )= =
+
+	
+�-'
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 8. Symbolic nuclear configurations and permanent dipole moment status of some atmospheric molecules
+
+(figure taken from McCartney, 1983).
+
+Interaction between the molecule and the external field takes place whenever a quantum of energy is extracted
+
+(absorption process) or added (emission) to the external field. The basic relation holds
+
+where and are the two energy levels involved. Denoting the upper and lower rotational quantum number
+
+as  and  the difference between the two energy levels is
+
+TABLE 1. VALUES OF MOLECULAR ELECTRICAL DIPOLE MOMENT (Μ IN DEBYE UNITS) AND ROTATIONAL
+CONSTANTS OF SOME ATMOSPHERIC MOLECULES
+
+Species
+
+CO  0.112  –  1.9314  –
+
+CO2  0.  –  0.3902  –
+
+N2O  0.167  –  0.4190  –
+
+H2O  1.85  27.877  14.512 9.285
+
+O3  0.53  3.553  0.445 0.395
+
+CH4  0.  –  5.249  –
+
+µ � 	 �
+
+
+ ν �
+
+� ′ � ″– 
+ ν �=
+� ′ � ″
+
+� ′ � ″
+∆
+, 	 � ′ � ′ 1+( ) 	 � ″ � ″ 1+( )–=
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+A quantum selection rule dictates that only transition among adjacent levels are allowed, that is
+
+where the value applies to absorption, which increases the internal energy of the molecule. Hence for the
+
+case of absorption
+
+(11)
+
+The absorbed photons have energies that are individually equal to Eq. (11) and the aggregate effect from all the
+
+molecules in a volume is a depletion of the incident wave energy at wavenumber which is observed as a spec-
+
+tral line. As an example absorption of a photon at wavenumber 669.29 (corresponding to the wavelength 14.947
+
+) is accomplished by the H2O molecule spinning around its principal axis A with a transition from rotational
+
+quantum number 12 to 13.
+
+Figure  9. Axes of rotational freedom for linear and asymmetric top molecules (figure taken from
+
+McCartney,1983).
+
+7.2  The molecule as a quantized vibrator.
+
+An ensemble of nuclear masses held together by elastic valence bonds forms a system capable of vibrating in one
+
+or more modes. Some of the most commonly encountered vibrational modes for diatomic and triatomic molecules
+
+are shown in Fig. 10 .
+
+A classical two-mass vibrator has a natural frequency  which is given by:
+
+where is the elastic force constant and is the reduced mass. The potential energy for this system is given by
+
+∆� � ′ � ″–( ) 1±= =
+∆� = +1
+
+∆
+,
+
+2
+	 � ″ 1+( ) 2 	 � ′ ν.0/21= = =
+
+νrot
+
+µm
+
+ν̃
+
+ν̃ 1
+2π
+------
+� e3 ′-------  
+
+1
+2
+---
+
+=
+
+� e 3 ′
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+the relation
+
+Figure  10. Symbolic configurations and vibrational modes of diatomic and triatomic molecules (figure taken
+
+from McCartney, 1983).
+
+where is the distance between the two masses at equilibrium. Quantum restrictions on vibrational energy are
+
+found by solving the time independent Schroedinger equation in one dimension. The eigenvalues defining the al-
+
+lowed energy levels are
+
+where is the quantum number for vibration. These equations hold for a simple harmonic motion, which is true
+
+only when the vibrational quantum number is small. Disregarding some of the complexities of real life, we may
+
+consider a simple transition of a diatomic molecule from two adjacent vibrational levels since the quantum selec-
+
+tion rule allows only transition for which , where the plus sign applies for transition in which the internal
+
+energy is incremented through absorption of a quantum of energy. Denoting by any level except and by
+
+ the next lower level, the transition energy is
+
+�54 2π2 3 ′ 676 0–( )2ν̃2=
+6 0
+
+� ν ν 12---+   
+ ν̃ ν 0 1 2 …, , ,= =
+
+� ν ν 12---+  
+
+
+2π
+------
+� e3 ′-------  
+
+1
+2
+---
+
+=
+
+ν
+
+∆ν 1±=
+ν′ ν 0=
+
+ν″
+
+∆� 
+
+2π
+------
+� e3 ′-------  
+
+1
+2
+---
+
+ν′ 1
+2
+---+ 
+
+  ν″ 1
+2
+---+ 
+
+ –=
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 15
+
+.
+
+hence
+
+Therefore a photon of energy , where  denotes the wavenumber of the transition, will be absorbed if
+
+that is when
+
+TABLE 2. VIBRATIONAL FREQUENCIES, WAVELENGTHS AND WAVENUMBERS OF RADIATIVELY ACTIVE ATMOSPHERIC
+MOLECULES (TAKEN FROM McCartney, 1983).
+
+Species Parameter Vibrational modes
+
+CO 6.43 x 1013
+
+4.67
+2143
+
+-
+-
+-
+
+-
+-
+-
+
+CO2 -
+-
+-
+
+2.00 x 1013
+
+15.0
+667
+
+7.05 x 1013
+
+4.26
+2349
+
+N2O 3.86 x 1013
+
+7.78
+1285
+
+1.77 x 1013
+
+17.0
+589
+
+6.67 x 1013
+
+4.49
+2224
+
+H2O 1.10 x 1014
+
+2.73
+3657
+
+4.79 x 1013
+
+6.27
+1595
+
+1.13 x 1014
+
+2.65
+3776
+
+O3 3.33 x 1013
+
+9.01
+1110
+
+2.12 x 1013
+
+14.2
+705
+
+3.13 x 1013
+
+9.59
+1043
+
+NO 5.71 x 1013
+
+5.25
+1904
+
+-
+-
+-
+
+-
+-
+-
+
+NO2 3.92 x 1013
+
+7.66
+1306
+
+2.26 x 1013
+
+13.25
+755
+
+4.86 x 1013
+
+6.17
+1621
+
+CH4 8.75 x 1013
+
+3.43
+2917
+
+4.60 x 1013
+
+6.52
+1534
+
+9.06 x 1013
+
+3.31
+3019
+
+CH4 5.71 x 1013
+
+5.25
+1904
+
+ν1 ν2 ν3
+
+Hz
+µm
+
+cm 1–
+
+Hz
+µm
+
+cm 1–
+
+Hz
+µm
+
+cm 1–
+
+Hz
+µm
+
+cm 1–
+
+Hz
+µm
+
+cm 1–
+
+Hz
+µm
+
+cm 1–
+
+Hz
+µm
+
+cm 1–
+
+Hz
+µm
+
+cm 1–
+
+ν4
+Hz
+µm
+
+cm 1–
+
+∆� 
+
+2π
+------
+� e3 ′-------  
+
+1
+2
+---
+
+=
+
+
+ νvib � νvib
+∆� 
+ ν̃ 
+ νvib �= =
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+The absorption by a volume of gas will result in the depletion of radiation of wavenumber (or frequency )
+
+which appears as an absorption line in the spectrum. As an example let’s consider the CO molecule. Its reduced
+
+mass is grams and the force constant has a value of dyn cm-1. Substituting
+
+these values in the last equation we obtain for a transition from level to an energy increase
+
+ergs equivalent to cm-1. In Table 2 the vibrational frequencies, wavelengths and
+
+wavenumbers of interesting atmospheric radiative molecules are listed.
+
+Figure  11. Simultaneous transitions in vibrational and rotational energies (figure taken from McCartney, 1983).
+
+7.3  Vibro-rotational bands.
+
+It has been already pointed out that molecules not possessing a permanent dipole moment do in fact possess oscil-
+
+lating dipole moments, caused by their vibrational motion, and therefore rotational transition coupled to vibrational
+
+transition are possible. Considering a simple molecule with one degree of rotational freedom (CO2 for example)
+
+we may therefore observe absorption (and emission) corresponding to quantum energies
+
+where the terms on the right side are taken with their sign. That is a number of transitions are allowed depending
+
+νvib
+1
+
+2π �---------
+�983 ′-------  
+
+1
+2
+---
+
+=
+
+νvib ν̃
+
+3 ′ 1.14 10 23–×= � e 1.84 106×=
+ν 0= ν 1=
+
+∆� 4.24 10 23–×= νvib 2143=
+
+∆� 
+ ν � ∆ � vib ∆ � rot+= =
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 17
+
+on the number of degrees of rotational freedom and on the number of vibrational modes. A simple description of
+
+the allowed energy transitions are shown in Fig. 11 .
+
+Figure  12. Nitric oxide spectrum.
+
+The more complex the molecular structure the larger the number of possible transitions. As an example Fig. 12
+
+shows the superposition of NO rotational lines close to the vibrational wavenumber at cm-1 with a reso-
+
+lution of 0.06 cm-1 while in Fig. 13 the complex structure due to the three rotational modes of NO2 is superimposed
+
+to its vibrational transition at  cm-1. In the latter the resolution of the measurements is 0.02 cm-1.
+
+Water vapour is one of the most important radiatively active molecules. Its complicated rotational (three degrees
+
+of freedom) and vibrational (three modes) structure produce a line spectrum which, at first sight, appears randomly
+
+distributed. One of the most important H2O absorption feature is the vibro-rotational band at cm
+-1. The
+
+central portion of the complex band, close to the vibrational frequency, is shown in Fig. 14 at a resolution of 0.46
+
+cm-1.
+
+At longer wavelengths, micro- and millimetre-wave frequencies, single rotational lines are also observed. Three of
+
+these, due to H2O and O2, are going to play an increasingly important role in microwave remote sensing, namely
+
+the line centred at 64 and 112 (O2) and 183 (H2O) GHz which are shown in Fig. 15 .
+
+≈
+
+1904≈
+
+1621≈
+
+1595≈
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  13. Nitrogen dioxide spectrum.
+
+8. LINE SHAPES AND THE ABSORPTION COEFFICIENT.
+
+For a strictly monochromatic absorption and emission to occur at , the energy involved for each molecule of gas
+
+should be exactly , implying that the energy levels are exactly known. The mathematical
+
+description of the absorption line would be where is the line strength and is the Dirac delta
+
+function centred at . However three physical phenomena occur in the atmosphere (and elsewhere) which pro-
+
+duce broadening of the line: (i) natural broadening, (ii) collision broadening and (iii) doppler broadening, which
+
+will be briefly discussed.
+
+8.1  Natural broadening.
+
+It is caused by smearing of the energy levels involved in the transition. In quantum mechanical terms this is due to
+
+the uncertainty principle and depends on the finite duration of each transition. It can be shown that the appropriate
+
+line shape to describe natural broadening is the Lorentz line shape
+
+ν0
+∆� � ′ � ″– 
+ ν �= =
+
+� ν : δ ν ν0–( )= : δ
+ν0
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 19
+
+Figure  14. Emission spectrum of the atmosphere measured at 10 km height with a resolution of approximately
+
+half wavenumber. Most of the lines are due to the water vapour vibro-rotational band.
+
+where  is the line strength
+
+and is the line half width, which is the distance from the line centre to where has decreased to
+
+half of its maximum power. The shape of a Lorentzian line is shown in Fig. 16 . It can be shown that is inde-
+
+pendent of wave number and its value is of the order of 10-5 nm
+
+� ν � ν( )≡ :π----
+α;
+
+ν ν0–( )
+2 α ; 2+-------------------------------------×=
+
+:
+
+: � ν( ) νd
+∞–
+
+∞
+∫=
+
+α; λ0 λ< � ν( )
+α;
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+20 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  15.Transmittances of the millimetre wave region calculated for a path between the surface and space for
+
+molecular oxygen, water vapour and their product (taken from Grody, 1976).
+
+8.2  Collisional broadening.
+
+It is due to the modification of molecular potentials, and hence to the energy levels, which take place during each
+
+emission (absorption) process, and is caused by inelastic as well as elastic collisions between the molecule and the
+
+surrounding ones. The shape of the line is still Lorentzian, as for natural broadening, but the half width is sev-
+
+eral orders of magnitude greater, and is inversely proportional to the mean free path between collisions, which in-
+
+dicates
+
+that will vary depending on pressure and temperature of the gas. When the partial pressure of the
+
+absorbing gas is a small fraction of the total gas pressure we can write:
+
+where and are reference values. As an example the collisional half width for the CO molecule in the
+
+vicinity of the vibrational vibrational transition, at standard pressure and K is nm
+
+8.3  Doppler broadening.
+
+Molecules in a volume of air possess a Maxwell velocity distribution, hence the velocity components along any
+
+direction of observation produce a Doppler effect which induces a shift in frequency in the emitted and absorbed
+
+radiance. The line shape is
+
+α =
+
+α= � �
+
+α = α=>�,
+�
+� �------
+� ��------=
+
+� � � �
+ν1
+
+�
+300= α= 4.22 10 2–×≈
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 21
+
+where is the molar mass. The Doppler half width for the CO transition of the previous paragraph is
+
+nm which is about 1/8 of the collisional half width. Collisions are the major cause of broadening
+
+in the troposphere, since their effect is proportional to pressure, and pressure variations are larger than temperature
+
+variations; while Doppler broadening is the dominant effect in the stratosphere, due to the larger mean free path
+
+and high temperatures, the latter producing larger standard deviations for the molecular velocity distribution. There
+
+is however an intermediate region where neither of the two shapes is satisfactory since both processes are active at
+
+once. Assuming the collisional and doppler broadening can be assumed to be independent we can combine both
+
+line shapes to give the Voigt shape. This is often used to allow for both tropospheric and stratospheric broadening
+
+of an absorption/emission line in one calculation.
+
+Actually the level of our knowledge of spectroscopic phenomena, that are at the very core of our understanding of
+
+the radiative processes, is still insufficient for many purposes, and a large effort is taking place to perform more
+
+accurate measurements of the key parameters, in order to avoid, whenever possible, the use of empirical tuning to
+
+reduce discrepancies between measurements and model results.
+
+� ν( ) :
+α? π--------------
+
+ν ν0–( )
+2–
+
+α? 2-------------------------exp=
+
+α? 3.58 10 7–× ν0 �A@ #⁄( )
+1
+2
+---
+
+=
+
+@ #
+αd 5.5 10
+
+3–×≈
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+22 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  16. Spectral line shape produced by: (a) Doppler broadening and (b) natural and collision broadening
+
+(taken from Levi (1968).
+
+9. CONTINUUM ABSORPTION
+
+In addition to discrete molecular interactions with radiation there is also another important, but less understood,
+
+mechanism for interacting with the incident radiation field called continuum absorption/emission by some atmos-
+
+pheric molecules, most notably water vapour. Continuum absorption manifests itself in the infrared and millimetre
+
+wave window regions of the atmospheric spectrum causing the windows to be less transparent than predicted by
+
+discrete molecular absorption alone. For channels designed to sense the surface this is obviously an important fac-
+
+tor. This continuum absorption/emission has a smooth frequency dependence making it impossible to ascribe to
+
+specific molecular transitions.
+
+There are two main theories for continuum absorption/emission. One is that it is due to the residual effects of the
+
+far wings of strong lines which are not accurately modelled. If there are many strong lines some distance away (in
+
+frequency) the effect of the individual lines can accumulate. A second theory is that the interaction is caused by
+
+molecular polymers (e.g. water vapour dimer) which being large floppy molecules might be expected to have broad
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 23
+
+transitions and hence broad spectral features. The exact mechanism continues to be a matter of debate.
+
+Laboratory and field measurements have measured the excess absorption and empirical relationships have been de-
+
+veloped to provide an estimate of the continuum absorption for any atmospheric path. One problem is that most of
+
+the measurements are for warm paths (300 K) whereas most atmospheric paths are colder than this. Nevertheless
+
+empirical relationships are widely used to include this source of absorption/emission in the estimation of the at-
+
+mospheric transmittance. The gases which have significant continuum absorption are H2O, CO2, N2, and O2 and
+
+the continuum is included for all window channel transmittance calculations from the visible to microwaves.
+
+As an example, for the Advanced Very High Resolution Radiometer (AVHRR) infrared window channel at 925 cm-
+
+1, the mean transmittance due to molecular line effects is 0.97 whereas the transmittance due to the continuum is
+
+only 0.93 for a mid-latitude atmosphere.
+
+10. INTEGRATION OVER FREQUENCY
+
+A common requirement for radiometers that are used for sounding the atmosphere is the high radiometric perform-
+
+ance, which can be expressed as a required noise performance or, equivalently, in terms of signal–to–noise ratio.
+
+The latter concept is useful in clarifying that, in order to reach a given performance, it may be necessary to integrate
+
+the signal in the wavenumber domain, and/or in time; another way is to allow more energy to reach the detector by
+
+increasing the solid angle of the measurement. The instruments used to sense operationally the atmosphere are usu-
+
+ally subdivided into two categories: sounders, where the frequency integration is kept to a minimum for reasons
+
+that will be discussed in Section 11, and imagers where the solid angle is minimized. In both cases some degree of
+
+integration in the wave-number domain is required. To simulate the behaviour of the radiometer, and to extract suc-
+
+cessfully information from the set of radiance measurements, it is therefore necessary to compute integrated quan-
+
+tities, like radiance in the interval
+
+where is the transmission of the filter for the radiometer channel. There are several ways in which the integra-
+
+tion can be performed, of different attainable accuracy, and will be only briefly outlined. Although much confusion
+
+is associated to the concept of resolution, the term has been used throughout in these notes to indicate a spectral
+
+width over which either an instrument averages the natural signal, or higher resolution computations have been av-
+
+eraged. Two examples of frequency integration are shown in Fig. 17 .
+
+∆ν
+
+�
+∆ν
+
+B
+ν
+�
+
+ν νd
+∆ν
+∫
+B
+
+ν νd
+∆ν
+∫
+
+--------------------------≡
+
+B
+ν
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+24 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  17. Examples of frequency integration: the broken curve is radiance computed at a resolution of
+
+0.005 cm-1, while the resolution of the full line is 0.293 cm-1. Both refer to the same measuring geometry and
+
+atmospheric conditions as Fig. 5
+
+10.1  Line-by-line methods
+
+A line-by-line model computes the contribution of each absorption line, within a predefined interval, to the mono-
+
+chromatic optical depth , at a given wave number . The total number, and the wave-number location, of the
+
+monochromatic computations depends on the accuracy to be obtained in the final product, the mean optical depth,
+
+or transmittance, in a wave-number interval that can be as small as required to accurately simulate the radiometer
+
+frequency response. It is the only way to proceed when the aim is accuracy and computer time is less of a problem.
+
+It exploits the information content of the spectroscopic databases (GEISA 1984; HITRAN 1986) and allows the
+
+deficiencies of the spectral parameters to be analysed, provided good laboratory or field data is available.
+
+10.2  Fast-transmittance models.
+
+A line-by-line model can also be used to compute accurate transmittances for a moderate number of atmospheric
+
+temperature and humidity profiles, chosen to represent widely differing atmospheric situations, and then derive co-
+
+efficients for parametric formulas relating the computed transmittances to the input data; the same parametrization
+
+is then used for any atmospheric situation. The line-by-line computations must produce transmittances integrated
+
+over wavenumber intervals much smaller than the channel width of the radiometer to be modelled so that the cor-
+
+rect instrument function can be applied when computing the averaged transmittances for any channel. The final
+
+result of an integration over wavenumber, either performed by the instrument itself or done on computed data, is a
+
+set of average transmittances, or radiances, for each channel of the instrument. The fast model transmittances can
+
+σν ν
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 25
+
+be used in Eq. (12) to compute an upwelling radiance for the radiometer channel.
+
+11. THE DIRECT PROBLEM.
+
+We have seen that for a cloudless atmosphere the equation for upwelling radiance at the upper boundary of the at-
+
+mosphere can be written in the form
+
+(12)
+
+where is the vertical profile of mass mixing ratio of the absorbing (emitting) material (water vapour, CO2,
+
+N2O, O3, etc.), and the subscript s indicates the lower boundary of the atmosphere. Eq. (12) clearly indicates that
+
+the interpretation of the radiance emitted by the atmosphere at a given wavenumber requires a detailed knowledge
+
+of:
+
+(a) spectroscopic properties of all gases radiatively active (which is contained in the term ,
+
+and the transmittance is also function of temperature and absorbing constituent amount along the
+
+ray path;
+
+(b) the vertical profile of the concentration for each radiatively active gas (term ),
+
+(c) the temperature structure  up to a level where emission phenomena become negligible.
+
+(d) the lower surface radiative properties, that is emissivity and skin temperature.
+
+We will now assume that it is possible to derive an equation similar to (12) when dealing with integrated radiance
+
+over a small wave-number interval, and will now try to understand the features of the radiance or brightness tem-
+
+perature spectra shown previously.
+
+There are tens of gaseous species which are radiatively active in this region of the spectrum, although the main
+
+absorbers are CO2, CH4, N2O, O3 and H2O. The first three can be considered as uniformly distributed along the
+
+vertical. With reference to Fig. 5 (or 6 ) the temperature structure can be approximated by the standard atmosphere
+
+with the vertical lapse rate of  K/km. Highest values of  are observed in the range 800–1000 and
+
+1080–1120 cm-1, the so-called infrared window region, since we know, from our spectroscopic knowledge, that
+
+only relatively weak lines are present in that range; consequently most of the emission by the lower (warm) surface
+
+reaches the top of the atmosphere. Skin temperature can be derived from the hottest points in the curve (assuming
+
+that surface emissivity is close to unity) giving a value of K. Lowest values are measured in the strong-
+
+est absorption region of carbon dioxide, from 660–680 cm-1 since, at these wave numbers, radiation emitted by
+
+atmospheric layers close to the ground (and relatively warm) is completely absorbed on its way to mid-troposphere
+
+by the strong and thick lines, and only radiation emitted in the upper tropospheric layers, which are relatively cold,
+
+reaches space (in the upper layers lines are thinner); therefore the measured brightness temperature is low.
+
+There are an infinite number of intermediate cases in which the weighting function peaks somewhere in mid-trop-
+
+osphere, since lines are strong and broad enough to absorb all the surface emission, but radiance originating from
+
+mid tropospheric layers is only partially absorbed, by the now thinner lines, on its way to space. And so on.
+
+The top panel of Fig. 7 needs some further explanation, but along the same lines. When the measurements were
+
+made, over Antarctica, the temperature of the surface was lower that the air temperature in the stratosphere, which
+
+�
+ν θ( ) ε � ν, 	 ν � �( )τν � � θ,( ) 	 ν � 4( ) τν
+
+� θ,( )∂ �ln∂----------------------- �lnd4(C
+0
+
+∫+=
+
+τν
+� θ,( ) � ν
+
+DE--- θsec �d
+0
+
+4
+∫–  exp=
+
+DF�( )
+
+τν
+� θ,( )
+
+DG�( )
+� �( )
+
+8–≈
+	IH
+
+283≈
+	IH
+
+
+
+Principles of remote sensing of atmospheric parameters from space
+
+26 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+means that the radiance signal coming from the most absorbing regions is actually warmer than the window values.
+
+From this brief discussion it appears therefore that a series of measurements of the emitted upwelling radiance, dis-
+
+tributed from the centre to the wings of an absorption band, contains intermixed information on the vertical tem-
+
+perature and concentration structure. In any case the relation between radiance, temperature and concentration is
+
+highly nonlinear as shown formally by Eq. (12).
+
+The worst limitation to the use of Eq. (12) is due to the fact that even shallow clouds are opaque to infrared radia-
+
+tion. With the exception of thin cirrus, clouds act as a blackbody effectively masking all radiative information com-
+
+ing from below cloud top. Since the typical horizontal dimension for an infrared sounder field of view ranges from
+
+several km to several tens of km, to collect enough energy to maintain a sufficiently high signal–to–noise ratio, a
+
+completely clear atmosphere over the field of view of a sounding instrument is a rarity, especially in meteorologi-
+
+cally active areas where temperature profiles are most needed for accurate weather forecasting. In the microwave,
+
+although scattering by non-precipitating clouds is almost negligible, scattering due to precipitation makes a notice-
+
+able contribution to microwave radiance, hence calculation of temperature without accounting for the scattering
+
+results in large errors. These effects are enhanced when millimetre–wave radiometers, as the 183 GHz radiometer,
+
+which can be used to derive water vapour profile, are used to sound the atmosphere. Uncertainties caused by the
+
+undetected presence of clouds are the greatest source of error in remote sensing of the lower and middle tropo-
+
+sphere. Nevertheless the new millimetre wave radiometers which are starting to fly offer great potential for global
+
+NWP applications as the areas where cloud effects can be neglected will be much greater than for the infrared in-
+
+struments allowing better global coverage.
+
+REFERENCES
+
+Goody R.M. and Yung Y.L. 1989 Atmospheric radiation theoretical basis. Second edition. Oxford University Press
+
+Grody, N.C., 1976, Remote sensing of atmospheric water content from satellites using microwave radiometer.
+
+IEEE Trans. Antennas and Propagation, 24, 155–162
+
+Hanel R.A., B. Schlachman, D. Rogers and D. Vanous, 1971, Nimbus-4 Michelson interferometer, Applied Optics,
+
+10, 1376–1382
+
+Houghton J.T., F.W. Taylor and C.D. Rodgers, 1984, Remote Sounding of Atmospheres. Cambridge Planetary Sci-
+
+ence Series, Cambridge University Press
+
+Levi L., 1968, Applied optics: A guide to modern optical system design. Wiley, New York
+
+Liou Kuo–Nan, 1980, An introduction to atmospheric radiation. Academic Press Inc.
+
+McCartney E., 1983, Absorption and emission by atmospheric gases: The physical processes. John Wiley & Sons
+
+Twomey S., 1977, Introduction to the mathematics of inversion in remote sensing and indirect measurements. El-
+
+sevier Scientific Publishing Company, New York
+
+Valley S.L., 1965, Handbook of geophysics and space environments. McGraw–Hill, New York

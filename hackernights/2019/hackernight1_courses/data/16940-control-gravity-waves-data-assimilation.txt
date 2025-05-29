@@ -1,0 +1,3324 @@
+Grav-wave_control
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+The control of gravity waves in data assimilation
+27 April 1999
+
+By Adrian Simmons
+
+European Centre for Medium-Range Weather Forecasts
+
+The need to control gravity waves in data assimilation and the general concept of initialization are discussed. The basic
+method of non-linear normal-mode initialization is introduced, and aspects of its implementation in models are presented,
+covering the vertical and horizontal modal decomposition, implicit initialization and diabatic initialization. The control of
+gravity waves in the ECMWF variational data assimilation system is described. An introduction to the alternative method of
+digital filtering is also given.
+
+Table of contents
+
+1 . Introduction
+
+2 . Non-linear normal-mode initialization
+
+2.1 Basic method
+
+2.2 Vertical decomposition
+
+2.3 Horizontal decomposition
+
+2.4 Implicit initialization
+
+2.5 Diabatic initialization
+
+3 . Control of gravity waves in the ECMWF variational data assimilation system
+
+4 . Digital filtering
+
+4.1 Adiabatic, non-recursive filtering
+
+4.2 Diabatic, recursive filtering
+
+4.3 Diabatic, non-recursive filtering
+
+APPENDIX A . Definition of operators for the ECMWF vertical finite-difference scheme
+
+APPENDIX B . The Lamb Wave
+
+APPENDIX C . The non-recursive implementation of the recursive filter
+
+1. INTRODUCTION
+
+The existence of balance is fundamental to the dynamics and predictability of the atmosphere. Atmospheric motion
+
+is dominated not by rapid fluctuations associated with sound and gravity waves, but rather by the more slowly
+
+changing weather systems. Over much of the globe these are close to the familiar state of geostrophic balance in
+
+which winds blow parallel to contours of constant geopotential height on an isobaric surface (Fig. 1 ).
+
+
+
+The control of gravity waves in data assimilation
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  1. The operational ECMWF analysis of height and wind at 500hPa for 12 UTC 13 April 1997.
+
+Faster wave motions are, however, excited if the atmosphere is suddenly disturbed. The massive volcanic eruption
+
+of Krakatau (between Java and Sumatra) in1883 excited a wave whose propagation could be traced in the surface
+
+pressure field around to the antipodal point and back to the source (Fig. 2 ). The signal took about 35 hours to com-
+
+plete its outward and return trip, moving at about 320 ms-1, around the speed of sound. This was what has come to
+
+be known as a Lamb wave, or in numerical weather prediction as an external gravity wave. More commonly, and
+
+on a much smaller scale, propagating internal gravity waves may be excited by intense convective systems. Fig. 3
+
+presents observations of wave structure in mid-tropospheric temperature and wind fields over Japan apparently as-
+
+sociated with the occurrence of exceptionally heavy rainfall.
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+Figure  2. Position at two-hourly intervals of the surface-pressure wave excited by the volcanic eruption of
+
+Krakatau, from Taylor(1929).
+
+
+
+The control of gravity waves in data assimilation
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 3. Fine-scale structure in temperature at 500hPa (left) and wind at 550hPa (right) over Japan at 12UTC on
+
+1 July 1971, from Ninomiya (1983)
+
+Numerical weather prediction models mostly assume hydrostatic balance, and thus do not support the existence of
+
+sound waves. They are generally based, however, on the primitive equations of motion, and Lamb and internal grav-
+
+ity waves can be excited in these models. In particular, they will be excited in data assimilation if the system uses
+
+observations in such a way as to produce analyses in which the balance present in the background state is disturbed.
+
+The waves in this case contaminate the short-range forecast that provides the background state for the next analysis,
+
+adding to the difficulty of extracting useful information from the observations.
+
+The primary control of gravity waves in a modern data assimilation system is through the multivariate formulation
+
+of the analysis. In such a system, an observation of surface pressure or temperature that differs from the background
+
+will generally result in an analysis which differs from the background not only in surface pressure and temperature,
+
+but also in wind, thus preventing an unrealistic deviation from geostrophic balance. This aspect of the control of
+
+gravity waves is not the main concern of these lecture notes, although we shall return to the topic briefly later. Rath-
+
+er, we shall be concerned mostly with what is known as the process of initialization.
+
+The term initialization is usually used to refer to the adjustment of analysed initial model conditions to prevent ex-
+
+cessive gravity-wave activity in the subsequent forecast. This dynamical initialization is needed if the multivariate
+
+formulation of the analysis is unable to provide an adequate balance throughout the model domain. This is the type
+
+of initialization that will be discussed here. More widely, initialization may be defined as an adjustment of the in-
+
+itial conditions either to maintain dynamical or physical balance or to satisfy some physical constraint. Thus it
+
+could include the adjustment of fields to ensure that relative humidities lie in the range from 0 to 100%, or the ad-
+
+justment of fields to ensure that initial rainfall rates match estimates from observations. This is referred to as phys-
+
+ical initialization.
+
+Although the principal use of dynamical initialization is to remove imbalance introduced during the analysis step
+
+in data assimilation, it has additional applications in numerical weather prediction. It is often used to remove im-
+
+balance in an initial state in which the model resolution or orography has been changed, for example in:
+
+• Incremental variational data assimilation (as discussed later);
+
+• Creating initial conditions for ensemble prediction based on a model with resolution lower than that
+
+of the model used in the data assimilation;
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+• Testing of a new higher resolution version of a model or new specification of orography.
+
+Initialization may also be used to remove imbalance when running forecasts from analyses produced by other fore-
+
+casting centres. This is done occasionally to investigate forecasting failures and is under investigation in the context
+
+of ensemble prediction.
+
+Some further characteristics of atmospheric motion must be taken into account in considering the topic of initiali-
+
+zation. A rich structure of largely stationary gravity-wave motion may be excited by flow over orography. Fig. 4
+
+shows a classical example. These waves can have an important direct effect on the tropospheric circulation, and
+
+together with the convectively-excited waves play a critical role in aspects of the circulation of the stratosphere and
+
+mesosphere. Their effects are in general parametrized in large-scale models, but they are coming increasingly to
+
+be resolved directly in limited-area and finer-resolution global models, and are a target for short-range mesoscale
+
+prediction. They should not be unduly suppressed by initialization.
+
+Figure  4. Section of potential temperature crossing the Rocky Mountains in Colorado, for 17 February 1970,
+
+from Lilly and Kennedy (1973).
+
+Tidal motion in the atmosphere is a form of forced gravity-wave motion which also should not be suppressed by
+
+initialization. The strong semi-diurnal component at the surface is forced by the daily variation in solar heating of
+
+the stratosphere, dominating the more strongly-forced diurnal component due to differences in downward propa-
+
+gation. It is seen in quite pronounced oscillations in surface pressure in the tropics and subtropics (Fig. 5 and Fig.
+
+17 ) and needs to be handled well if other signals in the observations are to be interpreted effectively. Moreover,
+
+the quasi-steady tropical circulation systems (as illustrated schematically in Fig. 6 ) characteristically involve a bal-
+
+ance between diabatic heating (or cooling) and the adiabatic cooling (or heating) associated with vertical motion.
+
+
+
+The control of gravity waves in data assimilation
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Care is needed to ensure that initialization does not produce analyses in which these circulations are weakened.
+
+Figure  5. The semi-diurnal tide. The upper plot shows surface pressure (hPa) and the lower plot the tendency of
+
+pressure (hPa/hour) at the lowest model level. The quantity plotted is where
+
+denotes the mean ECMWF analysis at UTC for January 1997, truncated spectrally at T10 to remove local
+
+orographic and station-specific features. Solid contours denote positive values and dashed contours negative
+
+values. The nature of atmospheric tides is described in Chapman and Lindzen (1970).
+
+Figure  6. Schematic view of the mean tropospheric circulation in the equatorial plane, from Webster(1983).
+
+The method of non-linear normal-mode initialization that has been used extensively at ECMWF to initialize its glo-
+
+bal models is described in the following section. The way gravity waves are controlled in the Centre’s variational
+
+data assimilation system is described and illustrated in section 3. An alternative approach to initialization, that of
+
+digital filtering, has been developed in recent years, particularly for application in limited-area models. An intro-
+
+duction to this method is given in section 4.
+
+1 4⁄( )
+�
+
+00
+
+�
+06–
+
+�
+12
+
+�
+18–+( )
+
+�����
+���
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+2. NON-LINEAR NORMAL-MODE INITIALIZATION
+
+2.1  Basic method
+
+Consider a forecast model linearized about a state of rest which is statically stable. The governing equations of the
+
+model can be written in the following general form:
+
+(1)
+
+where is a column vector of suitably-scaled model variables, of dimension say, and is a symmetric, real
+
+matrix. Explicit examples of sub-elements of will be given in the following subsections. The eigenval-
+
+ues of are the frequencies of the small-amplitude wave motions that the resting state can support, and the cor-
+
+responding eigenfunctions describe the structures of the waves. In limiting cases these waves can be separated into
+
+a set of “meteorological” or “Rossby” waves which move relatively slowly westward, and sets of eastward- and
+
+westward-moving gravity modes, the graver of which move much faster then the Rossby waves. More generally,
+
+the categorization is complicated in the tropics by the existence of the so-called mixed Rossby-gravity and Kelvin
+
+waves. Comprehensive studies of the modes of the shallow-water equations (known as the “Hough modes”) have
+
+been made by Longuet-Higgins(1968) and Kasahara(1976).
+
+The general non-linear model equations can be written in the form:
+
+(2)
+
+where the term represents both the non-linear terms and the residual linear terms that arise from differences
+
+between the actual state of rest and that used to compute .
+
+Consider a subset comprising orthonormal eigenvectors, , of with large eigenvalues
+
+. These represent the gravity waves that are to be initialized. A general model state can be writ-
+
+ten in the form:
+
+(3)
+
+Under idealized conditions in which the eigenvectors represent a complete set of gravity waves, represents
+
+the component of the atmospheric state comprising solely Rossby waves. More generally, represents the resid-
+
+ual state orthogonal to the set of gravity modes, which comprises Rossby waves, the slower gravity waves that
+
+will not be initialized, and mixed waves. We denote the component that will be initialized by :
+
+(4)
+
+The are determined by taking the scalar products of the two sides of (3) with the , and using orthogonality,
+
+, and orthonormality, , to obtain
+
+(5)
+
+or
+
+d
+d �----- �( ) �
+	��=
+
+� � 	
+� �× 	
+
+	
+
+d
+d �----- �( ) �	�� � �( )+=
+
+���( )
+	
+
+� �
+1
+
+�
+2 …
+
+���
+, , ,( ) 	
+
+υ1 υ2 … υ
+�
+
+, , ,( ) �
+
+� ��� α � � �� 1=
+
+�
+∑+=
+
+� ���
+����
+
+���
+
+��� α � � �� 1=
+
+�
+∑=
+
+α � � �
+��� � �⋅ 0= ����� �⋅ δ� �=
+
+α � � ���⋅=
+
+
+
+The control of gravity waves in data assimilation
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(6)
+
+where  is the  matrix whose columns are the , for .
+
+Substituting (3) into (2) and projecting onto the  modes to be initialized gives:
+
+(7)
+
+where .
+
+2.1 (a)  Linear normal-mode initialization: Linear normal-mode initialization comprises simply setting to
+
+zero the amplitudes of the modes to be initialized. It thus involves replacing the uninitialized state by
+
+, where
+
+(8)
+
+and  is the identity matrix.
+
+Fig. 7 presents an example of the impact of linear normal-mode initialization on the evolution of surface pressure
+
+at two points, one in the Great Plains of North America and one in the Himalayas. It is taken from the first study
+
+of normal-mode initialization for the original ECMWF finite-difference model (Temperton and Williamson, 1981;
+
+Williamson and Temperton, 1981), and presents an extreme case in that the initial data had been taken from an
+
+analysis produced using a different model. Imbalance in the interpolated initial conditions for the ECMWF model
+
+resulted in large-amplitude oscillations in the surface pressure, as indicated by the solid lines in the figure. The am-
+
+plitude of these oscillations was clearly reduced by applying linear normal-mode initialization (dashed lines), but
+
+significant fluctuations remained. Also worthy of note is the large, rapid fall in surface pressure at the Himalayan
+
+point at the start of the integration from the initialized analysis.
+
+Figure  7. Surface pressure (hPa) as a function of time before (solid) and after (dashed) linear normal-mode
+
+initialization at 40oN 90oW (left) and 30oN 90oE (right), from Temperton and Williamson(1981).
+
+� � � ��� � ! �=
+� � � �× � � " 1 2 … �, , ,=
+
+�
+
+d
+d �----- α �( ) � υ � α �$#%� � � α1 α2 … α
+
+�
+, , , ,( )+=
+
+# � � � ! �( ) �=
+
+α � � �'&
+�)(
+
+�)( * � � � � !–( ) �'&=
+*
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+2.1 (b)  Non-linear normal-mode initialization: Linear normal-mode does not prevent gravity waves from
+
+growing to significant amplitude because the non-linear or residual linear terms represented by are not neg-
+
+ligible. In non-linear normal-mode initialization (Machenhauer, 1977), the initialized gravity-wave amplitudes
+
+are set to non-zero values which are chosen to make the gravity-wave tendencies small. An approximate solution
+
+of the equation
+
+(9)
+
+is sought. Equation (7) is used to define an iterative solution of (9):
+
+. (10)
+
+Two iterations of the procedure are usually found to be sufficient. The starting values could be taken from a linear
+
+normal-mode initialization ( ), but in practice it is found to be sufficient to start from the uninitialized
+
+analysis ( ). This is the most straightforward starting point when the procedure is implemented in
+
+terms of updates applied directly to model variables, as outlined below in equations (12) to (15). It is, moreover,
+
+the necessary starting point for an effective full-field diabatic initialization using the approach described in 2.5 (a).
+
+An example of the working of non-linear normal-mode initialization is given in Fig. 8 . This is for the same case
+
+as presented in Fig. 7 for linear normal-mode initialization. Fig. 8 also contains information related to the vertical
+
+decomposition of normal modes which is discussed in the following subsection. For the moment, attention should
+
+be directed first towards the upper two panels and the curves labelled “0” which show the forecast from uninitial-
+
+ized initial conditions and “5” which show the forecast from the conditions most fully initialized by the non-linear
+
+normal-mode technique. These two panels can be compared directly with Fig. 7 which shows the forecast from
+
+linear normal-mode initialization. It is clear that the non-linear technique is much more successful than the linear
+
+technique. It not only prevents high-frequency oscillations in surface pressure over the 24-hour integration period,
+
+but also avoids the large change to the initial surface pressure at the Himalayan point, a change that is rejected by
+
+the model in the first few time steps of the forecast from linear initialization. Comparison of the lower-right and
+
+upper-left panels of Fig. 8 shows how the first iteration is sufficient to remove most of the short-period oscillations
+
+present when running from the uninitialized analysis, with the second iteration removing most of what is left after
+
+the first iteration.
+
+� �( )
+α �
+
+d
+d �----- α �( ) 0=
+
+α �,+( ) 1� υ �--------  – # �-��� α1+
+1–( ) α2+ 1–( ) … α � + 1–( ), , , ,( )=
+
+α � 0( ) 0=
+α � 0( ) � � � &⋅=
+
+
+
+The control of gravity waves in data assimilation
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  8. Surface pressure (hPa) as a function of time at 40oN 90oW (upper left) and 30oN 90oE (upper right)
+
+with no initialization (solid) and after non-linear normal-mode initialization of the first three and five vertical
+
+modes with two iterations. Surface pressure is also shown at 40oN 90oW with one, two and four modes initialized
+
+with two iterations (lower left), and with five modes initialized with one and two iterations (lower right). From
+
+Williamson and Temperton(1981).
+
+Equation (10) is not normally solved directly. (7) and (10) are combined to express the iterative non-linear normal-
+
+mode initialization procedure in terms of the modifications made to the gravity-wave amplitudes at each iteration:
+
+(11)
+
+Equation (11) is then converted into the initialization increment applied to model variables. Starting the iteration
+
+∆α �( ) + 1+( ) α �,+ 1+( ) α �.+( )– 1� υ �--------   �d
+dα �
+
+ 
+  +( )–= =
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+from the uninitialized analysis, the non-linear initialization procedure becomes:
+
+(12)
+
+(13)
+
+where is the diagonal matrix of eigenvalues for . The non-linear model tendency
+
+ is computed using the latest approximation, , to the initialized state:
+
+(14)
+
+The final initialized state, , is given by:
+
+(15)
+
+where  is the number of iterations.
+
+This “explicit” form of non-linear normal-mode initialization thus involves a repeated set of operations comprising:
+
+• One timestep of the model to computes the tendencies in physical space, starting from the latest
+
+approximation to the linearized state;
+
+• A projection of these tendencies onto the gravity modes to be initialized;
+
+• Division of the gravity-mode tendencies by the frequencies of the modes;
+
+• Projection back to physical space;
+
+• Addition of the increment to form a new approximation to the initialized state.
+
+Equation (13) may be written in the alternative form:
+
+(16)
+
+Equation (16) is used as the starting point for the derivation of “implicit” non-linear normal-mode initialization. As
+
+discussed in subsection 2.4, this approach uses a modified form of the governing, linearized equations which ena-
+
+bles increments to be calculated in physical space without use of explicit projections to and from gravity-wave
+
+space.
+
+2.2  Vertical decomposition
+
+Normal-mode initialization is a practical method because it is possible to separate the vertical and horizontal de-
+
+pendence of the gravity-wave modes. Furthermore, it has to be applied only to a limited number of modes in the
+
+vertical.
+
+We consider small-amplitude perturbations about a state of rest with temperature and surface pressure ,
+
+with eastward and northward wind perturbations and , and temperature perturbation . The equations are
+
+set out in the form appropriate for a model (such as that of ECMWF) in which the logarithm of surface pressure is
+
+a basic prognostic variable, with perturbation given by . We restrict the presentation here to the case in
+
+� 0( ) � &=
+
+∆ �/+ 1+( ) � � � Λ� 1– � � ! d
+d �----- �( )   +
+
+( )
+=
+
+Λ � � �× υ � " 1 2 … �, , ,=
+�d �0⁄( ) +( ) �/+( )
+
+�1+( ) � 0( ) ∆ �
+�
+
+( )�
+1=
+
++
+∑+=
+
+�)(
+
+�)( � 0( ) ∆ �/+( )
++ 1=
+
+2
+∑+=
+
+#
+
+	 ∆ �1+ 1+( ) � � � � � ! d�
+d �------   +
+
+( ) � d �
+d �------   � +
+
+( )
+= =
+
+354 6�784
+9 ' : ' 3 '
+
+6
+ln
+7
+
+( )'
+
+
+
+The control of gravity waves in data assimilation
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+which the reference temperature is isothermal, rather than varying with pressure. This simplifies the equations,
+
+and is not a serious restriction in practice. Effects of unrepresentivity of the reference state of rest are taken into
+
+account in non-linear normal-mode initialization through the term . Moreover, gravity-wave phase speeds
+
+and vertical mode structures are not strongly dependent on the choice of reference state, as illustrated in Appendix
+
+A.
+
+The dry, linearized, primitive equations for a terrain-following vertical coordinate are then:
+
+(17)
+
+(18)
+
+(19)
+
+(20)
+
+Here  is the divergence:
+
+(21)
+
+ is the pressure-coordinate vertical velocity:
+
+(22)
+
+and  is the temperature-dependent part of the perturbation geopotential:
+
+(23)
+
+is the planetary rotation rate, is the planetary radius, is longitude, is latitude and is the gas constant
+
+of dry air. , where is the specific heat of dry air at constant pressure. In evaluating the pressure on
+
+a coordinate surface in equations (19), (20), (22) and (23), the surface pressure is taken to be the reference value
+
+.
+
+We consider a model with levels, define to be the column vector comprising the values of at the levels,
+
+and define , and similarly. The column vector with each element equal to is denoted by , and we
+
+use matrices  and , and vector  to represent a general finite-difference scheme:
+
+354
+
+���( )
+
+9 ′∂
+�∂-------- 2Ω θsin : ′
+
+1; θcos--------------- λ∂
+∂ φ′ < 3�4 6�7ln( )′+( )–=
+
+: ′∂
+�∂------- 2– Ω θ 9 ′sin
+
+1;--- θ∂
+∂ φ′ < 3�4 6�7ln( )′+( )–=
+
+3
+′∂
+�∂--------
+
+κ
+3�4
+6----------ω′=
+
+�∂
+∂ 6ln 7( )′ 16�74-------- = ′ 6>
+
+0
+
+?A@CB
+∫–=
+
+= ′
+
+= ′ 1; θcos---------------
+9 ′∂
+λ∂
+
+--------
+θ∂
+
+∂ : ′ θcos( )+  =
+
+ω′
+
+ω′ = ′ 6>
+0
+
+?
+∫–=
+
+φ′
+
+φ′ <
+3
+
+′6----------- 6d?
+?A@CB
+∫=
+
+Ω ; λ θ <
+κ <ED ?⁄= D ?
+
+6�784
+F G 9 ′ FH I J < 3�4 µ
+
+γ τ δ
+
+16�784-------- = 6d
+0
+
+?K@CB
+∫ δ
+
+! I→
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+Explicit expressions for , and are given in Appendix A for the vertical discretization scheme developed for
+
+the ECMWF model by Simmons and Burridge(1981).
+
+We further define:
+
+(24)
+
+Then, using (17), (18) and the combination of (19) and (20), the linearized equations become:
+
+(25)
+
+(26)
+
+(27)
+
+where
+
+(28)
+
+The normal-mode initialization procedure determines an increment to the “mass” variable . To obtain increments
+
+in temperature and the logarithm of surface pressure, equation (27) is used together with the vector forms of the
+
+equations for and :
+
+(29)
+
+(30)
+
+Given initialization increment , the corresponding increments to temperature and the logarithm of surface pres-
+
+sure,  and , are given by
+
+(31)
+
+and
+
+(32)
+
+κ
+3�4
+6----------ω τ– I→
+
+φ' γ J→
+< 3�4( ) 6�7ln( )' µ 6�7ln( )'→
+
+γ τ δ
+
+L
+γ J µ 6�7ln( )'+=
+
+�∂
+∂
+G
+
+2Ω θsin H 1; θcos--------------- λ∂
+∂
+L
+
+–=
+
+�∂
+∂ H 2– Ω θ Gsin 1;--- θ∂
+
+∂
+L
+
+–=
+
+�∂
+∂
+L M I–=
+
+M
+γτ µδ
+
+!
++=
+
+L
+
+J 6�7ln( )'
+
+�∂
+∂ J τ I–=
+
+�∂
+∂ 6�7ln( )' δ! I–=
+
+∆
+L
+
+∆ J ∆ 6�7ln( )'
+
+∆ J τ
+M
+
+1– ∆
+L
+
+=
+
+∆
+6�7
+
+ln( )' δ
+! M
+
+1– ∆
+L
+
+=
+
+
+
+The control of gravity waves in data assimilation
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Now let denote the diagonal matrix of eigenvalues of , for , and let denote the matrix
+
+whose columns are the eigenvectors of .  can be written: .
+
+If the prognostic variables are transformed in the following way:
+
+and
+
+equations (25), (26) and (27) become a set of uncoupled shallow water equations with “equivalent” depths
+
+:
+
+(33)
+
+(34)
+
+(35)
+
+Here  is the divergence associated with velocities  and  as defined by (21):
+
+(36)
+
+The governing equation for pure gravity waves is obtained by setting the rotation rate, , to zero, taking the time
+
+derivative of (35), and using (33) and (34) to eliminate the rate of change of divergence . This gives:
+
+(37)
+
+For scales small enough for a local plane geometry to be valid, the phase speed of the pure gravity waves is .
+
+On the sphere the pure gravity-wave modes are the spherical harmonic functions , where is an
+
+associated Legendre function. The spherical harmonic functions are eigenfunctions of the Laplacian operator with
+
+eigenvalues . The pure gravity-wave frequencies are thus .
+
+Examples of modes are presented here for the current operational 31-level ECMWF model and for a 50-level ver-
+
+sion of the model planned for operational implementation. The location of the model levels for these two vertical
+
+resolutions is shown in Fig. 9 . Table 1 shows phase speeds and equivalent depths of the faster modes for a reference
+
+temperature, , of 300K and a reference surface pressure, , of 1000hPa. Corresponding vertical structures of
+
+the divergence fields (weighted by ) are shown in Fig. 10 .
+
+Φ Φ N
+M O
+
+1 2 …
+F
+
+, , ,= �M M M
+� Φ� 1–=
+
+9 ˆ N � 1– G( )N=
+
+:ˆ N � 1– H( )N=
+
+P Nˆ � 1– L( ) N=
+F
+
+ΦNRQ⁄
+
+�∂
+∂9 ˆ N
+
+2Ω θsin : ˆ N 1; θcos--------------- λ∂
+∂
+P ˆ N
+
+–=
+
+�∂
+∂: ˆ N
+
+2– Ω θ 9 ˆ Nsin 1;--- θ∂
+∂
+P ˆ N
+
+–=
+
+�∂
+∂
+P ˆ N
+
+ΦN = Nˆ–=
+
+= Nˆ 9 ˆ N : ˆ N
+
+= Nˆ 1; θcos--------------- λ∂
+∂9 ˆ N
+
+θ∂
+∂ : ˆ N θcos( )+  =
+
+Ω
+= Nˆ
+
+� 2
+2
+
+∂
+∂
+P ˆ N
+
+Φ N P ˆ N∇2– 0=
+
+ΦNP
++
+S
+
+θsin( ) T
+� S λ P
+
++
+S
+
+UVU 1+( ) ; 2⁄– 1;--- UWU 1+( )ΦN
+
+3�4 6�74
+6
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 15
+
+Figure  9. The distribution of full model levels for 31-level (left) and 50-level (right) vertical resolutions, plotted
+
+for a distribution of surface pressure which varies from 1013.25 to 500 hPa.
+
+TABLE 1. GRAVITY-WAVE PHASE SPEEDS AND EQUIVALENT DEPTHS FOR THE VERTICAL MODES OF THE 31-LEVEL
+AND 50-LEVEL VERSIONS OF THE ECMWF MODEL FOR A REFERENCE TEMPERATURE OF 300 K AND A REFERENCE
+
+SURFACE PRESSURE OF 1000 hPa. ONLY MODES WITH GRAVITY-WAVE PHASE SPEEDS FASTER THAN 50 ms-1ARE
+INCLUDED.
+
+Mode number
+Phase speed
+
+ (ms-1)
+for 31-level model
+
+Phase speed
+ (ms-1)
+
+for 50-level model
+
+Equivalent depth
+ (km)
+
+for 31-level model
+
+Equivalent depth
+ (km)
+
+for 50-level model
+
+1 343 347 12.0 12.3
+
+2 203 262 4.2 7.0
+
+3 119 194 1.4 3.8
+
+4 78 145 0.6 2.1
+
+5 56 112 0.3 1.3
+
+O
+Φ N ΦN Φ NRQ⁄ ΦNRQ⁄
+
+
+
+The control of gravity waves in data assimilation
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  10. Structures of the vertical modes of the 31-level and 50-level models with gravity-wave phase speeds
+
+faster than 50 ms-1, for a reference temperature of 300K and a reference surface pressure of 1000 hPa.
+
+The gravest mode moves the fastest, and differs in structure from the other modes in that it is the only mode whose
+
+-weighted amplitude (or energy density) decreases with height. It is generally referred to as the external gravity
+
+wave in the context of numerical weather prediction, but is known in geophysical fluid dynamics as the Lamb wave.
+
+It is shown in Appendix B that there is a corresponding analytical solution of the continuous equations in which
+
+the divergence and temperature vary in the vertical as , and the phase speed is given by . This
+
+gives a phase speed of 347ms-1 for a reference temperature of 300K, with =287m2K-1s-2 and =0.286. This val-
+
+ue is reproduced to the nearest ms-1 by the 50-level resolution.
+
+The remaining (“internal”) modes provide a mathematically-acceptable basis for representing the vertical structure
+
+of model variables, but do not correspond to modes of the continuous equations. They have an oscillatory structure
+
+6 90 0.8
+
+7 75 0.6
+
+8 63 0.4
+
+9 54 0.3
+
+TABLE 1. GRAVITY-WAVE PHASE SPEEDS AND EQUIVALENT DEPTHS FOR THE VERTICAL MODES OF THE 31-LEVEL
+AND 50-LEVEL VERSIONS OF THE ECMWF MODEL FOR A REFERENCE TEMPERATURE OF 300 K AND A REFERENCE
+
+SURFACE PRESSURE OF 1000 hPa. ONLY MODES WITH GRAVITY-WAVE PHASE SPEEDS FASTER THAN 50 ms-1ARE
+INCLUDED.
+
+Mode number
+Phase speed
+
+ (ms-1)
+for 31-level model
+
+Phase speed
+ (ms-1)
+
+for 50-level model
+
+Equivalent depth
+ (km)
+
+for 31-level model
+
+Equivalent depth
+ (km)
+
+for 50-level model
+
+O
+ΦN ΦN ΦNRQ⁄ ΦNRQ⁄
+
+6
+
+6 κ– < 3�4( ) 1 κ–( )⁄
+< κ
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 17
+
+with amplitude approximately proportional to , and represent standing waves that can exist because of the
+
+reflective nature of the upper boundary condition  applied in the model (Lindzen et al., 1968).
+
+It can be seen from Table 1 that only a limited number of modes are associated with gravity-wave phase speeds of
+
+the order of 50ms-1 or more. It is found necessary to initialize only these modes. Indeed, applying the non-linear
+
+normal-mode technique to the slower, higher-order modes is counter-productive, as the iterative solution fails to
+
+converge for these modes. The example presented in Fig. 8 illustrates the extent to which high frequency oscilla-
+
+tions are suppressed by initializing up to the five gravest modes. Initializing four or five modes appears adequate
+
+in this case. These results were for a nine-level vertical resolution for which the gravity-wave phase speeds of the
+
+fourth and fifth modes were 70ms-1 and 39ms-1 respectively, for a 300K reference temperature.
+
+2.3  Horizontal decomposition
+
+The horizontal decomposition is illustrated most conveniently for the case of a global spectral model such as used
+
+at ECMWF. Firstly, the shallow-water momentum equations are rewritten in terms of the divergence, (given by
+
+(36)), and relative vorticity, :
+
+(38)
+
+The non-linear shallow-water equations are:
+
+(39)
+
+(40)
+
+and
+
+(41)
+
+These equations are recast in terms of the spectral coefficients , and in spherical-harmonic expansions:
+
+(42)
+
+(43)
+
+and
+
+(44)
+
+As the prognostic variables are real valued, , and are the complex conjugates of and ,
+
+and we need consider only the equations for . These equations can be separated into sets, one for
+
+1
+6
+
+( )⁄
+ω 0=
+
+= Nˆ
+ξN̂
+
+ξN̂ 1; θcos--------------- λ∂
+∂: ˆ N
+
+θ∂
+∂ 9 ˆ N θcos( )–  =
+
+�∂
+∂ ξN̂ 2Ω θcos;-------------------- :XN̂– 2Ω θsin = Nˆ– # ˆ ξ N+=
+
+�∂
+∂ = Nˆ 2Ω θsin ξN̂ 2Ω θcos;-------------------- 9 N̂ ∇2 P Nˆ–– # ˆ Y N+=
+
+�∂
+∂ P Nˆ ΦN– = Nˆ # ˆ Z N+=
+
+ξ+
+S = +
+
+S P
++
+S
+
+ξ̂ N ξ+
+S �( ) P +
+
+S
+θsin( ) T
+� S λ
+
++ S=
+
+[
+∑S [–=
+
+[
+∑=
+
+= ˆ N = +
+S �( )P +
+
+S
+θsin( ) T
+� S λ
+
++ S=
+
+[
+∑S [–=
+
+[
+∑=
+
+P ˆ N φ+
+S �( )P +
+
+S
+θsin( ) T
+� S λ
+
++ S=
+
+[
+∑S [–=
+
+[
+∑=
+
+ξ +
+S– = +
+
+S– φ +
+S– ξ+
+
+S = +
+S
+
+φ +
+S
+
+\ 0≥ ] 1+
+
+
+
+The control of gravity waves in data assimilation
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+each zonal wavenumber . We introduce scaled variables:
+
+(45)
+
+(46)
+
+and
+
+(47)
+
+For each , we use , and to denote column vectors of dimension with elements , and
+
+, for .
+
+The shallow water equations (39), (40) and (41) may then be written in the form:
+
+(48)
+
+where  and  are diagonal matrices, with diagonal elements  and , where
+
+(49)
+
+and
+
+(50)
+
+is a symmetric tridiagonal matrix with diagonal elements zero, and off-diagonal elements for , with
+
+(51)
+
+In the absence of rotation , and the non-trivial eigenvectors of are gravity waves with frequencies
+
+, as noted earlier.
+
+With rotation, the basic Coriolis effect (as occurs in an f-plane geometry) is represented by the matrix , while the
+
+matrix represents the variation of the Coriolis effect with latitude, the so-called “beta” effect. Pure barotropic
+
+Rossby waves are obtained by imposing  and have frequencies .
+
+Equation (48) provides an explicit form for :
+
+\
+
+ξ̃+
+S ;
+
+UWU 1+( )--------------------------ξ+
+S
+
+=
+
+= ˜ +
+S � ;UWU 1+( )-------------------------- = +
+
+S
+=
+
+φ̃+
+S 1
+
+ΦN----------φ+
+S
+
+=
+
+\ ξ̃ = ˜ φ̃ ] \– 1+ ξ̃+
+S = ˜ +
+
+S
+φ̃ +
+S U \^\ 1+ … ], , ,=
+
+d
+d �-----
+
+ξ̃
+
+= ˜
+φ̃
+
+�
+β _ 0
+_ β `
+0 ` 0
+
+ξ̃
+
+= ˜
+φ̃
+
+# ˜ ξ
+# ˜ Y
+# ˜ φ
+
++ �
+	
+ξ̃
+
+= ˜
+φ̃
+
+# ˜ ξ
+# ˜ Y
+# ˜ φ
+
++= =
+
+β ` β+
+S D +
+
+β+
+S 2Ω \UVU 1+( )---------------------=
+
+D +
+1;--- UVU 1+( )Φ N=
+
+_ a +
+S U \>
+
+a +
+S 2ΩU------- U 2 1–( ) U 2 \ 2–( ) 4 U 2 1–( )⁄=
+
+β _ 0= = 	
+D +±
+
+_
+β
+
+= ˜ 0= β+
+S
+
+	
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 19
+
+(52)
+
+Eigenvalues and eigenfunctions of can readily be obtained using standard software for matrix analysis. Separa-
+
+tion into Rossby and gravity modes can in practice be achieved simply on the basis of wave frequencies; the east-
+
+ward moving waves and faster westward moving waves are the modes to be initialized.
+
+2.4  Implicit initialization
+
+Although formally straightforward for global spectral models, explicit normal-mode initialization has a demanding
+
+requirement for computer storage of the normal modes in the case of high horizontal resolution. Similar consider-
+
+ations apply to global models based on alternative horizontal discretizations. Two additional problems may arise
+
+for a limited-area model. Firstly, the map projection may cause horizontal separability to be lost. Secondly, there
+
+may be a problem in defining lateral boundary conditions for the normal modes. This led to the development of
+
+implicit normal mode initialization. This is presented here for the case of a global spectral model; Temperton(1988)
+
+introduced the method for a regional model using a polar stereographic projection and finite elements with a non-
+
+uniform grid.
+
+We start from the formula for initialization increments given by equation (16):
+
+The approach relies on being able to determine the “fast” gravity-wave component from the total ten-
+
+dency and on being able to solve the linear system for the increments . This can be achieved
+
+by approximating the operator . The approximation is to neglect the “beta-effect” in the vorticity equation. Equa-
+
+tion (52) is replaced by:
+
+(53)
+
+Equation (49) indicates that the approximation will be a good one for small horizontal scales (large ) for which
+
+the non-zero elements  of the diagonal matrix  are small.
+
+With this approximation, the linearized form of (48) gives:
+
+(54)
+
+(55)
+
+and
+
+(56)
+
+	
+β _ 0
+_ β `
+0 ` 0
+
+=
+
+	
+
+	 ∆ � + 1+( ) � � � � � ! d �
+d �------   +
+
+( ) � d �
+d �------   � +
+
+( )
+= =
+
+� �d⁄d( )�b+( )
+� �d⁄d( ) +( ) ∆ �/+ 1+( )
+
+	
+
+	
+0 _ 0
+_ β `
+0 ` 0
+
+=
+
+U
+β+
+S
+
+β
+
+ξ̃
+>
+�>------ �
+_ = ˜=
+
+= ˜d
+�d------- � β = ˜ �-_ ξ̃ ` φ̃+( )+=
+
+φ̃d
+�d------ �c` = ˜=
+
+
+
+The control of gravity waves in data assimilation
+
+20 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+The Rossby modes are stationary and non-divergent:
+
+(57)
+
+and, from (55), satisfy the balance equation:
+
+(58)
+
+From (54) and (56), a gravity mode (which has ) must have:
+
+(59)
+
+The expanded form of (16) is
+
+(60)
+
+Temperton(1989) showed that (57), (58) and (59) can be used to derive formulae for initialization increments that
+
+do not require explicit computation of gravity modes:
+
+(61)
+
+and
+
+(62)
+
+with
+
+(63)
+
+The matrix is pentadiagonal, but the equations to be solved ((61) and (62)) can in fact each be split into
+
+two separate equations for odd and even spectral components with diagonally-dominant tridiagonal matrices on the
+
+left-hand sides. Their solution is thus straightforward.
+
+In practice this implicit method has been found to give results that are negligibly different from explicit normal-
+
+mode initialization for most of the wavenumber range of high resolution models. A mixed scheme has been adopted
+
+for the ECMWF spectral model. The implicit method is used by default to initialize total wavenumbers in the range
+
+, with the explicit method used for , as the neglect of the term becomes increasingly inaccurate
+
+ξ̃d
+�d----- = ˜ 0= =
+
+` φ̃ _ ξ̃–=
+= ˜ 0≠
+
+ξ̃ _d` 1– φ̃=
+
+0 _ 0
+_ β `
+0 ` 0
+
+∆ξ̃ + 1+( )
+∆ = ˜ + 1+( )
+∆φ̃ + 1+( )
+
+�=
+�d
+
+dξ
+ 
+  � +
+
+( )
+
+�d
+d=
+
+ 
+  � +
+
+( )
+
+�d
+dφ
+
+ 
+  � +
+
+( )
+
+_ 2 ` 2+( )∆ = ˜ + 1+( ) �
+_ dξ
+d �------   +
+
+( ) �c` d
+d �----- φ̃   +
+
+( )
++=
+
+_ 2 ` 2+( ) ` 1– ∆φ̃ + 1+( )( ) � d
+d �----- = ˜   +
+
+( )
+β∆= ˜ +( )–=
+
+∆ξ̃ + 1+( ) _e` 1– ∆φ̃ +( )( )=
+
+_ 2 ` 2+( )
+
+U 21> U 21≤ β
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 21
+
+as the total wavenumber decreases.
+
+2.5  Diabatic initialization
+
+The formalism of non-linear normal-mode initialization presented in 2.1 is general, but in practice it was found
+
+necessary to suppress the diabatic (parametrized) components of the term in early applications of the meth-
+
+od (Williamson and Temperton, 1981). In particular, the large and rapidly varying temperature tendencies arising
+
+from the parametrization of convection were found to inhibit convergence of the method. Moreover, the basic ini-
+
+tialization condition expressed by (9):
+
+is inappropriate for the westward-moving thermal tidal waves forced by the daily westward progression of the solar
+
+heating of the atmosphere.
+
+The form of initialization in which only the adiabatic tendencies from the model are computed at each iteration is
+
+referred to as adiabatic non-linear normal-mode initialization. Although successful in preventing the growth of
+
+high-frequency oscillations in subsequent forecasts, adiabatic initialization also suppresses the slowly-varying
+
+large-scale circulations that are a feature of the tropical atmosphere. Two of the approaches that have been adopted
+
+to circumvent the problem are outlined below.
+
+2.5 (a)  Full-field initialization. A diagnosis and discussion of the problems of adiabatic initialization has
+
+been given by Wergen (1987), who also described the diabatic non-linear normal-mode initialization scheme in-
+
+troduced operationally at ECMWF in 1982. This scheme was used in conjunction with the Centre’s Optimum In-
+
+terpolation analysis until the latter was replaced by a variational data assimilation scheme early in 1996. The
+
+diabatic initialization scheme was modified in 1986 to include the treatment of tides specified below.
+
+The approach involves estimating a steady large-scale diabatic forcing. This is applied as a tendency term that does
+
+not change during the iterations of the non-linear normal-mode initialization, thereby avoiding the problem of non-
+
+convergence. The tidal problem is dealt with by subtracting an estimate of the tidal tendency from the adiabatic
+
+tendency. The steps involved are:
+
+• Performing a short forecast (~2h) from the uninitialized analysis, using all parametrizations but
+
+suppressing the diurnal cycle in the radiation scheme;
+
+• Time-averaging the diabatic tendencies computed at each timestep of this forecast;
+
+• Projecting the time-averaged tendencies onto gravity modes, keeping only low-frequency
+
+components (with periods>11h);
+
+• Subtracting tidal tendencies computed from a (10-day) time series of the most recent analyses;
+
+• Adding the resulting fixed filtered tendencies to the adiabatic tendencies computed for each
+
+iteration of the initialization procedure;
+
+• Computing the initialization increment in the usual way, using the modified tendencies from the
+
+preceding step.
+
+This approach, though rather cumbersome, worked well in practice.
+
+2.5 (b)  Incremental initialization. The simpler alternative approach of incremental initialization (Puri et al.,
+
+1982; Ballish et al., 1992) was adopted when ECMWF moved to the variational data assimilation scheme. This
+
+approach does not necessarily rely on using the normal-mode technique for initialization. In particular, it can be
+
+used in conjunction with the digital filtering technique described later.
+
+���( )
+
+d
+d �-----α � 0=
+
+
+
+The control of gravity waves in data assimilation
+
+22 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+We illustrate the approach here in its basic form. Let denote a background state, and as before the unini-
+
+tialized state and the initialized state. Let denote the result of an adiabatic initialization of . The
+
+incremental initialization scheme is then:
+
+(64)
+
+Provided the differences between and are small, the scheme preserves the large-scale diabatic balance
+
+present in the background field. However, if a component is handled poorly by the initialization procedure and is
+
+improved in compared with , the thermal tide for example, the improvement in may not carry through
+
+to the initialized analysis .
+
+As applied in a conventional data assimilation system, the state is the short-range forecast that provides the
+
+background for the analysis, is the result of the analysis and is the starting point for the next forecast. The
+
+approach has, however, wider applicability. (64) could also be used, for example, to provide initial conditions for
+
+a forecast from an analysis produced using a different data assimilation system, such as that of a different forecast-
+
+ing centre. In this case, would be the (uninitialized) analysis produced by a standard data assimilation using the
+
+forecast model for which initialization is required, and would be the analysis produced by the different data
+
+assimilation system.
+
+3. CONTROL OF GRAVITY WAVES IN THE ECMWF VARIATIONAL DATA ASSIMILATION SYS-
+TEM
+
+The basic variational data assimilation problem is to determine the model state that minimizes a scalar cost func-
+
+tion .  comprises three elements:
+
+(65)
+
+where is the background cost function defined in terms of the deviation of the analysis from the background
+
+state and is the observation cost function defined in terms of the deviation of the analysis from the obser-
+
+vations in the case of three-dimensional variational assimilation (3D-Var). In the case of four-dimensional assimi-
+
+lation (4D-Var), is the observation cost function defined in terms of the deviation from the observations of a
+
+forecast from the state . The two elements and are discussed in the companion lecture notes on Data as-
+
+similation concepts and methods. The primary control of gravity waves in the data assimilation comes in general
+
+through a multivariate formulation of the term, although in 4D-Var a contribution can come through the model
+
+integration that is implicit in the term .
+
+The term represents additional constraints on the analysis. These could include physical constraints, for exam-
+
+ple that the relative humidity be between 0 and 100%, or a constraint on high frequencies based on digital filtering.
+
+In the current implementation at ECMWF,  is given by
+
+(66)
+
+where denotes the projection of the tendency onto gravity waves and denotes a simple
+
+energy-based norm defined by a weighted sum of squares of spectral coefficients. The overall weighting factor
+
+was adjusted during the development of ECMWF’s 3D-Var system to remove oscillations in surface pressure (typ-
+
+ically a fraction of an hPa in magnitude) that were found to occur in the absence of  (Courtier et al., 1998).
+
+��f �'&
+�)( g U �����( ) �
+
+��( ��fhg U �i���j&( ) g U ������f( )–+=
+�'& ��f
+
+�'& ��f �'&
+��(
+
+��f
+�'& �)(
+
+��f
+�'&
+
+�� �
+� � f ��kl��m+ +=
+
+� f
+��f ��k
+
+��k
+� � f ��k
+
+� f��k
+��m
+
+��m
+
+��m
+ε d �
+
+d �------   �
+d ��f
+d �---------   �–
+
+2
+
+=
+
+d d �⁄( )� d d �⁄( ) 2
+ε
+
+��m
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 23
+
+Examples of the evolution of the cost function and its three components over 70 iterations of a 3D-Var minimi-
+
+zation are presented in Fig. 11 . The upper panel shows how in absolute terms makes only a tiny contribution
+
+to the overall cost function. The background state is used as the starting value for the minimization, and
+
+and are thus initially zero. is subsequently decreased substantially1, at the expense of some increase in
+
+and a slight increase in . The plots in the lower panel of Fig. 11 indicate an increase in small-scale gravity-wave
+
+activity when is excluded from the minimization (but computed as a diagnostic). In this case grows to about
+
+twice the value that develops when it provides part of the constraint on the analysis. It should be noted that the
+
+elements of the cost function are defined globally; despite its small overall value may provide an important local
+
+constraint, close to steep orography in particular.
+
+The variational data assimilation scheme is implemented in an incremental form in which the minimization is car-
+
+ried out at a lower resolution than that of the background forecast. Until March 1999, initialization was applied
+
+twice in the procedure. The low-resolution analysis requires an interpolated low-resolution background field, and
+
+this was initialized applying adiabatic non-linear normal-mode initialization for scales with . Then, on com-
+
+pletion of the low-resolution analysis, incremental adiabatic non-linear normal-mode initialization was applied in
+
+forming the high-resolution analysis :
+
+(67)
+
+Here is the increment of the low-resolution analysis (the difference between the low-resolution
+
+analysis and the low-resolution background) interpolated to the high resolution. This incremental initialization was
+
+applied operationally only for scales with from May 1997 onwards, for the primary purpose of adjusting
+
+the low-resolution analysis to the high-resolution orography. It was, however, applied to all scales in the original
+
+operational implementation of 3D-Var, as discussed further below.
+
+1.  The sharp fall near iteration number 30 is due to the initiation of variational quality control.
+
+�
+��m
+
+��f � f��m ��k � f�5m
+��m ��m
+
+��m
+
+U 20≥
+��n
+
+��n ��fog U ������f ��nδ( ) p � q)�→+( ) g U �i�r��f( )–+=
+��nδ( ) p � q)�→
+
+U 20≥
+
+
+
+The control of gravity waves in data assimilation
+
+24 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  11. Evolution of the cost function  and its components ,  and  during the minimization in a
+
+standard cycle of 3D-Var (upper panel) and plotted on a logarithmic scale (lower panel) both for the standard
+
+cycle (solid) and for a modified cycle (dashed) in which  was calculated for diagnostic purposes but not
+
+activated in the minimization.
+
+Some examples of the time evolution of the surface pressure are presented in Figs. 12 and 13 . Plots are shown for
+
+the two points 40oN 90oW and 30oN 90oE used to illustrate results from earlier studies of initialization in Figs. 7
+
+and 8 . The forecasts were carried out after three cycles of 3D-Var using the initialization configuration in question.
+
+Fig. 12 shows the impact of excluding the constraint . Both forecasts shown were from assimilations in which
+
+the incremental initialization was applied on all scales, and this is evidently sufficient to prevent high-frequency
+
+gravity-wave oscillations whether is activated or not. Suppressing gives little change at 40oN 90oW over
+
+the Great Plains, but has modified the starting value of surface pressure by about 0.5hPa at the Himalayan point. A
+
+pronounced semi-diurnal tidal oscillation can be seen at the latter point.
+
+� ��k � f ��m
+��m
+
+��m
+��m ��m
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 25
+
+Figure 12. Surface pressure (hPa) as a function of time for a control forecast (solid) and a forecast following three
+
+cycles of 3D-Var in which  was not activated (dashed), at 40oN 90oW (upper) and 30oN 90oE (lower).
+
+Fig. 13 shows the effect of removing the incremental initialization of the larger scales ( ), and of removing
+
+initialization (and the constraint) completely. Removing the larger-scale initialization allows some high- fre-
+
+quency oscillations to develop, although even at the Himalayan point the amplitude is barely over 0.1hPa. Com-
+
+pletely removing initialization has a larger effect, especially in the first few steps at the Himalayan point. Gravity-
+
+wave oscillations are nevertheless much smaller than in the forecast from the uninitialized analysis shown in Fig.
+
+7 , presumably because the present forecasts come from a consistent and much more modern data assimilation sys-
+
+tem.
+
+Further examination of these issues was carried out as part of the development of the 50-level version of the model
+
+which became operational in March 1999. It was found that continues to play a small but useful role, but that
+
+the initialization steps could be eliminated without significant deterioration of analysis and forecast quality. As the
+
+amplitudes of the internal modes vary approximately as for small , elimination of the initialization steps
+
+��m
+U 20<��m
+
+��m
+
+1
+6
+
+( )⁄
+6
+
+
+
+The control of gravity waves in data assimilation
+
+26 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+avoided a problem of large initialization increments close to the top of the 50-level model.
+
+Figure  13. Surface pressure (hPa) as a function of time for a control forecast (solid) and for forecasts following
+
+three cycles of 3D-Var with no large-scale initialization (dashed) and no initialization at all (dotted), at 40oN
+
+90oW (upper) and 30oN 90oE (lower).
+
+The removal of the incremental initialization of the scales with was implemented operationally at ECMWF
+
+in May 1997 at the same time as a change to the background term , moving from the formulation described by
+
+Courtier et al.(1998) (referred to as “old” ) to that reported by Bouttier et al.(1997) (the “new” ). The new
+
+was used for the forecasts shown in Figs. 12 and 13 . Some idealized tests carried out prior to the change pro-
+
+vide examples of the working of the initialization and of the background constraint.
+
+U 20< � f� f � f� f
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 27
+
+Fig. 14 shows increments in 850hPa height due to several idealized isolated observations of this field, specified
+
+such that the observed deviation from the background field was the same at each point. Results are shown for a
+
+single cycle of 3D-Var. The old reduces to a univariate formulation in the tropics, and produces localized in-
+
+crements of similar magnitude at all locations (upper-left panel). However, the incremental initialization (applied
+
+to all scales) removes most of the increment in the tropics (lower-left panel). The new imposes a semi-empirical
+
+(close to linear) balance. It produces more of a large-scale increment, and smaller local increments in the tropics
+
+(upper-right panel). More of each local increment survives initialization. Incremental initialization thus plays a
+
+smaller role in imposing balance on the analysis in the case of the new . This was an important factor in the
+
+decision to remove initialization for scales  in the operational system.
+
+Figure 14. Analysis increments in 850hPa height for a set of idealized height observations at 850hPa, for the
+
+operational prior to May 1997 (left) and that operational after May 1997 (right), with no initialization (upper) and
+
+after incremental non-linear normal-mode initialization (left).
+
+Close-ups of the height increments at one location and the associated wind increments are presented in Fig. 15 .
+
+The multivariate formulations of the old and new both produce increments which are close to being in geos-
+
+trophic balance, and initialization changes are much smaller than in the tropics. They are slightly smaller with the
+
+new than the old . The height increments are reduced by initialization and the wind increments are increased.
+
+The new produces a divergent component to the wind increment at the ground, as can be seen in the plots for
+
+1000hPa shown in Fig. 16 . The increment in divergence is shallow, and survives initialization because the latter is
+
+applied only to the first five, relatively deep, vertical modes.
+
+� f
+� f
+
+� fU 20<
+
+� f
+
+� f
+� f
+
+� f
+
+
+
+The control of gravity waves in data assimilation
+
+28 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  15. Analysis increments in 850hPa height and wind for a set of idealized height observations at 850hPa,
+
+for the operational prior to May 1997 (left) and that operational after May 1997 (right), with no initialization
+
+(upper) and after incremental non-linear normal-mode initialization (left).
+
+Figure 16. Analysis increments in 1000hPa height and wind for a set of idealized height observations at 850hPa,
+
+for the operational after May 1997, with no initialization (left) and after incremental non-linear normal-mode
+
+initialization (right).
+
+The thermal tide provides a final example. The variational analysis is able to “draw” to the tidal signal present in
+
+the surface pressure observations, but the signal is not fully retained in the ensuing forecast. The analysis thus pro-
+
+duces increments which improve the description of the tides. A fraction of the improvement is lost, however, if in-
+
+cremental initialization is applied to large scales. Fig. 17 illustrates how the analysis generally fits better the
+
+� f
+
+� f
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 29
+
+surface-pressure observations from a frequently reporting tropical island station when the initialization is restricted
+
+to scales .
+
+Figure  17. Surface pressure (hPa) from 00UTC 8 February to 18UTC 14 February 1997, as observed at
+
+Seychelles International Airport (5oS, 56oE; dashed line) and as analysed at this location (solid) with (upper) and
+
+without (lower) large-scale initialization.
+
+4. DIGITAL FILTERING
+
+The method of digital filtering provides an approach to initialization that is conceptually simple and easier to im-
+
+plement than non-linear normal-mode initialization. It involves generating a sequence of model fields and then ap-
+
+plying a filter to the resulting time series for each model grid-point and variable or each model spectral coefficient.
+
+The filter is chosen to reduce the amplitudes of high-frequency components of the time series to acceptable levels.
+
+The forecast is then run from an appropriate point within the filtered time series.
+
+U 20≥
+
+
+
+The control of gravity waves in data assimilation
+
+30 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+4.1  Adiabatic, non-recursive filtering
+
+We consider first the simplest case of adiabatic, non-recursive filtering. We denote the uninitialized analysis by
+
+. A forward adiabatic integration is carried out for  timesteps to generate the set of values:
+
+where denotes the model state after timesteps. Also, a backward adiabatic integration of the same length
+
+is carried out to generate values:
+
+The filtered initial state, or initialized analysis, is then given generally by:
+
+(68)
+
+where
+
+(69)
+
+The original application of digital filtering for initialization by Lynch and Huang (1992) used a modification of a
+
+basic filter defined by:
+
+(70)
+
+This represents the discrete equivalent of the filter of a continuous function that leaves low-frequency components
+
+unchanged but removes high-frequency components completely, multiplying a fourier component by
+
+, where
+
+(71)
+
+The modified “Lanczos” filter was defined by:
+
+(72)
+
+The term
+
+� 0( ) #
+
+� 1( ) � 2( ) … � 2( ), , ,{ }
+�1+( ) U
+
+� 1–( ) � 2–( ) … � 2–( ), , ,{ }
+
+s 0( ) g U �i�r� 0( )( ) 1t--- t + �1+
+( )
+
++ 2–=
+
+2
+∑= =
+
+t t
+++ 2–=
+
+2
+∑=
+
+t
++
+
+U υm ∆ �( )sin U π----------------------------=
+
+� υ �( )expu
+υ( )
+
+u
+υ( )
+
+1 υ υ
+m
+
+≤
+
+0 υ υ
+m
+
+>
+
+
+
+=
+
+t
++
+
+U π # 1+( )⁄[ ]sinU π # 1+( )⁄-------------------------------------------  
+  U υm ∆ �( )sin U π----------------------------  
+
+ 
+=
+
+U π # 1+( )⁄[ ]sinU π # 1+( )⁄-------------------------------------------
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 31
+
+in (72) provides what is known as a Lanczos window.
+
+The filters whose coefficients are given by (70) and (72) have the property of leaving the phase of a sinusoidal wave
+
+unchanged (apart from a possible 180o shift) while reducing the amplitude of the wave. The reduction in amplitude
+
+is shown as a function of wave period in Fig. 18 . The calculation is for a cut-off period ( ) of six hours, a
+
+span ( ) also of six hours and a timestep ( ) of 15 minutes. The solid line denotes the amplitude response
+
+for the continuous filter . The basic filter (dashed line) exhibits the familiar Gibbs oscillations, which are
+
+greatly reduced by application of the Lanczos filter (dotted line). The Lanczos filter gives less attenuation of longer-
+
+period waves, but weaker filtering of waves with periods just shorter than six hours.
+
+The impact on waves of unit input amplitude and periods of 3, 6, 12 and 24 hours is shown in Fig. 19 . The ampli-
+
+tudes of the 6-, 12- and 24-hour period waves are reduced less when the Lanczos window is included. The phase
+
+of the 3-hour wave is reversed by the basic filter. It has smaller amplitude and no phase reversal with the Lanczos
+
+window.
+
+An example of the noise reduction found when
+
+and Huang (1992) applied the method to a version of the HIRLAM model is presented in Fig. 20 . The Lanczos
+
+filter was used with six-hour cutoff and span, and the model was run with a six-minute timestep. Fig. 20 shows
+
+that digital filtering initialization reduced noise more effectively than the normal-mode initialization scheme devel-
+
+oped for HIRLAM. Other diagnostics confirmed the success of the digital filtering approach.
+
+Figure  18. Amplitude of the filtered wave as a function of wave period for an input sinusoidal wave of unit
+
+amplitude. The idealized continuous filter has a 6-hour cutoff, and the corresponding basic discrete filter and basic
+
+filter modified by a Lanczos window are shown for a 15-minute timestep and 6-hour span, following Lynch and
+
+Huang (1992).
+
+2π υ
+m
+
+⁄
+2 # ∆ � ∆ �u
+
+υ( )
+
+
+
+The control of gravity waves in data assimilation
+
+32 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 19. The response of waves of periods 3, 6, 12 and 24 hours to the basic filter (upper) and the filter modified
+
+by the Lanczos window (lower).
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 33
+
+Figure 20. Evolution of the mean absolute surface pressure tendency (hPa /3h) in 24-hour forecasts starting from
+
+an uninitialized analysis (solid line) and from analyses initialized using non-linear normal-mode initialization
+
+(dotted) and non-recursive digital filtering (dashed), from Lynch and Huang(1992).
+
+4.2  Diabatic, recursive filtering
+
+The backward integration used to generate the values in the approach described in the
+
+preceding subsection cannot be carried out using parametrizations of irreversible physical processes. Use of a re-
+
+cursive filter offers one way to use the digital filtering method for diabatic initialization (Lynch and Huang, 1994).
+
+Consider the sequence of values of model variables from consecutive timesteps of a fore-
+
+cast starting from the uninitialized analysis , possibly including diabatic and frictional processes. A recursive
+
+filter of order is defined in general by the values and the values
+
+ in the following expression for the filtered value  at step :
+
+(73)
+
+The process is started by applying lower-order filters to compute values of for . A non-recursive im-
+
+plementation of this filter is set out in Appendix C.
+
+We illustrate the case of the Second-order Quick-Start filter presented by Lynch and Huang (1994). This has
+
+ and:
+
+(74)
+
+with
+
+(75)
+
+and
+
+� 1–( ) � 2–( ) … � 2–( ), , ,{ }
+
+� 0( ) � 1( ) … � +( ) …, , , ,{ }
+� 0( )
+
+# # 1+ ; 0( ) ; 1( ) … ; 2( ), , ,{ } #v 1( ) v 2( ) … v 2( ), , ,{ } s +( ) U
+
+s +( ) ; �( ) �1+ �–( )� 0=
+
+2
+∑
+
+v �( )s + �–( )� 1=
+
+2
+∑+=
+
+s +( ) U #<
+
+# 2=
+w + 1+( ) ; 0( ) � + 1+( ) ; 1( ) � +( ) ; 2( ) � + 1–( )+ +( ) v 1( ) w +( ) v 2( ) w + 1–( )+( )+=
+
+w 0( ) � 0( )=
+
+
+
+The control of gravity waves in data assimilation
+
+34 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(76)
+
+If we define:
+
+(77)
+
+and
+
+(78)
+
+the filter coefficients are given by:
+
+(79)
+
+(80)
+
+(81)
+
+and
+
+(82)
+
+The upper panel of Fig. 21 shows the input and filtered waves for a 12-hour input period, a cutoff frequency
+
+( ) of three hours and a timestep of 15 minutes. The filter causes little reduction in amplitude of this wave,
+
+but introduces a delay or phase-lag of a little more than half an hour. A very similar delay can be seen in the lower
+
+panel of Fig. 21  for waves with longer periods.
+
+w 1( ) ;x� 1( ) 1 ;–( )� 0( )+=
+
+µ
+m υm ∆ �
+
+2
+------------ 
+
+ tan=
+
+y µ m 1 2+=
+
+; 1
+1 µ
+
+m
++
+
+--------------=
+
+; 0( ) 1
+2
+--- ; 1( ) ; 2( ) y
+
+1 y–-----------  
+2
+
+= = =
+
+v 1( ) 2 1 y–
+1 y+------------  =
+
+v 2( ) 1 y–
+1 y+------------  
+
+2
+–=
+
+2π υ
+m
+
+⁄
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 35
+
+Figure  21. The input wave and filtered output wave for 12-hour input period and a second-order recursive filter
+
+(upper) and the filtered output for 12-, 24- and 48-hour input periods (lower).
+
+The filtered response to input waves of periods 12, 3, 1 and 0.5 hours are shown in Fig. 22 , for 15- and 1-minute
+
+timesteps. The amplitude of the wave with 3-hour period is reduced by about 30%, and it too is delayed by a little
+
+over half an hour. Waves with shorter periods are damped considerably over the first hour or so. That with half-
+
+hour period is soon damped completely in the case of the 15-minute timestep.
+
+The rapid initial damping of short-period waves and the uniformity of the phase-lags for the longer-period waves
+
+means that an initialized forecast may be successfully launched by applying the second-order filter for a span of an
+
+hour or two, and then setting the model’s clock back by half an hour or so to account for the delay, before extending
+
+the forecast from the end-point of the filtered sequence. The effect of applying this procedure on the level of noise
+
+in a forecast using the HIRLAM system can be seen by comparing the dashed and solid curves in Fig. 23 . The
+
+procedure is evidently successful, and is sufficient for most forecasting purposes. It does not, however, provide in-
+
+itialized conditions at the analysis time or for the following hour or so, such as may be useful for diagnostic pur-
+
+poses or physical initialization. The alternative of simply assuming that the filtered value at the end of the span
+
+applies at the time of the uninitialized analysis is shown by the dotted curve in Fig. 23 . This introduces a phase
+
+shift of about an hour, the effect of which can be reduced by adopting the incremental approach presented in 2.5.
+
+
+
+The control of gravity waves in data assimilation
+
+36 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  22. The filtered output wave for 12-, 3-, 1- and 0.5-hour input periods and a second-order recursive filter
+
+with 15-minute timestep (upper) and 1-minute timestep (lower).
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 37
+
+Figure  23. Evolution of the mean absolute surface pressure tendency (hPa /3h) over six-hour forecasts starting
+
+from an uninitialized analysis (solid line) and from using two types of recursive digital filtering schemes, from
+
+Lynch and Huang(1994).
+
+4.3  Diabatic, non-recursive filtering
+
+Another approach to diabatic initialization is to carry out an initial backward adiabatic integration over a time in-
+
+terval followed by a forward diabatic integration over an interval , and then to apply non-recursive filtering
+
+to the sequence of values from the diabatic integration. Lynch et al.(1997) describe a particularly efficient variation
+
+of this approach that has been used to initialize both limited-area and (in incremental form) global models at Météo-
+
+France.
+
+The principal cost of digital filtering initialization is that of the model integration. Improved efficiency arises partly
+
+from using a Dolph-Chebyshev filter (Lynch, 1997) that requires a shorter span to achieve the same degree of noise
+
+reduction as the Lanczos filter. A further gain comes from filtering the results of the backward adiabatic integration.
+
+This yields a filtered value at a time prior to the analysis time, and this provides initial conditions for a dia-
+
+batic forecast over an interval . The initialized analysis is derived from a non-recursive filtering of this diabatic
+
+forecast.
+
+Fig. 24 shows that similar levels of noise reduction are obtained by using the Lanczos and (shorter-span) Dolph-
+
+Chebyshev filters without filtering the backward adiabatic forecast, and by using the Dolph-Chebyshev filter on
+
+both the backward adiabatic and (half-length) forward diabatic integrations.
+
+A disadvantage of this general approach to diabatic initialization is that the initialized fields are subject to error due
+
+to changes brought about by diabatic processes over the first half of the forward integration that is filtered. This
+
+error is reduced by using filters that need a shorter span to be effective, and by the filtering of the backward inte-
+
+gration, which enables the length of the diabatic forecast to be halved.
+
+3
+2
+3
+
+3
+2⁄3
+
+
+
+The control of gravity waves in data assimilation
+
+38 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 24. Evolution of the mean absolute surface pressure tendency (hPa /3h) for the first six hours of a forecast
+
+starting from an uninitialized analysis (solid line) and from analyses initialized using three non-recursive diabatic
+
+digital filtering schemes, from Lynch et al.(1997).
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 39
+
+APPENDIX A . DEFINITION OF OPERATORS FOR THE ECMWF VERTICAL FINITE-DIFFER-
+ENCE SCHEME
+
+Specification of the forms for the matrices and and the vectors and has been given by Simmons and Burr-
+
+idge(1981), although with a notation different to that used here. We present the general case of a reference temper-
+
+ature that varies with pressure, with values at the “full” levels of the model, for . We assume
+
+a hybrid vertical coordinate in which the pressure at the “half” levels, , is defined as a function of the surface
+
+pressure, , with  and .
+
+The forms are:
+
+(A.1)
+
+(A.2)
+
+(A.3)
+
+and
+
+(A.4)
+
+Here
+
+(A.5)
+
+and
+
+(A.6)
+
+All expressions involving a pressure are evaluated for the reference surface pressure .
+
+If the reference temperature profile is isothermal, with , (A.2) reduces to
+
+(A.7)
+
+γ τ δ µ
+
+3�4 N
+O
+
+1 2 …
+F
+
+, , ,=6 N 1 2⁄+6�7 6
+1 2⁄ 0=
+
+6 p 1 2⁄+ 6�7=
+
+γ z{N
+0
+
+Ol|
+<
+
+< αN
+O |
+
+=
+
+<
+6 N 1 2⁄+6 N 1 2⁄–----------------- 
+
+ ln
+O^|
+
+>
+
+
+
+
+
+
+
+=
+
+τ z}N
+6 N∆6 z∆----------κ
+
+354 z γ Nbz 1
+2
+6 z∆------------- ~ z}N
+
+354 z 1+( ) 3�4 z–( ) ~ z 1–( ) N 354 z 354 z 1–( )–( )+{ }+=
+
+δN
+6 N∆6�74---------=
+
+µN <
+354 N6 N 1 2⁄+-----------------
+
+6�7 6�7
+∂
+∂
+6
+
+ 
+  N 1 2⁄+ <
+
+354 z 16 z 1 2⁄+------------------
+6�7 6�7
+
+∂
+∂
+6
+
+ 
+  z 1 2⁄+
+
+16 z 1 2⁄–-----------------
+6�7 6�7
+
+∂
+∂
+6
+
+ 
+  z 1 2⁄–– 
+
+ 
+zN 1+=
+p
+∑+=
+
+αN 1
+6 N 1 2⁄–6 N∆----------------
+
+6 N 1 2⁄+6 N 1 2⁄–----------------- 
+ ln–
+
+O
+1>
+
+2ln
+O
+
+1=
+
+
+
+
+
+=
+
+~ z}N 6 N∆( ) 6�7∂
+∂
+6
+
+ 
+  z 1 2⁄+
+
+0
+Ol|
+
+>6 N∆
+Ol|
+
+≤
+
+
+
+–=
+
+6�784
+3�4 N 354=
+
+τz}N
+6 N∆6 z∆----------κ
+
+354 z γ Nz=
+
+
+
+The control of gravity waves in data assimilation
+
+40 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+and noting that
+
+(A.4) becomes simply
+
+(A.8)
+
+We illustrate results by comparing modes computed for the idealized temperature profile shown in Fig. 25 with
+
+modes computed for isothermal reference profiles with temperatures of 245K and 300K. The idealized profile is
+
+constructed to be linear in in regions representative of the troposphere and stratosphere. This distribution of
+
+temperature has a mean value of approximately 245K
+
+Figure  25. An idealized vertical profile of temperature.
+
+Gravity-wave phase speeds for the first nine modes are presented in Table 2 and mode structures for the profile
+
+TABLE 2. GRAVITY-WAVE PHASE SPEEDS FOR THE FIRST NINE MODES OF A 50-LEVEL VERSION OF THE ECMWF
+MODEL FOR THE REFERENCE TEMPERATURE PROFILE SHOWN IN Fig. 25 AND FOR TWO UNIFORM REFERENCE
+
+TEMPERATURES. THE REFERENCE SURFACE PRESSURE IS 1000HPA.
+
+Mode number
+Phase speed (ms-1)
+
+for reference temperature
+profile shown in Fig. 25
+
+Phase speed (ms-1)
+for 245K reference
+
+temperature
+
+Phase speed (ms-1)
+for 300K reference
+
+temperature
+
+1 316 313 347
+
+16 p 1 2⁄+------------------
+6�7 6�7
+
+∂
+∂
+6
+
+ 
+  p 1 2⁄+ 1=
+
+µ N < 354=
+
+6
+ln
+
+O
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 41
+
+shown in Fig. 25 and for the 245K reference temperature are shown in Fig. 26 . The corresponding mode structures
+
+for the 300K reference temperature can be seen in the right-hand panel of Fig. 10 . The gravity-wave phase speeds
+
+computed for the mean temperature of 245K are quite similar (within about 5%) to those computed for the refer-
+
+ence state with varying tropospheric and stratospheric temperatures. Mode structures are qualitatively similar, but
+
+evidently reflect the differences in static stability in the troposphere and stratosphere. Phase speeds for the 245K
+
+reference temperature are smaller than those for the 300K reference by a factor equal to the square root of the ratio
+
+of the temperatures, and mode structures are identical for the two isothermal reference states. This is because the
+
+uniform reference temperature appears only as a simple factor multiplying each element of the matrix de-
+
+fined by equation (28)
+
+2 249 237 262
+
+3 180 175 194
+
+4 131 131 145
+
+5 100 102 112
+
+6 78 82 90
+
+7 64 67 75
+
+8 54 57 63
+
+9 47 49 54
+
+TABLE 2. GRAVITY-WAVE PHASE SPEEDS FOR THE FIRST NINE MODES OF A 50-LEVEL VERSION OF THE ECMWF
+MODEL FOR THE REFERENCE TEMPERATURE PROFILE SHOWN IN Fig. 25 AND FOR TWO UNIFORM REFERENCE
+
+TEMPERATURES. THE REFERENCE SURFACE PRESSURE IS 1000HPA.
+
+Mode number
+Phase speed (ms-1)
+
+for reference temperature
+profile shown in Fig. 25
+
+Phase speed (ms-1)
+for 245K reference
+
+temperature
+
+Phase speed (ms-1)
+for 300K reference
+
+temperature
+
+O
+
+354 M
+
+
+
+The control of gravity waves in data assimilation
+
+42 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  26. Structures of the first nine vertical modes of the 50-level model for the reference temperature profile
+
+shown in Fig. 25  and for a uniform reference temperature of 245K. The reference surface pressure is 1000hPa.
+
+APPENDIX B . THE LAMB WAVE
+
+The vertical structure and equivalent depth of the Lamb wave can be specified analytically. A temperature profile
+
+of the form:
+
+(B.9)
+
+enables the term  in (17) and (18) to be written:
+
+(B.10)
+
+With also varying in the vertical as , the temperature and surface-pressure equations, (19) and (20),
+
+can both be satisfied only if . Thus, if we write:
+
+(B.11)
+
+(B.12)
+
+3
+' α
+
+3�4 66�74--------  
+α 6�7
+
+ln( )'–=
+
+φ' < 3�4 6�7ln( )'+
+
+φ' < 354 6�7ln( )'+ < 354
+6
+6�74--------  
+
+α 6�7
+ln( )'=
+
+= ' 66 74⁄( )α
+α κ–=
+
+< 3 4 6 7ln( )' P ˆ=
+
+9 '
+6
+6 784--------  
+
+κ– 9 ˆ=
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 43
+
+(B.13)
+
+and
+
+(B.14)
+
+equations (17) to (20) reduce to the shallow water equations:
+
+(B.15)
+
+(B.16)
+
+(B.17)
+
+The phase speed of the plane wave in the absence of rotation is thus .
+
+Since and , where is the specific heat at constant volume, the phase speed may be
+
+written . This may be recognized as the speed of sound in a gas of temperature .
+
+With height, , as the vertical coordinate, the vertical structure becomes . Wave
+
+energy density varies as . Horizontal winds and temperature thus increase exponential-
+
+ly with increasing height, but wave energy density decreases away from the ground. The vertical velocity vanishes
+
+identically. This may be seen by writing, to first order in wave amplitude:
+
+(B.18)
+
+The vertical velocity, , is then given to this order by:
+
+(B.19)
+
+ and  are given by:
+
+(B.20)
+
+and
+
+(B.21)
+
+Using (B.9) and (B.10), (B.21) becomes:
+
+: '
+6
+6�74--------  
+
+κ– : ˆ=
+
+= '
+6
+6�74--------  
+
+κ– = ˆ=
+
+9 ˆ∂
+�∂------ 2Ω θsin : ˆ
+
+1; θcos--------------- λ∂
+∂ P ˆ–=
+
+:ˆ∂
+�∂------ 2– Ω θ 9 ˆsin
+
+1;--- θ∂
+∂ P ˆ–=
+
+P ˆ∂
+�∂-------
+
+< 354
+1 κ–
+------------ = ˆ–=
+
+< 354( ) 1 κ–( )⁄
+κ <D ?⁄= D ? D{<+= D{
+
+D ? D{⁄( ) < 3�4 3�4
+ 66�784⁄( ) κ– Q κ( ) < 354( )⁄( )exp
+
+Q  1 2κ–( ) < 354( )⁄–( )exp
+
+ 
+0
+
+6
+( )  '+=
+
+
+
+ D
+D �-------
+
+ ′∂
+�∂------- ω+ ′
+
+d  0
+d
+6--------==
+
+
+0
+
+ '
+
+
+0
+
+< 3�4
+Q-----------
+
+6�74
+6--------  ln=
+
+ ' 1Q--- φ' <
+354 6�7
+
+ln( )'+( )=
+
+
+
+The control of gravity waves in data assimilation
+
+44 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(B.22)
+
+and substituting (B.20) and (B.22) into (B.19):
+
+(B.23)
+
+The right-hand side of (B.23) is equal to zero by virtue of equation (19).
+
+APPENDIX C . THE NON-RECURSIVE IMPLEMENTATION OF THE RECURSIVE FILTER
+
+Consider the recursive filter defined in general by equation (73):
+
+Define a vector  of dimension  by
+
+(C.24)
+
+and define  similarly.
+
+Let  and  denote matrices whose rows are given by  and  for .
+
+The non-recursive form of the recursive filter is then:
+
+(C.25)
+
+and  can be constructed inductively:
+
+(C.26)
+
+REFERENCES
+
+Ballish, B., Cao, X., Kalnay, E., and Kanamitsu, M. (1992) Incremental nonlinear normal mode initialization. Mon.
+
+Wea. Rev., 120, 1723-1734.
+
+Bouttier, F., Derber, J., and Fisher, M. (1997) The 1997 revision of the Jb term in 3D/4D-Var. ECMWF Tech.
+
+Memo., 238, 54pp.
+
+Chapman, S. and Lindzen, R.S. (1970) Atmospheric Tides. D. Reidel, Holland, 200pp.
+
+Courtier, P., Andersson, E., Heckley, W., Pailleux, J., Vasiljevic, D., Hamrud, M., Hollingsworth, A., Rabier, F.,
+
+and Fisher, M. (1998) The ECMWF implementation of three dimensional variational assimilation (3D-Var). Part
+
+I: Formulation. Q. J. R. Meteorol. Soc., 124, in press.
+
+ ' <
+3
+
+'
+Q κ----------=
+
+ <Q κ-------
+3
+
+'∂
+�∂--------
+
+ω' < 354
+Q 6-----------------–=
+
+s +( ) ; �( ) � + �–( )� 0=
+
+2
+∑
+
+v �( )s + �–( )� 1=
+
+2
+∑+=
+
+ +( ) U 1+( )
+ +( ) 0 0 … 0 ;, 2( ) ; 2 1–( ) … ; 1( ), , , , , ,( )=
+
+ +( )
+ +( )  +( ) � �( )( )
+
+! s �( )( )
+!
+
+" 0 1 2 … U, , , ,=
+
+ +( ) _+( ) +( )=
+_ +( )
+
+_ +( ) _+ 1–( ) 0 + 1–( )  + 1–( ) _+ 1–( )+ ; 0( )
+=
+
+
+
+The control of gravity waves in data assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 45
+
+Kasahara, A. (1976) Normal modes of ultra-long waves in the atmosphere. Mon. Wea. Rev., 104, 669-690.
+
+Lilly, D.K. and Kennedy, P.J. (1973) Observations of a stationary mountain wave and its associated momentum flux
+
+and energy dissipation. J. Atmos. Sci., 30, 1135-1152.
+
+Lindzen, R.S., Batten, E.S. and Kim, J.W. (1968) Oscillations in atmospheres with tops. Mon. Wea. Rev., 96, 133-
+140.
+
+Longuet-Higgins, M.S. (1968) The eigenfunctions of Laplace’s tidal equations over a sphere. Phil. Trans. Roy. Soc.
+
+London, A262, 511-607.
+
+Lynch, P. and Huang, X.-Y. (1992) Initialization of the HIRLAM model using a digital filter. Mon. Wea. Rev., 120,
+1019-1034.
+
+Lynch, P. and Huang, X.-Y. (1994) Diabatic initialization using recursive filters. Tellus, 46A, 583-597.
+
+Lynch, P. (1997) The Dolph-Chebyshev window: A simple optimal filter. Mon. Wea. Rev., 125, 655-660.
+
+Lynch, P., Giard, D., and Ivanovici, V. (1997) Improving the efficiency of a digital filtering scheme for diabatic
+
+initialization. Mon. Wea. Rev., 125, 1976-1982.
+
+Machenhauer, B. (1977) On the dynamics of gravity oscillations in a shallow water model, with application to nor-
+
+mal-mode initialization. Contrib. Atmos. Phys., 50, 253-271.
+
+Ninomiya, K. (1983) Internal-gravity-wave-like variations of temperature, humidity and wind observed in the trop-
+
+osphere downstream of heavy rainfall. J. Meteorol. Soc. Japan, 61, 163-169.
+
+Puri, K., Bourke, W., and Seaman, R. (1982) Incremental linear normal mode initialization in four-dimensional
+
+data assimilation. Mon. Wea. Rev., 110, 1773-1785.
+
+Simmons, A.J., and Burridge, D.M. (1981) An energy and angular-momentum conserving vertical finite-difference
+
+scheme and hybrid vertical coordinates. Mon. Wea. Rev., 109, 758-766.
+
+Taylor, G.I. (1929) Waves and tides in the atmosphere. Proc. Roy. Soc., A126, 169-183.
+
+Temperton, C. (1988) Implicit normal-mode initialization. Mon. Wea. Rev., 116, 1014-1031.
+
+Temperton, C. (1989) Implicit normal-mode initialization for spectral models. Mon. Wea. Rev., 117, 436-451.
+
+Temperton, C., and Williamson, D.L. (1981) Normal mode initialization for a multi-level gridpoint model. Part I:
+
+Linear aspects. Mon. Wea. Rev., 109, 729-743.
+
+Webster, P.J. (1983) Large-scale structure of the tropical atmosphere. Large-scale Dynamical Processes in the At-
+
+mosphere, Eds. B.J. Hoskins and R.P. Pearce, Academic Press, 235-275.
+
+Wergen, W. (1987) Diabatic nonlinear normal mode initialization for a spectral model with a hybrid vertical coor-
+
+dinate. ECMWF Technical Report No. 59, 83pp.
+
+Williamson, D.L., and Temperton, C. (1981) Normal mode initialization for a multi-level gridpoint model. Part II:
+
+Nonlinear aspects. Mon. Wea. Rev., 109, 744-757.

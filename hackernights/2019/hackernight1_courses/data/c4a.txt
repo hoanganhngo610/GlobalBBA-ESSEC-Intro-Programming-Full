@@ -1,0 +1,330 @@
+Models for Count Data With Overdispersion
+
+Germán Rodŕıguez
+
+November 6, 2013
+
+Abstract
+
+This addendum to the WWS 509 notes covers extra-Poisson varia-
+tion and the negative binomial model, with brief appearances by zero-
+inflated and hurdle models.
+
+1 Extra-Poisson Variation
+
+One of the key features of the Poisson distribution is that the variance equals
+the mean, so
+
+var(Y ) = E(Y ) = µ
+
+Empirically, however, we often find data that exhibit over-dispersion, with
+a variance larger than the mean. The Stata logs show an example from
+Long (1990), involving the number of publications produced by Ph.D. bio-
+chemists. As the analysis shows, there’s evidence that the variance is about
+1.8 times the mean. We now consider models that accommodate the excess
+variation.
+
+An interesting feature of the iteratively-reweighted least squares (IRLS)
+algorithm used in generalized linear models is that it depends only on the
+mean and variance of the observations. Nelder and Wedderburn (1972) pro-
+posed specifying just the mean and variance relationship and then applying
+the algorithm. The resulting estimates are called maximum quasi-likelihood
+estimates (MQLE), and have been shown to share many of the optimal-
+ity properties of maximum likelihood estimates (MLE) under fairly general
+conditions.
+
+In the context of count data, consider the assumption that the variance
+is proportional to the mean. Specifically,
+
+var(Y ) = φE(Y ) = φµ
+
+1
+
+
+
+If φ = 1 then the variance equals the mean and we obtain the Poisson
+mean-variance relationship. If φ > 1 then the have over-dispersion relative
+to Poisson. If φ < 1 we would have under-dispersion, but this is relatively
+rare.
+
+It turns out that applying the IRLS algorithm in this more general case
+involves working with weights w∗ = µ/φ. These are the Poisson weights
+w = µ divided by φ, but the φ cancels out when we compute the weighted
+estimator (X ′WX)−1X ′Wy, which thus reduces to the Poisson MLE. This
+implies that Poisson estimates are MQLE when the variance is proportional
+(not just equal) to the mean.
+
+The variance of the estimator in the more general case involves φ, and
+is given by
+
+var(β̂) = φ(X ′WX)−1
+
+where W = diag(µ1, . . . , µn), reducing to the Poisson variance when φ = 1.
+This means that Poisson standard errors will be conservative in the presence
+of over-dispersion.
+
+The obvious solution is to correct the standard errors using an estimate
+of φ. The standard approach relies on Pearson’s χ2 statistic, which is defined
+as
+
+χ2p =
+n∑
+i=1
+
+(yi − µi)2
+
+var(yi)
+=
+
+n∑
+i=1
+
+(yi − µi)2
+
+φµi
+
+If the model is correct the expected value of this statistic is n− p. Equating
+the statistic to its expectation and solving for φ gives the estimate
+
+φ̂ =
+χ2p
+n− p
+
+In the biochemist example, χ2p = 1662.55 for a model with p = 6 parameters
+
+on n = 915 observations, which leads to φ̂ = 1662.55/909 = 1.829. We retain
+the Poisson estimates but multiply the standard errors by
+
+√
+1.829 = 1.352,
+
+which inflates them by 35.2%.
+A word of caution is in order. Normally one would consider a large value
+
+of Pearson’s χ2 as evidence of lack of fit. What we are doing here is treating
+it as pure error to inflate our standard errors. Obviously this requires a
+high degree of confidence in the systematic part of the model, so we can be
+reasonably sure that the lack of fit is not due to specification errors but just
+over-dispersion.
+
+An alternative approach that often gives similar results is to use a ro-
+bust estimator of standard errors in the tradition of Huber (1956) and
+White (1980).
+
+2
+
+
+
+2 Negative Binomial
+
+An alternative approach to modeling over-dispersion in count data is to start
+from a Poisson regression model and add a multiplicative random effect θ
+to represent unobserved heterogeneity. This leads to the negative binomial
+regression model.
+
+Suppose that the conditional distribution of the outcome Y given an
+unobserved variable θ is indeed Poisson with mean and variance θµ, so
+
+Y |θ ∼ P (µθ)
+
+In the context of the Ph.D. biochemists, θ captures unobserved factors that
+increase (if θ > 1) or decrease (if θ < 1) productivity relative to what one
+would expect given the observed values of the covariates, which is of course
+µ where logµ = x′β. For convenience we take E(θ) = 1, so µ represents the
+expected outcome for the average individual given covariates x.
+
+In this model the data would be Poisson if only we could observe θ.
+Unfortunately we do not. Instead we make an assumption regarding its dis-
+tribution and “integrate it out” of the likelihood, effectively computing the
+unconditional distribution of the outcome. It turns out to be mathemati-
+cally convenient to assume that θ has a gamma distribution with parameters
+α and β. This distribution has mean α/β and variance α/β2, so we take
+α = β = 1/σ2, which makes the mean of the unobserved effect one and its
+variance σ2.
+
+With this information we can compute the unconditional distribution of
+the outcome, which happens to be the negative binomial distribution. The
+density is best written in terms of the parameters α, β and µ as done below,
+although you must recall that in our case α = β = 1/σ2, so there’s just one
+more parameter compared to a Poisson model.
+
+Pr{Y = y} = Γ(α+y)
+y!Γ(α)
+
+βαµy
+
+(µ+ β)α+y
+
+This distribution is best known as the distribution of the number of
+failures before the k-th success in a series of independent Bernoulli trials
+with common probability of success π. The density corresponding to this
+interpretation can be obtained from the expression above by setting α = k
+and π = β/(µ+ β).
+
+The negative binomial distribution with α = β = 1/σ2 has mean
+
+E(Y ) = µ
+
+3
+
+
+
+and variance
+var(Y ) = µ(1 + σ2µ)
+
+If σ2 = 0 there’s no unobserved heterogeneity and we obtain the Poisson
+variance. If σ2 > 0 then the variance is larger than the mean. Thus, the
+negative binomial distribution is over-dispersed relative to the Poisson.
+
+Interestingly, these moments can be derived using the law of iterated
+expectations without assuming that the unobservable has a gamma distri-
+bution; all we need are the conditional moments E(Y |θ) = var(Y |θ) = θµ
+and the assumption that the unobservable has mean one and variance σ2.
+The unconditional mean is simply the expected value of the conditional
+mean
+
+E(Y ) = Eθ[EY |θ(Y |θ)] = Eθ(θµ) = µEθ(θ) = µ
+
+where we used subscripts to clarify over which distribution we are taking
+expectations. The unconditional variance is the expected value of the con-
+ditional variance plus the variance of the conditional mean
+
+var(Y ) = Eθ[varY |θ(Y |θ)] + varθ[Eθ(θµ)]
+= Eθ(θµ) + varθ(θµ) = µEθ(θ) + µ
+
+2varθ(θ)
+
+= µ+ µ2σ2 = µ(1 + µσ2)
+
+again using a subscript to clarify over which distribution we are taking ex-
+pectation or computing variance.
+
+Stata has a command called nbreg that can fit the negative binomial
+model described here by maximum likelihood. The output uses alpha to la-
+bel the variance of the unobservable, which we call σ2. The model can also
+be fit by maximum quasi-likelihood using only the mean-variance relation-
+ship, provided σ2 is known or estimated separately. It is possible to derive
+an estimate of σ2 using Pearson’s χ2 statistic, but this requires alternating
+between estimating µ given σ2 and then σ2 given µ, so this approach loses
+the simplicity it has in the Poisson case.
+
+Because the Poisson model is a special case of the negative binomial when
+σ2 = 0, we can use a likelihood ratio test to compare the two models. There
+is, however, a small difficulty. Because the null hypothesis corresponding to
+the Poisson model is on a boundary of the parameter space, the likelihood
+ratio test statistic does not converge to a χ2 distribution with one d.f as
+one might expect. Simulations suggest that the null distribution is better
+approximated as a 50:50 mixture of zero and a χ2 with one d.f., and this is
+the approximation that Stata reports as chibar2. An alternative is simply
+
+4
+
+
+
+to note that treating the test statistic as χ2 with one d.f. results in a
+conservative test.
+
+For the Ph.D. Biochemist data in the Stata log the negative binomial
+model gives estimates that are very similar to the Poisson model, and have
+of course the same interpretation with the caveat that we are talking about
+an individual with average unobserved characteristics. The standard errors
+are very similar to the over-dispersed Poisson standard errors, and are both
+larger than the reference Poisson errors. The test that σ2 = 2 leads to a
+χ2LR = 180.2, which is highly significant with or without adjustment for the
+boundary problem.
+
+We note in closing this section that there are alternative formulations
+of the negative binomial model that lead to different models, including the
+over-dispersed Poisson model of the previous section. The formulation given
+here, however, is the one in common use.
+
+3 Zero-Inflated Models
+
+Another common problem with count data models, including both Poisson
+and negative binomial models, is that empirical data often show more zeroes
+than would be expected under either model. In the Ph.D. Biochemist data,
+for example, we find that 30% of the individuals publish no papers at all.
+The Poisson model predicts 21%, so it underestimates the zeroes by nine
+percentage points.
+
+The zero-inflated Poisson model postulates that there are two latent
+classes of people. The “always zero”, which in our example would be indi-
+viduals who never publish, and the rest, or “not always zero”, for whom the
+number of publications has a Poisson distribution with mean and variance
+µ > 0. The model combines a logit model that predicts which of the two
+latent classes a person belongs, with a Poisson model that predicts the out-
+come for those in the second latent class. In this model there are two kinds
+of zeroes: some are structural zeroes from the always zero class, and some
+are random zeroes from the other class.
+
+Stata can fit this model using the zip or zero-inflated Poisson command.
+You specify the predictors for the Poisson equation in the usual fashion, and
+use the inflate() option to specify the predictors for the logit equation.
+The inflate part can be inflate(_cons) to specify that everyone has the
+same probability of belonging to the zero class. Stata is rather finicky in
+determining which models are nested, and will not allow direct comparison
+of the zip and Poisson models, although they are nested, with the Poisson
+
+5
+
+
+
+model corresponding to the zip model where the probability of “always zero”
+is zero for everybody.
+
+Stata can also fit a zero-inflated negative binomial model using the com-
+mand zinb, which combines a logit equation for the latent classes with a
+negative binomial for the counts in the not “always zero” class. One can
+view this model as adding unobserved heterogeneity to the Poisson equation
+for the counts in the second latent class.
+
+These models are very appealing but interpretation is not always straight-
+forward. In an analysis of number of cigarettes smoked last week the latent
+classes have a natural interpretation: the “always zero” are non-smokers,
+to be distinguished from smokers who happen to smoke no cigarettes in
+a week, but one would be better off ascertaining whether the respondent
+smokes. When analyzing publications the “always zero” could be respon-
+dents in non-academic jobs where publishing is not required or expected, but
+again it would be better to include the type of job as a covariate. In health
+research it is common to ask elderly respondents how many limitations they
+encounter in carrying out activities of daily living, such as getting up from
+a chair or climbing some stairs. It is common to observe more zeroes than
+expected, but it is not clear what an “always zero” class would mean.
+
+4 Hurdle Models
+
+Another approach to excess zeroes is to use a logit model to distinguish
+counts of zero from larger counts, effectively collapsing the count distribu-
+tion into two categories, and then use a truncated Poisson model, namely a
+Poisson distribution where zero has been excluded, for the positive counts.
+This approach differs from the zip models because the classes are observed
+rather than latent, one consists of observed zeroes and the other of observed
+positive counts. The term “hurdle” is evocative of a threshold that must
+be exceeded before events occur, with a separate process determining the
+number of events.
+
+Stata can fit a zero-truncated Poisson model using the ztp command. To
+fit a hurdle model you create an indicator variable for counts above zero and
+run an ordinary logit, and then run ztp on the respondents with positive
+counts. To obtain an overall log-likelihood you just add the log-likelihoods
+of the two parts.
+
+Interpretation of the logit equation is more straightforward than in zip
+models because the binary choice is clear; you are modeling whether people
+smoke, publish, or have limitations in activities of daily living. Interpreta-
+
+6
+
+
+
+tion of the Poisson equation, however, is not so obvious because the quantity
+being modeled, µ, is the mean of the entire distribution, not the mean for
+those who experience events, which would be µ/(1−e−µ). This means that a
+coefficient such as β = 0.1 cannot be interpreted as reflecting a 10% increase
+in the mean, and the simplicity of the Poisson multiplicative model is lost.
+
+An alternative approach is to compute the derivative of the fitted values
+with respect to the predictors and interpret results in terms of marginal
+effects.
+
+7

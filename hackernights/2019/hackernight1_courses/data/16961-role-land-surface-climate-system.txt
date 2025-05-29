@@ -1,0 +1,1333 @@
+Role_of_land_surface
+
+
+The role of the land surface in the climate system
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+The role of the land surface in the climate
+system
+
+By Pedro Viterbo (p.viterbo@ecmwf.int)
+
+European Centre for Medium-Range Weather Forecasts, Shinfield Park, Reading RG2 9AX, United Kingdom
+
+Abstract
+
+The role of the land surface in the climate system is illustrated, with a focus on recent experience at the European Centre for
+Medium-Range Weather Forecasts (ECMWF). Global energy and water budgets are discussed and compared with their
+counterparts over the ocean, highlighting physical mechanisms responsible for their differences. Time scales associated with
+the global hydrological budget are presented. Using field data and model results, soil moisture is shown to be responsible for
+modulating the surface-atmosphere interaction at a continental scale, on time scales ranging from the diurnal to the seasonal.
+After a brief review of the impact of land surface on weather, three ECMWF case studies are presented where a more realistic
+representation of land surface was crucial for the performance of the forecast system. They correspond, respectively, to the role
+of soil moisture in determining the position and intensity of the precipitation maximum in an extreme event of mid-latitudes
+summer, the role of albedo of the snow in the presence of forests in spring and the effect of soil water freezing as a thermal
+regulator of the surface in cold climates. Finally, the evolution of the systematic errors in the ECMWF forecasts of near surface
+temperature and humidity is presented over the last ten years; a clear signature of changes to the representation of land surface
+processes (and other physical processes affecting the energy and water fluxes at the surface) can be found on that record.
+
+Table of contents
+
+1 . Introduction
+
+2 . Surface energy and water budget
+
+3 . Time scales and the role of soil moisture
+
+3.1 Global time scales
+
+3.2 The role of soil moisture
+
+3.3 The interplay between the diurnal and the seasonal time scales
+
+3.4 A schematic view of the role of land surface
+
+4 . Impact of land surface on weather: A brief literature survey
+
+5 . Examples from ECMWF recent experience
+
+5.1 Soil moisture
+
+5.2 Boreal forests
+
+5.3 Soil water freezing: A regulator of cold climates
+
+6 . Conclusions
+
+1. INTRODUCTION
+
+The climate system is influenced by the land surface at a variety of time and spatial scales. Firstly, the atmosphere
+
+
+
+The role of the land surface in the climate system
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+is in direct contact with the surface, which acts as a source or sink for the atmospheric enthalpy and moisture (and
+
+as a sink for the atmospheric momentum), via the surface sensible heat flux and evaporation (and the surface stress).
+
+Secondly, the surface conditions act as a regulator for important feedback cycles in the climate system. Thirdly, the
+
+partitioning of net radiation at the surface into sensible and latent heat fluxes determines the soil wetness evolution,
+
+which acts as one of the forcings – or, at the very least, a modulator - of low frequency variability. In fact, after the
+
+sea surface temperature, soil wetness and snow mass are the most important “memory” mechanisms for time scales
+
+ranging from weeks to seasons. Finally, the surface energy fluxes determine to a large extent the surface weather
+
+variables, such as screen-level temperature, humidity, and wind speed and, to a lesser extent, low-level cloudiness
+
+and precipitation. Humankind lives in the lowest two-metres of the atmosphere and is directly affected by the at-
+
+mospheric conditions at the near surface.
+
+This paper illustrates the impact of the land surface in the climate system, with a focus on examples based on recent
+
+experience at the European Centre for Medium-Range Weather Forecasts (ECMWF). The primary purpose of the
+
+paper is to highlight typical weather regimes/ecosystems where the land surface is of relevance to the evolution of
+
+atmospheric variables, rather than presenting a systematic review of the multifaceted research on surface-atmos-
+
+phere interactions.
+
+The importance of land surface in numerical weather prediction (NWP) stems from a blend of practical consider-
+
+ations and basic physical principles. Those are not very different from the general arguments presented in the open-
+
+ing paragraph, but two key issues are of paramount importance for NWP. First and foremost, accurate forecasts of
+
+near surface weather parameters are requested by the NWP users’ community. The quality of such products as the
+
+diurnal cycle of near surface air temperature and humidity, winds, low level cloudiness and precipitation is to a
+
+large extent determined by the physical realism of the model representation of the surface-atmosphere interactions.
+
+Secondly, remote sensing observations of the atmosphere have increased importance to characterise the state of the
+
+atmosphere over land. The sensors that are sensitive to the lower troposphere can only be used effectively in the
+
+presence of a good quality background field of skin temperature.
+
+It is important to emphasise that, despite the fact that deterministic forecasts of NWP do not extend beyond two
+
+weeks, the model land surface controls much longer time scales. The soil variables in the model are initialised every
+
+6 hours based on indirect, imperfect and very sparse observations (Douville et al. 2000). Data assimilation com-
+
+bines that information with a short-term forecast to get an optimal estimate of the land surface initial conditions.
+
+Cycling the creation of initial conditions is tantamount to an extended model integration nudged by observations
+
+and extends the memory of the surface variables beyond the forecast duration. The realism of the representation of
+
+land surface processes is crucial for handling correctly the memory properties, represented by soil moisture in sub-
+
+tropics and mid-latitudes spring and summer and by snow mass in high latitudes and mountainous areas.
+
+Although the importance of the land surface in the climate system has been established with, among others, the
+
+pioneering work of Namias (1958), Budyko (1963; 1974 and references therein), Manabe (1969), Charney (1975)
+
+–see review by Garratt (1993) - the impact of land surface on weather was only recently recognised, as can be seen
+
+by the scarce literature available. In Section 2 some general remarks on the surface energy and water budget will
+
+be presented, while Section 3 will elaborate on the role of the land surface, with emphasis on the long time scales
+
+characteristic of soil water. In Section 4 some surface-atmosphere interaction mechanisms that are relevant for the
+
+atmospheric simulation at the regional to continental scales are reviewed, based on numerical or observational stud-
+
+ies that are relevant for NWP. Section 5 will illustrate when and where the land surface can affect the weather, based
+
+on examples from recent experience at the European Centre for Medium-Range Weather Forecasts (ECMWF). A
+
+short summary is presented in Section 6.
+
+
+
+The role of the land surface in the climate system
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+2. SURFACE ENERGY AND WATER BUDGET
+
+Fig. 1 represents in a schematic form the energy and water balance at the land surface. The surface albedo, con-
+
+trolling the fraction of the incident shortwave radiation absorbed by the surface, depends on the soil and vegetation
+
+type and state and on the amount of snow present. The net longwave radiation, LW, depends also on properties of
+
+the land surface, namely the surface emissivity and the surface skin temperature. Since the net radiation flux (the
+
+sum of solar and longwave radiation) is downward, and because the land surface has a small thermal inertia, the
+
+sum of latent and sensible heat fluxes must be an upwards flux. Note that the surface latent heat flux, LE, in the
+
+energy budget (left panel) is equal to the latent heat, L, times the evaporation flux, E, in the water budget (right
+
+panel), indicating that the water is available at the surface in a condensed phase and is passed to the atmosphere in
+
+the vapour phase. In that process, the surface undergoes evaporative cooling.
+
+As mentioned in the introduction, the partitioning of the energy available at the surface into latent and sensible heat
+
+depends crucially on the soil moisture. Vegetated covered surfaces have the ability to draw water from a depth of
+
+order 1 m (the root layer), while for bare ground only the water in the top few cm of soil contributes for evaporation.
+
+The latent and sensible heat fluxes (LE and H, respectively) play a different role for the atmosphere. Sensible heat
+
+at the bottom means energy immediately available to the atmosphere, and contributes to the heating and/or deep-
+
+ening of the planetary boundary layer (BL), that shallow portion of the atmosphere directly affected by the surface.
+
+The surface evaporation flux does not directly heat the atmosphere, but provides moisture to the BL or, in the case
+
+of deep convection, to the whole troposphere. In favourable conditions, that contributes to precipitation generation
+
+mechanisms, with the associated release of latent heat into the whole troposphere. It is clear that, when compared
+
+to the sensible heat flux, evaporation can indirectly lead to a very efficient transfer of energy affecting a much deep-
+
+er atmospheric layer. For an entire atmospheric column, the net radiative cooling is balanced by energy involved
+
+in phase changes inside the column (condensation of water vapour and evaporation of rain) and sensible heat flux
+
+at the surface. Land surface processes affect directly or indirectly this balance.
+
+Figure 1. Schematics of surface energy and water fluxes. H, LE, LW and SW stand for surface sensible and latent
+
+heat flux, surface longwave and shortwave radiation flux, respectively; E, P, and Y stand for evaporation,
+
+precipitation and runoff. Numbers at the bottom represent averaged values over all land points for the ERA15
+
+reanalysis (1979–1993).
+
+TABLE 1. MEAN SURFACE ENERGY FLUXES IN THE ERA15 ATMOSPHERIC REANALYSIS
+
+SW LW H LE G0 Bo=H/LE
+
+Land 138 -63 -23 -41 0 0.6
+
+Sea 163 -51 -10 -104 -2 0.1
+
+Surface energy budget
+
+H
+
+LE LW
+
+SW
+
+23 41 63 138 Wm-2
+
+Surface water budget
+
+E
+
+P
+
+Y
+
+0.8 mmd-12.21.4
+
+
+
+The role of the land surface in the climate system
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Table 1 summarises the surface annual mean fluxes for the 1979-1993 period covered by the 15 year European Cen-
+
+tre for Medium-Range Weather Forecasts (ECMWF) reanalysis (ERA15, Gibson et al. 1997). Values presented are
+
+global averages over land and sea separately, in W m-2, and downward fluxes are positive. The net heat flux, G0, is
+
+the sum of all the surface fluxes. The contrasts between land and sea are clear. Even for such a large time period,
+
+the net flux is non-zero over sea, emphasising the larger thermal inertia of the oceans. The continents have a fast
+
+responsive surface and adjust their surface temperature in order to maintain a zero-heat flux at the surface, while
+
+the oceans have a much larger thermal inertia, with relatively small variations in surface temperature and flux im-
+
+balances allowed in much longer time scales. The last column, the Bowen ratio, Bo, is the ratio of sensible and
+
+latent surface heat fluxes. The larger values over land are indicative of the relatively difficulty of accessing the water
+
+at the surface. Over vegetated surfaces, this corresponds to the physiological mechanisms controlling transpiration
+
+while over bare ground the water directly accessible for evaporation is limited to the top few soil cm.
+
+Surface energy fluxes for an entire season (not shown in the table above) still balance out, indicating that the energy
+
+associated to the seasonal changes in soil temperature are negligible when compared to the individual surface en-
+
+ergy fluxes. However, for the surface water balance on a seasonal time scale, the storage term, or change in total
+
+soil water content, can be of similar magnitude to the precipitation or evaporation, which is self-evident in any ex-
+
+tended drought period. In the next section, we will discuss the different time scales regulating the surface and reg-
+
+ulated by the surface.
+
+3. TIME SCALES AND THE ROLE OF SOIL MOISTURE
+
+3.1  Global time scales
+
+Figure  2. The global water cycle (from Chahine 1992). Units of water in reservoirs: 1015 kg; units of water in
+
+fluxes: 1015 kg yr-1.
+
+Fig. 2 represents the size of the moisture reservoirs of the terrestrial atmosphere and the marine atmosphere (rec-
+
+tangles in the figure), the exchanges of moisture between them, and between the atmosphere and the surface below
+
+
+
+The role of the land surface in the climate system
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+(arrows in the picture). The sea surface evaporates at the potential rate, while over land there are additional mech-
+
+anisms that reduce the evapotranspiration rate: dryness of the soil or, over vegetated areas, physiological mecha-
+
+nisms that can reduce or shut transpiration from the plant leaves and trunks making the water from the root zone
+
+effectively unavailable for the atmosphere above. Precipitation over land is about a quarter of that over sea. Note
+
+that precipitation exceeds evaporation over land, while over sea the reverse is true. In order to have a closed budget
+
+for the terrestrial atmosphere, advection of moisture across a vertical wall projecting over the continent boundaries
+
+has to match the difference precipitation minus evaporation. Advection is roughly half of the water evaporated over
+
+land (see Peixoto and Oort 1992 for estimates based on radiosonde observations), suggesting an annual recircula-
+
+tion ratio (ratio of the rainfall coming from local evaporation over total rainfall rate) of 67% (71/107). To close the
+
+hydrological cycle, the advection has to be matched by the river runoff: the global averaged influx of fresh water
+
+into the ocean is estimated in this way as 36 x 1015 kg yr-1. For continental areas, annual runoff, evaporation and
+
+precipitation are approximately in the ratio 1:2:3.
+
+Rigorous formulations of the atmospheric branch of the hydrological cycle can be found in Peixoto 1973 and Peix-
+
+oto and Oort 1983, 1992. So-called “aerological estimates of runoff”, based on measurements of atmospheric water
+
+vapour transport and a closure at the surface, have been applied successfully to basins with areas larger than 106
+
+km2 (Rasmusson 1967, 1968, 1971; Peixoto 1973).
+
+The rainfall rate and the size of the reservoir can be combined to give a time scale 4.5/107 = 0.042 years = 15 days:
+
+the terrestrial atmosphere would be emptied by rainfall in 15 days. In a similar way the reservoir would be replen-
+
+ished by surface evapotranspiration in 23 days (4.5/71 years)1. The time scales associated to marine rainfall are
+
+only 7.5 days, and the corresponding value for evaporation is 6.8 days. This suggests (a) a more vigorous hydro-
+
+logical cycle over the ocean; (b) a land surface control over large time scales (weeks to months), through the eva-
+
+potranspiration flux of water at the surface. The implication of the above on the extended predictability of the
+
+atmosphere due to exchanges of water with the land surface has been discussed by many authors (see, e.g., Namias
+
+1958, Mintz 1984, Dümenil and Bengtsson 1993, Dirmeyer and Shukla 1993).
+
+The accuracy of the numbers shown in Fig. 2 varies widely: see Chahine 1992, for the sources used to produce
+
+these particular estimates. Any literature review shows a very large dispersion in those numbers (see, e.g., Viterbo
+
+1996): global estimates of the total column water vapour can vary by as much as 34%, while runoff estimates differ
+
+by 45%. Independent estimates of precipitation have smaller ranges of uncertainty (notwithstanding the extensive
+
+areas of the planet where observations are very scarce), but direct or indirect estimates of evaporation are subject
+
+to very large uncertainty.
+
+3.2  The role of soil moisture
+
+In order to illustrate the role of soil moisture in shaping the interaction surface-atmosphere, we will use model data
+
+over the Red-Arkansas River basin, a sub-basin of the Mississippi River basin. Data is based on the ECMWF rea-
+
+nalysis ERA15 (Gibson et al. 1997) used also in Section 2. Betts et al. (1998, 1999) have studied the ECMWF mod-
+
+el energy and water budget over the Mississippi River basin, as described by short-term forecasts. Basin-average
+
+data was used for nine years, 1985–93 and analysed at different temporal scales; we will concentrate in this sectio
+
+on summertime 5-day average ECMWF data.
+
+1. The global view on the atmospheric water budget presented in the text can be regionalised, allowing, under certain restrictive assumptions,
+an estimate of how much moisture that precipitates comes out from local evaporation versus horizontal transport. For a discussion on the
+“intensity of the hydrological cycle”, i.e., the time scales associated to the emptying and repleneshing of the atmospheric water reservoir at dif-
+ferent locations on the globe, see Trenberth (1999).
+
+
+
+The role of the land surface in the climate system
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  3. (a) Scatterplot of 5-day average evaporative fraction over warm soils (0-7 cm layer soil temperature >
+
+296 K) against 0-7 cm soil water (SW1). (b) As Fig 3(a), but for pressure height to the lifting condensation level
+
+(PLCL) (from Betts et al. 1998).
+
+We will illustrate here that the ECMWF data shows a similar coupling in the midsummer on the 5-day timescale
+
+between soil water, evaporation and low-level thermodynamics as the First International Satellite Land Surface Cli-
+
+matology Project Field Experiment (FIFE) data2 (Betts and Ball 1998) show on the diurnal time scale. We define
+
+a 5-day mean evaporative fraction as
+
+.
+
+where H and LE are the 5-day averages of the surface sensible and latent heat fluxes. Fig. 3 (a) shows the strong
+
+coupling between EF and the top layer model soil water, SW1. The data plotted are all the 5-day values (1985-
+
+1993) for which the 0-7 cm mean soil temperatures are > 296 K, representative of the warm months.
+
+Fig. 3 (b) shows a similar coupling of PLCL (the pressure height of the lifting condensation level, determining cloud
+
+base) to SW1 for the same data. The model resistance to evaporation between the saturated interior of a “leaf” and
+
+the surrounding air is dependent on soil water, and this vegetation resistance is therefore one key factor in deter-
+
+mining the equilibrium saturation level difference, PLCL, in the saturation pressure budget of the BL (Betts and Ball
+
+1998).
+
+We have shown 5-day averages, but the patterns and slopes in Figs. 3 (a) and (b) are similar (but shifted slightly to
+
+higher PLCL and lower EF) if the 12-h daytime average are used instead. Note that the lower limit in Fig. 3 (b) (cor-
+
+responding to very wet soils) is near the oceanic equilibrium of hPa (e.g., Betts and Ridgway 1989).
+
+The oceanic surface boundary is saturated, and has no additional resistance of evaporation corresponding to the
+
+vegetative resistance over land. Figs. 3 (a) and (b) are particularly significant because neither of these relationships
+
+of EF and PLCL on soil water depend strongly on soil temperature at this warm temperatures.
+
+2. FIFE was an experiment measuring the different components of the surface energy and water budget of a 15 x 15 km2 of natural grassland
+located in Kansas, US, and heavily instrumented over the period 1987-1989.
+
+(a) (b)
+
+��� � �
+� � �+
+--------------------=
+
+�
+LCL 60≈
+
+
+
+The role of the land surface in the climate system
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+3.3  The interplay between the diurnal and the seasonal time scales
+
+Figure  4. (a) Daytime diurnal cycle of potential temperature (q) and mixing ratio (q) at 2 m from 1145 to 2345
+
+UTC for monthly dry-day composites (FIFE averages for 1987); (b) (q, q) plot of surface data for selected 28 days
+
+from July and August 1987, composited by soil moisture, showing the dependence of mean diurnal cycle on
+
+surface evaporation (from Betts et al. 1996).
+
+Fig. 4 (a) (from Betts et al. 1996) shows the daytime diurnal cycle of the FIFE 2-m thermodynamic data for the
+
+predominantly sunny and dry days from May to October 1987. The axes are potential temperature (θ) and mixing
+ratio (q). This (θ, q) plot can be regarded as the heat and moisture budget on orthogonal axes (Betts 1992). There
+are 19, 21, 25, 22, 23, and 22 dates in each average from May to October. The selection criteria were near-noon
+
+surface net radiation above a threshold (which was 450 W m-2 in midsummer, falling to 300 W m-2 in October) and
+
+no significant daytime rainfall. Here we can see the diurnal and seasonal cycle together. The points are plotted hour-
+
+ly, starting at 1145 UTC, shortly after sunrise in midsummer. The seasonal rise and fall of mean temperature and
+
+mixing ratio can be seen: July is the warmest month. October is noticeably drier, after the vegetation has diedand
+
+evaporation is low. Saturation pressure lines of 970 and 800 hPa are shown dashed. The surface pressure is near
+
+970 hPa. It can be seen that at the morning minimum temperature, the 2 m air is about 30 hPa from saturation, ex-
+
+cept in October, when it is more unsaturated. The diurnal range of mixing ratio q is relatively small in all months.
+
+There is generally a rise of q in the morning, when the BL is shallow and capped by relatively moist air from the
+
+BL of the preceding day, and a fall in the afternoon, as the growing BL entrains drier air from higher levels. May
+
+shows no afternoon fall of q, probably because of the higher soil moisture and evaporation. May and June do not
+
+reach as low afternoon saturation pressures as the later months of July, August, September, and October. This
+
+means a lower mean lifting condensation level (see also previous section) or cloud base in spring. Probably this
+
+reflects a seasonal drying of the surface, although changes in upper air thermodynamic structure may be involved.
+
+It is clear that the afternoon maximum of equivalent potential temperature θe is controlled mostly by the seasonal
+shift. The isopleths of θe =310, 330, 350 K are shown dotted. The rise of θe from morning minimum to afternoon
+maximum is around 14 K in all months.
+
+The sum of surface sensible and latent heat fluxes is a surface source for increasing θe (e.g., Betts and Ball 1998).
+This surface θe is proportional to the sum of H+LE, and it is not affected by the Bowen ratio. It is entrainment of
+low θe air from above the BL, together with the deepening of the BL, that reduce the BL θe rise, and so feed back
+on both the shallow and even more importantly on precipitating convection. Thus one of the important aspects of
+
+the BL evolution over land is how large entrainment at BL top is. The daytime BL over land is primarily thermally
+
+generated (in strong winds, shear plays a role), and thus linked to the surface virtual heat flux (which over land is
+
+usually dominated by the sensible heat flux). Hence if the surface Bowen ratio is large, although the surface θe flux
+
+(a)
+(b)
+
+
+
+The role of the land surface in the climate system
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+may be unchanged, the large H flux drives more entrainment, produces a deeper BL, and the diurnal rise of θe is
+reduced. Fig. 4 (b) shows how this diurnal cycle over land depends on soil moisture and, as a consequence, the
+
+surface evaporation.
+
+A total of 28 days from July and August 1987 during FIFE, which were affected little by precipitation or cold air
+
+advection, were composited by soil moisture (SM: measured gravimetrically in the top 10 cm). The points are hour-
+
+ly values from 1115 UTC (near sunrise) to 2315 UTC. The dry soil composite (SM = 13%, for which the measured
+
+mean surface Bowen ratio at noon was 0.8) reaches a higher afternoon maximum K (the θe isopleths are
+shown dotted). In contrast, the wet soil composite (SM = 23.4%), for which Bowen ratio at noon was 0.4), reaches
+
+a much cooler afternoon θ maximum, but a much wetter q value, so that the afternoon K. Some of this
+shift of θe is associated with the shift of the entire diurnal path of higher q with higher soil moisture, but about half
+is the result of reduced entrainment of dry low θe into the BL. Over wet soils, H is much reduced and the BL deep-
+ens less rapidly. For all the three composites, the surface available fluxes (net radiation minus ground heat flux)
+
+were nearly identical, so that the surface θe fluxes were similar. This local feedback between soil moisture, evap-
+oration and afternoon θe equilibrium probably produces on large spatial scales a positive feedback between soil
+moisture and precipitation, which has been the subject of much research (see, for example, Brubaker et al. 1993,
+
+Trenberth 1999). The analogy over the tropical oceans is the link between BL and sea surface temperature (SST),
+
+which influences the prevalence of deep convection over warm water. Over land variations in soil moisture can lead
+
+to as large variations in BL θe as larger as those produced by several degrees of change in SST. On continental
+scales, higher soil moisture and higher evaporation over land would lead to a higher afternoon θe maximum relative
+to the surrounding ocean and shift more of the global precipitation over the continents (Betts et al. 1996). This feed-
+
+back has been seen in global models (Mintz 1984). On the regional scale, the Mississippi flood case study, present-
+
+ed in Section 5.1 below, suggested that the multiple BLs over the Midwestern United States controlled the location
+
+of precipitation, rather than this mechanism.
+
+3.4  A schematic view of the role of land surface
+
+To conclude this section, a schematic description of the interactions between the surface and the atmosphere will
+
+be presented. Inspired by an early, much more complex diagram by Horton (1931), Dooge (1992) (see also Kuhnel
+
+et al. (1991)) summarised the interaction between the land surface and the atmosphere in the picture reproduced
+
+(with adaptations) in Fig. 5 . The diagram illustrates the behaviour of the soil and the atmosphere within a complete
+
+cycle composed of a wet period followed by a dry period. Let us start just after a long episode of rainfall, point A
+
+in the figure. The soil water is available in abundance in the root layer3 and its evolution is going to be determined
+
+by evaporation. While the soil has plenty of water, the rate of evaporation is controlled by the near-surface atmos-
+
+pheric moisture: the regime is controlled by the atmosphere and the evaporation is at the potential rate. Below a
+
+certain level of soil moisture (point B in the picture), physiological mechanisms will limit the supply of water from
+
+the root layer into the atmosphere, and the evaporation will drop below its maximum value (potential evaporation,
+
+Epot). The regime is under a vegetation (soil) control. When precipitation starts (points C) it will meet a soil dry
+
+enough during the initial stages, so that infiltration (If, that part of water that falls as precipitation and is effectively
+
+collected by the soil for future use) will equal precipitation. The evolution of water in the soil is once more atmos-
+
+pheric controlled, via the rate of precipitation. Beyond a certain value (point D), the soil does not have the ability
+
+to soak all precipitation, some of it goes into runoff. This last phase is again soil controlled; the state of the soil
+
+determines the rate of infiltration.
+
+Land surface parametrizations have to represent correctly the surface fluxes and the evolution of soil moisture in
+
+3.   For the purpose of this discussion, field capacity may be considered as the threshold beyond which there is a minimum canopy resistance
+to evaporation.
+
+θe 352≈
+
+θe 361≈
+
+
+
+The role of the land surface in the climate system
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+all four phases of the cycle, and to switch from the atmospheric control into the soil control regime. The evolution
+
+of soil moisture will determine when point D will occur, and the evaporation formulation will determine point B.
+
+The crucial areas, from the point of view of the atmosphere, are the quadrants BC and CD. During spring and sum-
+
+mer (where the atmospheric demand can be very large), the system remains much longer in the half-circumference
+
+BCD than in the opposite part of the cycle.
+
+Figure  5. The hydrological rosette: Schematic depiction of the interaction between the soil hydrology and the
+
+atmosphere (adapted from Dooge (1992)). Epot and If represent potential evaporation and infiltration, respectively.
+
+4. IMPACT OF LAND SURFACE ON WEATHER: A BRIEF LITERATURE SURVEY
+
+Betts et al. (1996) review the impact of land surface in the context of global numerical weather prediction: Diurnal
+
+and seasonal feedback loops are discussed as well as feedback loops controlling the BL evolution. We will high-
+
+light here typical mechanisms controlling the interaction between land surface and the atmosphere, over the US,
+
+Europe, and the tropics.
+
+Early modelling efforts (Benjamin and Carlson 1986; Lanicci et al. 1987) have shown the sensitivity of precipita-
+
+tion in the US Great Plains to evaporation upstream, in the Mexican Plateau. The characteristic storm environment,
+
+leading to heavy precipitation over the Midwest, involves the breakdown of a capping inversion formed by an over-
+
+lying pre-existing boundary layer from the Mexican plateau, which overlies the cool moist BL originating in the
+
+Gulf of Mexico. This complex pattern of differential advection impacts on the strength of the capping inversion,
+
+and the strength of the inversion is controlled by evaporation upstream of the precipitation area. Lower values of
+
+evaporation lead to a stronger capping inversion, and the low level flow from the Gulf will not break through the
+
+inversion until much further north. The location and extent of the heavy precipitation associated with the July 1993
+
+US floods was found to be highly sensitive to the correct representation of these mechanisms in the ECMWF model
+
+(Beljaars et al. 1996; Viterbo and Betts 1999a; Section 5.1).
+
+Spatial gradients of soil moisture can also enhance the differential heating maintaining and reinforcing the surface
+
+front in a pre-storm environment and intensifying the thermally direct (ageostrophic) circulation (Chang and Wet-
+
+zel 1991; Fast and McCorcle 1991). A similar mechanism is active in a cold front associated with a severe squall
+
+line developing explosively (Koch et al. 1997).
+
+
+
+The role of the land surface in the climate system
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+The seasonality of leaf area index impacts on the systematic errors of US Midwest lower tropospheric temperature
+
+in summer (Xue et al. 1996; Yang et al. 1994). At a smaller scale, there are many observational and modelling
+
+studies demonstrating the importance of mesoscale fluxes and smaller-scale heterogeneity, specially at low wind
+
+speeds.
+
+Over Europe, Rowntree and Bolton (1983) demonstrated the role of local and non-local response of medium-range
+
+rainfall forecasts to anomalies in the initial soil. The mechanisms relevant to this soil moisture-precipitation feed-
+
+back were scrutinised in Schär et al. (1999) in a study demonstrating the impact of idealised (and large) anomalies
+
+of soil water on the European summer circulation. Unlike the desert-albedo feedback hypothesis (Charney 1975),
+
+the European soil-precipitation feedback is not of a large-scale dynamical nature, i.e., it is not associated to changes
+
+in large-scale flow. Precipitation recycling has also a small role in Europe. Three main feedback loops have been
+
+identified. Wet soils, associated with low Bowen ratios, lead to the build-up of a shallow BL, concentrating moist
+
+entropy at low levels and giving higher values of convective available potential energy (CAPE). Additionally, lower
+
+Bowen ratios lead to higher relative humidity, lowering the level of free convection. Finally, a positive feedback of
+
+radiative origin, with increased cloud cover, but larger net radiative flux, leads to larger moist entropy and convec-
+
+tive instability.
+
+All the examples above refer to extratropics spring and summer examples, in snow free situations. Section 5.2 be-
+
+low presents spring examples in the presence of snow. There is little or no impact of land surface on the atmospheric
+
+circulation in winter (see Giorgi (1990) and Section 5.3 below).
+
+Despite an extensive list of publications on the role of land-surface in the tropical climate, there is scanty evidence
+
+of its impact for short- and medium-range forecasts. A notable exception is the work of Walker and Rowntree
+
+(1977) who demonstrated the role of enhanced soil moisture gradients on the short-range (1-2 days ahead) forecast
+
+of the generation of easterly waves, using a simplified model over West Africa.
+
+5. EXAMPLES FROM ECMWF RECENT EXPERIENCE
+
+5.1  Soil moisture
+
+July 1993 showed anomalously high precipitation over the Central USA, with exceptional flooding of the Missis-
+
+sippi (Changnon 1996). During this month, the new version of the ECMWF model (CY48) and the then operational
+
+version (CY47)4, were running in parallel at full resolution (spectral truncation T213, grid-point spacing ~ 60 km),
+
+including data assimilation. Beljaars et al. (1996) compared the performance of the two schemes, looking at the
+
+average of all one-, two- and three-day forecasts verifying between 9 and 25 July. While the day one precipitation
+
+of the two systems were very similar, and similar to the observed precipitation, the forecasts at day 3 were markedly
+
+different. In the new system, the location and intensity of the maximum precipitation was similar to the observa-
+
+tions (40 N, 95 W), while the old system had less then half the precipitation amount in the area of the observed
+
+maximum and had a spurious maximum of precipitation displaced 800 km NE. In the old system, there was a grad-
+
+ual reduction in precipitation from day 1 to day 3, while the new system was able to better maintain the intensity.
+
+However, evaporation at the area of maximum precipitation was similar for the old and new system, and in both
+
+systems there was no evidence of forecast spin down, strongly suggesting that the local evaporation was not re-
+
+4. The main differences between CY47 and CY48 rely on the surface and boundary layer processes parametrization. The soil model in CY48
+has 4 layers, with no heat flux and free drainage bottom boundary condition, with soil properties (heat and water conductivities and diffusivi-
+ties) dependent in a non-linear way on soil moisture (Clapp and Hornberger 1978). CY47 has 2 layers plus 1 climate layer underneath, with
+constant water soil properties. CY48 has a smaller roughness length for heat than for momentum, while in CY47 they are identical. For more
+details see Viterbo and Beljaars (1995).
+
+
+
+The role of the land surface in the climate system
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+sponsible for the differences in precipitation. It turns out that the maximum of the evaporation difference was lo-
+
+cated over the Mexican Plateau, 1000 km SW of the precipitation maximum, two to three days upstream as
+
+suggested by backwards trajectories ending up at 750 hPa, 40 N, 95 W. The mean thermodynamic profiles, similar
+
+for day 1 forecasts, were very different for day 3 forecasts. The old model showed a too strong capping inversion
+
+above the BL, with air too warm and too dry and much lower values of CAPE. It is clear that the differential ad-
+
+vection mechanism characteristic of the US Monsoon was responsible for the differences in precipitation. When
+
+compared to the new model, the soil on the Mexican Plateau had much lower values of soil moisture in CY47, giv-
+
+ing a much reduced evaporation, which in turn produced a warm and dry air mass that capped the BL downstream,
+
+inhibiting convection. In CY47, the soil model values were strongly forced to an erroneous, too dry, climatology:
+
+In such a data dense area, atmospheric profiles were initiated to correct values, but during the forecast they slowly
+
+felt the influence of the erroneous soil moisture values. In CY48 the soil moisture values were initialised to field
+
+capacity at the beginning of July, consistent with values of June precipitation in the area much above normal. There
+
+was no forcing to climatology in CY48 (Viterbo and Beljaars 1995) and the model was capable of maintaining high
+
+values of moisture throughout July. Monthly integrations performed with CY47 and CY48 suggested the impor-
+
+tance of the memory associated to idealised soil moisture anomalies in the initial conditions (Beljaars et al. 1996).
+
+The monthly precipitation fields with CY48 compared much better to observations than those of CY47.
+
+Figure 6. Profiles (so-called tefigrams) of temperature (solid line) and dewpoint (dashed line) with CY47 (a) and
+
+CY48 (b) of the averages verifying from 9 to 25 July at the forecast range 78 hours. The model location is 40 N 95
+
+W. (c) shows the average verifying analysis. The shading indicates the area where a parcel lifted from the surface
+
+has a lower temperature than the surrounding air, i.e., the shaded surface area is a measure for the stability a parcel
+
+has to overcome before convection can occur (from Beljaars and Viterbo 1999).
+
+CY48 surface model ran with predicted soil moisture throughout the first half of 1994. It was clear that a very large
+
+near-surface warm and dry bias developed over the NH continental areas at the end of spring and beginning of sum-
+
+mer. A scheme to initialise soil water based on the short-term forecast errors of near-surface atmospheric humidity
+
+was developed to overcome that problem (Viterbo 1996). In order to test the new scheme, three complete data as-
+
+
+
+The role of the land surface in the climate system
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+similation-forecast experiments were ran at T213 for the month of June 1994: (a) Control (CY48, no assimilation
+
+of soil moisture); (b) As control, but using the initialised soil moisture values, and; (c) As in (b), but using a prog-
+
+nostic cloud scheme with much more realistic cloud cover over land (Tiedtke 1993). The near-surface warm and
+
+dry bias, reduced from Control to the initialised soil water experiment, in response to a wetter soil. A lower tropo-
+
+spheric warm bias developed in the Control model and was greatly reduced when initialisation of soil water is used.
+
+Both experiments had too little cloud cover over land with too large surface shortwave radiative fluxes, but the wet-
+
+ter soil conditions of experiment (b) managed to maintain evaporation in the face of excessive net radiation at the
+
+surface. The third simulation displayed even smaller biases, associated with a larger, more realistic cloud cover and
+
+smaller radiative biases.
+
+The algorithm to initialise soil water is successful in controlling model drifts but dampens the seasonal cycle and
+
+interannual variations of evaporation and soil moisture. Viterbo and Betts (1999a) revisited the July 1993 simula-
+
+tion, using the initial soil water algorithm and the prognostic cloud scheme. The new system gives poorer results
+
+for precipitation than Beljaars et al. (1996). Although much better than CY47, there is a suggestion of northward
+
+displacement and reduction in the precipitation maximum in day 2 forecasts. It appears that the initialisation of soil
+
+moisture at field capacity at the beginning of July in Beljaars et al. was crucial to obtain a good simulation of the
+
+excessive rainfall events.
+
+5.2  Boreal forests
+
+Surface albedo is the prime regulator of the net energy available at the surface. The albedo of snow-free land sur-
+
+faces ranges from values of 0.1 in forests to values of 0.35 over deserts. For areas seasonally covered with snow,
+
+that range can extend up to 0.85. Betts and Ball (1997) analysed the annual cycle of albedo in the BOREAS exper-
+
+iment, performed in Canada during 1994, focussing on the snow season, comparing several measurement sites lo-
+
+cated over grass, aspen and coniferous. Representative values for daily averaged albedo of snow-covered grass sites
+
+are 0.75, while corresponding values for the aspen and conifer sites are 0.21 and 0.13, respectively, with values as
+
+high as 0.4, one to two days after snowfall. The lower albedo of the boreal forests in the presence of snow corrob-
+
+orates data from other observational studies and the few attempts of making a hemispheric-satellite based estimate
+
+of albedo.
+
+The ECMWF model version of 1994, at the time of the BOREAS experiment, treated the albedo of snow covered
+
+areas with no regard to the land cover: beyond a critical value for snow depth, the albedo of snow covered areas
+
+was rarely outside the 0.7-0.8 range. As a result, when compared to experimental results, net radiation was too low
+
+and near-surface air temperatures were too cold. A modification to the scheme was designed such as the albedo of
+
+snow-covered surfaces tended to the asymptotic value of 0.2 in the presence of forests and 0.7 otherwise (Viterbo
+
+and Betts 1999b). The modified scheme has much reduced biases in temperature and radiation in the high latitudes.
+
+The cold bias in temperature in the control scheme extended in the vertical to the whole troposphere, increasing
+
+with forecast range and affecting most continental areas. The bottom panel of Fig. 7 shows the day 5 forecast error
+
+of 850 hPa temperature, averaged for March and April in 1996. The very high albedo induces cooling errors ex-
+
+ceeding –3 K in North America and –7 K in Asia. The top panel shows the corresponding figure for 1997. In spring
+
+1997, with the new snow albedo scheme, the cold bias over the boreal forest has been almost eliminated. The new
+
+scheme also improved the quality of the medium-range forecasts, as evidenced by better scores of 500 hPa geo-
+
+potential fields.
+
+
+
+The role of the land surface in the climate system
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+Figure  7. Comparison of the average 5-day forecast temperature errors at 850 hPa, for the ECMWF operational
+
+model during March-April 1996 (bottom) and 1997 (top) (from Viterbo and Betts 1999b).
+
+The forecast results above corroborate the study of Thomas and Rowntree (1992) on the role of the boreal forests
+
+in conditioning the climate at high latitudes. The spring months of two five-year experiments, the first with a (re-
+
+alistic) snow albedo and the second with the high latitude forests removed are compared. The latter experiment is
+
+colder than the former in the continental areas north of 50 N. Pielke and Vidale (1995) suggested that the boundary
+
+between tundra and boreal forests is a region of enhanced horizontal temperature gradients, acting as a pre-condi-
+
+tioner for baroclinic instability and “locking” the climatological position of the polar front. In analysing further
+
+refinements to the ECMWF snow model,van den Hurk et al. (2000) show that (a) simulating the boreal forest con-
+
+trol on evaporation in spring (reduced transpiration from frozen soils) and (b) increasing the runoff over frozen
+
+soils, improves the agreement of model results with observations.
+
+5.3  Soil water freezing: A regulator of cold climates
+
+The operational ECMWF forecasts for the winters of 1993-94 through to 1995-96 showed a tendency to produce
+
+a cold bias over continental areas in winter. This error was particularly severe during the winter of 1995-96 for
+
+Scandinavia, a year characterised by reduced snow amounts and, consequently, larger thermal coupling between
+
+the soil and the atmosphere above. Viterbo et al. (1999) diagnosed two main problems contributing to that error.
+
+Firstly, the energy involved in phase changes in the soil was not taken into account. When positive temperatures
+
+approach 0 C, a substantial amount of the external cooling demand (i.e., infrared cooling) is used to freeze the soil
+
+
+
+The role of the land surface in the climate system
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+water, thereby decreasing the rate of soil cooling; a similar effect occurs in melting. Soil water phase transitions
+
+act as a thermal barrier, increasing the soil inertia at temperatures close to 0 C. Secondly, the downward sensible
+
+heat flux, prevailing in winter conditions, was too small, leading the model into a positive feedback loop where
+
+cooling reduced the heat flux, and made the soil even colder. Model changes were designed to incorporate the miss-
+
+ing physical mechanisms. Separate seasonal integrations with both model schemes revealed a greatly alleviated soil
+
+and near-surface atmospheric cooling drift: Screen-level temperatures reduced from –10 C to close to zero. Despite
+
+the considerable warming in the model soil and near-surface winter climate in continental areas, there was negli-
+
+gible impact on the free atmosphere temperature and the atmospheric flow. In winter, stable situations, the atmos-
+
+phere is decoupled from the surface and changes at the surface do not propagate upwards, unless they affect the
+
+momentum budget.
+
+6. CONCLUSIONS
+
+The examples presented above have shown that land surface can have a significant impact on the atmosphere at the
+
+synoptic/continental scale when it affects the partitioning of the surface energy into sensible/latent heat, via the soil
+
+water. This effect can be local or non-local. On the other hand, land surface has a significant impact on the atmos-
+
+phere at the synoptic/continental scale when it affects the net energy at the surface, e.g., change of the albedo in
+
+snow-covered areas in spring. However, in winter, statically stable, conditions the land surface is decoupled from
+
+the atmosphere: Large variations in surface temperature affect only the lowest hundred metres of the atmosphere
+
+and do not have a significant impact on the circulation.
+
+Recent experience at ECMWF, summarised above, shows that forecasts systems are sensitive to misrepresentations
+
+of longer timescales in the land-surface/atmosphere interaction. Progress can only be made with sustained efforts
+
+on validation of the model components. Data assimilation/forecast systems are ideal tools to validate parameteri-
+
+sations because of their constant confrontation with observations (in a “perfect synoptics” scenario) and a very
+
+large community of users requiring accurate diurnal cycle of weather parameters. In this context, GEWEX (Global
+
+Energy and Water Experiment) Continental Scale Experiments and the Coordinated Enhanced Observation Period
+
+planned for 2002 will play a prominent role. If the surface and upper-air observations arrive at the NWP centres
+
+they can be assimilated. Analysis and short term forecasts from those centres are the best hope of having a coherent
+
+picture of surface and atmosphere variables and of the surface fluxes.
+
+
+
+The role of the land surface in the climate system
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 15
+
+Figure 8. History of monthly biases (thick lines) and standard deviations (thin lines) with respect to observations
+
+of the daytime (72-hour: red line) and night-time (60 hour: blue line) operational two-metre temperature forecasts,
+
+averaged for all available surface stations in the European area (30º N to 72º N and 22º W to 42º E).
+
+An important feedback loop in the surface-atmosphere interaction is the link between the anomalies of soil mois-
+
+ture and precipitation. Its correct representation in the model relies on the interplay of several parameterisations:
+
+evaporation and soil moisture, boundary layer processes, clouds and convection. Most NWP models have their
+
+poorest scores on precipitation in the tropics and spring/summer extratropics and improvements on the understand-
+
+ing of the soil moisture-convection interaction will most likely greatly alleviate that deficiency. Validation of model
+
+results against results from the Large Scale Biosphere-Atmosphere Experiment in Amazonia (LBA) (see forthcom-
+
+ing Special Issue of J. Geophys.Res. 2001) observations of the diurnal cycle of precipitation and atmospheric ther-
+
+mal and humidity profiles over the Amazon River Basin will probably be a key for progress in that area.
+
+Probably the best summary of the impact of land surface on weather can be shown on Fig. 8 , displaying the history
+
+of ECMWF operational short-range forecast errors of 2 m temperature over Europe as a time-series of monthly
+
+averages. These errors show a large annual cycle, are different for night and day (72 and 60 hour forecasts verifying
+
+at 12 and 00 UTC, respectively), and have a rich history of the many model changes that were made over the years.
+
+We will discuss only the model changes made from 1993 onwards.
+
+In August 1993, a surface scheme with a climatological deep-soil boundary condition for temperature and moisture
+
+was replaced by the free-running four-layer scheme (Viterbo and Beljaars 1995), but the impact is not very obvious.
+
+The summer daytime bias of August 1993 was smaller than that of the previous year but, at that time, the soil
+
+scheme has been running freely for only two-months (including the July parallel test described earlier). The next
+
+summer showed a pronounced warm bias related to a gradual drying out of the soil which was reduced in July 1994
+
+by resetting the soil moisture to field capacity over vegetated areas. A simple soil moisture analysis scheme was
+
+introduced in December 1994 (Viterbo 1996) with a clear beneficial impact on the daytime bias for summer 1995.
+
+The night-time temperatures have been biased cold for many years, related to an overly large amplitude of the di-
+
+
+
+The role of the land surface in the climate system
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+urnal cycle. The winter of 1995/1996 was particularly bad, mainly because the European area was blocked for most
+
+of the winter with easterly winds and very cold temperatures, although changes to the cloud scheme or the oro-
+
+graphic drag might have had a negative impact on night-time temperatures. It is interesting that the reduction of the
+
+daytime bias actually increased the night-time bias by displacing the entire diurnal cycle to colder temperatures.
+
+Soil freezing and increased boundary layer diffusion in stable layers, introduced in September 1996, improved the
+
+monthly error statistics considerably. The wintertime bias was largely eliminated and the amplitude of the diurnal
+
+cycle was down to a reasonable level. The snow albedo reduction described in Section Boreal forests was intro-
+
+duced in December 1996, but its impact is not clear over Europe, due to the relatively small area covered by snow
+
+and the overall magnitude of the errors linked to the excessive soil cooling, corrected three months earlier. Finally,
+
+a much more selective way of initialising soil moisture (Douville et al. 2000), introduced in April 1999, might be
+
+responsible for a slight reduction of the standard deviation of temperature errors in that year. A new surface scheme
+
+was introduced in June 2000 (van den Hurk et al. 2000), but it is too early to assess its operational performance. It
+
+is fair to point out that the statistics presented in Figure 8 are averaged over a month and over a large area. The
+
+errors on a day-to-day basis can still be large, but are less systematic and are often related to errors in the forecasted
+
+clouds or the presence of snow.
+
+ACKNOWLDEGMENTS
+
+This note summarises work done at ECMWF during the last ten years, in close collaboration with many colleagues,
+
+in particular Anton Beljaars and Alan Betts. Furthermore, the different contributions of Martin Miller, Jean-
+
+François Mahfouf, João Teixeira, and Eric Wood are gratefully acknowledged. Part of this work will also appear
+
+as a book chapter to be published by Springer-Verlag in 2002 (Viterbo and Beljaars 2002).
+
+REFERENCES
+
+Beljaars, A.C.M., P. Viterbo, M. Miller, and A.K. Betts, 1996: The anomalous rainfall over the USA during July
+
+1993: Sensitivity to land surface parametrization and soil moisture anomalies. Mon. Wea. Rev., 124, 362-383.
+
+Beljaars, A.C.M., and P. Viterbo, 1999: Soil moisture-precipitation interaction: Experience with two land surface
+
+schemes in the ECMWF model. Global energy and water cycles. K. Browning and R. Gurney, Eds., Cambridge
+
+University Press, Cambridge, 223-233.
+
+Benjamin, S.G., and T.N. Carlson, 1986: Some effects of surface heating and topography on the regional severe
+
+storm environment. Part I: Three-dimensional simulations. Mon. Wea. Rev., 114, 307-329.
+
+Betts, A.K., 1992: FIFE atmospheric boundary layer methods. J. Geophys. Res., 97D, 18,523-18,531.
+
+Betts, A.K., and J.H. Ball, 1997: Albedo over the boreal forest. J. Geophys. Res., 102D, 28,901-28,909.
+
+Betts, A.K., and J.H. Ball, 1998: FIFE surface climate and site-average datasets 1987-1989. J. Atnos. Sci., 55, 1091-
+1108.
+
+Betts, A.K., J.H. Ball, A.C.M. Beljaars, M.J. Miller and P. Viterbo, 1996: The land surface-atmosphere interaction:
+
+A review based on observational and global modeling perspectives. J. Geophys. Res., 101D, 7209-7225.
+
+Betts, A.K., J.H. Ball and P. Viterbo, 1999: Basin-scale water and energy budgets for the Mississippi from the EC-
+
+MWF reanalysis. J. Geophys. Res., 104D, 19,293-19,306.
+
+Betts, A.K., and W.L. Ridgway, 1989: Climatic equilibrium of the atmospheric convective boundary layer over a
+
+tropical ocean. J. Atmos. Sci., 46, 2621-2641.
+
+Betts, A.K., P. Viterbo, and E.F. Wood, 1998: Surface energy and water balances for the Arkansas-Red river basin
+
+
+
+The role of the land surface in the climate system
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 17
+
+from the ECMWF reanalysis. J. Climate, 11, 2881-2897.
+
+Brubaker, K.L., D. Entekhabi, and P.S. Eagleson, 1993: Estimation of continental precipitation recycling. J. Cli-
+
+mate, 6, 1077-1089.
+
+Budyko, M.I., 1963: Atlas of the heat balance of the Earth (in Russian). Globnaia Geofiz. Observ., Moscow, 69 pp.
+
+Budyko, M.I., 1974: Climate and Life. Academic Press, 510 pp.
+
+Chahine, M.T., 1992: The hydrological cycle and its influence on climate. Nature, 359, 373-380.
+
+Chang, J.-Y., and P.J. Wetzel, 1991: Effect of spatial variations of soil moisture and vegetation on the evolution of
+
+a prestorm environment: A numerical case study. Mon. Wea. Rev., 119, 1368-1390.
+
+Changnon, S.A., (Ed.), 1996: The great flood of 1993. Westview Press, xii+324 pp.
+
+Charney, J.G., 1975: Dynamics of deserts and droughts over the Sahel. Quart. J. Roy. Meteor. Soc., 101, 193-202.
+
+Clapp, R.B., and G.M. Hornberger, 1978: Empirical equations for some soil hydraulic properties. Water Resources
+
+Res., 14, 601-604.
+
+Dirmeyer, P. and J. Shukla, 1993: Observation and modelling studies of the influence of soil moisture anomalies
+
+on atmospheric circulation. Prediction of interannual climate variations. J. Shukla, Ed., Springer, Berlin, 1-23.
+
+Dooge, J., 1992: Sensitivity of runoff to climate change: A Hortonian approach. Bull. Amer. Meteor. Soc., 73, 2013-
+2024.
+
+Douville, H., P. Viterbo, J.-F. Mahouf, and A.C.M. Beljaars, 2000: Evaluation of the optimum interpolation and the
+
+nudging techniques for soil moisture analysis using FIFE data. Mon. Wea. Rev., 128, 1733-1756.
+
+Dümenil, L., and L. Bengtsson, 1993: Observation and modelling studies of the influence of land surface anomalies
+
+on atmospheric circulation (future directions). Prediction of interannual climate variations. J. Shukla, Ed., Spring-
+
+er, Berlin, 25-47.
+
+Fast, J.D., and M. D. McCorcle, 1991: The effect of heterogeneous soil moisture on a summer baroclinic circulation
+
+in the Central United States. Mon. Wea. Rev., 119, 2140-2167.
+
+Garratt, J., 1993: Sensitivity of climate simulations to land surface and atmospheric boundary-layer treatments—
+
+A Review. J. Climate, 6, 419-449.
+
+Gibson, J.K., P. Kallberg, S. Uppala, A. Hernandez, A. Nomura, E. Serrano, 1997: ERA description. ECMWF Re-
+
+Analysis Project Report Series, 1, 72 pp.
+
+Giorgi, F., 1990: Sensitivity of wintertime precipitation and soil hydrology simulation over the western United
+
+States to lower boundary specification. Atmosp.-Ocean, 28, 1-23.
+
+Horton, R.E., 1931: The field, scope and status of the science of hydrology. Trans. Amer. Geophys. Union, 12, 189-
+202.
+
+Koch, S.E., A. Aksakal, J.T. McQueen, 1997: The influence of mesoscale humidity and evapotranspiration fields
+
+on a model forecast of a cold-frontal squall line. Mon. Wea. Rev., 125, 384-409.
+
+Kuhnel, V., J.C.I. Dooge, J.P.J. O’Kane, and R.J. Romanowicz, 1991: Partial analysis applied to scale problems in
+
+surface moisture fluxes. Land Surface-Atmosphere interactions for climate modeling. Observation, models and
+
+analysis. E.F. Wood, Ed., Kluwer, Dordrecht, 221-247.
+
+Lanicci, J.M., T.N. Carlson, and T.T. Warner, 1987: Sensitivity of the Great Plains severe-storm environment to
+
+soil-moisture distribution. Mon. Wea. Rev., 115, 2660-2673.
+
+
+
+The role of the land surface in the climate system
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Manabe, S., 1969: Climate and the ocean circulation. 1. The atmospheric circulation and the hydrology of the
+
+earth’s surface. Mon. Wea. Rev., 97, 739-774.
+
+Mintz, Y., 1984. The sensitivity of numerically simulated climates to land-surface boundary conditions. Global Cli-
+
+mate. J. Houghton, Ed., Cambridge University Press, 79-105.
+
+Namias, J., 1958: Persistence of mid-tropospheric circulations between adjacent months and seasons. The atmos-
+
+phere and sea in motion (Rossby memorial volume). B. Bolin, Ed., Rockefeller Institute Press, 240-248.
+
+Peixoto, J.P., 1973: Atmospheric vapour flux computations for hydrological purposes. WMO Publ. 357, World Me-
+
+teorological Organization, Geneva, Switzerland, 83 pp.
+
+Peixoto, J.P., and A. Oort, 1983: The atmospheric branch of the hydrological cycle and climate. Variations of the
+
+global water budget. Street-Perrott, A., M. Beran, and R. Ratcliffe, Eds., Reidel, London, 5-65.
+
+Peixoto, J.P., and A. Oort, 1992: Physics of climate. American Institute of Physics, New York, 520 pp.
+
+Pielke, R.A., and P.L. Vidale, 1995: The boreal forest and the polar front. J. Geophys. Res., 100D, 25,755-25,758.
+
+Rasmusson, E.M., 1967: Atmospheric water vapor transport and the water balance of North America. Part I: Char-
+
+acteristics of the water vapor flux field. Mon. Wea. Rev., 95, 403-426.
+
+Rasmusson, E.M., 1968: Atmospheric water vapor transport and the water balance of North America. Part II:
+
+Large-scale water balance investigation. Mon. Wea. Rev., 96, 720-734.
+
+Rasmusson, E.M., 1971: A study of the hydrology of eastern North America using atamospheric water vapor data.
+
+Mon. Wea. Rev., 99, 119-135.
+
+Rowntree, P.R., and J.A. Bolton, 1983: Simulation of the atmospheric response to soil moisture anomalies over Eu-
+
+rope. Quart. J. Roy. Meteor. Soc., 109, 501-526.
+
+Schär, C., D. Lhthi, U. Beyerle, and E. Heise, 1999: The soil-precipitation feedback: A process study with a region-
+
+al climate model. J. Climate, 12, 722-741.
+
+Thomas, G., and P.R. Rowntree, 1992: The boreal forests and climate. Quart. J. Roy. Meteor. Soc., 118, 469-497.
+
+Tiedtke, M., 1993: Representation of clouds in large-scale models. Mon. Wea. Rev., 121, 3040-3061.
+
+Trenberth, 1999: Atmospheric moisture recycling: Role of advection and local evaporation. J. Climate, 12, 1368-
+1381.
+
+van den Hurk, B.J.J.M., P. Viterbo, A.C.M. Beljaars, and A.K. Betts, 2000: Offline validation of the ERA40 surface
+
+scheme. ECMWF Tech. Mem. 295, 42 pp.
+
+Viterbo, P., 1996: The representation of surface processes in general circulation models. Ph.D. Thesis, University
+
+of Lisbon, 201 pp. Available from the author, ECMWF, Shinfield Park, Reading RG2 9AX, England.
+
+Viterbo, P., and A.C.M. Beljaars, 1995: An improved land surface parametrization scheme in the ECMWF model
+
+and its validation. J. Climate, 8, 2716-2748.
+
+Viterbo, P., and A.C.M. Beljaars, 2002: Impact of land surface on weather. Vegetation, water, humans and the cli-
+
+mate: A new perspective on an interactive system. M. Claussen, P. Dirmeyer, J.H.C. Gash, P. Kabat, M. Meybeck.
+
+R. Pielke, Sr., and C. Vörösmarty, Eds. Springer-Verlag, to appear.
+
+Viterbo, P., A.C.M. Beljaars, J.-F. Mahfouf, and J. Teixeira, 1999: The representation of soil moisture freezing and
+
+its impact on the stable boundary layer. Quart. J. Roy. Meteor. Soc., 125, 2401-2426.
+
+Viterbo, P., and A.K. Betts, 1999a: The impact of the ECMWF reanalysis soil water on forecasts of the July 1993
+
+
+
+The role of the land surface in the climate system
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 19
+
+Mississippi flood. J. Geophys. Res., 104D, 19,361-19,366.
+
+Viterbo, P., and A.K. Betts, 1999b: The forecast impact of the albedo of the boreal forests in the presence of snow.
+
+J. Geophys. Res., 104D, 27,803-27,810.
+
+Walker, J., and P.R. Rowntree, 1977: The effect of soil moisture on circulation and rainfall in a tropical model.
+
+Quart. J. Roy. Meteor. Soc., 103, 29-46.
+
+Xue, Y., M.J. Fennessy, and P.J. Sellers, 1996: Impact of vegetation properties on U.S. Summer weather prediction.
+
+J. Geophys. Res., 101D, 7419-7430.
+
+Yang, R., M.J. Fennessy, and J. Shukla, 1994: The influence of initial soil wetness on medium-range surface weath-
+
+er forecasts. Mon. Wea. Rev., 122, 471-485.

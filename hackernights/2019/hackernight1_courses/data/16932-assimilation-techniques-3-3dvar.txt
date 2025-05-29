@@ -1,0 +1,755 @@
+Assimilation_techniques_3dVar
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+Assimilation techniques (3): 3dVar
+April 2001
+
+By Mike Fisher
+
+European Centre for Medium-Range Weather Forecasts.
+
+Table of contents
+
+1 . Introduction
+
+2 . The incremental method
+
+2.1 Implementation of the Incremental method in the ECMWF 3dVar
+
+3 . The background cost function
+
+3.1 Example
+
+3.2 Formulation of the background cost function in the ECMWF 3dVar
+
+3.3 Calculation of the background-error correlations
+
+3.4 Calculation of background-error variances
+
+REFERENCES
+
+1. INTRODUCTION
+
+This aim of this lecture is to complement the more theoretical presentation of 3dVar given in the “Assimilation al-
+
+gorithms” module with a discussion of some of the techniques which are necessary for a practical implementation
+
+of the method. The ECMWF implementation of 3dVar is described. This was the operational ECMWF analysis
+
+between 30 January 1996 and 24 November 1997. The reader is referred to Andersson et al. 1998, Courtier et al.
+
+1998 and Rabier et al. 1998 for a more detailed description.
+
+The topics covered in this lecture are:
+
+• The incremental method
+
+• Initialization of analysis increments
+
+• Formulation of the background cost function
+
+• Methods for calculating background error statistics
+
+2. THE INCREMENTAL METHOD
+
+Ideally, the analysis cost function should be specified in terms of fields which have the same resolution as the fore-
+
+cast model. However, this makes the cost function computationally expensive to minimize (especially in 4dVar,
+
+where the much of the computational expense is in the tangent-linear and adjoint models.)
+
+The incremental method reduces computational expense by minimizing a cost function which has a lower resolu-
+
+tion than is used by the forecast model. This is reasonable because analysis increments are generally rather smooth,
+
+at least with current methods for specifying background error correlations.
+
+
+
+Assimilation techniques (3): 3dVar
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+The incremental method is an iterative procedure. For each iteration , an approximate analysis is generated
+
+from an initial approximation  by:
+
+(1)
+
+Here, denotes the pseudo-inverse of an operator which reduces the resolution of the model fields to the
+
+resolution used for the cost function. (For example, might correspond to spectral truncation.) The pseudo-
+
+inverse of is an operator which increases resolution (for example by padding the spectrum with zeros). In this
+
+case,  increases the resolution of the increment  to match that of the analysis.
+
+The increment, , is calculated by minimizing the cost function:
+
+(2)
+
+Note in particular that the observation operator acts on the high resolution fields whereas the operator
+
+ acts on the low resolution increment.
+
+The incremental method is described above as an iterative procedure. However, there is generally no guarantee that
+
+the iterations will converge. For this reason, a typical implementation of the method performs only a few iterations.
+
+2.1  Implementation of the Incremental method in the ECMWF 3dVar
+
+In the case of the ECMWF 3dVar system, a single iteration of the incremental method is performed. The initial
+
+approximation to the analysis, , is simply the background. The analysis consists of 3 steps:
+
+2.1 (a)  Comparison with the observations at high resolution. This step calculates . The back-
+
+ground fields are transformed to gridpoint space and then interpolated to observation locations. 12-point bi-cubic
+
+interpolation is used for upper-air fields. Bi-linear interpolation is used for surface fields to avoid problems near
+
+surface discontinuities (e.g. coastlines) and steep orography.
+
+Observation operators are applied to the interpolated model fields to calculate the model equivalents of the obser-
+
+vations. The observations are compared with their model equivalents and the differences between the two (i.e. the
+
+departures) are written to the observation file, for use in the minimization. Obviously-bad observations are screened
+
+out at this stage by removing observations with very large departures.
+
+2.1 (b)  The minimization. This step calculates the low-resolution increment, . The high-resolution upper-
+
+air background fields are truncated to T63. The gridpoint surface fields are transformed to spectral space, truncated
+
+to T63, and transformed back to gridpoint space. This ensures consistency between the spectral and gridpoint fields
+
+used in the minimization. In the case of the 31-level model, non-linear normal mode initialization (NNMI) is ap-
+
+plied to the fields to adjust them to the low resolution orography. (NNMI has been found to give unsatisfactorary
+
+results in the 50-level and 60-level versions of the model, so no initialization of the low-resolution background is
+
+performed for these vertical resolutions.)
+
+The low resolution cost function for the increments is minimized using a quasi-Newton method (Gilbert and Le-
+
+maréchal, 1989). Variational quality control of observation departures is applied during the minimization (Anders-
+
+son and Järvinen, 1998).
+
+2.1 (c)  Updating at high resolution. This step calculates the high-resolution analysis, .
+
+� x�
+x� 1–
+
+x � x � 1– S†δx�+=
+
+S† S
+
+S
+
+S
+
+S† δx �
+
+δx�
+
+J δx�( ) 1
+2
+--- Sx� 1– δx� Sx�–+( )
+
+TB 1– Sx� 1– δx� Sx�–+( )
+1
+2
+---
+�
+
+x � 1–( ) H′ δx�( ) y–+( )
+TR 1–
+
+�
+x � 1–( ) H′ δx�( ) y–+( )+
+
+=
+
+�
+x � 1–
+
+H′
+
+x0
+
+�
+x �( ) y–
+
+δx
+
+x� x� S†δx+=
+
+
+
+Assimilation techniques (3): 3dVar
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+Since the low resolution analysis is balanced with respect to the low resolution orography, it is desirable to initialize
+
+the analysis increment to adjust it to the high-resolution orography. However, NNMI is a non-linear procedure. It
+
+must be applied to whole fields rather than to increments. For the 31-level model, the high resolution analysis is
+
+defined as:
+
+(3)
+
+No initialization is performed for the 50-level and 60-level versions of the model.
+
+3. THE BACKGROUND COST FUNCTION
+
+The background error term of the cost function is crucial to the performance of the analysis system. A simple ex-
+
+ample suffices to show why.
+
+3.1  Example
+
+Suppose we have a single observation of the value of a model field (e.g. temperature) at one gridpoint, correspond-
+
+ing to the element of the state vector. The observation operator is very simple in this case, and is represented
+
+by the  matrix whose  element is equal to one, and whose other elements are all zero:
+
+(4)
+
+The gradient of the cost function is zero at the minimum, and (in the non-incremental formulation) is given by:
+
+(5)
+
+Multiplying through by , and rearranging gives
+
+(6)
+
+But, for this example, is simply equal to the column of . Also, since we have just a single observation,
+
+is simply the scalar value , where is the analysed gridpoint value
+
+corresponding to the observation, and where  is the variance of observation error. Thus:
+
+(7)
+
+That is, the analysis increment is proportional to a column of the background error covariance matrix, . In other
+
+words, the background covariance matrix controls how information is spread out from the single observation, to
+
+provide statistically consistent increments at the neighbouring gridpoints and levels of the model, and to ensure
+
+that observations of one model variable (e.g. temperature) produce dynamically consistent increments in the other
+
+model variables (e.g. vorticity and divergence).
+
+x� x� NNMI x� S†δx+( ) NNMI x�( )–+=
+
+� th
+
+1 �×
+� th
+
+H 0 0 … 0 1 0 … 0,,,,,,,( )=
+
+J∇ x�( ) B 1– x � x �–( ) HTR 1– Hx� y–( )+ 0= =
+
+B
+
+x � x�– BHTR 1– y Hx�–( )=
+
+BHT
+� th B
+
+R 1– y Hx�–( ) y x�( ) �–( ) σ �2⁄ x �( )�
+σ�2
+
+x� x�–
+y x�( )�–
+
+σ�2
+----------------------
+
+ 
+ 
+ 
+
+B1 �
+B2 �
+…
+
+B 	 �
+
+=
+
+B
+
+
+
+Assimilation techniques (3): 3dVar
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+3.2  Formulation of the background cost function in the ECMWF 3dVar
+
+The background error covariance matrix is enormous, typically . This is much too large to fit into com-
+
+puter memory. Moreover, even if this was possible, we don’t have enough statistical information to determine all
+
+its elements. We are forced to simplify things.
+
+One way to approach the construction of the background error covariance matrix is to build a matrix for which
+
+the variable has covariance matrix equal to the identity matrix. The background cost function may
+
+then be written as
+
+(8)
+
+The background error covariance matrix is defined implicitly by  as .
+
+The effect of multplying background error by the matrix is to remove the correlations between its elements. (Re-
+
+member that the correlation matrix for is the identity matrix. That is, the elements of are uncorrelated.) A
+
+natural way to build is as a sequence of steps, each of which removes some correlation from the background
+
+error.
+
+The most obvious correlation in the background errors is the balance between mass errors and wind errors in the
+
+extra-tropics. We therefore define our as , where the matrix takes the model variables (vortic-
+
+ity, divergence, temperature, log(surface pressure), specific humidity, and ozone mixing ratio) and subtracts from
+
+the temperature and log(surface pressure) components which are in balance with the vorticity. A component is also
+
+subtracted from the divergence to remove the correlation between divergence and vorticity due to Ekman pumping
+
+near the surface, and compensating upper-tropospheric outflow. Similarly, a balanced component is subtracted
+
+from the ozone to account for the correlation between vorticity and ozone background errors.
+
+The balanced components of temperature, log(surface pressure), divergence and ozone are defined as:
+
+(9)
+
+where the matrix has the same form as the linear balance operator relating vorticity to height, but has
+
+coefficients which are statistically determined. The matrices , and account for the vertical correlation
+
+between “height” (as defined by ) and the balanced temperature, log(surface pressure), divergence and ozone.
+
+These matrices are block diagonal, with one full vertical matrix for each spectral component, whose coefficients
+
+depend only on the total wavenumber .
+
+The balance operator, , is intended to remove all correlations between different variables. The remaining part
+
+of the change of variable, , is therefore block diagonal, with one block for each of the variables (vorticity, tem-
+
+perature-and-log(surface pressure), divergence, and ozone). Each block has the same form, for example the block
+
+corresponding to vorticity is:
+
+(10)
+
+Here, divides the vorticity by its standard deviation of background error; removes horizontal
+
+correlation; and  removes vertical correlation.
+
+106 106×
+
+L
+
+χ L x x�–( )=
+
+Jb
+1
+2
+---χTχ=
+
+L B LTL( )
+1–
+
+=
+
+L
+
+χ χ
+L
+
+L L L
+ K 1–= K 1–
+
+�
+ln��,( )� MΨζ=
+
+� � NΨζ=
+�
+
+3( ) � OΨζ=
+
+Ψ
+M N O
+
+Ψ
+
+�
+
+K 1–
+
+L 
+
+
+L
+( )ζ C� ζ
+1 2⁄– C � ζ
+
+1 2⁄– Σζ
+1–=
+
+Σζ
+1– C � ζ
+
+1 2⁄–
+
+C � ζ
+1 2⁄–
+
+
+
+Assimilation techniques (3): 3dVar
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+Division by background error standard deviation is performed in gridpoint space, to allow a spatial variation of
+
+background error. However, the horizontal correlations are assumed to be spatially homogeneous and isotropic.
+
+This makes  diagonal, with coefficients which depend only on the total wavenumber .
+
+The matrix is block diagonal, with one vertical matrix for each spectral component, whose coefficients de-
+
+pend only on the total wavenumber. This structure allows the vertical correlations to vary with horiziontal scale, so
+
+that large horizontal scales have deeper vertical correlations than small horizontal scales. It does not allow spatial
+
+variation of the vertical correlations. Note, however, that the vertical correlations of temperature do vary spatially.
+
+This is because in the tropics they are determined by the correlations defined for the unbalanced temperature,
+
+whereas in middle latitudes they are largely determined implicitly by the action of the balance operator on the vor-
+
+ticity correlation matrix.
+
+Fig. 1 (a) shows the vertical correlation of temperature error with model level 18 of the ECMWF 31-level model
+
+(level 18 is at approximately 500hPa). The statistics were estimated using the NMC method (see below). Note that
+
+the vertical extent of the correlation is smaller in the tropics than in middle latitudes. Figure 1b shows the vertical
+
+correlations for temperature implied by the Jb formulation. Note that the main latitudinal variation in the vertical
+
+correlations is retained.
+
+The effect of the balance operator in accounting for correlation between geopotential height and wind is demon-
+
+strated by Fig. 2 , which shows the wind increments generated by a single geopotential height observation at 60N,
+
+30W. In Fig. 2 (a), the observation is placed at 1000hPa, and wind increments are shown for the nearest model level
+
+to 1000hPa. Note that the wind increment includes a convergent component. This is generated by the inclusion in
+
+the balance operator of a correlation between divergence and vorticity. Fig. 2 (b) shows the wind increment near
+
+300hPa for a height observation at 300hPa. In this case, the increment is slightly divergent.
+
+Figure  1. (a) Vertical correlation of temperature for 48h-24h forecast differences. (b) Vertical correlations of
+
+temperature implied by the Jb formulation. The vertical axis is model level for the 31-level model.
+
+C� ζ
+1 2⁄– �
+
+C � ζ
+1 2⁄–
+
+
+
+Assimilation techniques (3): 3dVar
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  2. Wind increment generated by a single observation of geopotential. (a) Increments at model level 30
+
+(near 1000hPa) from an observation at 1000hPa. (b) Increments at model level 13 (near 300hPa) from an
+
+observation at 300hPa. In both cases, the observed height is 10m lower than the background.
+
+Fig. 3 demonstrates the way in which information from an observation is spread in the vertical. It shows a cross
+
+section of the increment generated by a single temperature observation at 200hPa.
+
+Figure  3. Cross section of the increment generated by a temperature observation at 200hPa, 60N, 30W. The
+
+observed value is 0.5K warmer than the background. (a) Temperature increment. (b) Vorticity increment (contour
+
+interval is ). The vertical axis for both plots is model level for the 31-level model.
+
+3.3  Calculation of the background-error correlations
+
+The previous section showed that, by making some simplifying assumptions, the number of non-zero elements of
+
+the background error covariance matrix may be drastically reduced. The largest matrices are of of order the number
+
+of levels of the model, and may be estimated statistically from a sample of background error of size a few times
+
+the number of levels.
+
+4 10 7–×
+
+
+
+Assimilation techniques (3): 3dVar
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+Unfortunately, we cannot calculate background error, since this would require knowledge of the true state of the
+
+atmosphere. There are three main approaches to get round the problem:
+
+3.3 (a)  The Hollingsworth and Lönnberg (1986) method. This method looks at the spatial covariance of dif-
+
+ferences between observations and the background. These differences are a combination of background and obser-
+
+vation error. We can partition the error into background errors and observation errors by assuming that the
+
+observation errors are spatially uncorrelated. If we bin observation-minus-background as a function of distance
+
+from each observation, only the zero-distance bin will contain a contribution from the observation error.
+
+The Hollingsworth and Lönnberg (1986) method has the advantage that it is a direct diagnosis of background error
+
+covariance. However, it requires a uniform set of unbiased observations with spatially uncorrelated error. This
+
+makes it unsuitable for calculating the global statistics required by 3dVar. In addition, the method produces statis-
+
+tics for observable quantities such as wind and temperature, whereas the background cost function requires statis-
+
+tics for vorticity and unbalanced components of temperature, etc.. Nevertheless, the method remains a valuable
+
+tool. In particular, it can be used to verify that the standard deviations of background and observation error are cor-
+
+rectly specified.
+
+3.3 (b)  The NMC method (Parrish and Derber, 1992). This method was used until recently in the ECMWF
+
+3dVar and 4dVar systems. The method assumes that the statistical structure of forecast errors varies little over 48
+
+hours. Under this assumption, the spatial correlations of backgound error should be similar to the correlations of
+
+differences between 48h and 24h forecasts verifying at the same time.
+
+The advantage of the method is that it is straightforward to calculate the required global statistics. The disadvantage
+
+is that the underlying assumption that the statistical structure of 48h forecast error is similar to that of background
+
+error is difficult to justify.
+
+3.3 (c)  The analysis–ensemble method. The method currently used at ECMWF to estimate background error
+
+statistics is to run an ensemble of independent analysis experiments. For each experiment, the observations are per-
+
+turbed by adding random noise drawn from the assumed distribution of observation error. The effect of the pertur-
+
+bations is to generate differences in the analyses for each experiment. These are propagated to the next analysis
+
+cycle as differences in backgrounds. After a few days of assimilation, the statistics of differences between back-
+
+ground fields for pairs of members of the ensemble equilibrate, and in principle become representative of the true
+
+statistics of background error. As a further refinement to the method, the effect of model error may be represented
+
+by introducing random perturbations to the physical parameterizations used in the assimilating model.
+
+Figs. 4 and 5 show some statistics of background error calculated using the analysis-ensemble method (figure 4)
+
+and the NMC method (Fig. 5 ). The analysis-ensemble method gives background correlations which are smaller in
+
+horizontal and vertical scale than those produced by the NMC method. The background differences are also less
+
+balanced than the forecast differences used by the NMC method.
+
+
+
+Assimilation techniques (3): 3dVar
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  4. Statistics of background error for vorticity calculated using the analysis-ensemble method. (a)
+
+Wavenumber-averaged vertical correlation matrix. (b) Horizontal correlation as a function of model level and
+
+great-circle distance. (c) Vertical correlation with model level 39 (approx. 500hPa) as a function of wavenumber.
+
+(d) Standard deviation of vorticity error as a function of model level and wavenumber.
+
+
+
+Assimilation techniques (3): 3dVar
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+Figure  5. Statistics of vorticity background error calculated using the NMC method. (a) Wavenumber-averaged
+
+vertical correlation matrix. (b) Horizontal correlation as a function of model level and great-circle distance. (c)
+
+Vertical correlation with model level 39 (approx. 500hPa) as a function of wavenumber. (d)Standard deviation of
+
+vorticity error as a function of model level and wavenumber.
+
+3.4  Calculation of background-error variances
+
+The variance of background error is specified in gridpoint space. This allows the spatial variability of background
+
+error to be taken into account. (For example, background error variance is likely to be relatively smaller in areas of
+
+dense observational coverage, than in areas where there are few observations.) In practice, only the vorticity and
+
+specific humidity variances have a horizontal variation of background variance in the ECMWF 3dVar. (Note, how-
+
+ever that the balance operator implies a horizontal variation of the balanced components of the other analysed var-
+
+iables.)
+
+For specific humidity, background error variances are given by an empirical formula which expresses the relative
+
+
+
+Assimilation techniques (3): 3dVar
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+humidity background error as a function of temperature and relative humidity. Additionally, background errors for
+
+humidity are reduced to very small values in the stratosphere, and are reduced at low levels over sea.
+
+For vorticity, three-dimensional fields of background error standard deviation are calculated using a cycling algo-
+
+rithm (Fisher and Courtier, 1995) which applies an empirical error-growth model to a diagnostic estimation of the
+
+standard deviations of analysis error.
+
+REFERENCES
+
+Andersson, E. and H. Järvinen, 1998. Variational Quality Control. Quarterly Journal Royal Met. Society, Vol. 125,
+
+No. 554, pp 697.
+
+Andersson, E., J. Haseler, P. Undén, P. Courtier, G. Kelly, D. Vasiljevic, C. Brancovic, C. Cardinali, C. Gaffard, A.
+
+Hollingsworth, C. Jakob, P. Janssen, E. Klinker, A. Lanzinger, M. Miller, F. Rabier, A. Simmons, B. Strauss, J-N.
+
+Thepaut and P. Viterbo, 1998, The ECMWF implementation of three dimensional variational assimilation (3D-
+
+Var). Part III: Experimental results. Quarterly Journal Royal Met. Society. Vol. 124, No. 550, pp1831-1860.
+
+Andersson, E., M. Fisher, R. Munro, A. McNally, 2000, Diagnosis of background errors for radiances and other
+
+observable quantities in a variational data assimilation scheme, and the explanation of a case of poor convergence.
+
+Quarterly Journal Royal Met. Society. Vol. 126, pp1455-1472.
+
+Courtier P., E. Andersson, W. Heckley, J. Pailleux, D. Vasiljevic, M. Hamrud, A. Hollingsworth, F. Rabier and M.
+
+Fisher, 1998, The ECMWF implementation of three-dimensional variational assimilation (3D-Var). I: Formulation.
+
+Quarterly Journal Royal Met. Society, Vol 124, No. 550, pp 1783.
+
+Dennis J.E. Jr. and J.J. Moré, 1977, Quasi-Newton Methods, Motivation and Theory. SIAM Review, Vol. 19, No.
+
+1, pp 46-89.
+
+Fisher M. and P. Courtier, 1995, Estimating the covariance matrix of analysis and forecast error in variational data
+
+assimilation. ECMWF Technical Memorandum No. 220.
+
+Gilbert J.C. and C. Lemaréchal, 1989, Some numerical experiments with variable storage quasi-Newton algo-
+
+rithms, Math. Prog 45, pp 407-436.
+
+Hollingsworth A. and P. Lönnberg, 1986, The statistical structure of short-range forecast errors as determined from
+
+radiosonde data. Part I: The wind field. Tellus, 38A, pp 111-136.
+
+Liu D.C. and J. Nocedal, 1989, On the limited memory BFGS method for large scale optimization, Mathematical
+
+Programming, 45, pp 503-528.
+
+Nocedal J., 1980, Updating quasi-Newton matrices with limited storage, Mathematics of Computation, 35, No.
+
+151, pp 773-782.
+
+Parrish, D. and J.C. Derber, 1992, The National Meteorological Center’s spectral statistical interpolation analysis
+
+system. Monthly Weather Review, 120, pp1747-1763.
+
+Rabier F., A. McNally, E. Andersson, P. Courtier, P. Undén, J. Eyre, A. Hollingsworth and F. Bouttier, 1998, The
+
+ECMWF implementation of three-dimensional variational assimilation (3D-Var). II: Structure function. Quarterly
+
+Journal Royal Met. Society, Vol. 124, No. 550, pp 1809.
+
+Shewchuk J.R. 1994, An introduction to the conjugate gradient method without the agonizing pain. Edition .
+
+http://www.cs.cmu.edu/~jrs/
+
+Wang Z., I. Navon, F.X. Le Dimet and X. Zou, 1992, The second order adjoint analysis: theory and applications.
+
+1
+1
+4
+---
+
+
+
+Assimilation techniques (3): 3dVar
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+Meteorology and Atmospheric Physics, 1992.
+
+Wang Z., I. Navon and X. Zou and F.X. LeDimet, 1995, A truncated Newton optimization algorithm in meteorol-
+
+ogy applications with analytic Hessian/vector products, Computational Optimization and Applications, 4, pp 241-
+
+262.

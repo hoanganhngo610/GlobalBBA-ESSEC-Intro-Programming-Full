@@ -1,0 +1,5378 @@
+Assim_concepts
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+Data assimilation concepts and methods
+March 1999
+
+By F. Bouttier and P. Courtier
+
+Abstract
+
+These training course lecture notes are an advanced and comprehensive presentation of most data assimilation methods that
+are considered useful in applied meteorology and oceanography today. Some are considered old-fashioned but they are still
+valuable for low cost applications. Others have never been implemented yet in realistic applications, but they are regarded as
+the future of data assimilation. A mathematical approach has been chosen, which allows a compact and rigorous presentation
+of the algorithms, though only some basic mathematical competence is required from the reader.
+
+This document has been put together with the help of previous lecture notes, which are now superseded:
+• Variational analysis: use of observations, example of clear radiances, Jean Pailleux, 1989.
+• Inversion methods for satellite sounding data, J. Eyre, 1991. (part 2 only)
+• Methods of data assimilation: optimum interpolation, P. Undén, 1993. (except section 5)
+• Data assimilation methods: introduction to statistical estimation, J. Eyre and P. Courtier, 1994.
+• Variational methods, P. Courtier, 1995. (except sections 3.2-3.6, 4.5, 4.6)
+• Kalman filtering, F, Bouttier, 1997. (except the predictability parts)
+
+Traditionally the lecture notes have been referring a lot to the assimilation and forecast system at ECMWF, rather than to more
+general algorithms. Sometimes ideas that had not even been tested found their way into the training course lecture notes. New
+notes had to be written every couple of years, with inconsistent notation.
+
+In this new presentation it has been decided to stick to a description of the main assimilation methods used worldwide, without
+any reference to ECMWF specific features, and clear comparisons between the different algorithms. This should make it easier
+to adapt the methods to problems outside the global weather forecasting framework of ECMWF, e.g. ocean data assimilation,
+land surface analysis or inversion of remote-sensing data. It is hoped that the reader will manage to see the physical nature of
+the algorithms beyond the mathematical equations.
+
+A first edition of these lecture notes was released in March 1998. In this second edition, some figures were added, and a few
+errors were corrected.
+
+Thanks are due to J. Pailleux, J. Eyre, P. Undén and A. Hollingsworth for their contribution to the previous lecture notes, to A.
+Lorenc, R. Daley, M. Ghil and O. Talagrand for teaching the various forms of the statistical interpolation technique to the
+meteorological world, to D. Richardson for proof-reading the document, and to the attendees of training course who kindly
+provided constructive comments.
+
+Table of contents
+
+1 . Basic concepts of data assimilation
+
+1.1 On the choice of model
+
+1.2 Cressman analysis and related methods
+
+1.3 The need for a statistical approach
+
+2 . The state vector, control space and observations
+
+2.1 State vector
+
+2.2 Control variable
+
+2.3 Observations
+
+2.4 Departures
+
+
+
+Data assimilation concepts and methods
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+3 . The modelling of errors
+
+3.1 Using pdfs to represent uncertainty
+
+3.2 Error variables
+
+3.3 Using error covariances
+
+3.4 Estimating statistics in practice
+
+4 . Statistical interpolation with least-squares estimation
+
+4.1 Notation and hypotheses
+
+4.2 Theorem: least-squares analysis equations
+
+9.3 Comments
+
+9.4 On the tangent linear hypothesis
+
+9.5 The point of view of conditional probabilities
+
+9.6 Numerical cost of least-squares analysis
+
+9.7 Conclusion
+
+10 . A simple scalar illustration of least-squares estimation
+
+11 . Models of error covariances
+
+11.1 Observation error variances
+
+11.2 Observation error correlations
+
+11.3 Background error variances
+
+11.4 Background error correlations
+
+11.5 Estimation of error covariances
+
+11.6 Modelling of background correlations
+
+12 . Optimal interpolation (OI) analysis
+
+13 . Three-dimensional variational analysis (3D-Var)
+
+14 . 1D-Var and other variational analysis systems
+
+15 . Four-dimensional variational assimilation (4D-Var)
+
+15.1 The four-dimensional analysis problem
+
+15.2 Theorem: minimization of the 4D-Var cost function
+
+15.3 Properties of 4D-Var
+
+15.4 Equivalence between 4D-Var and the Kalman Filter
+
+16 . Estimating the quality of the analysis
+
+16.1 Theorem: use of Hessian information
+
+16.2 Remarks
+
+17 . Implementation techniques
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+17.1 Minimization algorithms and preconditioning
+
+17.2 Theorem: preconditioning of a variational analysis
+
+17.3 The incremental method
+
+17.4 The adjoint technique
+
+18 . Dual formulation of 3D/4D-Var (PSAS)
+
+19 . The extended Kalman filter (EKF)
+
+19.1 Notation and hypotheses
+
+19.2 Theorem: the KF algorithm
+
+5.3 Theorem: KF/4D-Var equivalence
+
+5.4 The Extended Kalman Filter (EKF)
+
+5.5 Comments on the KF algorithm
+
+6 . Conclusion
+
+APPENDIX A A primer on linear matrix algebra
+
+APPENDIX B Practical adjoint coding
+
+APPENDIX C Exercises
+
+APPENDIX D Main symbols
+
+1. BASIC CONCEPTS OF DATA ASSIMILATION
+
+Analysis. An analysis is the production of an accurate image of the true state of the atmosphere at a given time,
+represented in a model as a collection of numbers. An analysis can be useful in itself as a comprehensive and self-
+
+consistent diagnostic of the atmosphere. It can also be used as input data to another operation, notably as the initial
+
+state for a numerical weather forecast, or as a data retrieval to be used as a pseudo-observation. It can provide a
+
+reference against which to check the quality of observations.
+
+The basic objective information that can be used to produce the analysis is a collection of observed values provided
+
+by observations of the true state. If the model state is overdetermined by the observations, then the analysis reduces
+
+to an interpolation problem. In most cases the analysis problem is under-determined1 because data is sparse and
+
+only indirectly related to the model variables. In order to make it a well-posed problem it is necessary to rely on
+
+some background information in the form of an a priori estimate of the model state. Physical constraints on the
+
+analysis problem can also help. The background information can be a climatology or a trivial state; it can also be
+
+generated from the output of a previous analysis, using some assumptions of consistency in time of the model state,
+
+like stationarity (hypothesis of persistence) or the evolution predicted by a forecast model. In a well-behaved sys-
+
+tem, one expects that this allows the information to be accumulated in time into the model state, and to propagate
+
+to all variables of the model. This is the concept of data assimilation.
+
+1.  although it can be overdetermined locally in data-dense areas
+
+
+
+Data assimilation concepts and methods
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  1. Representation of four basic strategies for data assimilation, as a function of time. The way the time
+
+distribution of observations (“obs”) is processed to produce a time sequence of assimilated states (the lower curve
+
+in each panel) can be sequential and/or continuous.
+
+Assimilation. Data assimilation is an analysis technique in which the observed information is accumulated into the
+model state by taking advantage of consistency constraints with laws of time evolution and physical properties.
+
+There are two basic approaches to data assimilation: sequential assimilation, that only considers observation made
+
+in the past until the time of analysis, which is the case of real-time assimilation systems, and non-sequential, or
+
+retrospective assimilation, where observation from the future can be used, for instance in a reanalysis exercise. An-
+
+other distinction can made between methods that are intermittent or continuous in time. In an intermittent method,
+
+observations can be processed in small batches, which is usually technically convenient. In a continuous method,
+
+observation batches over longer periods are considered, and the correction to the analysed state is smooth in time,
+
+which is physically more realistic. The four basic types of assimilation are depicted schematically in Fig. 1 . Com-
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+promises between these approaches are possible.
+
+Figure 2. A summarized history of the main data assimilation algorithms used in meteorology and oceanography,
+
+roughly classified according to their complexity (and cost) of implementation, and their applicability to real-time
+
+problems. Currently, the most commonly used for operational applications are OI, 3D-Var and 4D-Var.
+
+Many assimilation techniques have been developed for meteorology and oceanography (Fig. 2 ). They differ in
+
+their numerical cost, their optimality, and in their suitability for real-time data assimilation. Most of them are ex-
+
+plained in this volume.
+
+ref: Daley 1991; Lorenc 1986; Ghil 1989
+
+1.1  On the choice of model
+
+The concepts developed here are illustrated by examples in the ECMWF global meteorological model, but they can
+
+be (and they have been) applied equally well to limited area models, mesoscale models, ocean circulation models,
+
+wave models, two-dimensional models of sea surface temperature or land surface properties, or one-dimensional
+
+vertical column models of the atmosphere for satellite data retrieval, for example. This presentation could be made
+
+in the general framework of an infinite-dimensional model (i.e. without discretization) with a continuous time di-
+
+mension. This would involve some sophisticated mathematical tools. For the sake of simplicity, only the discrete,
+
+finite-dimensional problem will be addressed here.
+
+In meteorology there are often several equivalent ways of representing the model state. The fields themselves can
+
+be represented as grid-point values (i.e. averages of the fields inside grid boxes), spectral components, EOF values,
+
+finite-element decomposition, for instance, which can be projections on different basis vectors of the same state.
+
+The wind can be represented as components , vorticity and divergence , or streamfunction and veloc-���,( ) ζ η,( )
+
+
+
+Data assimilation concepts and methods
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+ity potential , with a suitable definition of the integration constants. The humidity can be represented as spe-
+
+cific or relative humidity or dew-point temperature, as long as temperature is known. In the vertical, under the
+
+assumption of hydrostatic balance, thicknesses or geopotential heights can be regarded as equivalent to the knowl-
+
+edge of temperature and surface pressure. All these transforms do not change the analysis problem, only its repre-
+
+sentation2. This may sound trivial, but it is important to realize that the analysis can be carried out in a
+
+representation that is not the same as the forecast model, as long as the transforms are invertible. The practical prob-
+
+lems of finding the analysis, e.g. the modelling of error statistics, can be greatly simplified if the right representation
+
+is chosen.
+
+Since the model has a lower resolution than reality, even the best possible analysis will never be completely real-
+
+istic. In the presentation of analysis algorithms we will sometimes refer to the true state of the model. This is a
+
+phrase to refer to the best possible state represented by the model, which is what we are trying to approximate.
+
+Hence it is clear that, even if the observations do not have any instrumental error, and the analysis is equal to the
+
+true state, there will be some unavoidable discrepancies between the observed values and their equivalents in the
+
+analysis, because of representativeness errors. Although we will often treat these errors as a part of the observation
+
+errors in the mathematical equations below, one should keep in mind that they depend on the model discretization,
+
+not on instrumental problems.
+
+1.2  Cressman analysis and related methods
+
+One may like to design the analysis procedure as an algorithm in which the model state is set equal to the observed
+
+values in the vicinity of available observations, and to an arbitrary state (say, climatology or a previous forecast)
+
+otherwise. This formed the basis of the old Cressman analysis scheme (Fig. 3 ) which is still widely used for simple
+
+assimilation systems.
+
+The model state is assumed to be univariate and represented as grid-point values. If we denote by a previous
+
+estimate of the model state (background) provided by climatology, persistence or a previous forecast, and by ,
+
+a set of observations of the same parameter, a simple kind of Cressman analysis is provided by
+
+the model state  defined at each grid point
+�
+ according to the following update equation:
+
+where is a measure of the distance between points and . is the background state interpolated to
+
+point . The weight function equals one if the grid point is collocated with observation . It is a
+
+decreasing function of distance which is zero if , where � is a user-defined constant (the “influence
+radius”) beyond which the observations have no weight.
+
+2.  At ECMWF, the analysis problem is currently formulated in terms of the spectral components of vorticity, divergence, temperature, grid-
+point values of specific humidity, on surfaces defined by the hybrid coordinate, and logarithm of surface pressure, just like in the forecast
+model. In winter 1998 the model state dimension was about 6.106.
+
+ψ χ,( )
+
+xb
+y �( )
+
+� 1 . . . . . . �=
+xa
+
+xa
+�
+
+( ) xb
+�
+
+( )
+� � �,( ) y �( ) xb �( )–{ }� 1=
+
+	
+∑
+
+� � �,( )�
+1=
+
+	
+∑
+
+---------------------------------------------------------------------+=
+
+� � �,( ) max 0 �
+2 
+ ���
+
+,
+2–
+
+� 2 
+ ���,2+
+-------------------------,
+
+ 
+ 
+ 
+
+=
+
+
+ ���
+, � � xb �( )
+
+� � � �,( ) � �
+ ���
+, �>
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+Figure 3. An example of Cressman analysis of a one-dimensional field. The background field is represented as
+
+the blue function, and the observations in green. The analysis (black curve) is produced by interpolating between
+
+the background (grey curve) and the observed value, in the vicinity of each observation; the closer the
+
+observation, the larger its weight.
+
+There are many variants of the Cressman method. One can redefine the weight function, e.g. as .
+
+A more general algorithm is the successive correction method (SCM)3. One of its features is that the weights can
+
+be less than one for , which means that a weighted average between the background and the observation is
+
+performed. Another one is that the updates can be performed several times, either as several iterations at a single
+
+time in order to enhance the smoothness of corrections, or as several corrections distributed in time. With enough
+
+sophistication the successive correction method can be as good as any other assimilation method, however there is
+
+no direct method for specifying the optimal weights.
+
+ref: Daley 1991
+
+1.3  The need for a statistical approach
+
+The Cressman method is not satisfactory in practice for the following reasons:
+
+• if we have a preliminary estimate of the analysis with a good quality, we do not want to replace it by
+
+values provided from poor quality observations.
+
+• when going away from an observation, it is not clear how to relax the analysis toward the arbitrary
+
+state, i.e. how to decide on the shape of the function .
+
+• an analysis should respect some basic known properties of the true system, like smoothness of the
+
+fields, or relationship between the variables (e.g. hydrostatic balance, or saturation constraints).
+
+This is not guaranteed by the Cressman method: random observation errors could generate
+
+unphysical features in the analysis.
+
+Because of its simplicity, the Cressman method can be a useful starting tool. But it is impossible to get rid of the
+
+above problems and to produce a good-quality analysis without a better method. The ingredients of a good analysis
+
+are actually well known by anyone who has experience with manual analysis:
+
+1) one should start from a good-quality first guess, i.e. a previous analysis or forecast that gives an
+
+overview of the situation,
+
+3.   In the recent literature this name is often replaced by observation nudging which is more or less the same thing. The model nudging is a
+model forcing technique in which the model state is relaxed toward another predefined state.
+
+xb
+
+
+ 2���
+, 2 � 2⁄–( )exp
+
+� �=
+
+�
+
+
+
+Data assimilation concepts and methods
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+2) if observations are dense, then one assumes that the truth probably lies near their average. One must
+
+make a compromise between the first guess and the observed values. The analysis should be closest
+
+to the data we trust most, whereas suspicious data will be given little weight.
+
+3) the analysis should be smooth, because we know that the true field is. When going away from an
+
+observation, the analysis will relax smoothly to the first guess on scales known to be typical of the
+
+usual physical phenomena.
+
+4) the analysis should also try to respect the known physical features of the system. Of course, it is
+
+possible in exceptional cases that unusual scales and imbalances happen, and a good analyst must
+
+be able to recognize this, because exceptional cases are usually important too.
+
+Loosely speaking, the data that can go into the analysis system comprises the observations, the first guess and the
+
+known physical properties of the system. One sees that the most important feature to represent in the analysis sys-
+
+tem is the fact that all pieces of data are important sources of information, but at the same time we do not trust any
+
+of them completely, so we must make compromises when necessary. There are errors in the model and in the ob-
+
+servations, so we can never be sure which one to trust. However we can look for a strategy that minimizes on av-
+
+erage the difference between the analysis and the truth.
+
+To design an algorithm that does this automatically, it is necessary to represent mathematically the uncertainty of
+
+the data. This uncertainty can be measured by calibrating (or by assuming) their error statistics, and modelled using
+
+probabilistic concepts. Then the analysis algorithm can be designed on a formal requirement that in the average the
+
+analysis errors must be minimal in a sense that is meaningful to the user. This will allow us to write the analysis as
+
+an optimization problem.
+
+ref: Lorenc 1986
+
+2. THE STATE VECTOR, CONTROL SPACE AND OBSERVATIONS
+
+2.1  State vector
+
+The first step in the mathematical formalisation of the analysis problem is the definition of the work space. As in
+
+a forecast model, the collection of numbers needed to represent the atmospheric state of the model is collected as
+
+a column matrix called the state vector x. How the vector components relate to the real state depend on the choice
+of discretization, which is mathematically equivalent to a choice of basis.
+
+As explained earlier, one must distinguish between reality itself (which is more complex than what can be repre-
+
+sented as a state vector) and the best possible representation of reality as a state vector, which we shall denote ,
+
+the true state at the time of the analysis. Another important value of the state vector is , the a priori or background
+
+estimate of the true state before the analysis is carried out, valid at the same time4. Finally, the analysis is denoted
+
+, which is what we are looking for.
+
+2.2  Control variable
+
+In practice it is often convenient not to solve the analysis problem for all components of the model state. Perhaps
+
+we do not know how to perform a consistent analysis of all components5, or we have to reduce the resolution or
+
+4.  It is sometimes called the first guess, but the recommended word is background, for reasons explained later.
+
+5.  This is often the case with surface or cloud-related variables, or the boundary conditions in limited-area models.
+
+xt
+xb
+
+xa
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+domain of analysis because of insufficient computer power. This is difficult to avoid as the resolution and sophis-
+
+tication of forecast models tend to be as high as the computing power allows, i.e. too high for the analysis which
+
+is more expensive because the observations have to be processed on top of the management of the model state itself.
+
+In these cases the work space of the analysis is not the model space, but the space allowed for the corrections to the
+
+background, called control variable space. Then the analysis problem is to find a correction (or analysis incre-
+
+ment) such that
+
+is as close as possible to . Formally the analysis problem can be presented exactly like before by a simple trans-
+
+lation: instead of looking for , we look for  in a suitable subspace6.
+
+2.3  Observations
+
+For a given analysis we use a number of observed values. They are gathered into an observation vector . To use
+
+them in the analysis procedure it is necessary to be able to compare them with the state vector. It would be nice if
+
+each degree of freedom were observed directly, so could be regarded as a particular value of the state vector. In
+
+practice there are fewer observations than variables in the model and they are irregularly disposed, so that the only
+
+correct way to compare observations with the state vector is through the use of a function from model state space
+
+to observation space called an observation operator7 that we will denote by . This operator generates the values
+
+that the observations would take if both they and the state vector were perfect, in the absence of any mod-
+
+elling error8. In practice is a collection of interpolation operators from the model discretization to the observa-
+
+tion points, and conversions from model variables to the observed parameters. For each scalar observation there is
+
+a corresponding line of . The number of observations, i.e. the dimension of vector and the number of lines in
+
+, is varying if the observing network is not exactly periodic in time. There are usually many fewer observations
+
+than variables in the model.
+
+2.4  Departures
+
+The key to data analysis is the use of the discrepancies between observations and state vector. According to the
+
+previous paragraph, this is given by the vector of departures at the observation points:
+
+When calculated with the background it is called innovations, and with the analysis , analysis residuals.
+
+Their study provides important information about the quality of the assimilation procedure.
+
+3. THE MODELLING OF ERRORS
+
+To represent the fact that there is some uncertainty in the background, the observations and in the analysis we will
+
+assume some model of the errors between these vectors and their true counterparts. The correct way to do this is
+
+to assume some probability density function, or pdf, for each kind of error. There is a sophisticated and rigorous
+
+mathematical theory of probabilities to which the reader may refer. For the more practical minds we present a sim-
+
+6.  Mathematically speaking, we constrain  to belong to the affine manifold spanned by  plus the control variable vector subspace.
+
+7.  also called forward operator
+
+8.  the values  are also called model equivalents of the observations.
+
+δx
+
+xa xb δx+=
+
+xt
+xa xa xb–( )
+
+xa xb
+
+y
+
+y
+
+
+
+
+x( ) 
+
+�
+x( )
+
+
+y
+
+y H x( )–
+
+xb xa
+
+
+
+Data assimilation concepts and methods
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+plified (and mathematically loose) explanation of pdfs in the paragraph below, using the example of background
+
+errors.
+
+3.1  Using pdfs to represent uncertainty
+
+Given a background field just before doing an analysis, there is one and only one vector of errors that separates
+
+it from the true state:
+
+If we were able to repeat each analysis experiment a large number of times, under exactly the same conditions, but
+
+with different realizations of errors generated by unknown causes, would be different each time. We can calcu-
+
+late statistics such as averages, variances and histograms of frequencies of . In the limit of a very large number
+
+of realizations, we expect the statistics to converge to values which depend only on the physical processes respon-
+
+sible for the errors, not on any particular realization of these errors. When we do another analysis under the same
+
+conditions, we do not expect to know what will be the error , but at least we will know its statistics. The best
+
+information about the distribution of is given by the limit of the histogram when the classes are infinitely small,
+
+which is a scalar function of integral 1 called the probability density function of . From this function one can
+
+derive all statistics, including the average (or expectation) and the variances9. A popular model of scalar pdf is
+
+the Gaussian function, which can be generalized to a multivariate pdf.
+
+3.2  Error variables
+
+The errors in the background and in the observations10 are modelled as follows:
+
+• background errors: , of average and covariances . They
+are the estimation errors of the background state, i.e. the difference between the background state
+
+vector and its true value. They do not include discretization errors.
+
+• observation errors: , of average and covariances .
+They contain errors in the observation process (instrumental errors, because the reported value is
+
+not a perfect image of reality), errors in the design of the operator , and representativeness errors
+
+i.e. discretization errors which prevent  from being a perfect image of the true state11.
+
+• analysis errors: , of average . A measure of these errors is given by the
+trace of the analysis error covariance matrix ,
+
+.
+
+They are the estimation errors of the analysis state, which is what we want to minimize.
+
+The averages of errors are called biases and they are the sign of a systematic problem in the assimilating system:
+
+a model drift, or a bias in the observations, or a systematic error in the way they are used.
+
+9.  Mathematically speaking, a pdf may not have an average or variances, but in the usual geophysical problems all pdfs do, and we will
+assume this throughout this presentation.
+
+10. One could model forecast errors and balance properties in a similar way, although this is outside the scope of this discussion. See the sec-
+tion on the Kalman filter.
+
+11. An example is sharp temperature inversions in the vertical. They can be fairly well observed using a radiosonde, but it is impossible to rep-
+resent them precisely with the current vertical resolution of atmospheric models. On the other hand, temperature soundings obtained from sat-
+ellite cannot themselves observe sharp inversions.
+
+xb
+
+εb xb xt–=
+
+εb
+εb
+
+εb
+εb
+
+εb
+εb
+
+εb xb xt–= εb B εb εb–( ) εb εb–( )
+T=
+
+εo y
+
+
+xt( )–= εo R εo εo–( ) εo εo–( )
+T=
+
+
+xt
+
+εa xa xt–= εa εa εa–
+A
+
+Tr A( ) εa εa–
+2=
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+It is important to understand the algebraic nature of the statistics. Biases are vectors of the same kind as the model
+
+state or observation vectors, so their interpretation is straightforward. Linear transforms that are applied to model
+
+state or observation vectors (such as spectral transforms) can be applied to bias vectors.
+
+3.3  Using error covariances
+
+Error covariances are more subtle and we will illustrate this with the background errors (all remarks apply to ob-
+
+servation errors too). In a scalar system, the background error covariance is simply the variance, i.e. the root-mean-
+
+square (or r.m.s., or quadratic) average of departures from the mean:
+
+In a multidimensional system, the covariances are a square symmetric matrix. If the model state vector has
+
+dimension , then the covariances are an matrix. The diagonal of the matrix contain variances12, for each
+
+variable of the model; the off-diagonal terms are cross-covariances between each pair of variables of the model.
+
+The matrix is positive13. Unless some variances are zero, which happens only in the rather special case where one
+
+believes some features are perfect in the background, the error covariance matrix is positive definite. For instance
+
+if the model state is tri-dimensional, and the background errors (minus their average) are denoted ,
+
+then
+
+The off-diagonal terms can be transformed into error correlations (if the corresponding variances are non zero):
+
+Finally, linear transformations of the model state vector can only be applied to covariances as full matrix trans-
+
+forms. In particular, it is not possible to directly transform the fields of variances or standard deviations. If one de-
+
+fines a linear transformation by a matrix (i.e. a matrix whose lines are the coordinates of the new basis vectors
+
+in terms of the old ones, so that the new coordinates of the transform of are ), then the covariance matrix in
+
+terms of the new variables is .
+
+3.4  Estimating statistics in practice
+
+The error statistics (biases and covariances) are functions of the physical processes governing the meteorological
+
+situation and the observing network. They also depend on our a priori knowledge of the errors. Error variances in
+
+particular reflect our uncertainty in features of the background or the observations. In general, the only way to es-
+
+timate statistics is to assume that they are stationary over a period of time and uniform over a domain14 so that one
+
+12.  The square roots of variances are called standard deviations, or standard errors.
+
+13.  This does not mean that all the matrix elements are positive; the definition of a positive definite matrix is given in Appendix A. The posi-
+tiveness can be proven by remarking that the eigenvalues of the matrix are the variances in the direction of the eigenvectors, and thus are posi-
+tive.
+
+B var εb( ) var εb εb–( )
+2= =
+
+� � �×
+
+�
+1
+�
+
+2
+�
+
+3, ,( )
+
+B
+
+var � 1( ) cov � 1 � 2,( ) cov � 1 � 3,( )
+cov � 1 � 2,( ) var � 2( ) cov � 2 � 3,( )
+cov � 1 � 3,( ) cov � 2 � 3,( ) var � 3( )
+
+=
+
+ρ � � � �,( ) cov
+� � � �,( )
+
+var � �( )var � �( )-----------------------------------------=
+
+�
+x
+
+�
+x�
+
+B
+� T
+
+
+
+Data assimilation concepts and methods
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+can take a number of error realizations and make empirical statistics. This is in a sense a climatology of errors.
+
+Another empirical way to specify error statistics is to take them to be a fraction of the climatological statistics of
+
+the fields themselves.
+
+When setting up an assimilation system in practice, such approximations are unavoidable because it is very difficult
+
+to gather accurate data to calibrate statistics: estimation errors cannot be observed directly. Some useful informa-
+
+tion on the average values of the statistics can be gathered from diagnostics of an existing data assimilation system
+
+using the observational method (see its description below) and the NMC method (use of forecast differences as
+
+surrogates to short-range forecast errors). More detailed, flow-dependent forecast error covariances can be estimat-
+
+ed directly from a Kalman filter (described below), although this algorithm raises other problems. Finally, meteor-
+
+ological common sense can be used to specify error statistics, to the extent that they reflect our a priori knowledge
+
+of the physical processes responsible for the errors15.
+
+ref: Hollingsworth et al. 1986; Parrish and Derber 1992
+
+4. STATISTICAL INTERPOLATION WITH LEAST-SQUARES ESTIMATION
+
+In this section we present the fundamental equation for linear analysis in a general algebraic form: the least squares
+
+estimation, also called Best Linear Unbiased Estimator (BLUE). The following sections will provide more expla-
+
+nations and illustrations, and we shall see how the least-squares estimation can be simplified to yield the most com-
+
+mon algorithms used nowadays in meteorology and oceanography.
+
+4.1  Notation and hypotheses
+
+The dimension of the model state is  and the dimension of the observation vector is . We will denote:
+
+ true model state (dimension )
+
+ background model state (dimension )
+
+ analysis model state (dimension )
+
+ vector of observations (dimension )
+
+ observation operator (from dimension  to )
+
+ covariance matrix of the background errors  (dimension )
+
+ covariance matrix of observation errors  (dimension )
+
+ covariance matrix of the analysis errors  (dimension )
+
+The following hypotheses are assumed:
+
+• Linearized observation operator: the variations of the observation operator in the vicinity of the
+background state are linear: for any close enough to , where
+
+is a linear operator.
+
+• Non-trivial errors:  and  are positive definite matrices.
+
+14.   It is called an assumption of ergodicity.
+
+15.  It is obvious that e.g. forecast errors in a tropical meteorological assimilation shall be increased in the vicinity of reported tropical
+cyclones, for instance, or that observation operators for satellite radiances have more errors in cloudy areas.
+
+� �
+xt �
+xb �
+xa �
+y �
+ � �
+B xb xt–( ) � �×
+R y
+
+
+xt[ ]–( ) � �×
+
+A xa xt–( ) � �×
+
+x xb
+
+
+x( )
+
+
+xb( )– H x xb–( )= H
+
+B R
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+• Unbiased errors: the expectation of the background and observation errors is zero i.e.
+
+• Uncorrelated errors: observation and background errors are mutually uncorrelated i.e.
+
+• Linear analysis: we look for an analysis defined by corrections to the background which depend
+linearly on background observation departures.
+
+• Optimal analysis: we look for an analysis state which is as close as possible to the true state in an
+r.m.s. sense (i.e. it is a minimum variance estimate).
+
+ref: Daley 1991; Lorenc 1986; Ghil 1989
+
+4.2  Theorem: least-squares analysis equations
+
+Proof:
+
+With a translation of by , we can assume that so the observation operator is linear for our purposes. The
+equation (A5) is simply a mathematical expression of the fact that we want the analysis to depend linearly on the observation
+
+(a) The optimal least-squares estimator, or BLUE analysis, is defined by the
+
+following interpolation equations:
+
+(A5)
+
+(A6)
+
+where the linear operator  is called the gain, or weight matrix, of the analysis.
+
+(a) The analysis error covariance matrix is, for any :
+
+(A7)
+
+If  is the optimal least-squares gain, the expression becomes
+
+(A8)
+
+(a) The BLUE analysis is equivalently obtained as a solution to the variational
+
+optimization problem:
+
+(A9)
+
+where is called the cost function of the analysis (or misfit, or penalty function),
+
+ is the background term,  is the observation term.
+
+(a) The analysis  is optimal: it is closest in an r.m.s. sense to the true state .
+
+(b) If the background and observation error pdfs are Gaussian, then is also the
+
+maximum likelihood estimator of .
+
+xb xt– y
+
+
+xt( )– 0= =
+
+xb xt–( ) y
+
+
+yt[ ]–( )
+T 0=
+
+xa xb K y
+
+
+xb[ ]–( )+=
+
+K BHT HBHT R+( )
+1–
+
+=
+
+K
+
+K
+
+A I KH–( )B I KH–( )T KRKT+=
+
+K
+
+A I KH–( )B=
+
+xa = Arg min�
+� x( ) = x xb–( )TB 1– x xb–( ) y  x[ ]–( )TR 1– y  x[ ]–( )+
+
+= � b x( ) � o x( )+
+
+�
+� b � o
+
+xa xt
+
+xa
+xt
+
+x xb
+
+
+H=
+
+
+
+Data assimilation concepts and methods
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+departures. The expression of in (A6) is well-defined because is a positive definite matrix, and is positive.
+The minimization problem (A9) is well-defined because is a convex function and is a strictly convex function (it is
+a quadratic form).
+The equivalence between items (a) and (c) of the theorem stems from the requirement that the gradient of is zero at the
+optimum :
+
+The identity with (A6) is straightforward to prove (all inverse matrices considered are positive definite):
+
+hence
+
+The expressions (A7) and (A8) for are obtained by rewriting the analysis equation (A5) in terms of the background,
+analysis and observation errors:
+
+By developing the expression of and taking its expectation, by linearity of the expectation operator one finds the
+general expression (A7) (remember that and being uncorrelated, their cross-covariance is zero). The simpler form
+(A8) is easy to derive by substituting the expression for the optimal  and simplifying the terms that cancel.
+
+Finally to prove (A6) itself we take the analysis error covariance matrix given by (A7) and we minimize its trace, i.e. the
+total error variance: (note that  and )
+
+This is a continuous differentiable scalar function of the coefficients of , so we can express its derivative as the first-
+order terms in  of the difference ,  being an arbitrary test matrix:
+
+The last line shows that the derivative is zero for any choice of if and only if , which
+is equivalent to
+
+K R HBHT� o � b
+�
+
+xa
+
+∇� xa( ) = 0 = 2B 1– xa xb–( ) 2HTR 1– y  xa[ ]–( )–
+0 = B 1– xa xb–( ) H
+
+TR 1– y
+
+
+xb[ ]–( )– H
+TR 1– H xa xb–( )–
+
+xa xb–( ) = B
+1– HTR 1– H+( )
+
+1–
+HTR 1– y
+
+
+xb[ ]–( )
+
+HTR 1– HBHT R+( ) = B 1– HTR 1– H+( )BHT
+
+= HT HTR 1– HBHT+
+
+B 1– HTR 1– H+( )
+1–
+HTR 1– BHT HBHT R+( )
+
+1–
+=
+
+A
+
+εb xb xt–=
+ε� x� xt–=
+εo y
+
+
+xt[ ]–=
+
+ε� εb– K εo Hεb–( )=
+ε� I KH–( )εb Kεo+=
+
+ε� ε�T
+εb εo
+
+K
+
+BT B= RT R=
+
+Tr A( ) Tr B( ) Tr KHBHTKT( ) 2Tr BHTKT( )– Tr KRKT( )+ +=
+
+K 
+ K
+K Tr A( ) K L+( ) Tr A( ) K( )– L
+
+
+
+K Tr A( )[ ]L = 2Tr KHBH
+
+TLT( ) 2Tr BHTLT( ) 2Tr KRLT( )+–
+
+= 2Tr KHBHTLT BHTLT– KRLT+( )
+
+= 2Tr K HBHT R+( ) BHT–[ ]LT{ }
+
+L HBHT R+( )KT HB– 0=
+
+K BHT HBHT R+( )
+1–
+
+=
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 15
+
+because  is assumed to be invertible.
+
+In the case of Gaussian pdfs, one can model the background, observation and analysis pdfs as follows, respectively:
+
+( ,  and  are normalization factors.)
+
+which yields the right averages and covariances for the background and observations errors, and the analysis error
+
+pdf is simply defined as the Bayesian product of the two known sources of information, the background and the
+
+observation pdfs (this can be derived rigorously by using Bayes’ theorem to write as a conditional probability
+
+of given the observations and the a priori pdf of the background). Then, by taking minus the logarithm of ,
+
+one finds that the model state with the maximum probability (or likelihood) is the one that minimizes the cost func-
+
+tion  expressed in the theorem.
+
+9.3  Comments
+
+The hypotheses of non-triviality can always been made in well-posed analysis problems: if is non-positive, one
+
+can restrict the control space to the orthogonal of the kernel of (the analysis will not make any correction to
+
+background variables that are perfectly known). If is not a surjection, then some observations are redundant and
+
+the observing network shall be restricted to the image of . If is non-positive, the expression (A6) for still
+
+holds (then the analysis will be equal to the observed value at the observation points ), but the variational
+
+version of the least-squares analysis cannot be used. It is even possible (with some algebraic precautions) to have
+
+some infinite eigenvalues in , i.e. a non-positive , which means that some observations are not used because
+
+their errors are infinite.
+
+The hypothesis of unbiased errors is a difficult one in practice because there often are significant biases in the back-
+
+ground fields (caused by biases in the forecast model) and in the observations (or in the observation operators). If
+
+the biases are known, they can be subtracted from the background and observation values, and the above algebra
+
+applies to the debiased quantities. If the biases are left in, the analysis will not be optimal, even though it will seem
+
+to reduce the biases by interpolating between the background and observations. It is important to monitor the biases
+
+in an assimilation system, e.g. by looking at averages of background departures, but it is not trivial to decide which
+
+part of these are model or observation biases. The problem of bias monitoring and removal is the subject of ongoing
+
+research.
+
+The hypothesis of uncorrelated errors is usually justified because the causes of errors in the background and in the
+
+observations are supposed to be completely independent. However, one must be careful about observation preproc-
+
+essing practices (such as satellite retrieval procedures) that use the background field in a way that biases the obser-
+
+vations toward the background. It might reduce the apparent background departures, but it will cause the analysis
+
+to be suboptimal (too close to the background, a condition nicknamed as the incest problem).
+
+The tangent linear hypothesis is not trivial and it is commented in the next section.
+
+It is possible to rewrite the least-squares analysis equations in terms of the inverses of the error covariance matrices,
+
+called information matrices. It makes the algebra a bit more complicated, but it allows one to see clearly that the
+
+information contained in the analysis is the sum, in a simple sense, of the observations provided by the background
+
+and by the observations. This is illustrated in the section on the estimation of analysis quality below.
+
+HBHT R+( )
+
+� � �
+
+�
+b x( ) =
+
+� 1
+2
+--- x xb–( )
+
+TB 1– x xb–( )exp
+
+�
+o x( ) =
+
+� 1
+2
+--- y
+
+
+x[ ]–( )TR 1– y
+
+
+xb[ ]–( )exp
+�
+
+a x( ) =
+�
+
+b x( )
+�
+
+o x( )
+
+�
+a
+
+x
+�
+
+a x( )
+
+� x( )
+
+B
+B
+
+H
+H R K
+
+xa( )
+
+R R 1–
+
+
+
+Data assimilation concepts and methods
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+It will be shown in the section on dual algorithms (PSAS analysis) that the equations, and in particular the cost
+
+function , can be rewritten in the space of the observations . Also, it is easy to that least-squares analysis is
+
+closely related to a linear regression between model state and observations.
+
+9.4  On the tangent linear hypothesis
+
+The hypothesis of linearized observation operator is needed in order to derive a rigorous algebraic expression for
+
+the optimal . In practice, may not be linear, but it usually makes physical sense to linearize it in the vicinity
+
+of the background state:
+
+Then, being a continuous function of , the least-squares equations for the analysis should intuitively yield a
+
+nearly optimal .
+
+More generally, the tangent linear hypothesis on can be written as the first-order Taylor–Young formula in the
+
+vicinity of an arbitrary state  and for a perturbation :
+
+,
+
+with . This hypothesis, called the tangent linear hypothesis is only acceptable if the
+
+higher-order variations of can be neglected (in particular there should be no discontinuities) for all
+
+perturbations of the model state which have the same order of magnitude as the background errors. The operator
+
+is called the differential, or first derivative, or tangent linear (TL)16 function of at point . Although this is
+
+a desirable mathematical property of , it is not enough for practical purposes, because the approximation
+
+must be satisfactory, in user-defined terms, for finite values of that depend on the application considered. In the
+
+least-squares analysis problem, we need
+
+for all values of that will be encountered in the analysis procedure, notably , , and also all trial
+
+values used in the minimization of if a variational analysis is performed17. Thus the important requirement
+
+is that the difference between and should be much smaller than the typical observation
+
+errors (defined by ), for all model state perturbations of size and structure consistent with typical
+
+background errors, and also with the amplitude of the analysis increments .
+
+Thus the problem of linearizing is not just related to the observation errors themselves. It must be appreciated
+
+in terms of the errors in the background too, which in a sequential assimilation system are the previous forecast
+
+errors, which depend on the forecast range and the quality of the model. Ultimately the correctness of the lineari-
+
+zation must be appreciated in the context of the fully integrated assimilation system. It will be easier to apply the
+
+16. Both qualifiers tangent and linear are needed: obviously could be linear without satisfying the Taylor formula. A function can also be
+tangent to another without being linear, if the difference between them is an , e.g. and are tangent to each other for .
+
+17. Qualitatively speaking they all belong to a neighbourhood of having a shape and size which is consistent with the and error cov-
+ariances.
+
+� y
+
+K
+
+
+
+x( )
+
+
+xb( ) H x xb–( )≈–
+
+K H
+xa 
+
+x �
+
+
+x �+( )  x( ) H � O � 2( )+ +=
+lim� 0→ O � 2( ) � 2– 0=
+
+H
+
+
+x
+
+H
+O � 2( ) � 2 � 3 � 0=
+
+
+
+
+x �+( )  x( ) H �≈–
+
+�
+
+y
+
+
+x( ) y H x xb–( )–
+
+
+xb( )+≈–
+
+x x xa= x xt=
+� x( )
+
+xb B R
+
+
+x( )
+
+
+xb( )– H x xb–( )
+R x xb–
+
+xa xb–
+xb
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 17
+
+linearization to a good system because the departures will be smaller. Conversely, the linearization may be
+
+inapplicable to difficult data assimilation problems. This is often the case with ocean models or satellite data, which
+
+means that it can be wrong to use sophisticated analysis algorithms that rely too much on the linearity of the prob-
+
+lem.
+
+The linearization problem can be even more acute for the linearization of the model forecast operator which is
+
+needed in 4D-Var and in the Kalman filter described below. As with the linearization of , it may or may not be
+
+licit depending on the quality of all components of the assimilation system: data coverage, observation quality,
+
+model resolution and physics, and forecast range. The user requirements and the physical properties of the system
+
+must be considered.
+
+The non-linear analysis problem
+
+The assumption of linear analysis is a strong one. Linear algebra is needed to derive the optimal analysis equations.
+
+One can rely on the linearization of a weakly non-linear observation operator, at the expense of optimality. The
+
+incremental method (described below for the variational analysis) performs this procedure iteratively in an empir-
+
+ical attempt to make the analysis more optimal. For strongly non-linear problems, there is no general and simple
+
+way to calculate the optimal analysis. The simulated annealing method can be useful; specific methods, such as the
+
+simplex, deal with variables with bounded definition domains. Finally, it is sometimes possible to make a problem
+
+more linear simply by a clever definition of model and observation variables (see the section on minimization meth-
+
+ods).
+
+9.5  The point of view of conditional probabilities
+
+It is interesting to formalize the analysis problem using the conditional, or Bayesian, probabilities. Let us denote
+
+the a priori pdf (probability density function) of the model state before the observations are considered, i.e.
+
+the background pdf. Let us denote the pdf of the observations. The aim of the analysis is to find the maximum
+
+of , the conditional probability of the model state given the observations. The joint pdf of and (i.e. the
+
+probability that  and  occur together) is
+
+i.e. it is the probability that occurs when occurs, and vice versa. The above expression is the Bayes theorem.
+
+In the analysis procedure we know that a measurement has been made and we know its value , so
+
+and we obtain
+
+which means that the analysis pdf is equal to the background pdf times the observation pdf . The latter
+
+peaks at  but it is not a Dirac distribution because the observations are not error-free.
+
+The virtue of the probabilistic derivation of the analysis problem is that it can be extended to non-Gaussian prob-
+
+abilities (although this spoils the equivalence with the (A6) equation for ). A practical application is done in the
+
+framework of variational quality control, where it is assumed that observation errors are not Gaussian but they con-
+
+tain some amount of “gross errors”, i.e. there is a probability that the error is not generated by the usual Gaussian
+
+physical processes but by some more serious problem, like coding or instrumental failure. The gross errors might
+
+be modelled using a uniform pdf over a predefined interval of admissible gross errors, leading to a non-Gaussian
+
+observation pdf. When the opposite of the logarithm of this pdf is taken, the resulting observation cost function is
+
+not quadratic, but gives less weight to the observation (i.e. there is less slope) for model states that disagree strongly
+
+with the observed value.
+
+x xb–
+
+�
+
+
+���
+( ) � �
+
+( )���!�
+( )
+
+� �
+� �
+
+��� �
+∧( )
+
+���!�
+( )
+�"�
+
+( )
+� �#�
+
+( )
+���
+
+( )= =
+
+� �
+� � �
+
+( ) 1=
+
+���!�
+( )
+
+� �#�
+( )
+�$�
+
+( )=
+
+�"�%�
+( )� &�
+
+( )=
+
+K
+
+
+
+Data assimilation concepts and methods
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+ref: Lorenc 1986
+
+9.6  Numerical cost of least-squares analysis
+
+In current operational meteorological models, the dimension of the model state (or, more precisely, of the control
+
+variable space) is of the order of , and the dimension of the observation vector (the number of observed
+
+scalars) is of the order of per analysis18. Therefore the analysis problem is mathematically underdeter-
+
+mined (although in some regions it might be overdetermined if the density of the observations is larger than the
+
+resolution of the model). In any practical application it is essential to keep in mind the size of the matrix operators
+
+involved in computing the analysis (Fig. 4 ). The least-squares analysis method requires in principle the specifica-
+
+tion of covariance matrices and (or their inverses in the variational form of the algorithm) which respectively
+
+contain of the order of and distinct coefficients, which are statistics to estimate (the estimation of a
+
+variance or covariance statistic converges like the square root of the number of realizations). The explicit determi-
+
+nation of requires the inversion of a matrix of size , which has an asymptotic complexity of the order of
+
+. The exact minimization of the cost function requires, in principle, evaluations of the cost
+
+function and its gradient, assuming is quadratic and there are no numerical errors (e.g. using a conjugate gradient
+
+method).
+
+Figure  4. Sketches of the shapes of the matrices and vector dimensions involved in an usual analysis problem
+
+where there are many fewer observations than degrees of freedom in the model: from top to bottom, in the
+
+equations of the linear analysis, the computation of , of the  term, and the computation of the cost
+
+function .
+
+It is obvious that, except in analysis problems of very small dimension (like one-dimensional retrievals), it is im-
+
+possible to compute exactly the least-squares analysis. Some approximations are necessary, they are the subject of
+
+the following sections.
+
+18. At ECMWF in winter 1998 the control variable dimension was 512000, the number of active observations (per 6-hour interval) was about
+150000
+
+x � 107=
+� 105=
+
+B R
+� 2 2⁄ � 2 2⁄
+
+K � �×
+� 2 �( )log � � 1+
+
+�
+
+K HBHT
+
+�
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 19
+
+9.7  Conclusion
+
+We have seen that there are two main ways of defining the statistical analysis problem:
+
+• either assume that the background and error covariances are known, and derive the analysis
+
+equations by requiring that the total analysis error variances are minimum,
+
+• or assume that the background and observation error pdfs are Gaussian, and derive the analysis
+
+equations by looking for the state with the maximum probability.
+
+Both approaches lead to two mathematically equivalent algorithms:
+
+• the direct determination of the analysis gain matrix ,
+
+• the minimization of a quadratic cost function.
+
+These algorithms have very different numerical properties, and their equivalence stops as soon as some underlying
+
+hypotheses are not verified, like the linearization of the observation operator, for instance.
+
+10. A SIMPLE SCALAR ILLUSTRATION OF LEAST-SQUARES ESTIMATION
+
+Let us assume that we need to estimate the temperature  of a room.
+
+We have a thermometer of known accuracy (the standard deviation of measurement error) and we observe ,
+
+which is considered to have expectation (i.e. we assume that the observation is unbiased) and variance . In
+
+the absence of any other information the best estimate we can provide of the temperature is , with accuracy .
+
+However we may have some additional information about the temperature of the room. We may have a reading
+
+from another, independent thermometer, perhaps with a different accuracy. We may notice that everyone in the
+
+room is wearing a jumper—another timely piece of information from which we can derive an estimate, although
+
+with a rather large associated error. We may have an accurate observation from an earlier date, which can be treated
+
+as an estimate for the current time, with an error suitably inflated to account for the separation in time. Any of these
+
+observations could be treated as a priori or background information, to be used with in estimating the room
+
+temperature. Let our background estimate be , of expectation (i.e. it is unbiased) and of accuracy . Intu-
+
+itively and can be combined to provide a better estimate (or analysis) of than any of these taken alone.
+
+We are going to look for a linear weighted average of the form:
+
+which can be rewritten as , i.e. we look for a correction to the background which is a linear
+
+function of the difference between the observation and the background.
+
+The error variance of the estimate is:
+
+where we have assumed that the observation and background errors are uncorrelated. We choose the optimal value
+
+of  that minimizes the analysis error variance:
+
+which is equivalent to minimizing (Fig. 5 )
+
+K
+
+'
+t
+
+σo
+'
+
+o'
+t σo
+
+2
+
+'
+o σo
+
+'
+o'
+
+b
+
+'
+t σb'
+
+o
+
+'
+b
+
+'
+t
+
+'
+a ( ' o 1 (–( ) ' b+=
+
+'
+a
+
+'
+b ( ' o ' b–( )+=
+
+σa
+2 1 (–( )2σb2 ( 2σo2+=
+
+(
+
+( σb
+2
+
+σb
+2 σo
+
+2+
+------------------=
+
+
+
+Data assimilation concepts and methods
+
+20 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 5. Schematic representation of the variational form of the least-squares analysis, in a scalar system where
+
+the observation  is in the same space as the model : the cost-function terms  and  are both convex and
+
+tend to “pull” the analysis towards the background  and the observation , respectively.
+
+The minimum of their sum is somewhere between  and , and is the optimal least-squares analysis.
+
+• In the limiting case of a very low quality measurement ( ), and the analysis remains
+
+equal to the background.
+
+• On the other hand, if the observation has a very high quality ( ), and the analysis is
+
+equal to the observation.
+
+• If both have the same accuracy, , and the analysis is simply the average of
+
+and , which reflects the fact that we trust as much the observation as the background, so we
+
+make a compromise.
+
+• In all cases, , which means that the analysis is a weighted average of the background and
+
+the observation.
+
+These situations are sketched in Fig. 6 .
+
+� '( ) � b '( ) � o '( )+
+' '
+
+b–( )
+2
+
+σb
+2
+
+------------------------
+
+' '
+o–( )
+
+2
+
+σb
+2
+
+------------------------+= =
+
+� � � b � o�
+b
+
+�
+�
+
+b
+
+�
+σo>>σb ( 0=
+
+σo>>σb ( 1=
+
+σo σb= ( 1 2⁄= ' o'
+b
+
+0 ( 1≤ ≤
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 21
+
+Figure 6. Schematic representation of the variations of the estimation error , and of the optimal weight that
+
+determines the analysis , for various relative amplitudes of the background and observation standard errors
+
+( ).
+
+It is interesting to look at the variance of analysis error for the optimal :
+
+or
+
+which shows that the analysis error variance is always smaller than both the background and observation error
+
+variances, and it is smallest if both are equal, in which case the analysis error variance is half the background error
+
+variance.
+
+11. MODELS OF ERROR COVARIANCES
+
+A correct specification of observation and background error covariances is crucial to the quality of the analysis,
+
+because they determine to what extent the background fields will be corrected to match the observations. The es-
+
+sential parameters are the variances, but the correlations are also very important because they specify how the ob-
+
+served information will be smoothed in model space if there is a mismatch between the resolution of the model and
+
+the density of the observations. In the framework of Kalman filtering and 4D assimilation with model as a weak
+
+constraint, a third kind of covariances to specify is , the model error covariances (see the relevant section below).
+
+σa (
+xa
+
+σb σo,
+
+(
+1
+
+σa
+2
+
+----- 1
+
+σo
+2
+
+----- 1
+
+σb
+2
+
+-----+=
+
+σa
+2 σo
+
+2
+
+1 σo σb⁄( )
+2+
+
+--------------------------------
+σb
+
+2
+
+1 σb σo⁄( )
+2+
+
+-------------------------------- 1 (–( )σb2= = =
+
+Q
+
+
+
+Data assimilation concepts and methods
+
+22 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+11.1  Observation error variances
+
+They are mainly specified according to the knowledge of instrumental characteristics, which can be estimated using
+
+collocated observations, for instance. As explained before, they should also include the variance of representative-
+
+ness errors which is not negligible when analysing phenomena which cannot be well represented in model space.
+
+It is wrong to leave observation biases as a contribution to the observation error variances because it will produce
+
+biases in the analysis increments; whenever observation biases can be identified, they should be removed from the
+
+observed value or from the background fields, depending on whether one thinks they are caused by problems in the
+
+model or in the observation procedure (unfortunately we do not always know what to decide).
+
+11.2  Observation error correlations
+
+They are often assumed to be zero, i.e. one believes that distinct measurements are affected by physically independ-
+
+ent errors. This sounds reasonable for pairs of observations carried out by distinct instruments. This may not be
+
+true for sets of observations performed by the same platform, like radiosonde, aircraft or satellite measurements,
+
+or when several successive reports from the same station are used in 4D-Var. Intuitively there will be a significant
+
+observation error correlation for reports close to one another. If there is a bias it will show up as a permanent ob-
+
+servation error correlation. The observation preprocessing can generate artificial correlations between the trans-
+
+formed observations e.g. when temperature profiles are converted to geopotential, or when there is a conversion
+
+between relative and specific humidity (correlation with temperature), or when a retrieval procedure is applied to
+
+satellite data. If the background is used in the observation preprocessing, this will introduce artificial correlations
+
+between observations and background errors which are difficult to account for: moving the observation closer to
+
+the background may make the observation and background errors look smaller, but it will unrealistically reduce the
+
+weight of the originally observed information. Finally, representativeness errors are correlated by nature: interpo-
+
+lation errors are correlated whenever observations are dense compared to the resolution of the model. Errors in the
+
+design of the observation operator, like forecast model errors in 4D-Var, are correlated on the same scales as the
+
+modelling problems.
+
+The presence of (positive) observation error correlations can be shown to reduce the weight given to the average of
+
+the observations, and thus give more relative importance to differences between observed values, like gradients or
+
+tendencies. Unfortunately observation error correlations are difficult to estimate and can create problems in the nu-
+
+merics of the analysis and quality control algorithms. In practice it often makes sense to try to minimize them by
+
+working on a bias correction scheme, by avoiding unnecessary observation preprocessing, by thinning dense data
+
+and by improving the design of the model and observation operators. Most models of covariances used in prac-
+
+tice are diagonal or almost.
+
+11.3  Background error variances
+
+They are usually estimates of the error variances in the forecast used to produce . In the Kalman filter they are
+
+estimated automatically using the tangent-linear model, so they do not need to be specified (although this means
+
+that the problem is moved to the specification of the model error and the tuning of approximated algorithms that
+
+are less costly than the complete Kalman filter). A crude estimate can be obtained by taking an arbitrary fraction
+
+of climatological variance of the fields themselves. If the analysis is of good quality (i.e. if there are a lot of obser-
+
+vations) a better average estimate is provided by the variance of the differences between the forecast and a verifying
+
+analysis. If the observations can be assumed to be uncorrelated, much better averaged background error variances
+
+can be obtained by using the observational method explained below. However, in a system like the atmosphere the
+
+actual background errors are expected to depend a lot on the weather situation, and ideally the background errors
+
+should be flow-dependent. This can be achieved by the Kalman filter, by 4D-Var to some extent, or by some em-
+
+pirical laws of error growth based on physical grounds. If background error variances are badly specified, it will
+
+R
+
+xb
+
+Q
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 23
+
+lead to too large or too small analysis increments. In least-squares analysis algorithms, only the relative magnitude
+
+of the background and observation error variances is important. However, the absolute values may be important if
+
+they are used to make quality-control decisions on the observations (it is usually desirable to accept more easily
+
+the observations with a large background departure if the background error is likely to be large).
+
+11.4  Background error correlations
+
+They are essential for several reasons:
+
+Information spreading. In data-sparse areas, the shape of the analysis increment is completely
+determined by the covariance structures (for a single observation it is given by ). Hence the
+
+correlations in will perform the spatial spreading of information from the observation points
+
+(real observations are usually local) to a finite domain surrounding it.
+
+Information smoothing. In data-dense areas, one can show that in the presence of discrete
+observations (which is the usual case) the amount of smoothing19 of the observed information is
+
+governed by the correlations in , which can be understood by remarking that the leftmost term in
+
+is . The smoothing of the increments is important in ensuring that the analysis contains scales
+
+which are statistically compatible with the smoothness properties of the physical fields. For
+
+instance, when analysing stratospheric or anticyclonic air masses, it is desirable to smooth the
+
+increments a lot in the horizontal in order to average and spread efficiently the measurements.
+
+When doing a low-level analysis in frontal, coastal or mountainous areas, or near temperature
+
+inversions, it is desirable on the contrary to limit the extent of the increments so as not to produce an
+
+unphysically smooth analysis. This has to be reflected in the specification of background error
+
+correlations.
+
+Balance properties. There are often more degrees of freedom in a model than in reality. For
+instance, the large-scale atmosphere is usually hydrostatic. It is almost geostrophic, at least there is
+
+always a large amount of geostrophy in the extratropics. These balance properties could be
+
+regarded as annoying constraints on the analysis problem, and enforced brutally e.g. using an a
+
+posteriori normal-mode initialization. On the other hand, they are statistical properties that link the
+
+different model variables. In other words, they show up as correlations in the background errors
+
+because the existence of a balance in the reality and in the model state will imply that there is a
+
+(linearized) version of the balance that exists in the background error covariances, too. This is
+
+interesting for the use of observed information: observing one model variable yields information
+
+about all variables that are balanced with it, e.g. a low-level wind observation allows one to correct
+
+the surface pressure field by assuming some amount of geostrophy. When combined with the spatial
+
+smoothing of increments this can lead to a considerable impact on the quality of the analysis, e.g. a
+
+temperature observation at one point can be smoothed to produce a correction to geopotential
+
+height around it, and then produce a complete three-dimensional correction of the geostrophic wind
+
+field (Fig. 7 ). The relative amplitude of the increments in terms of the various model fields will
+
+depend directly on the specified amount of correlation as well as on the assumed error variance in
+
+all the concerned parameters.
+
+19.  There is an equivalence between statistical analysis and the theory of interpolation by splines.
+
+BHT
+
+B
+
+B
+K B
+
+
+
+Data assimilation concepts and methods
+
+24 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  7. Example of horizontal structure functions commonly used in meteorology: the horizontal
+
+autocorrelation of height (or pressure) has an isotropic, gaussian-like shape as a function of distance (right panel).
+
+In turn, geostrophy implies that wind will be cross-correlated with height at distances where the gradient of height
+
+correlation is maximum. Hence, an isolated height observation will generate an isotropic height “bump” with a
+
+rotating wind increment in the shape of a ring.
+
+Ill-conditioning of the assimilation. It is possible to include into the control variables some
+additional parameters which are not directly observed, like model tuning parameters or bias
+
+estimates. This can be an efficient indirect parameter estimation technique if there is a realistic
+
+coupling with the observed data, usually through the design of the observation operator or of the
+
+model (in a 4-D assimilation). It may not be possible or sensible to specify explicit correlations with
+
+the rest of the model state in . However, one must be careful to specify a sensible background
+
+error for all parameters of the control variable, unless it is certain that the problem is over-
+
+determined by the observations. A too small error variance will obviously prevent any correction to
+
+the additional parameters. A too large variance may on the other hand make the additional
+
+parameters act like a sink of noise, exhibiting variations whenever it improves the fit of the analysis
+
+to observations, even if no such correction of the additional parameters is physically justified. This
+
+can create genuine problems because some implicit analysis coupling is often created by variable
+
+dependencies in the observation operators or in the model (in 4D-Var). Then, the specification of
+
+background errors for additional parameters will have an impact on the analysis of the main model
+
+state. They should reflect the acceptable amplitude of the analysis corrections.
+
+Flow-dependent structure functions. If enough is known about the dynamics of the problem, one
+can make depend on the uncertainty of the previous analysis and forecast, not only in terms of
+
+background error variances, but also in the correlations. In geophysical fluids there is not just a loss
+
+of predictability during the forecast, there are waves that follow specific patterns, and these patterns
+
+are expected to be found in the background errors. For instance, in an area prone to cyclogenesis,
+
+one expects the most likely background errors to have the shape (or structure function) of the most
+
+unstable structures, perhaps with a baroclinic wave tilt, and anticorrelations between the errors in
+
+the warm and in the cold air masses. This is equivalent to a balance property, and again if the
+
+B
+
+B
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 25
+
+relevant information can be embedded into the correlations of , then the observed information can
+
+be more accurately spread spatially and distributed among all model parameters involved. Such
+
+information can be provided in the framework of a Kalman filter or 4D-Var.
+
+ref: Courtier et al. 1998
+
+11.5  Estimation of error covariances
+
+It is a difficult problem, because they are never observed directly, they can only be estimated in a statistical sense,
+
+so that one is forced to make some assumptions of homogeneity. The best source of information about the errors
+
+in an assimilation system is the study of the background departures ( ) and they can be used in a variety
+
+of ways. Other indications can be obtained from the analysis departures, or from the values of the cost functions in
+
+3D/4D-Var. There are some more empirical methods based on the study of forecasts started from the analyses, like
+
+the NMC method or the adjoint sensitivity studies, but their theoretical foundation is rather unclear for the time
+
+being. A comprehensive and rigorous methodology is being developed under the framework of adaptive filtering
+
+which is too complex to explain in this volume. Probably the most simple yet reliable estimation method is the ob-
+
+servational method explained below.
+
+Figure  8. Schematic representation the observational method. The (observation – background) covariance
+
+statistics for a given assimilation system are stratified against distance, and the intercept at the origin of the
+
+histogram provides an estimate of the average background and observation error variances for these particular
+
+assimilation and observation systems.
+
+The observational (or Hollingworth–Lonnberg) method. This method20 relies on the use of background depar-
+tures in an observing network that is dense and large enough to provide information on many scales, and that can
+
+be assumed to consist of uncorrelated and discrete observations. The principle (illustrated in Fig. 8 ) is to calculate
+
+an histogram (or variogram) of background departure covariances, stratified against separation (for instance). At
+
+zero separation the histogram provides averaged information about the background and observation errors, at non-
+
+zero separation it gives the averaged background error correlation: if and are two observation points, the back-
+
+ground departure covariance  can be calculated empirically and it is equal to
+
+20. named after the authors that popularized it in meteorology, although it was known and used before in geophysics. The widespread kriging
+method is closely related.
+
+B
+
+y
+
+
+xb[ ]–
+
+� �) � �,( )
+
+
+
+Data assimilation concepts and methods
+
+26 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+If one assumes that there is no correlation between observation and background errors, the last two terms on the
+
+second line vanish. The first term is the observation error covariance between and , the second term is the
+
+background error covariance interpolated at these points, assuming both are homogeneous over the dataset used.
+
+In summary,
+
+• if , , the sum of the observation and the background error variances,
+
+• if and the observation errors are assumed to be uncorrelated, , the
+
+background error covariance between and . (If there are observation error correlations, it is
+
+impossible to disentangle the information about  and  without additional data)
+
+• Under the same assumption, if and are very close to each other without being equal, then
+
+, so that by determining the intercept for zero separation of , one
+
+can determine .
+
+• Then, one gets and the background error correlations are given by
+
+(we have assumed that the background error variances are homogeneous over the
+
+considered dataset).
+
+In most systems the background error covariances should go to zero for very large separations. If this is not the
+
+case, it is usually the sign of biases in the background and/or in the observations and the method may not work
+
+correctly (Hollingsworth and Lonnberg 1986.).
+
+11.6  Modelling of background correlations
+
+As explained above the full matrix is usually too big to be specified explicitly. The variances are just the n di-
+
+agonal terms of , which are usually specified completely. The off-diagonal terms are more difficult to specify.
+
+They must generate a symmetric positive definite matrix, so one must be careful about the assumptions made to
+
+specify them. Additionally is often required to have some physical properties which are required to be reflected
+
+in the analysis:
+
+• the correlations must be smooth in physical space, on sensible scales,
+
+• the correlations should go to zero for very large separations if it is believed that observations should
+
+only have a local effect on the increments,
+
+• the correlations should not exhibit physically unjustifiable variations according to direction or
+
+location,
+
+• the most fundamental balance properties, like geostrophy, must be reasonably well enforced.
+
+• the correlations should not lead to unreasonable effective background error variances for any
+
+parameter that is observed, used in the subsequent model forecast, or output to the users as an
+
+analysis product.
+
+) � �,( ) = y� H � xb–( ) y � H � xb–( )T
+= y� H� xt–( ) H� xt H � xb–( )+[ ] y � H � xt–( ) H � xt H � xb–( )+[ ]T
+= y� H � xt–( ) y � H � xt–( )T H� xt xb–( ) xt xb–( )TH �T+ +
+
+y� H� xt–( ) xt xb–( )TH �T H � xt xb–( ) y � H � xt–( )T+ +
+= R � � H � BH �T 0 0+ + +
+
+� �
+
+) � �,( ) R � � H � BH �T+=
+� �= ) � �,( ) σo2 �( ) σb2 �( )+=
+� �≠ ) � �,( ) covb � �,( )=
+
+� �
+R B
+
+� �
+lim �*�→ ) � �,( ) σb2 �( )= ) � �,( )
+
+σb
+2 �( )
+σo
+
+2 �( ) ) � �,( ) σb2 �( )–=) � �,( )( ) σb2 �( )⁄
+
+B
+B
+
+B
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 27
+
+The complexity and subtlety of these requirements mean that the specification of background error covariances is
+
+a problem similar to physical parametrization. Physically sound hypotheses need to be made and tested carefully.
+
+Some of the more popular techniques are listed below, but more sophisticated ones remain to be invented.
+
+• Correlation models can be specified independently from variance fields, under the condition that the
+
+scales of variation of the variances are much larger than the correlation scales, otherwise the shape
+
+of the covariances would differ a lot from the correlations, with unpredictable consequences on the
+
+balance properties.
+
+• Vertical autocorrelation matrices for each parameter are usually small enough to be specified
+
+explicitly.
+
+• Horizontal autocorrelations cannot be specified explicitly, but they can be reduced to sparse
+
+matrices by assuming that they are homogeneous and isotropic to some extent. It implies that they
+
+are diagonal in spectral space21. In grid-point space some low-pass digital filters can be applied to
+
+achieve a similar result.
+
+• Three-dimensional multivariate correlation models can be built by carefully combining
+
+separability, homogeneity and independency hypotheses like: zero correlations in the vertical for
+
+distinct spectral wavenumbers, homogeneity of the vertical correlations in the horizontal and/or
+
+horizontal correlations in the vertical, property of the correlations being products of horizontal and
+
+vertical correlations. Numerically they imply that the correlation matrix is sparse because it is made
+
+of block matrices which are themselves block-diagonal22
+
+• Balance constraints can be enforced by transforming the model variables into suitably defined
+
+complementary spaces of balanced and unbalanced variables. The latter are supposed to have
+
+smaller background error variances than the former, meaning that they will contribute less to the
+
+increment structures.
+
+• The geostrophic balance constraint can be enforced using the classical -plane or -plane balance
+
+equations, or projections onto subspaces spanned by so-called Rossby and Gravity normal modes.
+
+• More general kinds of balance properties can be expressed using linear regression operators
+
+calibrated on actual background error fields, if no analytical formulation is available.
+
+Two last requirements which can be important for the numerical implementation of the analysis algorithm are the
+
+availability of the symmetric square root of (a matrix such that ) and of its inverse. They can con-
+
+strain notably the design of .
+
+ref: Courtier et al. 1998
+
+12. OPTIMAL INTERPOLATION (OI) ANALYSIS
+
+The OI is an algebraic simplification of the computation of the weight in the analysis equations (A5) and (A6).
+
+(A1)
+
+(A2)
+
+The equation (A1) can be regarded as a list of scalar analysis equations, one per model variable in the vector .
+
+21.   This is the Khinchine-Bochner theorem. The spectral coefficients are proportional to the spectral variance of the correlations for each
+total wavenumber. This is detailed on the sphere in Courtier et al. (1996).
+22.  It corresponds to the mathematical concept of tensor product.
+
++
+β
+
+B , ,-, T B=
+B
+
+K
+
+xa xb K y
+
+
+xb[ ]–( )+=
+
+K BHT HBHT R+( )
+1–
+
+=
+
+x
+
+
+
+Data assimilation concepts and methods
+
+28 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+For each model variable the analysis increment is given by the corresponding line of times the vector of back-
+
+ground departures . The fundamental hypothesis in OI is: For each model variable, only a few obser-
+
+vations are important in determining the analysis increment. It is implemented as follows:
+
+1) For each model variable , select a small number of observations using empirical selection
+
+criteria.
+
+2) Form the corresponding list of background departures , the background error
+
+covariances between the model variable and the model state interpolated at the
+
+observation points (i.e. the relevant coefficients of the -th line of ), and the
+
+background and observation error covariance submatrices formed by the restrictions of and
+
+ to the selected observations.
+
+3) Invert the positive definite matrix formed by the restriction of to the selected
+
+observations (e.g. by an LU or Choleski method),
+
+4) Multiply it by the -th line of  to get the necessary line of .
+
+It is possible to save some computer time on the matrix inversion by solving directly a symmetric positive linear
+
+system, since we know in advance the vector of departures to which the inverse matrix will be applied. Also, if the
+
+same set of observations is used to analyse several model variables, then the same matrix inverse (or factorization)
+
+can be reused.
+
+In the OI algorithm it is necessary to have the background error covariances as a model which can easily be
+
+applied to pairs of model and observed variables, and to pairs of observed variables. This can be difficult to imple-
+
+ment if the observation operators are complex. On the other hand, the matrix needs not be specified globally, it
+
+can be specified in an ad hoc way for each model variable, as long as it remains locally positive definite. The spec-
+
+ification of usually relies on the design of empirical autocorrelation functions (e.g. Gaussian or Bessel functions
+
+and their derivatives), and on assumed amounts of balance constraints like hydrostatic balance or geostrophy.
+
+The selection of observations should in principle provide all the observations which would have a significant
+
+weight in the optimal analysis, i.e. those which have significant background error covariances with the var-
+
+iable considered. In practice, background error covariances are assumed to be small for large separation, so that
+
+only the observations in a limited geometrical domain around the model variable need to be selected. For compu-
+
+tational reasons it may be desirable to ensure that only a limited number of observations are selected each time, in
+
+order to keep the matrix inversions cheap. Two common strategies for observation selection are pointwise selection
+
+(Fig. 9 ) and box selection (Fig. 10 )
+
+K
+y
+
+
+xb[ ]–( )
+
+x �( ) � �
+
+� � y  xb[ ]–( ) � � �
+x �( ) � �
+
+� � � BHT � � � �×
+HBHT
+
+R
+
+� � � �× HBHT R+( )
+
+� BHT K
+
+B
+
+B
+
+B
+
+BHT
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 29
+
+Figure  9. One OI data selection strategy is to assume that each analysis point is only sensitive to observations
+
+located in a small vicinity. Therefore, the observations used to perform the analysis at two neighbouring points
+
+or may be different, so that the analysis field will generally not be continuous in space. The cost of the analysis
+
+increases with the size of the selection domains.
+
+Figure  10. A slightly more sophisticated and more expensive OI data selection is to use, for all the points in an
+
+analysis box (full rectangle), all observations located in a bigger selection box (dashed rectangle), so that most of
+
+the observations selected in two neighbouring analysis boxes are identical.
+
+The advantage of OI is its simplicity of implementation and its relatively small cost if the right assumptions can be
+
+made on the observation selection.
+
+A drawback of OI is that spurious noise is produced in the analysis fields because different sets of observations
+
+�
+1�
+
+2
+
+
+
+Data assimilation concepts and methods
+
+30 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(and possibly different background error models) are used on different parts of the model state. Also, it is impos-
+
+sible to guarantee the coherence between small and large scales of the analysis (Lorenc 1981).
+
+13. THREE-DIMENSIONAL VARIATIONAL ANALYSIS (3D-VAR)
+
+The principle of 3D-Var is to avoid the computation (A6) of the gain completely by looking for the analysis as
+
+an approximate solution to the equivalent minimization problem defined by the cost function in (A9). The solu-
+
+tion is sought iteratively by performing several evaluations of the cost function
+
+and of its gradient
+
+in order to approach the minimum using a suitable descent algorithm. The approximation lies in the fact that only
+
+a small number of iterations are performed. The minimization can be stopped by limiting artificially the number
+
+of iterations, or by requiring that the norm of the gradient decreases by a predefined amount during the
+
+minimization, which is an intrinsic measure of how much the analysis is closer to the optimum than the initial
+
+point of the minimization. The geometry of the minimization is suggested in Fig. 11 .
+
+K
+�
+
+� x( ) x xb–( )TB 1– x xb–( ) y  x[ ]–( )TR 1– y  x[ ]–( )+=
+
+� x( )∇ 2B 1– x xb–( ) 2 TR 1– y  x[ ]–( )–=
+
+� x( )∇
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 31
+
+Figure 11. Schematic representation of the variational cost-function minimization (here in a two-variable model
+
+space): the quadratic cost-function has the shape of a paraboloid, or bowl, with the minimum at the optimal
+
+analysis . The minimization works by performing several line-searches to move the control variable to areas
+
+where the cost-function is smaller, usually by looking at the local slope (the gradient) of the cost-function.
+
+In practice, the initial point of the minimization, or first guess, is taken equal to the background . This is not
+
+compulsory, however, so it is important to distinguish clearly between the terms background (which is used in the
+
+definition of the cost function) and first guess (which is used to initiate the minimization procedure). If the mini-
+
+mization is satisfactory, the analysis will not depend significantly on the choice of first guess, but it will always be
+
+sensitive to the background.
+
+A significant difficulty with 3D-Var is the need to design a model for that properly defines background error
+
+covariances for all pairs of model variables. In particular, it has to be symmetric positive definite, and the back-
+
+ground error variances must be realistic when expressed in terms of observation parameters, because this is what
+
+will determine the weight of the observations in the analysis.
+
+The popularity of 3D-Var stems from its conceptual simplicity and from the ease with which complex observation
+
+operators can be used, since only the operators and the adjoints of their tangent linear need to be provided23. Weak-
+
+ly non-linear observation operators can be used, with a small loss in the optimality of the result. As long as is
+
+strictly convex, there is still one and only one analysis.
+
+In most cases the observation error covariance matrix is block-diagonal, or even diagonal, because there is no
+
+reason to assume observation error correlations between independent observing networks, observing platforms or
+
+stations, and instruments, except in some special cases. It is easy to see that a block-diagonal implies that
+
+23.  whereas OI requires a background error covariance model between each observed variable and each model variable.
+
+xa x
+
+xb
+
+B
+
+�
+
+R
+
+R � o
+
+
+
+Data assimilation concepts and methods
+
+32 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+is a sum of scalar cost-functions , each one defined by a submatrix and the corresponding subsets
+
+and  of the observation operators and values:
+
+The gradient can be similarly decomposed. The breakdown of is a useful diagnostic tool of the behaviour
+
+of 3D-Var in terms of each observation type: the magnitude of each term measures the misfit between the state
+
+and the corresponding subset of observations. It can also simplify the coding of the computations of and its
+
+gradient24.
+
+Another advantage is the ability to enforce external weak (or penalty) constraints, such as balance properties, by
+
+putting additional terms into the cost function (usually denoted ). However, this can make the preconditioning
+
+of the minimization problem difficult.
+
+ref: Parrish and Derber 1992, Courtier et al. 1998.
+
+14. 1D-VAR AND OTHER VARIATIONAL ANALYSIS SYSTEMS
+
+The essence of the 3D-Var algorithm is to rewrite a least-squares problem as the minimization of a cost-function.
+
+The method was introduced in order to remove the local data selection in the OI algorithm, thereby performing a
+
+global analysis of the 3-D meteorological fields, hence the name. Of course, the technique has been applied equally
+
+well to other problems in which the control variable is much smaller. A very successful example is the satellite data
+
+retrieval problem, in which the 1D-Var algorithm performs a local analysis of one atmospheric column (the model
+
+state) at the location of each satellite sounding such as TOVS radiances or microwave measurements. Similar var-
+
+iational techniques have been applied to the retrieval of surface wind fields from a collection of scatterometer am-
+
+biguous wind measurements or to the analysis of land surface properties in a numerical weather prediction model
+
+(in this case the control variable is more or less a column of the 3-D model, but the time dimension is taken into
+
+account as in 4D-Var). Except 1D-Var, these methods have no established name yet.
+
+ref: Eyre 1987.
+
+15. FOUR-DIMENSIONAL VARIATIONAL ASSIMILATION (4D-VAR)
+
+4D-Var is a simple generalization of 3D-Var for observations that are distributed in time. The equations are the
+
+same, provided the observation operators are generalized to include a forecast model that will allow a comparison
+
+between the model state and the observations at the appropriate time.
+
+Over a given time interval, the analysis being at the initial time, and the observations being distributed among n
+
+times in the interval, we denote by the subscript the quantities at any given observation time . Hence, ,
+
+and are the observations, the model and the true states at time , and is the error covariance matrix for the
+
+observation errors . The observation operator at time is linearized as . The background error
+
+24.  Actually the whole  can be decomposed into as many elementary cost functions as there are observed parameters, by redefining the
+observation space to be the eigenvectors of .
+
+. � o �, R �  �
+y�
+
+� o = � o �, x( )�
+1=
+
+/
+∑
+
+� o �, = y �  � x[ ]–( )TR� 1– y�  � x[ ]–( )
+
+� o∇ � o
+x
+
+� o
+
+0
+o
+
+R
+
+� c
+
+� � y � x�
+xt � � R�
+
+y�  � xt �( )–  � � H�
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 33
+
+covariance matrix  is only defined at initial time, the time of the background and of the analysis .
+
+15.1  The four-dimensional analysis problem
+
+In its general form, it is defined as the minimization of the following cost function:
+
+which can be proven, like in the three-dimensional case detailed previously, to be equivalent to finding the
+
+maximum likelihood estimate of the analysis subject to the hypothesis of Gaussian errors.
+
+The 4D-Var analysis, or four-dimensional variational assimilation problem, is by convention defined as the
+above minimization problem subject to the strong constraint that the sequence of model states must be a solution
+
+of the model equations:
+
+where is a predefined model forecast operator from the initial time to . 4D-Var is thus a nonlinear
+
+constrained optimization problem which is very difficult to solve in the general case. Fortunately it can be greatly
+
+simplified with two hypotheses:
+
+Causality. The forecast model can be expressed as the product of intermediate forecast steps, which
+reflects the causality of nature. Usually it is the integration of a numerical prediction model starting
+
+with as the initial condition. If the times i are sorted, with so that is the identity,
+
+then by denoting  the forecast step from  to  we have and by recurrence
+
+Tangent linear hypothesis. The cost function can be made quadratic by assuming, on top of the
+linearization of , that the operator can be linearized, i.e.
+
+where is the tangent linear (TL) model, i.e. the differential of . For a discussion of this
+
+hypothesis, refer to the section on the tangent linear hypothesis, in which the remarks made on
+
+apply similarly to . It explains that the realism of the TL hypothesis depends not only on the
+
+model, but also on the general characteristics of the assimilation system, including notably the
+
+length of the 4D-Var time interval.
+
+The two hypotheses above simplify the general minimization problem to an unconstrained quadratic one which is
+
+numerically much easier to solve. The first term of the cost function is no more complicated than in 3D-Var
+
+and it will be left out of this discussion. The evaluation of the second term would seem to require integrations
+
+of the forecast model from the analysis time to each of the observation times , and even more for the computation
+
+of the gradient . We are going to show that the computations can in fact be arranged in a much more efficient
+
+way.
+
+B xb xa
+
+� x( ) x xb–( )TB 1– x xb–( ) y�  � x�[ ]–( )TR� 1– y�  � x�[ ]–( )�
+0=
+
+	
+∑+=
+
+x �
+
+� x�, � 0 �→ x( )=∀
+�
+
+0
+�
+
+→ �
+
+x x0 x=
+�
+
+0� � � 1– � x� � � x� 1–=
+
+x� � � � � 1– … � 1x=
+
+ � �
+
+y�  � � 0 �→ x( ) y �  � � 0 �→ xb( )– H� M0 �→ x xb–( )–≈–
+M
+
+�
+
+
+�
+
+� b
+� o �
+�
+
+� o∇
+
+
+
+Data assimilation concepts and methods
+
+34 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+15.2  Theorem: minimization of the 4D-Var cost function
+
+Proof:
+
+The first stage is the direct integration of the model from  to , computing successively at each observation time :
+
+1) the forecast state ,
+
+2) the “normalized departures”  which are stored,
+
+3) the contributions to the cost function
+
+4) And finally .
+To compute  it is necessary to perform a slightly complex factorization:
+
+and the last expression is easily evaluated from right to left using the following algorithm:
+
+5) initialize the so-called adjoint variable  to zero at final time:
+
+6) for each time step the variable is obtained by adding the adjoint forcing to and by performing the
+adjoint integration by multiplying the result by , i.e.
+
+7) at the end of the recurrence, the value of the adjoint variable  gives the required result.
+
+The terminology employed in the algorithm reflects the fact that the computations look like the integration of an
+
+adjoint model backward in time with a time-stepping defined by the transpose time-stepping operators and an
+
+external forcing , which depends on the distance between the model trajectory and the observations. In this
+
+discrete presentation it is just a convenient way of evaluating an algebraic expression25.
+
+The evaluation of the 4D-Var observation cost function and its gradient, and , re-
+
+quires one direct model integration from times 0 to and one suitably modified adjoint integra-
+
+tion made of transposes of the tangent linear model time-stepping operators .
+
+25.  In a continuous (in time) presentation, the concept of adjoint model could be carried much further into the area of differential equations.
+However, this is not relevant to real models where the adjoint of the discretized model must be used, instead of the discretization of a continu-
+ous adjoint model. The only relevant case is if some continuous operators have a simple adjoint: then, with a careful discretization that pre-
+serves this property, the implementation of the discrete transpose operators can be simplified.
+
+� o x( ) � o x( )∇
+�
+
+M�
+
+x x	 �
+x� � � � � 1– … � 1x1= 
+ � R� 1– y�  � x �[ ]–( )=
+
+� o � x( ) y  � x�[ ]–( )T 
+ �=
+� o �( ) � o � x( )� 0=
+
+	
+∑=� o∇
+
+1
+2
+--- � o∇– = 12--- � o �∇�
+
+0=
+
+	
+∑–
+
+= M1
+T…M �TH�T 
+ ��
+
+0=
+
+	
+∑
+
+= H0
+T 
+�1 M1T H1T 
+ 1 M2T H2T 
+ 2 … M	TH	T 
+ 	+ +[ ]…+[ ]+
+
+x̃ x̃ 0=
+
+� 1– x̃� 1– H�T 
+ � x̃�
+M�T x̃� 1– M�T x̃� H�T 
+ �+( )=
+
+x̃0 1 2⁄( )� o x( )–=
+
+M�T
+H�T 
+ �
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 35
+
+15.3  Properties of 4D-Var
+
+Figure  12. Example of 4D-Var intermittent assimilation in a numerical forecasting system. Every 6 hours a 4D-
+
+Var is performed to assimilate the most recent observations, using a segment of the previous forecast as
+
+background. This updates the initial model trajectory for the subsequent forecast.
+
+When compared to a 3-D analysis algorithm in a sequential assimilation system, 4D-Var has the following charac-
+
+teristics:
+
+• it works only under the assumption that the model is perfect. Problems can be expected if model
+
+error are large.
+
+• it requires the implementation of the rather special operators, the so-called adjoint model. This
+
+can be a lot of work if the forecast model is complex.
+
+• in a real-time system it requires the assimilation to wait for the observations over the whole 4D-Var
+
+time interval to be available before the analysis procedure can begin, whereas sequential systems
+
+can process observations shortly after they are available. This can delay26 the availability of .
+
+• is used as the initial state for a forecast, then by construction of 4D-Var one is sure that the
+
+forecast will be completely consistent with the model equations and the four-dimensional
+
+distribution of observations until the end of the 4D-Var time interval (the cutoff time). This
+
+makes intermittent 4D-Var a very suitable system for numerical forecasting (Fig. 12 ).
+
+• 4D-Var is an optimal assimilation algorithm over its time period thanks to the following theorem. It
+
+means that it uses the observations as well as possible, even if is not perfect, to provide in a
+
+much less expensive way than the equivalent Kalman Filter. For instance, the coupling between
+
+advection and observed information in illustrated in Fig. 13 .
+
+26.  Some special implementations of 4D-Var can partly solve this problem.
+
+M�T
+
+xa
+xa
+
+�
+
+B xa
+
+
+
+Data assimilation concepts and methods
+
+36 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  13. Example of propagation of the information by 4D-Var (or, equivalently, a Kalman filter) in a 1-D
+
+model with advection (i.e. transport) of a scalar quantity. All features observed at any point within the 4D-Var
+
+time window will be related to the correct upstream point of the control variable by the tangent linear and
+
+adjoint model, along the characteristic lines of the flow (dashed).
+
+15.4  Equivalence between 4D-Var and the Kalman Filter
+
+Over a given time interval, under the assumption that the model is perfect, with the same input data (initial back-
+
+ground and its covariances , distribution of observations and their covariances ), the 4D-Var analysis at the
+
+end of the time interval is equal to the Kalman filter analysis at the same time.
+
+This theorem is discussed in more details in the section about the Kalman filter algorithm, with a discussion of the
+
+pros and cons of using 4D-Var.
+
+A special property of the 4D-Var analysis in the middle of the time interval is that it uses all the observations si-
+
+multaneously, not just the ones before the analysis time. It is said that 4D-Var is a smoothing algorithm27.
+
+Ref: Talagrand and Courtier 1987, Thépaut and Courtier 1991, Rabier and Courtier 1992, Lacarra and Talagrand
+
+1988, Errico et al. 1993.
+
+16. ESTIMATING THE QUALITY OF THE ANALYSIS
+
+It is usually an important property of an analysis algorithm that it should be able to provide an estimate of the qual-
+
+ity of its output. If there is no observation the quality is obviously that of the background. In a sequential analysis
+
+system the knowledge of the analysis quality is useful because it helps in the specification of the background error
+
+covariances for the next analysis, a problem called cycling the analysis. If the background is a forecast, then its
+
+27.  Equivalent to the Kalman smoother algorithm which is a generalization of the Kalman filter, but at a much smaller cost.
+
+2
+1
+2
+
+2,( )
+
+B R�
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 37
+
+errors are a combination of analysis and model errors, evolved in time according to the model dynamics. This is
+
+explicitly represented in the Kalman filter algorithm.
+
+If the analysis gain has been calculated, e.g. in an OI analysis, then the analysis error covariance matrix is pro-
+
+vided by Eq. (A7)
+
+(A3)
+
+which reduces to (A8) in the unlikely case where  has been computed exactly.
+
+In a variational analysis procedure, the error covariances of the analysis can be inferred from the matrix of second
+
+derivatives, or Hessian, of the cost function thanks to the following result:
+
+16.1  Theorem: use of Hessian information
+
+Proof:
+
+The Hessian is obtained by differentiating  twice with respect to the control variable :
+
+(A5)
+
+Now we express the fact that  and we insert the true model state  into the equation:
+
+Hence
+
+When it is multiplied on the right by its transpose, and the expectation of the result is taken, the right-hand side then contains
+two terms that multiply
+
+which is zero because we assume background and observation errors are uncorrelated. The remaining terms lead to,
+successively:
+
+The Hessian of the cost function of the variational analysis is equal to twice the inverse of the
+
+analysis error covariance matrix:
+
+K
+
+A I KH–( )B I KH–( )T KRKT+=
+
+A I KH–( )B= K
+
+A
+1
+2
+--- � ″  
+
+1–
+=
+
+� x
+
+� x( ) = x xb–( )TB 1– x xb–( ) y  x[ ]–( )TR 1– y  x[ ]–( )+
+�∇ = 2B 1– x xb–( ) 2HTR 1– y  x[ ]–( )–
+
+� ″ = �∇∇ = 2 B 1– HTR 1– H+( )
+� xa( )∇ 0= xt
+
+0 = B 1– xa xb–( ) H
+TR 1– y
+
+
+xa[ ]–( )–
+
+= B 1– xa xt xt+– xb–( ) H
+T– R 1– y
+
+
+xt[ ]– H xt x– a[ ]+( )
+
+= B 1– xa xt–( ) H
+T– R 1– H xt x– a( ) B
+
+1– xb xt–( )– H
+T– R 1– y
+
+
+xt[ ]–( )
+
+B 1– HTR 1– H+( ) xa xt–( ) B
+1– xb xt–( ) H
+
+TR 1– y
+
+
+xt[ ]–( )+=
+
+xb xt–( ) y
+
+
+xt[ ]–( )
+T
+
+
+
+Data assimilation concepts and methods
+
+38 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+which proves the result.
+
+16.2  Remarks
+
+Figure  14. Illustration in a one-dimensional problem of the relationship between the Hessian and the quality of
+
+the analysis. In one dimension, the Hessian is the second derivative, or convexity, of the cost-function of the
+
+variational analysis: two examples of cost-functions are depicted in the upper panel, one with a strong convexity
+
+(on the left), the other with a weaker one (on the right). If the cost-function is consistent with the pdfs involved in
+
+the analysis problem, the Hessian is a measure of the sharpness of the pdf of the analysis (depicted in the lower
+
+panel). A sharper pdf (on the left) means that the analysis is more reliable, and that the probability of the
+
+estimated state to be the true one is higher.
+
+A simple, geometrical illustration of the relationship between the Hessian and the quality of the analysis is provided
+
+in Fig. 14 . In a multidimensional problem, the same interpretation is valid along cross-sections of the cost-func-
+
+tion.
+
+If the linearization of the observation operator can be performed exactly, the cost function is exactly quadratic
+
+and does not depend on the value of the analysis: can be determined as soon as is defined, even before
+
+the analysis is actually carried out28. If the linearization is not exact, is not constant. It may depend a lot on
+
+, even if itself does not look very different from a quadratic function. For instance, if is continuously dif-
+
+ferentiable but not strictly convex, there are points at which . If is not continuous, then there are points
+
+at which is not defined at all. It means that must be exactly linear in order to be able to calculate using
+
+28.  Actually, neither  nor  depend on the values of the background or of the observations.
+
+B 1– HTR 1– H+( )A B 1– HTR 1– H+( ) = B 1– BB 1– HTR 1– RR 1– H+
+
+= B 1– HTR 1– H+
+
+A = B 1– HTR 1– H+( )
+1–
+
+ �
+� ″ A �
+
+� ″ x( )
+
+A K
+
+x � �
+� ″ 0= ∇�
+
+� ″  A
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 39
+
+the Hessian. In practice must be modified to use the tangent linear of , which can be acceptable in a close
+
+vicinity of .
+
+The identity shows clearly how the observed data increases the inverse error covariances,
+
+also called information matrices.
+
+Ref: Rabier and Courtier 1992.
+
+17. IMPLEMENTATION TECHNIQUES
+
+In most practical applications, numerical cost is an important issue. As shown above, there is a variety of analysis
+
+methods available. It does not imply that any of these is the best; they should be regarded as a choice of several
+
+compromises between numerical cost, statistical optimality and physical realism of the assimilation system. The
+
+sections below describe other features of the analysis algorithms which can be used to further cut down on the nu-
+
+merical cost, without sacrificing too much on the sophistication of the analysis method itself. They are discussed
+
+here in the framework of 3D-Var29, but they can be applied equally well (with a few adaptations) to all related al-
+
+gorithms: 1D-Var, 4D-Var, PSAS or the Kalman filter.
+
+17.1  Minimization algorithms and preconditioning
+
+In a variational analysis system a cost function has to be minimized, usually using an iterative descent algorithm.
+
+The cost of the analysis is proportional to the number of evaluations of the cost function and its gradient30, called
+
+the number of simulations. When the state itself is updated, an iteration is performed. Each iteration may require
+
+one or more simulations, depending on the minimizing algorithm used. Hence the technical implementation of a
+
+variational analysis can be summarized as a simulator operator:
+
+How to use the simulator to minimize the cost function is a well-developed area of mathematics (called optimiza-
+
+tion, a part of numerical analysis). With the analysis methods described above, the cost function will be a scalar
+
+function of a real vector in a Euclidean space; in most applications it will be quadratic and will be unconstrained.
+
+There are several ready-to-use algorithms that do the minimization, called minimizers. An obvious method, the
+
+steepest descent method, is to update by adding a correction that is proportional to . This is usually not
+
+very efficient, and more popular algorithms are the conjugate gradient and quasi-Newton methods. They are still
+
+being improved. There are more specialized algorithms for situations where is not quadratic or is bounded,
+
+e.g. simulated annealing or the simplex, although such methods can be very expensive. The incremental method
+
+described below can also be regarded as a particular minimizer. A detailed description of the main minimizing al-
+
+gorithms can be found in dedicated mathematical books. Among the important theoretical results are the optimality
+
+properties of the conjugate gradient method in the case of an exactly quadratic cost function, and its equivalence
+
+with a Lanczos method for determining eigenvectors of the Hessian matrix. Also, the quasi-Newton methods can
+
+be regarded as a preconditioning of the cost function using accumulated information about the second derivatives.
+
+The main aspect of that affects the performance of conventional minimizers (assuming is quadratic or almost)
+
+29. This reflects history. The main step in meteorological data assimilation methods was the move from OI to 3D-Var. It was a major technical
+challenge in terms of coding and numerical cost at the time, which required some major developments in the fields of adjoint coding, formula-
+tion of the incremental technique and design of the preconditioner.
+
+30. Some minimization algorithms also use information about the second derivative of the cost function, which requires the coding of the sec-
+ond-order adjoint of its components.
+
+� 
+xa
+
+A 1– B 1– HTR 1– H+=
+
+x
+
+x � x( ) � x( )∇,⇒
+
+x
+
+x � x( )∇–
+
+� x
+
+� �
+
+
+
+Data assimilation concepts and methods
+
+40 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+is its condition number. This quantity measures the ellipticity of the iso-surfaces of J, and it describes the difficulty
+
+of minimization problem (or ill-conditioning) due to the gradient not pointing accurately toward the minimum
+
+(Fig. 15 ). In this case minimizers have trouble converging, a phenomenon called the narrow valley effect.
+
+Figure  15. Illustration of the so-called narrow valley effect: in a plane of the control variable space where the
+
+convexity of the cost-function depends a lot on direction, the isolines are narrow ellipses, and in most places the
+
+gradient of the cost function is nearly orthogonal to the direction of the minimum , which means that
+
+minimization algorithms will tend to waste many iterations zigzagging slowly towards the optimum.
+
+Condition number. The condition number of is defined to be the ratio between the largest and the smallest ei-
+genvalue of . The larger the number, the more ill-conditioned the problem is.
+
+If the condition number is equal to one, i.e. is proportional to , the cost function is said to be spherical and
+
+the minimum can be found in one iteration because  points directly toward the minimum.
+
+In the general case, is elliptic, but it is possible to define a change of minimization space called preconditioning
+
+that decreases the condition number. The idea is to present the minimizer with a problem that is not the minimiza-
+
+tion of , but another easier problem from which can be obtained easily. The mapping between both prob-
+
+lems is defined as follows using a preconditioner operator :
+
+�∇
+
+xopt
+
+�
+� ″
+
+� ″ I
+� xb( )∇–
+
+�
+
+� x( ) xa
+,
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 41
+
+17.2  Theorem: preconditioning of a variational analysis
+
+The proof is left as an exercise. In 3D-Var, a simple and efficient preconditioner is the symmetric left-hand square
+
+root of , i.e. a matrix31 L such that . In this case one can show that
+
+i.e. the term is now the canonical inner product. An ideal preconditioner would of course be provided by the
+
+symmetric square root of the Hessian matrix. Some sophisticated minimizer packages allow the user to provide
+
+his own preconditioner to the code, which can take the form of a clever specification of the inner product.
+
+Ref: Gilbert and Lemaréchal 1989.
+
+17.3  The incremental method
+
+The incremental method is a relatively empirical technique designed to reduce the cost of solving a predefined var-
+
+iational problem, e.g. by reducing the resolution of the increments.
+
+In the introduction it was explained how the control variable could be made smaller than the model state by requir-
+
+ing that the increments can only be non-zero in a subspace of the model. In this case there is no guarantee that the
+
+analysis verifies any optimality condition in the full model space. For instance, OI solves the problem separately
+
+in a set of subspaces (defined by the observation selection), but the result is not as optimal as a global least-squares
+
+analysis. With 3D- or 4D-Var is it usually not affordable to solve the variational problem at the full model resolu-
+
+tion. However, it is expected that most of the complexity of the analysis is in the synoptic scales, because this is
+
+where most background errors are expected to be. If the increments are right at the synoptic scales, then one can
+
+expect the smaller scales to be more or less forced to be realistic features by the model dynamics. It is undesirable,
+
+though, to completely neglect the small scales in the analysis procedure because they are important in the compar-
+
+ison of the observations with the background state. In other words, one is looking for a low-resolution correction
+
+If L is an invertible operator, an equivalent rewriting of the minimization problem:
+
+,
+
+with the initial point ,
+is the preconditioned problem:
+
+,
+
+with the initial point  .
+
+The solution is given by .
+
+31.  The symmetric square root is not unique, it is defined modulo an orthogonal matrix.
+
+xa = Arg min �
+� :x ⇒ � x( ) � x( )∇,
+xini xb=
+
+χa = Arg min � ˆ
+� ˆ :χ ⇒ � ˆ χ( ) �3, χ( ) ∇� ˆ χ( ), , T �3, χ( )∇= =
+
+χini , 1– xb=
+xa , χa=
+
+B B ,-, T=
+
+� ˆ χ( ) χTχ � o , χ( )+=
+� b
+
+
+
+Data assimilation concepts and methods
+
+42 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+to a high-resolution background. The incremental method described below has been designed for this particular
+
+problem. Mathematically, it can be thought the approximation of a large problem by a sequence of smaller prob-
+
+lems. However, there is no proof of the convergence of the general procedure32.
+
+In the incremental method some high-resolution versions of the cost function, the observation operator and the
+
+model state are considered, denoted respectively . We are trying to minimize . One or several
+
+successive approximations to this problem are solved successfully. Each one is an inner loop that tries to update a
+
+high-resolution state into another one that is more optimal (in the first update, ). The input
+
+information to the inner loop is given by the high-resolution departures:
+
+and by a low-resolution version  of defined by a conversion operator :
+
+It is natural to linearize the low-resolution observation operator in the vicinity of which is the best currently
+
+available estimate of the analysis33, which yields a linearized observation operator that depends on the update
+
+index , and defined as the differential of  in the vicinity of :
+
+However, for consistency with the high-resolution problem, one also requires that the low-resolution is kept con-
+
+sistent with the high-resolution one for , so that the linearized departures used at low resolution will be cal-
+
+culated as
+
+so that the low-resolution cost-function to minimize in the inner loop is
+
+which is exactly quadratic. Its minimum is which can in turn be used to update the high-resolution state
+
+using a (possibly nonlinear) ad hoc conversion operator :
+
+which ensures that the high-resolution state is not modified if the inner loop minimization does not change the
+
+state. From the new high-resolution departures can be calculated and used to define the next low-
+
+resolution problem. If then the high- and low-resolution problems are fully consistent with each
+
+other and the whole algorithm has converged. However, it not guaranteed that there is a convergence at all. This is
+
+why one must be careful about the physical implications of changing the resolution. The intuitively important
+
+assumption for convergence (this can be proven in simplified systems) is that
+
+32.   It is possible to guarantee convergence for some special forms of the incremental algorithm.
+
+33.  One would rather like to use a low-resolution version of the linearized high-resolution  in the vicinity of  but it would be more
+expensive than the technique described here.
+
+� h  h xh, ,( ) � h xh( )
+
+xh �, xh � 1+, xh �, xb=
+
+
+
+h
+�
+
+, y
+
+
+h xh �,( )–=
+x� xh �, 4 h 5→
+
+x� 4 h 5→ xh �,( )=
+
+
+x�
+H�
+
+� � x � �,
+
+�  x�
+
+
+x( ) H � x x�–( )  x�( )+≈
+
+x x�=
+
+y
+
+
+x( ) y H� x x�–( )  h � h �,( )+[ ]–≈– 
+ h �, H � x x�–( )–=
+
+� � �( ) x xb–( )TB 1– x xb–( ) 
+ h �, H� x x�–( )–[ ]TR 1– 
+ h �, H � x x�–( )–[ ]+=
+x� 1+
+
+465 h→
+xh � 1+, xh �, 475 h→ x� 1+( ) 475 h→ x�( )–+=
+
+xh � 1+, 
+ h � 1+,
+
+h
+�
+
+1+,
+
+
+
+h
+�
+
+,=
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 43
+
+i.e. the changes in the model equivalents of the observations should be similar at high and low resolutions. If for
+
+instance they are of opposite signs, one can expect the model state at high resolution to go away from the
+
+observations during the procedure until it is stopped by the term—a not very desirable behaviour. Whether
+
+this is a genuine problem is still an area of research. History has shown so far that 3D-Var with a simple
+
+incremental formulation and a rather low resolution of the inner loops can be much better than an OI algorithm at
+
+full resolution, for a similar numerical cost.
+
+Ref: Courtier et al. 1994.
+
+17.4  The adjoint technique
+
+As shown in the explanation of the 4D-Var method, some computational savings can be achieved by a suitable or-
+
+dering of the algebraic operations, in order to reduce the size and number of the matrix multiplications involved.
+
+For minimization problems in particular, when the derivative of a scalar function with respect to a large vector
+
+needs to be evaluated (e.g. Jo), it is advantageous to use the chain rule backwards, i.e. from the scalar function to
+
+the input vector. Algebraically this means replacing a set of matrices by their transposes, hence the name of adjoint
+
+technique. The definition of the adjoint depends on the scalar products34 used:
+
+Important remarks on the adjoints
+• Riesz theorem: The adjoint always exists and it is unique, assuming spaces of finite dimension35.
+
+Hence, coding the adjoint does not raise questions about its existence, only questions of technical
+
+implementation.
+
+• In the meteorological literature, the term adjoint is often improperly used to denote the adjoint of
+
+the tangent linear of a non-linear operator. One must be aware that discussions about the “existence
+
+of the adjoint” usually address the existence of the tangent linear operator (or the acceptability of
+
+using the adjoint of an improper tangent-linear in order to minimize a 4D-Var cost-function). As
+
+explained above, the adjoint itself always exist.
+
+• In general, the adjoint depends on the definition of spaces and . For instance, a canonical
+
+injection (i.e. with being a subspace of ) is not necessarily self-adjoint although
+
+does not involve any arithmetic operation.
+
+• In general, the adjoint depends on the choice of scalar products, even if . For instance, a
+
+symmetric matrix may not be self-adjoint if the scalar product is not the canonical product (see
+
+below).
+
+34.   or: inner products
+
+Adjoint operator. By definition, given a linear operator going from a space to a space ,
+and scalar products , and in these respective spaces, the adjoint of is the
+
+linear operator  such that for any vectors  in the suitable spaces,
+
+35.  It is actually true for all continuous operators in Hilbert spaces, but this is outside the scope of this paper.
+
+ � ° 465 h→ x � 1+( )  � ° 465 h→ x �( ) H � x� 1+ x �–( )≈–
+
+� b
+
+8 9 :
+< . , . > ; < . , . > < 88 * �=�,( )
+
+<
+8 �>�
+
+> <, < � 8 * � > ;,=
+
+9 :
+8 � �
+
+=
+9 : 8
+
+9 :
+=
+
+
+
+Data assimilation concepts and methods
+
+44 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+The proof is obvious from the definition of :
+
+and noting that E is invertible. In most practical cases (such as in the rest of this paper) the implicit scalar product
+
+used is the canonical inner product36, so that the transpose is the adjoint: . However, one must take
+
+care whenever another scalar product is used, because it has implications on the coding of the adjoint: the scalar
+
+product coefficients or their inverses must be used according to the above equation.
+
+Adjoint of a sequence of operators. Like the transpose, the adjoint of a product of operators is the product of the
+adjoints in the reverse order. The scalar product matrices cancel out each other, so that if is a
+
+sequence of operators, its adjoint is
+
+which shows that, even if the scalar products are not the canonical inner product, in most of the adjoint coding it
+
+can be considered that the adjoint is the transpose. The guidelines for practical adjoint coding are detailed in an
+appendix.
+
+Ref: Errico and Vukicevic 1992.
+
+18. DUAL FORMULATION OF 3D/4D-VAR (PSAS)
+
+The 3D-Var formulation (A5) can be rewritten into a form called PSAS (Physical Space Assimilation System37)
+
+which is equivalent in the linear case only. The idea is to notice that the expression
+
+can be split as the following two equalities
+
+Theorem: adjoint and scalar product change. The operator being identified with
+its matrix, and the scalar products and being identified with their symmetric
+
+positive definite matrices and such that e.g. , the matrix of the adjoint
+
+of  is
+
+36.  or: inner dot product, or: Euclidean product.
+
+37.  The misleading name PSAS was introduced for historical reasons and is widely used, probably because it sounds like the US slang word
+pizzazz.
+
+8
+:
+9 :
+
+→
+< . , . > ; < . , . > <9 :
+
+<
+�?�
+
+> ;, � T 9 �=8
+
+8 * 9 1– 8 T :=
+8 *
+
+<
+8 �=�
+
+> <, � T 8 T : � < � 8 * � > ;, � T 9@8 * �= = =
+
+8BA 8 *=
+
+8 8
+1
+
+8
+2…
+8 	=
+
+8
+1
+
+8
+2…
+8 	( )* 9 1– 8 	T… 8 2T 8 1T :=
+
+xa xb– BH
+T HBHT R+( )
+
+1–
+y Hxb–( )=
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 45
+
+where has the same dimension as and can be regarded as a kind of “increment” in observation space38,
+
+whereas is a smoothing term that maps the increment from observation to model space. The aim is to solve
+
+the analysis problem in terms of  rather than in model space. One way is to solve for  the linear system
+
+which can be regarded as the dual of the OI algorithm. Another way is to find a cost function that minimizes,
+
+for instance
+
+which is a quadratic cost function. The practical PSAS analysis algorithm is as follows:
+
+1) Calculate the background departures
+
+2) Minimize . Some possible preconditionings are given by the symmetric square root of or
+
+.
+
+3) Multiply the minimum  by  to obtain analysis increments.
+
+4) Add the increments to the background .
+
+A 4-D generalization of PSAS is obtained by a suitable redefinition of the space to be a concatenation
+
+of all the values at all observation time steps . Then must be replaced by an operator
+
+that uses the tangent linear model to map the initial model state to the observation space at each time step ,
+
+i.e. . The factorization of the cost function evaluation using the adjoint method is applied
+
+to the computation of the term , so that the evaluation of the 4D-PSAS cost function is as follows:
+
+1) Calculate the departures  for each time step, (this needs only be done once)
+
+2) Integrate the adjoint model from final to initial time, starting with a null model state, adding the
+
+forcing at each observation timestep,
+
+3) Multiply the resulting adjoint variable at initial time by , which yields ,
+
+4) Integrate the tangent-linear model, starting with as model state, storing the state times at
+
+each observation time step. The collection of the stored values is .
+
+5) Add and (both obtained by sums of already computed quantities) to obtain
+
+.
+
+More comments on the 4D-PSAS algorithm are provided in Courtier (1997). The PSAS algorithm is equivalent to
+
+the representer method (Bennett and Thornburn 1992).
+
+As of today it is still unclear whether PSAS is superior or not to the conventional variational formulations, 3D and
+
+38. Note, though, that it does not have the right physical dimensions. The actual increment in observation space is , and a precise
+physical interpretation of  is difficult.
+
+wa = HBH
+T R+( )
+
+1–
+y Hxb–( )
+
+xa xb– = BH
+Twa
+
+wa y
+
+HBH
+T
+
+wa
+wa
+
+BHT
+
+w w
+
+HBHT R+( )w y Hxb–=
+
+wa
+
+:
+w( ) wT HBHT R+( )w 2wT y Hxb–( )–=
+
+y Hxb–:
+w( ) R
+
+HBHT
+
+wa BH
+T
+
+xb
+
+w
+w1… … w � …, , ,( ) w� � H
+
+M� �
+H1M1 … H� M � …,, ,( )
+
+HBHTw
+:
+
+w( )
+
+y � H� M � xb( )–
+
+H �Tw�
+B BHw
+
+BHw H�
+HBHTw
+
+wTRw wT y Hxb–( ):
+w( )
+
+
+
+Data assimilation concepts and methods
+
+46 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+4D-Var. Here are some pros and cons:
+
+• PSAS is only equivalent to 3D/4D-Var if is linear, which means that it cannot be extended to
+
+weakly non-linear observation operators.
+
+• However, most implementations of 3D/4D-Var are incremental, which means that they do rely on a
+
+linearization of anyway: they include non-linearity through incremental updates, which can be
+
+used identically in an incremental version of PSAS.
+
+• It is awkward to include a  term in PSAS for constraints expressed in model space.
+
+• Background error models can be implemented directly in PSAS as the operator. In 3D/4D-Var
+
+they need to be inverted (unless they are factorized and used as preconditioner).
+
+• The size of the PSAS cost function is determined by the number of observations instead of the
+
+dimension of the model space . If then the PSAS minimization is done in a smaller space
+
+than 3D/4D-Var. In a 4D-Var context, increases with the length of the minimization period
+
+whereas  is fixed, so that this apparent advantage of PSAS may disappear.
+
+• The conditioning of a PSAS cost function preconditioned by the square root of is identical to
+
+that of 3D/4D-Var preconditioned by the square root of . However the comparison may be altered
+
+if more sophisticated preconditionings are used, or if one square root or the other is easier to
+
+specify.
+
+• Both 3D/4D-Var and PSAS can be generalized to include model errors. In 3D/4D-Var this means
+
+increasing the size of the control variable, which is not the case in PSAS, although the final cost of
+
+both algorithms looks the same.
+
+Ref: Bennett and Thornburn 1992, Courtier 1997.
+
+19. THE EXTENDED KALMAN FILTER (EKF)
+
+The Kalman Filter and its extended version (EKF) are developments of the least-squares analysis method in the
+
+framework of a sequential data assimilation, in which each background is provided by a forecast that starts from
+
+the previous analysis. It is adapted to the real-time assimilation39 of observations distributed in time into a forecast
+
+model .
+
+The analysis equations of the linear Kalman Filter are exactly the ones already described in the least-squares anal-
+
+ysis theorem. The notation is the same, except that the background (i.e. forecast) and analysis error covariance ma-
+
+trices are now respectively denoted  and . The background state  is a forecast denoted .
+
+19.1  Notation and hypotheses
+
+They are the same as in the least-squares analysis theorem, except that:
+
+• the background and analysis error covariance matrices and are respectively replaced by
+
+and  to denote the fact that the background is now a forecast.
+
+• The time index of each quantity is denoted by the suffix . The model forecast operator from
+
+dates to  is denoted by
+
+39.  The word filter characterizes an assimilation techniques that uses only observation from the past to perform each analysis. An algorithm
+that uses observations from both past and future is called a smoother. 4D-Var can be regarded as a smoother. Observation smoothing can be
+useful for non-real time data assimilation, e.g. reanalysis, although the idea has not been used much yet. The Kalman filter has a smoother ver-
+sion called Kalman smoother.
+
+H
+
+H
+
+� c
+B
+
+�
+� � �«
+
+�
+�
+
+R
+B
+
+�
+
+Pf Pa xb xf
+
+B A Pf
+Pa
+
+� �
+� � 1+ � �C� 1+→
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 47
+
+• forecast errors: the deviation of the forecast prediction from the true evolution,
+, is called the model error40 and we assume that it is not biased41 and
+
+that the model error covariance matrix  is known.
+• uncorrelated analysis and model errors: the analysis errors and model errors of the
+
+subsequent forecast  are assumed to be mutually uncorrelated.
+
+• linearized forecast operator: the variations of the model prediction in the vicinity of the forecast
+state are assumed to be a linear function of the initial state: for any close enough to ,
+
+,where  is a linear operator.
+
+19.2  Theorem: the KF algorithm
+
+Proof:
+
+The forecast equation (KF1) just translates the fact that we use the model to evolve the model state, starting from the
+previous optimal analysis . The equation (KF2) is obtained by first subtracting from (KF1) and using the
+linearity of the forecast operator:
+
+Multiplying it on the right by its transpose and taking the expectation of the result yields, by definition, on the
+left-hand side, and on the right-hand side four terms. Two of these are and by
+definition. The remaining two terms are cross-correlations between the analysis error and the model error
+for , which are assumed to be zero. This means that provided by (KF2) is the background error
+covariance matrix for the analysis at time .
+
+The equations (KF3), (KF4) and (KF5) are simply the least-square analysis equations (A6), (A5) and (A8) that
+
+40.  Or modelling error.
+
+41.  This is equivalent to assuming that the background errors are unbiased, so it is not really a new hypothesis.
+
+Under the specified hypotheses the optimal way (in the least squares sense) to assimilate sequen-
+
+tially the observations is given by the Kalman filter algorithm defined below by recurrence over
+
+the observation times :
+
+State forecast (KF1)
+
+Error covariance forecast (KF2)
+
+Kalman gain computation (KF3)
+
+State analysis (KF4)
+
+Error covariance of analysis (KF5)
+
+and the analyses are the sequences of .
+
+� �D�
+1+→ xt �( )[ ] xt � 1+( )–
+
+Q �( )
+xa �( ) xt �( )–� �D�
+
+1+→ xt �( ) xt � 1+( )–[ ]
+
+x �( ) xa �( )� �D�
+1+→ x �( )[ ] � �D� 1+→ xa �( )[ ]– M �D� 1+→ x �( ) xa � 1+( )–[ ]= M
+
+�
+
+xf � 1+( ) � �C� 1+→ xa �( )=
+
+Pf � 1+( ) M�D� 1+→ PaMT�C� 1+→ Q �( )+=
+
+K �( ) Pf �( )HT �( ) H �( )Pf �( )HT �( ) �C�( )+[ ] 1–=
+
+xa �( ) xf �( ) K �( ) y �( )  �( )xf �( )–[ ]+=
+
+Pa �( ) I K �( )H �( )–[ ]P �( )=
+xa �( )
+
+E
+xa F( ) xt F 1+( )
+
+xf � 1+( ) xt � 1+( )– M �D� 1+→ xa �( ) xt �( )–[ ] � �C� 1+→ xt �( ) xt � 1+( )–[ ]+=
+Pf F 1+( )
+
+M F F 1+→ Pa F( )M
+T
+
+F F 1+→ Q F( )xa F( ) xt F( )–E
+F F 1+→ Pf F 1+( )F 1+
+
+
+
+Data assimilation concepts and methods
+
+48 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+were proven above, using  as background errors, and assuming that  is computed optimally.
+
+5.3  Theorem: KF/4D-Var equivalence
+
+5.4  The Extended Kalman Filter (EKF)
+
+The Kalman filter algorithm can be generalized to non-linear and operators, although it means that neither
+
+the optimality of the analysis nor the equivalence with 4D-Var hold in that case. If is non-linear, can be de-
+
+fined as its tangent linear in the vicinity of , as discussed in a previous section. Similarly, if is non-linear,
+
+which is the case of most meteorological and oceanographical models, can be defined as the tangent linear fore-
+
+cast model in the vicinity of , i.e. we assume that for any likely initial state  (notably ),
+
+and the realism of this hypothesis must be appreciated using physical arguments, as already discussed about the
+
+observation operator and 4D-Var. If and/or are non-linear, the algorithm written above is called the
+
+Extended Kalman Filter. Note that the linearization of interacts with the model errors in a possibly
+
+complicated way, as can be seen from the proof of Eq. (KF2) above. If non-linearities are important, it may be
+
+necessary to include empirical correction terms in the equation, or to use a more general stochastic prediction
+
+method such as an ensemble prediction (or Monte Carlo) method, which yields an algorithm known as the
+
+Ensemble Kalman Filter.
+
+5.5  Comments on the KF algorithm
+
+The input to the algorithms is: the definition of the model and the observation operator, the initial condition for
+
+when the recurrence of the filter is started42, the sequence of observations , and the sequence of model
+
+and observation error covariance matrices . The output is the sequence of estimates of the model
+
+state and its error covariance matrix. The organization of the KF assimilation looks like a coupled stream of esti-
+
+mations of model states and error covariances (Fig. 16 ).
+
+Over the same time interval assuming that (i.e. the model is perfect), and that
+
+both algorithms use the same data (notably, is the initial background error covariance ma-
+
+trix), then there is equality between
+
+1) the final analysis  produced by the above Kalman filter algorithm, and
+
+2) the final value of the optimal trajectory estimated by 4D-Var, i.e. .
+
+This theorem means that the KF verifies the four-dimensional least-squares optimality theory ex-
+
+pressed by the 4D-Var cost function, although it is defined by a sequence of 3-D analyses, whereas
+
+4D-Var solves the 4-D problem globally.
+
+42. Note that it is not well known whether, after a long time, the analysis ceases or not to depend significantly on the way the KF is initialized.
+
+Pf �( ) K
+
+0
+.
+
+,[ ] Q 0=
+Pf 0( )
+
+xa
+.
+
+( )
+�
+
+0
+/
+
+→ xa 0( )
+
+ �
+
+
+H
+xb
+
+�
+M
+
+xa x �( ) xt �( )
+� �C�
+
+1+→ x �( )[ ] � �D� 1+→ xa �( )[ ] M�C� 1+→ x �( ) xa �( )–[ ]≈–
+
+ �
+�
+
+x P,( ) y
+Q R,( ) xa Pa,( )
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 49
+
+Figure  16. The organization of computations in a KF or EKF assimilation.
+
+The variational form of the least-squares analysis can be used in the analysis step of the Kalman filter, instead of
+
+the explicit equations written above.
+
+The numerical cost of the KF or EKF is that of the analysis itself, plus the estimation of the analysis error covari-
+
+ances, discussed in a specific section, plus the (KF2) covariance forecast equation which requires n forecasts of the
+
+tangent linear model ( being the dimension of the model state) to build the operator . The storage cost itself
+
+is significant, since each matrix is (only a half can be stored since they are symmetric) and in (KF5) the
+
+matrix must be evaluated and stored too (unless the variational form is used, in which case evaluations of
+
+the gradient of the cost function must be performed to build the Hessian which must then be inverted). It means
+
+that the cost of the KF is much larger than 4D-Var, even with small models. The algorithm should rather be regarded
+
+as a reference in the design of more approximate assimilation algorithms which are being developed nowadays. It
+
+is still not clear what is the best way to approximate the KF, and the answer will probably be application-dependent.
+
+There are many similarities between 4D-VAR and the EKF and it is important to understand the fundamental dif-
+
+ferences between them:
+
+x-forecast (a)
+
+xfobservations
+
+xa
+
+x-forecast (a)
+
+xfobservations
+
+analysis (c)
+
+x-analysis (d) P-analysis (e)
+
+analysis (c)
+
+x-analysis (d) P-analysis (e)
+
+feedback
+Pf model
+
+P-forecast (b)
+
+Pf
+
+Pa
+
+xa
+P
+
+Pf model
+
+� M
+P � �×
+
+KH �
+
+
+
+Data assimilation concepts and methods
+
+50 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+• 4D-VAR can be run for assimilation in a realistic NWP framework because it is computationally
+
+much cheaper than the KF or EKF.
+
+• 4D-VAR is more optimal than the (linear or extended) KF inside the time interval for optimization
+
+because it uses all the observations at once, i.e. it is not sequential, it is a smoother.
+
+• unlike the EKF, 4D-VAR relies on the hypothesis that the model is perfect (i.e. ).
+
+• 4D-VAR can only be run for a finite time interval, especially if the dynamical model is non-linear,
+
+whereas the EKF can in principle be run forever.
+
+• 4D-VAR itself does not provide an estimate of , a specific procedure to estimate the quality of
+
+the analysis must be applied, which costs as much as running the equivalent EKF.
+
+Ref: Ghil 1989, Lacarra and Talagrand 1988, Errico et al. 1993.
+
+6. CONCLUSION
+
+This presentation of analysis algorithms has been centred on the algebra of the least-squares analysis method. How-
+
+ever one shall not forget the importance of other issues like observation screening and physical consistency of the
+
+assimilation, including bias correction, which can be of great importance for the quality of the assimilation system
+
+taken as a whole.
+
+The recent trend in data assimilation is to combine the advantages of 4D-Var and the Kalman filter techniques. In
+
+a real-time assimilation system, 4D-Var over a short time interval is a very efficient analysis method. A Hessian
+
+estimation method can provide a good estimate of the analysis error covariance matrix. A simplified version of the
+
+extended Kalman filter forecast step is then used (SKF) to estimate the forecast error covariances at the time of the
+
+next analysis, which must then be combined with an empirical, more static model of the background error covari-
+
+ances. It is hoped that a good compromise between these algorithms can be achieved. There can be some construc-
+
+tive interactions with the problems of ensemble prediction, and specific studies of analysis quality like sensitivity
+
+studies and observation targeting. These new methods provide many by-products which still remain to be used as
+
+diagnostic tools for improving the assimilation and forecast system.
+
+APPENDIX A A PRIMER ON LINEAR MATRIX ALGEBRA
+
+Note: this is a simplified presentation for finite-dimensional real vector spaces. For more general results and rigor-
+
+ous mathematical definitions, refer to mathematical textbooks.
+
+Matrix. A matrix of dimension is a two-dimensional array of real coefficients where
+ is the line index,  is the column index. A matrix is usually represented as a table:
+
+A matrix for which  is called a square matrix.
+
+Diagonal. The diagonal of a square matrix is the set of coefficients . A matrix is called
+
+Q 0=
+
+Pf
+
+A � �× � � �( )� 1… 	 �, 1…G= =� �
+
+A
+� � �( )
+
+�
+11
+
+�
+12 . . .
+
+�
+1 G�
+
+21
+
+�
+22
+
+�
+2 G
+
+. . .
+
+. . .
+
+. . .� 	 1 � 	 2 . . . � 	 G
+
+= =
+
+� �=
+� �× A � � �H�( )� 1… 	=
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 51
+
+diagonal if all its non-diagonal coefficients are zero.
+
+Transpose. The transpose of a matrix is a matrix denoted with the coefficients defined by
+i.e. the coefficients and are swapped, which looks like a symmetry with respect to the di-
+
+agonal:
+
+Symmetry. A square matrix is symmetric if it is equal to its transpose, i.e. . This is equivalent to having
+ for any  and . A property of diagonal matrices is that they are symmetric.
+
+Scalar multiplication. A matrix times a real scalar is defined as the matrix with coeffi-
+cients .
+
+Matrix sum. The sum of two matrices and is defined as the matrix with coefficients
+. It is easy to see that the sum and scalar multiplication define a vector space structure on the set of
+
+matrices (the sum is associative and its neutral element is the zero matrix, with all coefficients set to zero).
+
+Matrix product. The product between an matrix and a matrix is defined as the matrix
+ with coefficients  given by
+
+The product is not defined if the number of columns in is not the same as the number of lines in . The product
+
+is not commutative in general. The neutral element of the product is the identity matrix defined as the diagonal
+
+matrix with values 1 on the diagonal, and the suitable dimension. If the product can be generalized to matrix
+
+times vector by identifying the right-hand term of the product with the column of vector coordinates in a
+
+suitable basis; then the multiplication (on the left) of a vector by a matrix can be identified to a linear appli-
+
+cation from  to . Likewise,  matrices can be identified with scalars.
+
+Matrix inverse. A square matrix is called invertible if there exist an matrix denoted and
+called inverse of , such that
+
+Trace. The trace of a square matrix is defined as the scalar which is the sum of the
+diagonal coefficients.
+
+Useful properties.
+
+(A, B, C are assumed to be such that the operations below have a meaning)
+
+The transposition is linear:
+
+Transpose of a product:
+
+Inverse of a product:
+
+Inverse of a transpose:
+
+� �× A � �× AT� � �( )T � �I�( )= � � � � �I�
+
+AT
+
+�
+11
+
+�
+21 . . .
+
+� 	 1�
+12
+
+�
+22
+
+� 	 2
+. . .
+
+. . .
+
+. . .�
+1 G � 2 G . . . � 	 G
+
+=
+
+A AT=� � � � �J�= � �
+� �× A λ � �× λA
+
+λ
+� � �( )
+
+� �× A B � �× A B+� � � � � �+( )
+� �×
+
+� �× A � K× B � K×
+C AB= ) � �( )
+
+) � � � �ML �L
+1=
+
+G
+∑=
+
+A B
+I
+
+K 1=
+x
+
+� �( )
+x A
+
+x Ax 1 1×
+
+� �× A � �× A 1–
+A A 1– A AA 1– I= =
+
+� �× A Tr A( ) � �H��
+1=
+
+	
+∑=
+
+A λB+( )T AT λBT+=
+
+AB( )T BTAT=
+
+AB( ) 1– B 1– A 1–=
+
+AT( )
+1–
+
+A 1–( )
+T
+
+=
+
+
+
+Data assimilation concepts and methods
+
+52 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Associativity of the product:
+
+Diagonal matrices: their products and inverses are diagonal, with coefficients given respectively by the products
+and inverses of the diagonals of the operands.
+
+Symmetric matrices: the symmetry is conserved by scalar multiplication, sum and inversion, but not by the prod-
+uct (in general).
+
+The trace is linear:
+
+Trace of a transpose:
+
+Trace of a product:
+
+Trace and basis change: , i.e. the trace is an intrinsic property of the linear application rep-
+resented by .
+
+Positive definite matrices. A symmetric matrix is defined to be positive definite if, for any vector , the scalar
+unless . Positive definite matrices have real positive eigenvalues, and their positive definiteness
+
+is conserved through inversion.
+
+APPENDIX B PRACTICAL ADJOINT CODING
+
+As explained previously, coding the adjoint is mostly a problem of coding a transpose. Assuming a linear operator
+
+is available as a piece of code, called direct code, there are two approaches to implement the code for the adjoint
+
+operator. One is to take the operator as a whole, store its matrix (e.g. by taking the image of each canonical basis
+
+vector; the matrix of a tangent linear operator is called the Jacobian matrix and its coefficients are partial deriva-
+
+tives of the output with respect to the input) and code the multiplication by its transpose, which is only feasible if
+
+the matrix can be evaluated and stored at a reasonable price.
+
+The other, more common approach, is to use the rule above for taking the adjoint of a sequence of operators, and
+
+to apply it to each elementary step of the direct code, called “model” here to fix ideas. Most of the time there is a
+
+piece of adjoint to code for each (or almost) active instruction of the direct code, considered as elementary linear
+
+operators, each in its little subspace. The concept of ‘subspace’ of a piece of code is justified by the fact that most
+
+components of the state are not modified by it, so that the corresponding operator is a block-diagonal matrix with
+
+just a little block spanning the variables that are actually used on input and modified on output:
+
+From a coding point of view, it is only necessary to code the action performed by , the other variables are kept
+
+unchanged anyway. This allows one to work locally, by following a few simple rules:
+
+• the adjoint of a sequence of operations is the reverse sequence of the transposes of each operation.
+
+AB( )C A BC( )=
+
+Tr A λB+( ) Tr A( ) λTr B( )+=
+
+Tr AT( ) Tr A( )=
+
+Tr AB( ) Tr BA( )
+� � � � � ����
+
+,∑= =
+Tr B 1– AB( ) Tr A( )=
+
+A
+
+A x
+xTAx 0> x 0=
+
+A�
+
+1
+
+1 0
+
+.
+
+.
+
+.
+
+0 A �
+.
+
+.
+
+. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  1
+
+1 0
+
+.
+
+.
+
+.
+
+0 A�T
+.
+
+.
+
+. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+= =
+
+A�T
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 53
+
+• the scalar products need to be considered only at the beginning and at the end of the code that is
+
+being adjointed (unless one wants to use some special properties of pieces of code with respect to
+
+particular products, like the unitary character of Fourier transforms with respect to the  norm).
+
+• the input to a piece of code (e.g. a subroutine) becomes the output of the corresponding adjoint
+
+code, and vice versa. Care must be taken when specifying the interfaces between subroutines, so
+
+what is input and what is output at each stage must be clear. It means that the adjoint coding is
+
+much easier if good programming principles have been respected in the direct code to start with,
+
+such as modularity, consistent variable naming and interface control.
+
+• it is recommended to use the same variable names for matching direct (i.e. tangent linear) and
+
+adjoint model states, in order to be able to reuse the direct code for array dimensioning and self-
+
+adjoint operations.
+
+• the actual coding of the adjoint is performed at the smallest possible level of active subsets of code
+
+(one active instruction, or a small number of instructions that clearly depict an explicit linear
+
+operator) that must each be a linear operator with known coefficients. Its adjoint is the transpose
+
+operator, taken in the relevant space, which implies the following items.
+
+• Each modified variable is a part of the input space unless this subset of code is the first time it is
+
+used in the whole direct code, i.e. it is being “defined” at this stage.
+
+• Each input variable is a part of the output space unless this subset of code is the last time it is used
+
+in the whole direct code, i.e. it is being “undefined” at this stage.
+
+• The adjoint of a variable “undefinition”, i.e. the end of its scope, is its setting to zero.
+
+• For code robustness, it is advised to consider that no variable is being undefined anywhere except at
+
+the end of code units like subroutines where they must all be pre-initialized to zero, so that each
+
+adjoint operation will be written as the addition of something to a variable.
+
+The last items deserve some illustration. When a new variable starts to be used at some point in the code, (e.g. an
+
+array is allocated, or a variable is initialized for the first time) we go from a space e.g. to a bigger space, e.g.
+
+. Hence in the adjoint we go from to , which is a projection operator, and is “undefined” in the
+
+adjoint code, although no matching instruction exists in a language like Fortran, so that no specific statement is
+needed in the adjoint. The undefinition is usually performed when returning from an adjoint subroutine. If is
+
+used later in the adjoint code, it must have been re-initialized.
+
+When a new variable stops being used, we go from space to , and this is usually implicit in the direct
+
+code after the last instruction that uses . One can consider that the definition of a local variable is lost when re-
+
+turning from a subroutine. This inconspicuous operation in the direct code is mathematically known as a canonical
+
+injection. Its matrix is obtained from the direct code matrix, which is a projection:
+
+(So that the transpose operator43 reads, using the same variable letters (although they do not necessarily have the
+
+same values as in the direct operation):
+
+43.  Sometimes called the adjoint of identity.
+
+N 2
+
+�
+( )�O�
+
+,( )
+�O�
+
+,( )
+�
+
+( )
+�
+
+�
+
+�>�
+,( )
+
+�
+( )�
+
+�
+( ) 1 0( )
+
+�
+�  =
+
+�
+�  
+
+1
+
+0 
+  �( )=
+
+
+
+Data assimilation concepts and methods
+
+54 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+or, in Fortran:
+
+b=0.
+
+If this instruction is forgotten it will result in a badly initialized b variable, with possibly erroneous results if the
+
+same variable name is used for other computations before.
+
+Hence the adjoint of even a simple assignment a=b depends on the scope of the variables. If the input space is
+
+ and the output space is , the algebraic direct operation is
+
+so that the adjoint is trivially
+
+and the adjoint code is b=a. If however may be used later in the direct code, it is not being undefined, the
+
+output space is  and the algebraic direct operation a=b is now
+
+The adjoint is
+
+(and the adjoint code is b=b+a, which is quite different, because b is now both in the output and in the output of
+
+the direct code44. If b is used later in the direct code, it will already contain something which will be used when
+
+doing b=b+a in the adjoint code. Physically speaking, it means that the sensitivity of the output to (which is
+
+what the adjoint variable b contains) is the sum of the sensitivities to in all operations that read the value of b in
+
+the direct code.
+
+If one codes b=b+a although b is not used later in the code, b is still correctly initialized in the adjoint because
+
+the adjoint of its eventual undefinition is b=0which will be placed before. It can be difficult to remember in a large
+
+code where each variable is used for the last time. Variable undefinition is usually easy to spot because it is always
+
+at the end of program sections (subroutines) or at variable de-allocation. If the interface between program sections
+
+is clearly documented, this makes it easy to pre-initialize the adjoint variables to zero at the right place. Hence the
+
+best adjoint programming rule is to always assume that a variable is being used later, and to set all adjoint code
+variables to zero when they are defined.
+
+For instance, the adjoint of a typical line of code like a=s*b+t*c (the * is the multiplication, s and t are con-
+
+stants) is
+
+a=0     ! when a is first defined in the adjoint code
+
+b=0     ! when b is first defined in the adjoint code
+
+44. Whether a is part of the input space in the direct code is not important, because it is being overwritten. In the adjoint, putting explicitly a
+in both input and output spaces would simply result in the additional useless line of adjoint code: a=a. One should worry more about the
+scope of input variables than about output variables when examining the direct code.
+
+�
+( )
+
+�
+( )
+
+�
+( ) 1( )
+
+�
+( )=
+
+�
+( ) 1( )
+
+�
+( )=
+
+�
+�O�
+
+,( )
+
+�
+�  
+
+1
+
+1 
+  �( )=
+
+�
+( ) 11( )
+
+�
+�  =
+
+�
+�
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 55
+
+c=0     ! when c is first defined in the adjoint code
+
+. . . . . . . . .
+
+b=b+s*a
+
+c=c+t*a
+
+If any of the a,b,c variables are defined as input arguments to a subroutine in the adjoint, then of course their
+
+initial value is defined outside and they should retain their input value.
+
+However, there is no problem of undefinition of a in a statement like a=s*a+t*c which has the adjoint
+
+c=0     ! when c is first defined in the adjoint code
+
+........
+
+a=s*a         ! not a=a+s*a !
+
+c=c+t*a
+
+because a is both in the input and output spaces. Note that a conditional like this in the direct code:
+
+if (a>0) then
+
+  a=2*a
+
+endif
+
+defines a non-linear function of a which is not licit. The problem is in the linearization, not in taking the adjoint.
+
+Most problems with writing adjoint codes are with in the handling of the trajectory (the linearization coefficients
+
+that appear when taking the differential of a non-linear operator), because the adjoint requires these values in an
+
+order that is the reverse of their computation order. They need to be stored, or recomputed on the fly, which is usu-
+
+ally a matter of compromising between storage space (or disk I/O) and CPU time, to assess on a case-to-case basis.
+
+APPENDIX C EXERCISES
+
+The number of stars indicate roughly the degree of difficulty.
+
+(i) Prove equation (A8) giving  if  is optimal.
+
+(ii) Prove directly the equations given in the section on the scalar case.
+
+(iii) Prove the theorem on preconditioning, including the case where the square root of is used. Does
+
+the condition number depend on the choice of square root matrix?
+
+(iv) Compare the BLUE equations with the linear regression equations between the model and
+
+observation values.
+
+(v) Write and comment on the BLUE analysis in a one-dimensional model, with one and then with 2
+
+observations.
+
+(vi) rewrite the KF equations in the scalar case and examine its convergence in time if the model is the
+
+identity and if  and  are constant.
+
+(vii) Calculate the product of a vector with the Hessian using the simulator operator only.
+
+A K
+
+B
+
+R Q
+
+
+
+Data assimilation concepts and methods
+
+56 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(viii) The SWM (Sherley–Woodbury–Morrisson) approximation of a positive definite matrix is
+
+( are positive scalars, are vectors). Prove that it is positive definite, and
+
+derive its inverse and a symmetric square root.
+
+(ix) * Calculate the normalization factors to define properly the Gaussian pdfs for the background and
+
+the analysis states.
+
+(x) Write the algorithm to implement a Cressman analysis. What happens if the observing network is
+
+very dense?
+
+(xi) a primitive analysis technique is to fit a set of polynomials to the observations. Derive the algorithm
+
+in a one-dimensional framework.
+
+(xii) * Generalize the polynomial fit technique to give different weights to different observations.
+
+(xiii) Prove that . Is it a sufficient condition for the covariance matrix to be
+
+positive definite?
+
+(xiv) Prove that a covariance matrix can be factorized in the form and describe some
+
+numerical methods to do it.
+
+(xv) * Give examples in which the adjoint is not the inverse, and examples in which it is.
+
+(xvi) * Derive in the scalar case what is the analysis error if the weight is calculated using an assumed
+
+that is not the genuine background standard error.
+
+(xvii) * Prove that the background error covariance matrix can be factorized as where is a
+
+diagonal matrix and  is the correlation matrix. What is the physical meaning of ?
+
+(xviii) * Rewrite the 4D-Var algorithm using the inverse of the model (assuming it exists), putting the
+
+analysis time at the end of the time interval.
+
+(xix) * (physics regularization) In the scalar case, considering the observation operator
+
+, design a continuously differentiable observation operator with a tunable
+
+“regularization” parameter so that can be as small as required and outside a
+
+small interval around zero.
+
+(xx) ** Design a scalar example using the previous observation operator, in which the cost-function has
+
+one or two minima, depending on the value of the regularization parameter.
+
+(xxi) * Prove that the scalar KF, with the model equal to the identity and constant error statistics, is
+
+equivalent to a running average that is defined, in the limit of a continuous time variable, by an
+
+exponential weighting function. How does the e-folding time depend on the error statistics?
+
+(xxii) * (adaptive filter) Rewrite the KF equation as an adaptive statistical adaptation scheme:
+
+, where the model state is the two scalars and is the scalar observation, is
+
+an externally defined function of time. The forecast model is assumed to be the identity.
+
+(xxiii) ** Generalize the Cressman algorithm in order to retain some background information at the
+
+analysis points, as in the least-squares analysis.
+
+(xxiv) ** (retrieval and super-obing) Modify the BLUE equation for when the observations are replaced
+
+by a linear combination of them through a retrieval algorithm , i.e. .
+
+(xxv) ** Precondition the PSAS cost function with the symmetric square root of and prove that the
+
+condition number is then the same as 3D-Var preconditioned by the symmetric square root of .
+
+P
+λ� 1–( ) � � � �T�∑+ λ� � �
+
+cov � �,( ) var �( )var �( )≤
+
+B , T ,=
+
+σb
+
+B 4RQS4= 4
+Q 4
+
+
+x( ) max 0 x,( )=
+
+ ˆ  ˆ–   ˆ=
+
+� � � �
++=
+
+�>�
+,( )
+
+� �
+
+. �
+ˆ
+.T�
+
+=
+
+R
+B 1–
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 57
+
+(xxvi) *** (control variable remapping) In a continuous one-dimensional model, derive the adjoint of the
+
+“remapping” operator where is the space coordinate and is an
+
+invertible, continuously differentiable function. Does this make sense in a discrete model?
+
+(xxvii) *** Derive the 4D-Var equations by expressing the minimization problem constrained by the model
+
+equations with its Lagrangian, and comment on the physical meaning of the Lagrange multiplier at
+
+the analysis point.
+
+(xxviii)** (flow-dependency in 4D-Var) Derive the Hessian of a 4D-Var in which there is one single
+
+observation at the end of the analysis interval. How does the analysis increment compare with the
+
+singular vectors of the model? (see the training course on predictability)
+
+(xxix) *** The NMC method assumes that the covariances of forecast error differences (differences
+
+between two forecasts starting from 2 consecutive analyses and valid at the same time) are similar
+
+to the forecast error covariances. Formulate this using the KF notation and discuss the validity of
+
+the assumption.
+
+(xxx) *** (lagged innovation covariances) Assuming that the observing network is always the same in the
+
+KF, prove that if the analysis weight is optimal, then the innovation departures are not correlated in
+
+time.
+
+(xxxi) *** (fixed-lag Kalman smoother) Derive the equations for the 1-lag Kalman smoother, i.e. a
+
+generalization of the KF equations in which the observations at both times of the current analysis
+
+and of the next one are used at each analysis step. Tip: extend the KF control variable to include the
+
+model state at both analysis times.
+
+APPENDIX D MAIN SYMBOLS
+
+ model state vector
+
+ true value of the model state i.e. perfect analysis
+
+ background model state
+
+ analysed model state
+
+ observation vector
+
+observation operator (maps into the space by providing model equivalents of the observed
+
+values)
+
+ linearized observation operator (in the vicinity of a predefined model state)
+
+ background error covariances (estimation error covariance matrix of )
+
+ analysis error covariances (estimation error covariance matrix of )
+
+ observation error covariances (error covariance matrix of
+
+ analysis gain matrix
+
+ identity matrix
+
+ cost function of the variational analysis
+
+ background term of the cost function
+
+� + �( )=[ ] � +VU �( )( )=[ ]⇒ � U
+
+x
+
+xt
+
+xb
+
+xa
+
+y
+
+
+x y
+
+H
+
+B xb
+
+A xa
+
+R y
+
+
+xt( )–
+
+K
+
+I
+
+�
+� b
+
+
+
+Data assimilation concepts and methods
+
+58 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+ observation term of the cost function
+
+ penalization term of the cost function
+
+REFERENCES
+
+The references below have been chosen because of their educational value. It does not necessarily mean that they
+
+are the original historical references. These can usually be found in the reference lists of the paper below.
+
+Bennett, A. and M. Thornburn, 1992: The generalized inverse of a non-linear quasi-geostrophic ocean circulation
+
+model. J. Phys. Oceanogr., 3, 213-230.
+
+Derber, J. and F. Bouttier, 1999: A reformulation of the background error covariance in the ECMWF global data
+
+assimilation system. Accepted for publication in Tellus.
+
+Courtier, P., J.-N. Thépaut and A. Hollingsworth, 1994: A strategy for operational implementation of 4D-VAR, us-
+
+ing an incremental approach. Quart. J. Roy. Meteor. Soc., 120, 1367-1387.
+
+Courtier, P.,1997: Dual formulation of four-dimensional variational assimilation. Quart. J. Roy. Meteor. Soc., 123,
+2449-2461.
+
+Courtier, P., E. Andersson, W. Heckley, J. Pailleux, D. Vasiljevic, M. Hamrud, A. Hollingsworth, F. Rabier and M.
+
+Fisher, 1998: The ECMWF implementation of three-dimensional variational assimilation (3D-Var). Part 1: formu-
+
+lation. Quart. J. Roy. Meteor. Soc., 124, 1783-1807.
+
+Daley, R., 1991: Atmospheric Data Analysis. Cambridge Atmospheric and Space Science Series, Cambridge Uni-
+
+versity Press. ISBN 0-521-38215-7, 457 pages.
+
+Errico, R. and T. Vukicevic, 1992: Sensitivity Analysis using an Adjoint of the PSU-NCAR Mesoscale Model.
+
+Mon. Wea. Rev., 120, 1644-1660.
+
+Errico, R., T. Vukicevic and K. Raeder, 1993: Examination of the accuracy of a tangent linear model. Tellus, 45A,
+462-477.
+
+Eyre, J., 1987: Inversion of cloudy satellite sounding radiances by nonlinear optimal estimation: theory and simu-
+
+lation for TOVS. Quart. J. Roy. Meteor. Soc., 113.
+
+Ghil, M., 1989: Meteorological Data Assimilation for Oceanographers. Part I: Description and Theoretical Frame-
+
+work. Dyn. of Atmos. Oceans, 13, 171-218.
+
+Gilbert, J.-C. and C. Lemaréchal, 1989: Some numerical experiments with variable storage quasi-Newton algo-
+
+rithms. Mathematical Programming.
+
+Hollingsworth, A., and P. Lonnberg, 1986: The statistical structure of short-range forecast errors as determined
+
+from radiosonde data. Part I: The wind field. Tellus, 38A, 111-136.
+
+Hollingsworth, A., D. Shaw, P. Lonnberg, L. Illari, K. Arpe and A. Simmons, 1986: Monitoring of observation and
+
+analysis quality by a data-assimilation system. Mon. Wea. Rev., 114, 1225-1242.
+
+Lacarra, J.-F., and O. Talagrand, 1988: Short-Range Evolution of Small Perturbations in a Barotropic Model. Tel-
+
+lus, 40A, 81-95.
+
+Lorenc, A., 1986: Analysis methods for numerical weather prediction. Quart. J. Roy. Meteor. Soc., 112, 1177-1194.
+
+Lorenc, A., 1981: A Global Three-Dimensional Multivariate Statistical Interpolation Scheme. Mon. Wea. Rev.,
+
+Parrish, D. and J. Derber, 1992: The National Meteorological Center’s spectral statistical-interpolation analysis
+
+� o
+� c
+
+
+
+Data assimilation concepts and methods
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 59
+
+system. Mon. Wea. Rev., 120, 1747-1763.
+
+Rabier, F., and P. Courtier, 1992: Four-dimensional assimilation in the presence of baroclinic instability. Quart. J.
+
+Roy. Meteor. Soc., 118, 649-672.
+
+Talagrand, O. and P. Courtier, 1987: Variational assimilation of meteorological observations with the adjoint vor-
+
+ticity equation. I: Theory. Quart. J. Roy. Meteor. Soc., 113, 1311-1328.
+
+Thepaut, J.-N. and P. Courtier, 1991: Four-dimensional data assimilation using the adjoint of a multi-level primi-
+
+tive-equation model. Quart. J. Roy. Meteor. Soc., 117, 1225-1254.
+
+Vukicevic, T., 1991: Nonlinear and Linear Evolution of Initial Forecast Errors. Mon. Wea. Rev., 119, 1602-1611

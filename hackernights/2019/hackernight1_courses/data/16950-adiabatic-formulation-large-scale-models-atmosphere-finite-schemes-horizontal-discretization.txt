@@ -1,0 +1,1317 @@
+Horizontal_discretization
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+Adiabatic formulation of large-scale models of
+the atmosphere
+Finite-difference schemes for the horizontal
+discretization. April 1994
+
+By A. J. Simmons
+
+European Centre for Medium-Range Forecast
+
+Table of contents
+
+1 . Introduction
+
+2 . Distribution of grid-points
+
+3 . Staggering of variables
+
+3.1 Staggered grids
+
+3.2 The linearized shallow-water equations on an f-plane
+
+3.2 (a) Discretizations of the linearized shallow-water equations
+
+3.3 The time-staggered D (Eliassen) grid
+
+3.4 Grid splitting
+
+3.5 Applications
+
+4 . Conservation and Eulerian advection schemes
+
+4.1 Introduction
+
+4.2 The shallow-water equations on the sphere
+
+4.3 A conserving finite-difference scheme for the shallow-water equations on the sphere.
+
+4.4 Some other conserving schemes
+
+5 . Treatment of the poles
+
+5.1 Formulation of the finite-difference scheme
+
+5.2 Computational stability
+
+REFERENCES
+
+1. INTRODUCTION
+
+Three types of method are available for the horizontal discretization of the governing equations of large-scale mod-
+
+els of the atmosphere. These are the finite-difference method, the spectral method and the finite-element method.
+
+The basics of these methods have been introduced in the preceding course on numerical methods.
+
+All three methods are used today for operational numerical weather prediction. The spectral method is adopted al-
+
+
+
+Adiabatic formulation of large-scale models of the atmosphere
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+most universally for global medium-range forecasting models. Of the principal current operational models, the
+
+only one not using the spectral method is the finite-difference model of the United Kingdom Meteorological Office
+
+(Cullen and Davies, 1991). Some other centres are, however, considering future use of the finite-difference ap-
+
+proach. More diversity is seen among the models employed for global climate modelling, but again the spectral
+
+method predominates; of 29 models listed by Gates(1992) as participating in AMIP, a model comparison project,
+
+19 were spectral. Conversely, for local, short-range forecasting, limited-area finite-difference models are most
+
+commonly used. However, a spectral limited-area model has been used operationally by the Japan Meteorological
+
+Agency for a number of years (Tatsumi, 1986), and Météo-France has recently implemented a global spectral mod-
+
+el with non-uniform resolution for this purpose (Courtier and Geleyn, 1988). Spectral limited-area models have
+
+also been developed by several other groups: HIRLAM, ECMWF, Météo-France and NMC, Washington (Haugen
+
+and Machenhauer, 1993; Hoyer, 1987; Juang and Kanamitsu, 1994). The finite-element method has been in oper-
+
+ational use for regional prediction for some time in Canada, and a multi-purpose model based on the method with
+
+option of variable resolution is under development for uses which include global prediction (Côté et al., 1993).
+
+A number of choices have to be made once it has been decided to use the finite-difference method for an atmos-
+
+pheric model. Particular choices may depend on other decisions made for the model, particularly the choice of
+
+time-stepping method, for example whether a semi-implicit or split-explicit scheme is chosen to handle fast-mov-
+
+ing gravity-waves, or whether an Eulerian or semi-Lagrangian scheme is chosen for advection. Questions to be
+
+answered include:
+
+• How should grid points be distributed over the sphere?
+
+• How should variables be staggered?
+
+• Which finite-difference scheme should be used?
+
+• Which conservation properties should be satisfied?
+
+• Which order of accuracy should be used?
+
+• How should the special problems of the poles be treated?
+
+In this lecture, we discuss how some of these questions have been answered for different models.
+
+2. DISTRIBUTION OF GRID-POINTS
+
+The problem of how to distribute grid points over the sphere has yet to be solved in a fully satisfactory manner.
+
+The generally accepted method for medium-range prediction and longer term integrations is to use a grid which is
+
+regular in latitude and longitude, as in the upper illustration of Fig. 1 . Such a grid was used in the original opera-
+
+tional ECMWF model (Burridge, 1980; Simmons et al., 1989), and is used today in the UKMO model. In this case
+
+the grid length becomes small in the zonal direction close to the poles, and special calculations may have to be
+
+carried out to avoid having to use a very small time-step, as discussed in Subsection 5. Unnecessary expense may
+
+also be incurred in calculating physical parametrizations on a grid which is overly fine in the east-west close to the
+
+poles.
+
+These inefficiencies were recognized in the early days of global modelling, and led Kurihara(1965) to propose use
+
+of the “skipped” or “Kurihara” grid shown in the middle illustration of Fig. 1 . However, problems were encoun-
+
+tered in practice with these grids, most notably in the tendency for spuriously high pressure to develop at the poles.
+
+Their use has been largely abandoned in finite-difference models, although more recently Purser(1988) has sug-
+
+gested their reintroduction, but using more accurate numerical schemes to remedy the problems. The use of an
+
+icosahedral grid (see also Fig. 1 ) has also been considered (e.g. Williamson, 1970; see also Cullen, 1974, for the
+
+finite-element method), but has not gained widespread acceptance.
+
+The traditional method of avoiding problems at or near the pole in limited-area models was to use projection onto
+
+a plane, typically a polar stereographic projection. More recent models tend to use a regular latitude/longitude sys-
+
+
+
+Adiabatic formulation of large-scale models of the atmosphere
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+tem, but with the pole of the coordinate system rotated away from the geographic pole so that the equator of the
+
+rotated system passes through the domain of interest. This is the approach now in use at the UKMO, in the HIR-
+
+LAM and DWD models, and in the “eta” model of NMC, Washington (see papers in Proceedings of 1991 ECMWF
+
+Seminar, and Mesinger et al., 1988).
+
+Reference was made in the introduction to variable resolution spectral and finite-element models designed prima-
+
+rily for local short-range prediction. An example of such (fixed) variable resolution in a finite-difference model is
+
+described by Sharma et al. (1987). Another possibility is adaptive mesh refinement in which resolution is refined
+
+where the solution has fine-scale structure, rather than in a fixed region. Among the review articles listed in the
+
+Reference section is one by Skamarock on this topic.
+
+Figure  1. Alternative distributions of grid points on the sphere
+
+
+
+Adiabatic formulation of large-scale models of the atmosphere
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+3. STAGGERING OF VARIABLES
+
+3.1  Staggered grids
+
+Having decided on the basic distribution of grid points, a choice has to be made as to how to arrange the different
+
+prognostic variables on the grid, since the most obvious choice of representing all variables at the same point has
+
+disadvantages. In the following, the standard layouts are illustrated for the variables of the shallow-water equa-
+
+tions, the zonal and meridional wind components, and , and the geopotential . In multi-level models, tem-
+
+perature and surface pressure are defined at the points. Humidity, any extra advected atmospheric variables, and
+
+surface variables are also generally held at the points in comprehensive atmospheric models, as is salinity in
+
+ocean models.
+
+There are five principal arrangements of variables, usually identified by the letters A to E (see, for example, Ar-
+
+akawa and Lamb, 1977). The A grid is the basic unstaggered grid illustrated in Fig. 2 , in which all variables are
+
+held at the same point. The B and E grids (Figs. 3 and 6 ) carry both wind components at the same points, and
+
+are referred to as semi-staggered. The C and D grids (Figs. 4 and 5 ) provide two fully staggered layouts in which
+
+there are different locations for the two wind components and for height. Note that the E grid can be viewed as the
+
+B grid rotated through .
+
+Figure  2. Distribution of variables for the unstaggered A grid
+
+� � φ
+φ
+φ
+
+45°
+
+∆x
+
+∆y
+
+φ, ����� φ, �����
+
+φ, �����
+
+φ, ����� φ, �����
+
+
+
+Adiabatic formulation of large-scale models of the atmosphere
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+Figure  3. Distribution of variables for the staggered B grid
+
+Figure  4. Distribution of variables for the staggered C grid
+
+φ
+
+�����
+
+φφφ
+
+�����
+
+����� �����
+
+φ
+
+φ ��
+
+� � �
+
+φ
+
+��
+
+φ ��φ
+
+�
+
+φ ��
+
+
+
+Adiabatic formulation of large-scale models of the atmosphere
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  5. Distribution of variables for the staggered D grid
+
+Figure  6. Distribution of variables for the staggered E grid
+
+3.2  The linearized shallow-water equations on an f-plane
+
+To illustrate the application of the various grids it is convenient to consider the linearized shallow-water equations
+
+on an f-plane:
+
+The choice of staggering may be closely linked with the choice of time scheme. One example is provided by the
+
+forward/backward (two-level) time scheme, as used for instance in the UKMO model:
+
+φ ��
+
+� � �
+
+φ
+
+��
+
+φ ��φ
+
+�
+
+φ ��
+
+φ
+
+����� φφφ �����
+
+�����
+
+φ
+
+�����
+
+φφ
+
+φ φ
+
+∂ �
+∂ �------ =
+
+∂φ
+∂�------– �
+
+�+
+∂ �
+∂ �------ =
+
+∂φ
+∂	------– �
+
+�–
+∂φ
+∂ �------ = Φ
+
+∂ �
+∂�------
+
+∂ �
+∂	------+ 
+
+ –
+
+
+
+Adiabatic formulation of large-scale models of the atmosphere
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+Here
+
+These equations are solved first for and , and then for . The solution of the coupled implicit equa-
+
+tions for the wind components is evidently simpler for the semi-staggered grids in which the two wind components
+
+are held at the same points.
+
+For the semi-implicit (three-level) time scheme used, for example, in the original ECMWF finite-difference model,
+
+we have:
+
+Here
+
+This leads to a Helmholtz equation of the form:
+
+to be solved for , after which and can be computed. The discretization of this
+
+Helmholtz equation is of simplest form when the C grid is used.
+
+3.2 (a)  Discretizations of the linearized shallow-water equations. We use the following notation for the sec-
+
+ond-order finite-difference derivative and averaging operators with respect to :
+
+and
+
+with similar expressions for the independent variable .
+
+With these definitions, the simplest second-order discretizations of the linearized shallow water equations for the
+
+various staggered grids are given by:
+
+δ
+ � = ∂∂�------φ
+� ∆ �–( )– � � 
++
+
+δ 
+ � = ∂∂	------φ
+� ∆ �–( )– �– � 
+
+
+δ 
+ φ = Φ ∂∂�------
+� �( ) ∂∂	------
+
+� �( )+–
+
+δ
+ � 1∆ �------
+� �( ) � � ∆ �–( )–[ ] and � 
+ 1
+
+2
+--- � �( ) � � ∆ �–( )+[ ]= =
+
+� �( ) � �( ) φ �( )
+
+∂2 
+ � = ∂∂�------φ
+2 
+
+
+– � � �( )+
+
+∂2 
+ � = ∂∂	------φ
+2 
+
+
+– �– � �( )
+
+∂2 
+ φ = Φ ∂∂�------
+� 2 
+ ∂
+
+∂	------
+� 2 
++–
+
+∂2 
+ � 12∆ �---------
+� � ∆ �+( ) � � ∆ �–( )–[ ] and � 2 
+ 1
+
+2
+--- � � ∆ �+( ) � � ∆ �–( )+[ ]= =
+
+φ � ∆ �+( ) 2∆ �( )2Φ∇2φ � ∆ �+( )– terms involving time levels � and � ∆ �–=
+φ � ∆ �+( ) � � ∆ �+( ) � � ∆ �+( )
+
+�
+
+δ � φ 1∆�------- φ �
+1
+2
+---∆�+   φ �
+
+1
+2
+---∆�–  –=
+
+φ
+� 1
+
+2
+--- φ � 1
+
+2
+---∆�+   φ �
+
+1
+2
+---∆�–  +=
+
+	
+
+
+
+Adiabatic formulation of large-scale models of the atmosphere
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+A grid:
+
+B grid:
+
+C grid:
+
+D grid:
+
+E grid:
+
+Several comments can be made on the above forms:
+
+∂ �
+∂ �------ = δ � φ
+
+�
+– � �+
+
+∂ �
+∂ �------ = δ� φ
+
+�
+– � �–
+
+∂φ
+∂ �------ = Φ δ �
+
+� � δ� � �+( )–
+
+∂ �
+∂ �------ = δ � φ
+
+�
+– � �+
+
+∂ �
+∂ �------ = δ� φ
+
+�
+– � �–
+
+∂φ
+∂ �------ = Φ δ �
+
+� � δ� � �+( )–
+
+∂ �
+∂ �------ = δ � φ– �
+
+� � �+
+∂ �
+∂ �------ = δ� φ– �
+
+� � �–
+∂φ
+∂ �------ = Φ δ �
+
+� δ� �+( )–
+
+∂ �
+∂ �------ = δ � φ
+
+� �
+– � � � �+
+
+∂ �
+∂ �------ = δ� φ
+
+� �
+– � � � �–
+
+∂φ
+∂ �------ = Φ δ �
+
+� � � δ� � � �+( )–
+
+∂ �
+∂ �------ = δ � φ– �
+
+�+
+∂ �
+∂ �------ = δ� φ– �
+
+�–
+∂φ
+∂ �------ = Φ δ �
+
+� δ� �+( )–
+
+
+
+Adiabatic formulation of large-scale models of the atmosphere
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+(i) Since all derivatives in the A grid formulation are
+
+effectively taken over double grid lengths, with implied loss of accuracy.
+
+(ii) The form of the Coriolis terms for the B grid favours implementation of the forward/backward
+
+scheme illustrated in 3.2.
+
+(iii) Suitability of the C grid for implementation of semi-implicit time differencing has already been
+
+noted. Coriolis terms are averaged in both horizontal directions, thereby reducing the amplitude of
+
+these terms for small-scale motion.
+
+(iv) The extensive averaging in the discretization shown for the D grid can be avoided by time-
+
+staggering, as discussed below.
+
+(v) The E grid also favours implementation of the forward/backward scheme. In this case there is no
+
+averaging of right-hand side terms. However, comparing square grids of equal resolution, i.e. when
+
+the distance between neighbouring grid points carrying the same variable is the same for each grid,
+
+the x and y derivatives for the E grid are taken over a grid interval which is longer than for the
+
+other staggered grids.
+
+3.3  The time-staggered D (Eliassen) grid
+
+Staggering variables in time as well as space provides a way of avoiding the averaging on the right-hand side terms
+
+indicated above for the D grid. This technique, due to Eliassen(1956), involves representing variables at every sec-
+
+ond time step on an offset D grid, illustrated in Fig. 7 . The shallow water equations are in this case discretized as
+
+shown above for the E grid. If the right-hand side terms are evaluated using variables on the D grid shown in Fig.
+
+5 , then tendencies are computed for the variables at the positions shown on the offset grid (Fig. 7 ). On the next
+
+time step they are computed back on the original grid. A variant of this approach is to use a higher-order interpo-
+
+lation to transfer values back from the offset grid to the original grid (Bratseth, 1983).
+
+Figure  7. Distribution of variables for the offset time-staggered D (Eliassen) grid
+
+3.4  Grid splitting
+
+The B and E grids can be regarded as being made up of two C grids. This is illustrated below in Fig. 8 for the B
+
+grid. If no distinction is made between variables represented by upper- and lower-case characters, then the figure
+
+represents a B grid. However, half the points, those denoted by lower-case characters, form a C grid whose and
+
+δ � φ � 1
+2∆�---------- φ � ∆�+( ) φ � ∆�–( )–[ ]=
+
+2
+
+φ
+
+��
+
+� � �
+
+φ ��
+
+φ
+
+��
+
+� φ
+
+��
+
+�
+
+
+
+Adiabatic formulation of large-scale models of the atmosphere
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+axes are rotated 45o anticlockwise relative to the axes of the B grid. The other half, denoted by upper-case char-
+
+acters, form a second C grid, shifted by one grid-length along the  axis of the B grid.
+
+Figure 8. Distribution of variables on the B grid illustrating how it can be viewed as a combination of two C grids
+
+rotated through 45o, identified by variables written in upper and lower cases.
+
+In formulating B- and E-grid models, action has to be taken to avoid solutions splitting into two separate distribu-
+
+tions on the two C subgrids. One effective remedy, proposed by Mesinger(1973), is to modify the continuity equa-
+
+tion by a formally small term:
+
+where and are two finite-difference forms of the Laplacian and is an adjustable parameter. For a square
+
+grid ( ) the two forms of the Laplacian are:
+
+and
+
+3.5  Applications
+
+A number of idealized calculations have been carried out to assess the suitability of the various grids. Discussions
+
+of these can be found in several of the review articles cited in the list of references. A general result of these cal-
+
+culations is that the staggered grids are indeed to be preferred to the unstaggered A grid. Beyond this, no one stag-
+
+gered arrangement of variables appears to be overwhelmingly superior.
+
+The lack of a clear winner from among the various staggered grids in idealized tests is reflected in the variety of
+
+grids used in operational finite-difference models. The B grid is currently used in the UKMO “unified” model, for
+
+climate simulation as well as numerical weather prediction. The C grid was chosen for the first operational EC-
+
+MWF model, and is in operational use in the several countries that run versions of the HIRLAM model, whose
+
+	
+�
+
+φΦφΦ
+
+����� ����� �����
+
+ΦφΦφ
+
+����� ����� �����
+
+φΦφΦ
+
+����� ����� �����
+
+∂φ
+∂ �------ Φ δ �
+
+� � δ � �+( ) � ∆ � Φ ∇+2 ∇x2–( )φ+ + 0=
+
+∇+
+2 ∇x
+
+2 �
+∆� ∆	=
+
+∇+
+2 4φ ��	,( )– φ � ∆ ��	,+( ) φ � ∆��	,–( ) φ ��	 ∆	+,( ) φ ��	 ∆	–,( )+ + + +[ ] ∆�( )2⁄=
+
+∇x
+2 1
+
+2
+--- 4φ ��	,( )– φ � ∆ ��	 ∆	+,+( ) φ � ∆ ��	 ∆	+,–( ) φ � ∆ ��	 ∆– 	,+( ) φ � ∆– ��	 ∆– 	,( )+ + + +[ ] ∆� 2( )⁄=
+
+
+
+Adiabatic formulation of large-scale models of the atmosphere
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+adiabatic formulation was derived from that of the original ECMWF model. This grid is also used in the opera-
+
+tional limited-area models of DWD, and a C-grid version of the UKMO model is under development. The D grid
+
+is used in the DNMI model using interpolation from the offset D grid as discussed above. It is also used (with time-
+
+staggering) in NMC’s “nested grid” model (Phillips, 1979). However, the E grid, for which schemes were devel-
+
+oped extensively by Mesinger and Janji in Belgrade, is used in NMC's newer “eta” model. For reasons indicated
+
+above, the gravity-wave terms are generally handled by the semi-implicit method in the C-grid models, and by for-
+
+ward/backward time differencing in the B- and E-grid models. Overall, the C grid appears to be emerging as the
+
+most popular, with the E grid its closest competitor.
+
+4. CONSERVATION AND EULERIAN ADVECTION SCHEMES
+
+4.1  Introduction
+
+There are several reasons why numerical schemes for models are often formulated to respect conservation proper-
+
+ties of the governing equations. An important practical consideration is that satisfaction of conservation properties
+
+helps to ensure the computational stability of a model. Apart from this, the direct physical realism of a conservation
+
+property may be a desirable feature. For example, ensuring conservation of mass prevents the surface pressure
+
+from drifting to highly unrealistic values in long-term integrations of atmospheric models. Advection schemes
+
+which satisfy an appropriate dynamical conservation property may help to ensure the realism of a model's energy
+
+spectrum.
+
+There are, however, considerations other than conservation that might influence the choice of numerical scheme.
+
+Shape-preservation (avoidance of the generation of spurious maxima or minima) may be considered an important
+
+feature of an advection scheme, and the economy of a method (especially the ability to take long time steps) may
+
+be a critical factor. Indeed, semi-Lagrangian advection schemes, generally without formal conservation properties,
+
+are increasingly being developed for numerical weather prediction.
+
+4.2  The shallow-water equations on the sphere
+
+To illustrate conservation and a conserving difference scheme it is convenient to consider the full shallow-water
+
+equations on the sphere.  These can be written in the form:
+
+where  is longitude,  is latitude and  is the radius of the sphere, with
+
+and
+
+∂ �
+∂ �------ =
+
+1
+θcos
+
+------------ 1�---– ∂∂λ------ φ �+( ) � φ
+� θcos+
+
+∂ �
+∂ �------ =
+
+1�--- ∂∂θ------ φ �+( ) � φ
+�––
+
+∂φ
+∂ �------ =
+
+1� cosθ---------------
+∂
+
+∂λ
+------ φ �( ) ∂∂θ------ φ
+
+� θcos( )+–
+
+λ θ �
+
+� 1
+2
+--- � 2 � 2+[ ]=
+
+
+
+Adiabatic formulation of large-scale models of the atmosphere
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Here , with  the planetary rotation rate.
+
+It can be verified that these equations are such that the following conservation relations hold:
+
+Mass
+
+Energy
+
+Potential enstrophy
+
+4.3  A conserving finite-difference scheme for the shallow-water equations on the sphere.
+
+As an example of a conserving finite-difference scheme we take the C-grid scheme used in ECMWF's original op-
+
+erational model. This scheme conserves mass and potential enstrophy, following Sadourny (1975). The spatial dis-
+
+cretization is given by:
+
+where the zonal and meridional mass fluxes,  and , are given by
+
+with
+
+� 1φ--- �
+1� cosθ---------------
+
+∂ �
+∂λ
+------
+
+∂
+∂θ
+------ � θcos( )–
+
+ 
+ 
+ 
+
++=
+
+� 2Ω θsin= Ω
+
+∂
+∂ �----- φ θcos λd θd
+
+0
+
+2π
+
+∫
+π 2⁄–
+
+π 2⁄
+
+∫ 0=
+
+∂
+∂ �----- � φ
+
+φ2
+
+2
+-----+ 
+
+  θcos λd θd
+0
+
+2π
+
+∫
+π 2⁄–
+
+π 2⁄
+
+∫ 0=
+
+∂
+∂ �----- �
+
+2φ θcos λd θd
+0
+
+2π
+
+∫
+π 2⁄–
+
+π 2⁄
+
+∫ 0=
+
+∂ �
+∂ �------ =
+
+1
+θcos
+
+------------ 1�---δλ φ �[ ]+( )– �[ ]θ � θcos θλ+
+∂ �
+∂ �------ =
+
+1�---δθ φ �[ ]+( )– �[ ]λ � θλ–
+∂φ
+∂ �------ =
+
+1� cosθ--------------- δλ
+�( ) δθ � θcos( )+[ ]–
+
+� �
+
+� φλ � and � φθ �= =
+
+�[ ] 1
+2
+--- � 2λ 1
+
+θcos
+------------ � 2 θcos θ+=
+
+
+
+Adiabatic formulation of large-scale models of the atmosphere
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+and
+
+Sadourny(1975) discusses how enstrophy conservation helps maintain a realistic energy spectrum. However, add-
+
+ing formal conservation properties does not guarantee stability. The scheme initially tested at ECMWF conserved
+
+energy also, but was unstable when applied in a multi-level model (Hollingsworth et al. 1983). The instability man-
+
+ifested itself in a catastrophic weakening of the simulated flow over a two to three day period, and was linked to a
+
+poorer momentum conservation in the energy-conserving version.
+
+4.4  Some other conserving schemes
+
+There is a quite extensive literature on conserving finite-difference schemes. The pioneering contributions of Ar-
+
+akawa began with a paper in 1966; a recent work (Arakawa and Hsu, 1990) presented C-grid schemes which con-
+
+serve energy, but dissipate potential enstrophy. Janji (1984) derived an E-grid scheme with “built-in control” of
+
+energy cascade. This is a transform to the E-grid of a C-grid scheme of Arakawa which conserves energy and en-
+
+strophy for non-divergent flow. It is used today in the NMC “eta” model. A conserving B-grid scheme, following
+
+Mesinger (1981), with option of fourth-order accuracy, is used in the UKMO “unified” model (Cullen and Davies,
+
+1991).
+
+5. TREATMENT OF THE POLES
+
+5.1  Formulation of the finite-difference scheme
+
+Care is needed in the formulation of finite-difference schemes for the polar caps in global models. As an example,
+
+we take the ECMWF shallow-water scheme. The C grid is defined such that is held at the two polar points.
+
+Tendencies of are thus needed at these points, and polar values of and also have to be defined, as they
+
+are needed to integrate the equation
+
+for values of  one half grid-length from the poles.
+
+For the polar tendency of , the continuity equation
+
+is integrated over the polar cap, and Green's theorem is applied to give
+
+where the sum is of the meridional mass fluxes over all longitudes ( ) one half grid-length from
+
+the pole, and  for the North Pole and  for  the South Pole.
+
+�[ ] 1
+φ θcos
+
+θλ-------------------- � θcos
+θ 1�--- δλ � δθ � θcos( )–{ }+=
+
+φ
+φ �[ ] �
+
+∂ �
+∂ �------
+
+1�---δθ φ �[ ]+( )– �[ ]λ � θλ–=
+
+�
+φ
+
+∂φ
+∂ �------
+
+1
+θacos
+
+-------------- δλ
+�( ) δθ � θcos( )+[ ]–=
+
+∂
+∂ �-----φpole
+
+4 �������� � ∆θ----------------------------
+�
+
+pole
+1
+2
+--- �,–� 1=
+
+ "!$#� 
+∑=
+
+%
+1 2 … �&�'���, , ,=
+
+� 1= � 1–=
+
+
+
+Adiabatic formulation of large-scale models of the atmosphere
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+The polar values of and are determined from considerations of conservation. The specific expressions are
+
+given by Burridge (1980), who also illustrates how the scheme performs well in representing Rossby–Haurwitz
+
+wave motion in the vicinity of a pole.
+
+5.2  Computational stability
+
+Another important requirement is to avoid a highly restrictive CFL time-step limit arising from the short east-west
+
+grid-lengths near the poles when a regular latitude/longitude grid is used.
+
+The usual solution is based on Fourier decomposition poleward of critical latitudes. The unstable higher-wave-
+
+number components of tendencies or fields are modified, and the tendencies or fields are transformed back to grid-
+
+point values. Fourier filtering involves reducing the amplitudes of higher-wavenumber components of tendencies
+
+or fields by sufficient amounts to ensure stability. For example, the results presented by Burridge(1980) were ob-
+
+tained by filtering the tendency of wavenumber  by a factor:
+
+Variants are:
+
+(i) Applying the filtering only to the most critical of the terms that make up the tendencies.
+
+(ii) Fourier chopping: a special case in which higher-wavenumber components of tendencies or fields
+
+are set to zero.
+
+(iii) Use of a scale-selective diffusion scheme with sufficient damping to prevent instability, as used in
+
+the former operational ECMWF model; if is the provisional, undiffused new value of a
+
+variable, the implicit scheme is
+
+which is solved in Fourier space for the diffused value
+
+The alternative of using a skipped or Kurihara grid was discussed in Section 2. Another early approach was that
+
+of Grimmer and Shaw (1967), who used time-steps that were shorter near the poles than elsewhere. Recently, Bates
+
+et al. (1993) have shown that use of semi-Lagrangian advection obviates the need for Fourier filtering in a global
+
+model with regular latitude/longitude grid. However, it remains to be seen whether finite-difference models can be
+
+developed which approach the efficiency of spectral models which use the “reduced” grid of Hortal and Simmons
+
+(1991) (see also Courtier, 1994), in which the longitudinal grid spacing is close to uniform over the sphere.
+
+REFERENCES
+
+1.1  Textbook:
+
+Haltiner, G.J. and R.T. Williams,  1979:  Numerical Prediction and Dynamic Meteorology, 2nd ed., Wiley, 477pp.
+
+5.3  Reviews:
+
+GARP Publication Series No. 17, WMO. (Vol. I, Mesinger and Arakawa, 1976; Vol.II, several authors, 1979)
+
+�[ ] �
+
+(
+
+min 1
+θcos
+
+π 4⁄( )
+(
+
+∆λ 2⁄( )sincos
+-------------------------------------------------------,
+
+)
+p
+� ∆ �+( )
+
+1
+2∆ �--------- �
+
+� ∆ �+( ) ) p � ∆ �+( )–[ ] * 1� 4cos4θ-------------------δλ
+4 ) � ∆ �+( ) 1� 4-----δϑ
+
+4 )
+p
+� ∆ �+( )+–=
+
+) � ∆ �+( )
+
+
+
+Adiabatic formulation of large-scale models of the atmosphere
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 15
+
+Proceedings of 1983 ECMWF Seminar on Numerical Methods for Weather Prediction (especially papers by Janji_
+
+& Mesinger, Arakawa, and Dell'Osso)
+
+Proceedings of 1991 ECMWF Seminar on Numerical Methods in Atmospheric Models (especially papers by Cul-
+
+len, Skamarock, Gustafsson, Majewski)
+
+5.4  Specific papers referred to in the text:
+
+Arakawa, A., 1966: Computational design for long-term numerical integrations of the equations of atmospheric
+
+motion. J. Comput. Phys., 1, 119-143.
+
+Arakawa, A. and V.R. Lamb, 1977: Computational design of the basic dynamical processes of the UCLA general
+
+circulation model. Methods in computational physics, 17, 173-265.
+
+Arakawa, A. and Y.-J. Hsu, 1990: Energy conserving and potential-enstrophy dissipating schemes for the shallow-
+
+water equations. Mon. Wea. Rev., 118, 1960-1969.
+
+Bates, J.R., S. Moorthi and R.W. Higgins, 1993: A global multi-level atmospheric model using a vector semi-
+
+Lagrangian finite-difference scheme. Mon. Wea. Rev., 121, 244-263.
+
+Bratseth, A., 1983: Some economical explicit finite-difference schemes for the primitive equations. Mon. Wea.
+
+Rev., 111, 663-668.
+
+Burridge, D.M., 1980: Some aspects of large scale numerical modelling of the atmosphere. Proceedings of 1979
+
+ECMWF Seminar on Dynamical Meteorology and Numerical Weather Prediction, Vol. 2, 1-78.
+
+Côté, J., M. Roch, A. Staniforth and L. Fillion, 1993: A variable-resolution semi-Lagrangian finite-element global
+
+model of the shallow-water equations. Mon. Wea. Rev., 121, 231-243.
+
+Courtier, P., and J.-F. Geleyn, 1988: A global numerical weather prediction model with variable resolution: Ap-
+
+plication to shallow-water equations. Quart. J. Roy. Meteor. Soc., 114, 1321-1346.
+
+Courtier, P., 1994: A pole problem in the reduced Gaussian grid. Quart. J. Roy. Meteor. Soc., 120, to appear in
+
+July issue.
+
+Cullen, M.J.P, 1974: Integrations of the primitive equations on a sphere using the finite element method. Quart.
+
+J. Roy. Meteor. Soc., 100, 555-562.
+
+Cullen, M.J.P. and T. Davies, 1991: A conservative split-explicit integration scheme with fourth-order horizontal
+
+advection. Quart. J. Roy. Meteor. Soc., 117, 993-1002.
+
+Eliassen, A., 1956: A procedure for numerical integration of the primitive equations of the two-parameter model
+
+of the atmosphere. Science Report 4, Department of Meteorology, UCLA, 53pp.
+
+Gates, W.L., 1992: AMIP: The Atmospheric Model Intercomparison Project. Bull. Amer. Meteor. Soc., 73, 1962-
+
+1970.
+
+Grimmer, M. and Shaw, D.B., 1967: Energy preserving integrations of the primitive equations on the sphere.
+
+Quart. J. Roy. Meteor. Soc., 93, 337-349.
+
+Haugen, J.E., and B. Machenhauer, 1993: A spectral limited-area model formulation with time-dependent bound-
+
+ary conditions applied to the shallow-water equations. Mon. Wea. Rev., 121, 1786-1815.
+
+Hollingsworth, A., P. Kållberg, V. Renner and D.M. Burridge, 1983: An internal symmetric computational insta-
+
+bility. Quart. J. Roy. Meteor. Soc., 109, 417-428.
+
+Hortal, M., and A.J. Simmons, 1991: Use of reduced Gaussian grids in spectral models. Mon. Wea. Rev., 119,
+
+
+
+Adiabatic formulation of large-scale models of the atmosphere
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+1057-1074.
+
+Hoyer, J.-M., 1987: The ECMWF spectral limited area model. Proceedings of ECMWF Workshop on Techniques
+
+for Horizontal Discretization in Numerical Weather Prediction Models, 343-359.
+
+Janji, Z.I., 1984: Nonlinear advection schemes and energy cascade on semi-staggered grids. Mon. Wea. Rev., 112,
+
+1234-1245.
+
+Juang, H.-M. H., and M. Kanamitsu, 1994: The NMC nested regional spectral model. Mon. Wea. Rev., 122, 3-26.
+
+Kurihara, Y., 1965: Numerical integration of the primitive equations on a spherical grid. Mon. Wea. Rev., 93, 399-
+
+415.
+
+Mesinger, F., 1973: A method for construction of second-order accuracy difference schemes permitting no false
+
+two-grid-interval wave in the height field. Tellus, 25, 444-458.
+
+Mesinger, F., 1981: Horizontal advection schemes on a staggered grid, an enstrophy and energy conserving model.
+
+Mon. Wea. Rev., 109, 467-478.
+
+Mesinger, F., Z.I. Janji_, S. Nickovic, D. Gavrilov and D.G. Deaven, 1988: The step-mountain coordinate: Model
+
+description and performance for cases of Alpine lee cyclogenesis and for a case of an Appalachian redevelopment.
+
+Mon. Wea. Rev., 116, 1493-1518.
+
+Phillips, N.A., 1979: The nested grid model. NOAA Technical Report NWS 22,Dept. of Commerce, Silver Spring,
+
+MD, 80pp.
+
+Purser, R.J., 1988: Accurate numerical differencing near a polar singularity of a skipped grid. Mon. Wea. Rev., 116,
+
+1067-1076.
+
+Sadourny, R., 1975: The dynamics of finite-difference models of the shallow-water equations. J. Atmos. Sci., 32,
+
+680-689.
+
+Sharma, O.P., H.C. Upadhyaya, T. Braine-Bonnaire and R. Sadourny, 1987: Experiments on regional forecasting
+
+using a stretched-coordinate general circulation model. J. Meteor. Soc. Japan, Special Volume, Short and Medium
+
+Range Numerical Weather Prediction, 263-271.
+
+Simmons, A.J., D.M. Burridge, M. Jarraud, C. Girard and W. Wergen, 1989: The ECMWF medium-range predic-
+
+tion models: Development of the numerical formulations and the impact of increased resolution. Meteor. Atmos.
+
+Phys., 40, 28-60.
+
+Tatsumi, Y., 1986: A spectra; limited-area model with time dependent lateral boundary conditions and its appli-
+
+cation to a multi-level primitive equation model. J. Meteor. Soc. Japan, 64, 637-663.
+
+Williamson, D.L., 1970: Integration of the primitive barotropic model over a spherical geodesic grid. Mon. Wea.
+
+Rev., 98, 512-520.

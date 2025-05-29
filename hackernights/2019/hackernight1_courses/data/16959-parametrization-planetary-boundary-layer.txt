@@ -1,0 +1,3880 @@
+Boundary_layer
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 1
+
+The parametrization of the planetary boundary
+layer
+May 1992
+
+By Anton Beljaars
+
+European Centre for Medium-Range Weather Forecasts
+
+Table of contents
+
+1 . Introduction
+
+1.1 The planetary boundary layer
+
+1.2 Importance of the PBL in large-scale models
+
+1.3 Recommended literature
+
+1.4 General characteristics of the planetary boundary layer
+
+1.5 Conserved quantities and static stability
+
+1.6 Basic equations
+
+1.7 Ekman equation
+
+2 . Similarity theory and surface fluxes
+
+2.1 Surface-layer similarity
+
+2.2 The outer layer
+
+2.3 Matching of surface and outer layer (drag laws)
+
+2.4 Surface boundary conditions and surface fluxes
+
+3 . PBL schemes for atmospheric models
+
+3.1 Geostrophic transfer laws
+
+3.2 Integral models (slab, bulk models)
+
+3.3 Grid point models with
+�
+
+-closure
+
+3.4
+�
+
+-profile closures
+
+3.5 TKE-closure
+
+4 . List of symbols
+
+REFERENCES
+
+
+
+The parametrization of the planetary boundary layer
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+1. INTRODUCTION
+
+1.1  The planetary boundary layer
+
+The planetary boundary layer (PBL) is the region of the atmosphere near the surface where the influence of the
+
+surface is felt through turbulent exchange of momentum, heat and moisture. The equations which describe the
+
+large-scale evolution of the atmosphere do not take into account the interaction with the surface. The turbulent mo-
+
+tion responsible for this interaction is small-scale and totally sub-grid and therefore needs to be parametrized.
+
+The transition region between the surface and the free atmosphere, where vertical diffusion due to turbulent motion
+
+takes place, varies in depth. The PBL can be as shallow as 100 m during night over land and go up to a few thousand
+
+metres when the atmosphere is heated from the surface. The PBL parametrization determines together with the sur-
+
+face parametrization the surface fluxes and redistributes the surface fluxes over the boundary layer depth. Boundary
+
+layer processes are relatively quick; the PBL responds to its forcing within a few hours which is fast compared to
+
+the time scale of the large-scale evolution of the atmosphere, in other words: the PBL is always in quasi-equilibrium
+
+with the large-scale forcing.
+
+1.2  Importance of the PBL in large-scale models
+
+A number of reasons exists to have a realistic representation of the boundary layer in a large scale model:
+
+• The large-scale budgets of momentum heat and moisture are considerably affected by the surface
+
+fluxes on time scales of a few days.
+
+• Model variables in the boundary layer are important model products.
+
+• The boundary layer interacts with other processes e.g. clouds and convection.
+
+The importance of the surface fluxes can be illustrated by estimating the recycle time of the different quantities on
+
+the basis of typical values of the surface fluxes. The numbers in Table 1 have been derived from a typical run with
+
+the ECMWF model or are simply order of magnitudes estimations.
+
+Already from these very crude estimates it can be seen that the surface fluxes play an important role in forecasting
+
+for the medium range. It is obvious that the surface fluxes are crucial for the “climate” of the model. With regard
+
+to the momentum budget it should be noted that the Ekman spin-down time has to be considered as the relevant
+
+time scale because it is an efficient mechanism for spinning down vorticity in the entire atmosphere by frictional
+
+stress in the PBL only.
+
+The second important reason to have a PBL scheme in a large-scale model is that forecast products are needed near
+
+the surface. The temperature and wind at standard observation height (2 m and 10 m for temperature and wind re-
+
+spectively) are obvious products. It is important to realize that the PBL scheme together with the land surface and
+
+radiation scheme introduces the diurnal pattern in the surface fields. Also the analysed and forecasted fields of sur-
+
+face fluxes (momentum, heat and moisture) are becoming more and more important as input and verification for
+
+wave models, air pollution models and climate models.
+
+TABLE 1. GLOBAL BUDGETS (ORDER OF MAGNITUDE ESTIMATES)
+
+Budget Total
+Surface
+
+flux
+Recycle time
+
+Water  J m–2 80 W m–2 10 days7 107×
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+Finally it has to be realized that other processes can not be parametrized properly without having a PBL scheme.
+
+Boundary layer clouds are an obvious example, but also convection schemes often use surface fluxes of moisture
+
+in their closure.
+
+1.3  Recommended literature
+
+General textbook and introductory review on most aspects of the PBL:
+
+Stull, R.B. (1988): An introduction to boundary layer meteorology. Kluwer publishers.
+
+Introduction to turbulence:
+
+Tennekes, H. and Lumley, J.L. (1972): A first course in turbulence. MIT press.
+
+Atmospheric turbulence:
+
+Nieuwstadt, F.T.M. and Van Dop, H. (eds. 1982): Atmospheric turbulence and air pollution
+
+modelling. Reidel publishers.
+
+Haugen, D.A. (ed. 1973): Workshop on micro meteorology. Am. Meteor. Soc.
+
+Monin, A.S. and Yaglom, A.M. (1971): Statistical fluid dynamics. Vol I, MIT press.
+
+Panofsky, H.A. and Dutton, J.A. (1984): Atmospheric turbulence: Models and methods for
+
+engineering applications. John Wiley and sons.
+
+Surface fluxes:
+
+Oke, T.R. (1978): Boundary layer climates. Halsted press.
+
+Brutsaert, W. (1982): Evaporation into the atmosphere. Reidel publishers.
+
+1.4  General characteristics of the planetary boundary layer
+
+Turbulence
+
+The diffusive processes in the atmospheric boundary are dominated by turbulence. The molecular diffusion can in
+
+general be neglected except in a shallow layer (a few mm only) near the surface. The time scale of the turbulent
+
+motion ranges from a few seconds for the small eddies to about half an hour for the biggest eddies (see Fig. 1 ).
+
+The length scales vary from millimetres for the dissipative fluctuations to a few hundred metres for the eddies in
+
+the bulk of the boundary layer. The latter ones dominate the diffusive properties of the turbulent boundary layer. It
+
+is clear that these scales cannot be resolved by large-scale models and need to be parametrized.
+
+Internal +
+potential
+energy
+
+J m–2
+
+(0.5% available)
+30 W m–2 8 days
+
+Kinetic
+energy
+
+ J m–2 2 W m–2 10 days
+
+Momentum  kg m
+s–1
+
+0.1 N m–2 25 days
+(Eckman spin-down time: 4 days
+
+TABLE 1. GLOBAL BUDGETS (ORDER OF MAGNITUDE ESTIMATES)
+
+Budget Total
+Surface
+
+flux
+Recycle time
+
+4 109×
+
+2 106×
+
+2 105×
+
+
+
+The parametrization of the planetary boundary layer
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  1. Spectrum of the horizontal wind velocity after Van Der Hoven (1957). Some experimental points are
+
+shown.
+
+Stability
+
+The structure of the atmospheric boundary layer is influenced by the underlying surface and by the stability of the
+
+PBL (see Fig. 2 ).
+
+The surface roughness determines to a certain extent the amount of turbulence production, the surface stress and
+
+the shape of the wind profile. Stability influences the structure of turbulence. In an unstably stratified PBL (e.g.
+
+during day-time over land with an upward heat flux from the surface) the turbulence production is enhanced and
+
+the exchange is intensified resulting in a more uniform distribution of momentum, potential temperature and spe-
+
+cific humidity. In a stably stratified boundary layer (e.g. during night-time over land) the turbulence produced by
+
+shear is suppressed by the stratification resulting in a weak exchange and a weak coupling with the surface. The
+
+qualitative impact of these aspect is illustrated in Fig. 2
+
+Diurnal pattern
+
+The typical evolution of the PBL over land is illustrated in Fig. 3 for a 24 hour interval. During daytime, with an
+
+upward heat flux from the surface, the turbulent mixing is very strong, resulting in approximately uniform profiles
+
+of potential temperature and wind over the bulk of the boundary layer. The unstable boundary layer is therefore
+
+often called “mixed layer”. Near the surface we see a super adiabatic layer and a strong wind gradient. The top of
+
+the mixed layer is capped by an inversion which inhibits the turbulent motion (e.g. the rising thermals) to penetrate
+
+aloft. The inversion height rises quickly early in the morning an reaches a height of a few kilometres during day-
+
+time. When the heat flux from the surface changes sign at night the turbulence in the mixed layer dies out and a
+
+shallow stable layer near the surface develops. The nocturnal boundary layer has a height of typically 50 to 200 m
+
+dependent on wind speed and stability.
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+Figure  2. The wind speed profile near the ground including (a) the effect of terrain roughness, and (b) to (e) the
+
+effect of stability on profile shape end eddy structure. In (e) the profiles of (b) to (d) are re-plotted with a
+
+logarithmic height scale. (Fig. 2.10 from Oke, 1978).
+
+
+
+The parametrization of the planetary boundary layer
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  3. (a) Diurnal variation of the boundary layer on an “ideal” day. (b) Idealized mean profiles of potential
+
+temperature ( ), wind speed ( � ) and density ( ) for the daytime convective boundary layer. (c) Same as (b) for
+nocturnal stable layer. The arrows indicate sunrise and sunset.
+
+θ ρv
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+Surface fluxes
+
+Figure  4. Diurnal energy balance of (a) a Scots and Corsican pine forest at Thetford (England) on 7 July 1971,
+
+and (b) a Douglas fir forest at Haney (B.C. Canada) on 10 July 1970, including (c) the atmospheric vapour
+
+pressure deficit. In these figures Q* represents net radiation, QH the sensible heat flux, QE the latent heat flux and
+
+∆Qs the soil heat flux. (Fig. 4.24 from Oke 1978).
+
+The surface fluxes of momentum, heat an moisture are of crucial importance to the model as they affect the climate
+
+
+
+The parametrization of the planetary boundary layer
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+of the model, the model performance in the medium range and play an integral role in a number of parametriza-
+
+tions. The diurnal pattern of the PBL over land is mainly forced by the energy budget at the surface through the
+
+diurnal evolution of the net radiation at the surface as illustrated in Fig. 4 . During daytime the net radiation is par-
+
+titioned between the heat flux into the ground, the sensible heat flux into the atmosphere and the latent heat of evap-
+
+oration. The ground heat flux is generally smaller than 10% of the net radiation during daytime. The partitioning
+
+of available net radiation between sensible and latent heat is part of the land surface parametrization scheme. The
+
+fluxes are much smaller during night-time and are much less important for the atmospheric budgets but equally
+
+relevant for the prediction of boundary layer parameters.
+
+The boundary layer over sea does not have a distinct diurnal pattern but can be stable and unstable dependent of
+
+the air type that is advected relative to the sea surface temperature. Strong cold air advection over a relatively warm
+
+sea can lead to extremely high fluxes of sensible and latent heat into the atmosphere. Warm air advection over a
+
+cold sea leads to a stable PBL but does occur less frequently.
+
+It is important to realize that the thermodynamic surface boundary conditions over sea are very different from those
+
+over land. Over sea the temperature and specific humidity are specified and kept constant during the forecast. Over
+
+land the surface boundary condition for temperature and moisture are nearly flux boundary conditions, because of
+
+the constraint imposed by the surface energy budget. In the latter case, the fluxes are determined by the net radiation
+
+at the surface. This means that the total energy input into the atmosphere (sensible + latent heat) is not so much
+
+determined by the flow or by the PBL parametrization but by the net radiation at the surface. The sea however, is,
+
+with its fixed SST boundary condition, an infinite source of energy to the model. The specification of the PBL ex-
+
+change with the sea surface is therefore extremely critical. Beljaars and Miller (1991) give an example of model
+
+sensitivity to the parametrization of surface fluxes over tropical oceans.
+
+PBL clouds
+
+Cumulus clouds, stratocumulus clouds and fog are very much part of the boundary layer dynamics and interact
+
+strongly with radiation.
+
+1.5  Conserved quantities and static stability
+
+To describe vertical diffusion by turbulent motion we have to select variables that are conserved for adiabatic proc-
+
+esses. In the hydrostatic approximation both potential temperature θ and dry static energy are conserved for dry
+adiabatic ascent or descent. They are defined as
+
+(1)
+
+(2)
+
+When moist processes are considered as well it is necessary to use liquid water potential temperature θl or the liquid
+water static energy � l and total water content � t:
+
+(3)
+
+(4)
+
+(5)
+
+θ ��� 0 �⁄( )
+�	��
+
+
+⁄ ��� 0 �⁄( )0.286≈=
+
+� �� � ���+=
+
+θl θ
+�
+
+vapθ
+�� �-------------   � l–=
+
+� l �� � ���
+�
+
+vap � l–+=
+
+� t � � l+=
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+The static stability is determined by the density of a fluid parcel moved adiabatically to a reference height in com-
+
+parison with the density of the surrounding fluid. The virtual potential temperature θv and the virtual dry static en-
+ergy are often used for this purpose:
+
+(6)
+
+(7)
+
+1.6  Basic equations
+
+To illustrate the closure problem we derive the Reynolds equations for momentum, starting from the three momen-
+
+tum equations for incompressible flow in a rectangular coordinate system with z perpendicular to the earth surface:
+
+(8)
+
+(9)
+
+Decomposition of each variable into a mean part and a fluctuating (turbulent) part:
+
+(10)
+
+After averaging, application of the Boussinesq approximation (retain density fluctuations in the buoyancy terms
+
+only) and applying the hydrostatic approximation:
+
+(11)
+
+(12)
+
+Further simplifications are obtained by neglecting viscous effects for large Reynolds numbers ( � � /ν >> 1, where�
+is a length scale) and by assuming that the ����� -scales are much larger than the � -scales (boundary layer approx-
+
+imation):
+
+θv θ 1
+�
+
+v�------- 1–   � � l–+ θ 1 0.61 � � l–+{ }= =
+
+� v �� � 1 0.61 � � l–+{ } ���+=
+
+∂ �
+∂ �------ �
+
+∂ �
+∂�------ �
+
+∂ �
+∂�------ �
+
+∂ �
+∂�------ � �–+ + + =
+
+1
+ρ
+---∂�
+
+∂�------– ν∇
+2 �+
+
+∂ �
+∂ �------ �
+
+∂ �
+∂�------ �
+
+∂ �
+∂�------ �
+
+∂ �
+∂�------ � �+ + + + =
+
+1
+ρ
+---∂�
+
+∂�------– ν∇
+2 �+
+
+∂ �
+∂ �------- �
+
+∂ �
+∂�------- �
+
+∂ �
+∂�------- �
+
+∂ �
+∂�-------+ + + =
+
+1
+ρ
+---∂�
+
+∂�------– ν∇ � �–+
+
+∂ �
+∂�------
+
+∂ �
+∂�------
+
+∂ �
+∂�-------+ + 0=
+
+� � � ′ , ρ+ ρ0 ρ′ ,+= =
+� ! � ′ , �+ " � ′ ,+= =
+� # � ′+=
+
+∂ �
+∂ �-------- �
+
+∂ �
+∂�-------- !
+
+∂ �
+∂�-------- #
+
+∂ �
+∂�-------- � !–+ + + =
+
+1
+ρ0
+-----∂"
+
+∂�-------– ν∇
+2 � ∂∂�------ � ′ � ′
+
+∂
+∂�------ � ′ � ′–
+
+∂
+∂�------ � ′ � ′––+
+
+∂ !
+∂ �------- �
+
+∂ !
+∂�------- !
+
+∂ !
+∂�------- #
+
+∂ !
+∂�------- � �+ + + + =
+
+1
+ρ0
+-----∂"
+
+∂�-------– ν∇
+2 ! ∂
+
+∂�------ � ′ � ′
+∂
+
+∂�------ � ′ � ′–
+∂
+
+∂�------ � ′ � ′––+
+
+� = 1ρ0-----
+∂"
+∂�-------–
+
+∂ �
+∂�--------
+
+∂ !
+∂�-------
+
+∂ #
+∂�---------+ + 0=
+
+
+
+The parametrization of the planetary boundary layer
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(13)
+
+These equations describe the horizontal momentum budget of the resolved flow and have extra terms due to the
+
+Reynolds decomposition and averaging procedure. The terms and are known as the Reynolds stresses
+
+and represent vertical transport of horizontal momentum by unresolved turbulent motion. These are the terms that
+
+need to be parametrized. Similar equations exist for potential temperature and specific humidity.
+
+An equation that is important in some parametrization schemes and gives insight in the dynamics of turbulence is
+
+the equation for turbulent kinetic energy. To derive it, the equations for the fluctuating quantities are taken by sub-
+
+tracting the equations for mean momentum from the equations for total momentum. The kinetic energy of the fluc-
+
+tuations is obtained by multiplying the equations for the different components by the velocity fluctuation itself and
+
+by adding the three equations for the three components. The result is:
+
+(14)
+
+(15)
+
+The left hand side of this equation represents time dependence and advection. The right hand side has source, sink
+
+and transport terms. Terms I represent mechanical production of turbulence by wind shear and convert energy of
+
+the mean flow into turbulence. Term two is the production of turbulence by buoyancy and converts potential energy
+
+of the atmosphere to turbulence or vice versa. Terms III and IV are transport or turbulent diffusion terms because
+
+they equal zero when vertically integrated over the domain. They represent the vertical transport of turbulence en-
+
+ergy by the turbulent fluctuations and the pressure fluctuations respectively. The last term (V) is the dissipation term
+
+which converts turbulence kinetic energy into heat by molecular friction at very small scales.
+
+1.7  Ekman equation
+
+To illustrate the mechanism of Ekman pumping we consider the following equations for the steady state boundary
+
+layer:
+
+(16)
+
+(17)
+
+∂ �
+∂ �-------- �
+
+∂ �
+∂�-------- !
+
+∂ �
+∂�-------- #
+
+∂ �
+∂�-------- � !–+ + +
+
+1
+ρ0
+-----∂"
+
+∂�-------–
+∂ � ′ � ′
+
+∂�---------------–=
+∂ !
+∂ �------- �
+
+∂ !
+∂�------- !
+
+∂ !
+∂�------- #
+
+∂ !
+∂�------- � �+ + + +
+
+1
+ρ0
+-----∂"
+
+∂�-------
+∂ � ′ � ′
+
+∂�---------------––=
+
+� 1
+ρ0
+-----∂"
+
+∂�-------–=
+
+� ′ � ′ � ′ � ′
+
+$
+′ � ′
+
+$ 1
+2
+--- � ′2 � ′2 � ′2+ +( )=
+
+∂
+$
+
+∂ �------- �
+∂
+$
+
+∂�------- !
+∂
+$
+
+∂�------- #
+∂
+$
+
+∂�-------+ + + = � ′ � ′
+∂ �
+∂�--------– � ′ � ′
+
+∂ !
+∂�-------–
+
+�
+ρ0
+----- � ′ρ′–
+
+I I II
+
++
+∂
+
+∂�------
+$
+
+′ � ′ +
+� ′ � ′
+
+ρ
+------------
+
+ ε–
+
+III IV V
+
+�%! ! G–( )– ∂ � ′ � ′∂�--------------- where �&! G,–
+1
+ρ0
+-----∂"
+
+∂�-------= =
+
+� � � G–( )– ∂ � ′ � ′∂�--------------- where � � G,–
+1
+ρ0
+-----–
+
+∂"
+∂�-------= =
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+For a simple closure with , and constant ' we rewrite the equations in
+complex notation:
+
+(18)
+
+Figure  5. (a) Hodograph of Ekman spiral; the vectors indicate the increase of wind speed and its veering with
+
+height, (b) Illustration of the ageostrophic wind in the PBL of a cyclone, and (c) vertical velocity in cyclone due to
+
+Ekman pumping (Holton, 1979).
+
+The solution with �%( ! (  0 at the surface and �%()� ,! ( !   far away from the surface, reads:
+
+� ′ � ′ ' ∂ � ∂�⁄–= � ′ � ′ ' ∂ ! ∂�⁄–=
+
+i� � i !+( ) * � � G i ! G–( )– ' ∂
+2
+
+∂� 2-------- � i !+( )=
+
+
+
+The parametrization of the planetary boundary layer
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(19)
+
+The vertical velocity #,+ at the top of the PBL is derived from the continuity equation by integration from the sur-
+face to boundary layer depth - , where -  is large.
+
+(20)
+
+We see that the vertical velocity at the top of the PBL is proportional to the curl of the surface stress and to the curl
+
+of the geostrophic wind. This qualitative result is in fact independent of how ' is exactly specified. The vertical
+velocity can bee seen as a boundary condition for the inviscid flow above the boundary layer. The inflow of air in
+
+a cyclone due to friction at the surface causes an ascending motion at the top of the PBL and spins down the vortex
+
+by vortex compression (conservation of angular momentum). This mechanism is very important because it trans-
+
+fers the effect of boundary layer friction to the entire troposphere. Ekman pumping is illustrated in Fig. 5 .
+
+2. SIMILARITY THEORY AND SURFACE FLUXES
+
+Many physical processes in the atmosphere are too complicated to enable the derivation of parametrizations on the
+
+basis of first principles. Turbulence is such an example: although turbulent fluctuations are described by the equa-
+
+tions of motion for a continuum fluid, it is very difficult to generate solutions of these equations and moreover the
+
+solutions show chaotic behaviour on very short time scales. Most of the time we are only interested in statistical
+
+averages. It is therefore common practice to rely on empirical relationships based on observations. Similarity the-
+
+ory provides the framework to organize and group the experimental data.
+
+Similarity theory starts with the identification of the relevant physical parameters, then dimensionless groups are
+
+formed from the these parameters, and finally experimental data is used to find functional relations between dimen-
+
+sionless groups. When the functional relations are known, they can be used as part of a parametrization scheme.
+
+Because experimental data is always noisy and shows a lot of scatter it is important to limit as much as possible the
+
+number of dimensionless groups. It may for instance be difficult to find an empirical representation of noisy data
+
+when more than one or two independent parameters are involved. It is therefore advantageous to consider different
+
+parts of the boundary layer (surface layer, outer layer) and different limiting cases (neutral, very unstable etc.) sep-
+
+arately, to simplify the problem and to limit the number of dimensionless groups that are relevant at the same time.
+
+The procedures are straightforward in principle (the Buckingham Pi dimensional analysis method; see e.g. Stull,
+
+1988), but require experience and intuition in practice. The judgment of which parameters are important or unim-
+
+portant is a crucial aspect of the analysis.
+
+Similarity theory is used in virtually all PBL schemes that have been developed for atmospheric models. Different
+
+aspects of the boundary layer similarity are discussed in the following sections.
+
+2.1  Surface-layer similarity
+
+The surface layer is the shallow fraction of the PBL near the surface where the fluxes are approximately equal to
+
+the surface values. The surface layer is therefore often called the constant flux layer. Although the definition implies
+
+that �/. - is much smaller than 1 in the surface layer, in practice the upper limit is often defined as the height where
+
+� i !+( ) � G i ! G–( ) � G i ! G–( ) * �'-----  
+1 2⁄ �exp–=
+
+#	0 = ∂ �
+∂�--------–
+
+∂ !
+∂�-------–   d�
+
+0
+
+0
+∫ =
+
+1
+�---
+
+∂ � ′ � ′
+∂�---------------
+
+∂ � ′ � ′
+∂�---------------+–  
+
+=
+'
+2 �------  
+
+1 2⁄ ∂ � G
+∂�-----------–
+
+∂ ! G
+∂�-----------–  
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+�1. -2(  0.1.
+The relevant parameters in the surface layer for the wind profiles are the momentum flux, the buoyancy flux and
+
+height above the surface
+
+, (21)
+
+, (22)
+
+z (turbulence length scale).
+
+The height above the surface is the length scale for turbulence because the size of the transporting eddies is confined
+
+by their distance from the surface. If the potential temperature and specific humidity are considered, we also need
+
+the kinematic fluxes of heat and moisture:  and . The following scales are defined:
+
+(23)
+
+(24)
+
+(25)
+
+(26)
+
+Since the non-neutral surface layer has two relevant length scales (� and � ) all dimensionless quantities are written
+as function of �1. � . Examples of dimensionless gradients and turbulence intensities are:
+
+(27)
+
+(28)
+
+(29)
+
+(30)
+
+(31)
+
+1
+ρ
+--- τ0 � ′ � ′( )02 � ′ � ′( )02+{ }1 2⁄=
+
+�
+ρ
+--- � ′ρ′( )0– �θv----- � ′θ′v( )0=
+
+� ′θ′( )0 � ′ � ′( )0
+
+� * τ0ρ----
+1 2⁄
+
+(friction velocity)=
+
+� � *3–3 �
+θv
+----- � ′θv′( )
+
+----------------------------
+
+0
+
+(Obukhov length)=
+
+θ*
+� ′θ′( )0–
+� *---------------------- (turbulent temperature scale)=
+
+� * � ′ � ′( )0– � *---------------------- (turbulent humidity scale)=
+
+3 � � *
+� ′ � ′–( )0------------------------
+
+∂ �
+∂�-------- φM
+
+��----  =
+
+3 � � *
+� ′ � ′–( )0------------------------
+
+∂ !
+∂�------- φM
+
+��----  =
+
+3 �
+θ*
+------∂θ
+
+∂�------ φH
+��----  =
+
+3 �
+� *------
+
+∂ �
+∂�------ φQ
+
+��----  =
+
+σ 4
+� *------- f 5
+
+��----  =
+
+
+
+The parametrization of the planetary boundary layer
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(32)
+
+note that (33)
+
+where .
+
+The dimensionless gradient functions (27)–(30) have been studied extensively with help of field experiments over
+
+homogeneous terrain. Fig. 6 illustrates this for φΜ with data from the Kansas experiment. Many empirical forms
+have been proposed for the dimensionless functions. The expressions for the unstable surface layer (often referred
+
+to as the Dyer and Hicks profiles; see Paulson 1970, Dyer 1974 and Hogstrom 1988 for a review) are:
+
+(34)
+
+(35)
+
+(36)
+
+(37)
+
+and the linear relationship
+
+(38)
+
+as originally proposed by Webb (1970) is fairly consistent with most data for 0 6 �/. � 6 0.5 (cf. Hogstrom, 1988).
+Analysis by Hicks (1976) of stable wind profiles above the flat homogeneous terrain of the “Wangara” site and by
+
+Holtslag and DeBruin (1988) of Cabauw data up to resulted in the following expression (see also Bel-
+
+jaars and Holtslag, 1991)
+
+(39)
+
+(40)
+
+where 78( 1, 9:( 0.667, �;( 5 and <=( 0.35. This expression behaves like (38) for small �/. � values and approaches
+φM ~ 7 �1. � for large �1. � . The 3/2 power in φH has been introduced to make φH /φM proportional to for
+large values of �1. �  (see discussion on stability functions in section 3.3).
+
+σθ
+θ*
+------ fθ
+
+��----  =
+
+' M3 � � *------------
+1
+
+φM
+-------=
+
+' M τ >d � d�⁄------------------
+τ?
+
+d ! d�⁄------------------= =
+
+φM 1 16
+��----–  
+
+1
+4
+---–
+
+=
+
+φH Q, 1 16
+��----–  
+
+1
+2
+---–
+
+for
+��---- 0<=
+
+3
+0.4=
+
+φM φH Q, 1 5
+��---- for ��---- 0>+= =
+
+� �⁄ 10≈
+
+φM 1 7 ��---- 9 1 �@< ��----+ +   <
+��----–  exp+ +=
+
+φH 1 1
+2
+3
+--- 7 ��----+  
+
+3
+2
+---
+
+9 1 � < ��----+ +   <
+��----–  exp+ +=
+
+� �⁄( )1 2⁄
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 15
+
+Figure 6. Comparison of dimensionless wind shear observations with interpolation formulas (after Businger et al.
+
+1971; ζ ( �1. � ).
+
+
+
+The parametrization of the planetary boundary layer
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  7. Wind profiles extrapolated from observed 10 m wind according to (2.1.21-22) with (2.1.25) and
+
+(2.1.28) in comparison with observations up to 200 m (Cabauw). The upper and lower panel represents unstable
+
+and stable stratification respectively. Lm indicates the stability class as an average over a number of observations.
+
+The dots and error bars represent averages and standard deviations of observations (from Holtslag 1984).
+
+The gradient functions can be integrated to profiles for wind, potential temperature and specific humidity
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 17
+
+(41)
+
+(42)
+
+(43)
+
+(44)
+
+with
+
+(45)
+
+(46)
+
+where (47)
+
+and
+
+(48)
+
+(49)
+
+This can be derived from the gradient functions with help of the relationship φ = 1 – (η) dΨ . dη, where η=�/. � .
+Examples of wind profiles according to the empirical forms of (45) and (48) are shown in Fig. 7 in comparison
+
+with data.
+
+It is clear that these functions play a crucial role in parametrization schemes. The gradient functions provide direct
+
+expressions for exchange coefficients as they relate fluxes to gradients. The integral profile functions are generally
+
+used in models that have a model level in the surface layer to specify the profiles between the lowest model level
+
+and the surface. The expressions (41) to (44) can in fact be seen as finite difference forms for the layer between the
+
+surface and the lowest model level.
+
+Limiting cases in surface layer similarity
+
+In determining analytical forms for the similarity functions it is often useful to consider their asymptotic behaviour.
+
+The neutral limit (�/. � = 0) and the free convection limit (A �/. � >>1) are of particular interest because they provide
+information to limit the degrees of freedom in choosing analytical expressions.
+
+In the neutral limit with �/. � = 0, the Obukhov length drops out as a relevant scale and therefore the dimensionless
+
+� τ >ρ 3 � *-------------
+�
+
+� 0M--------- 
+  ΨM
+
+��----  –ln=
+
+! τ?
+ρ
+3 � *-------------
+
+�
+� 0M--------- 
+
+  ΨM
+��----  –ln=
+
+θ θs–
+� ′θ′–( )03 � *----------------------
+
+�
+� 0H-------- 
+
+  ΨM
+��----  –ln=
+
+� � s– � ′ � ′–( )03 � *----------------------
+�
+
+� 0Q-------- 
+  ΨM
+
+��----  –ln=
+
+ΨM 2 1 �+( ) 2⁄{ } 1 � 2+( ) 2⁄{ } �( ) π 2⁄+atan–ln+ln=
+
+ΨH Q, 2 1 � 2+( ) 2⁄{ } for ��---- 0<ln=
+
+� 1 16 ��----–  
+1
+4
+---
+
+=
+
+ΨM 7 ��----– 9 ��---- �<---–   <
+��----–   9&�<------–exp–=
+
+ΨH 1 1
+2
+3
+--- 7 ��----+  
+
+3
+2
+---
+
+– 9 ��---- �<---–   <
+��----–  
+
+9/�
+<------– for
+
+��---- 0>exp–=
+
+
+
+The parametrization of the planetary boundary layer
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+wind gradient has to be constant. The dimensional wind gradient φM is by definition equal to 1 because the empirical
+constant is absorbed in the definition and is called the Von Karman constant. The exact value of the Von Karman
+
+constant has been subject of considerable debate. Values between 0.35 and 0.42 have been proposed, but 0.4 is the
+
+most widely accepted value now (e.g. Hogstrom, 1988).
+
+The other limiting case with – �/. � >> 1 is called the free convection limit. A large value for – �/. � implies that
+the production of turbulence by buoyancy is much larger than the production by wind shear and that the friction
+
+velocity � * is irrelevant as scaling quantity. The only way to obtain independence of � * in the dimensionless po-
+tential temperature gradient expression is by choosing a 1/3 power law for – �/. � >> 1, as � is proportional to �
+by definition:
+
+(50)
+
+Alternatively a convective velocity scale can be defined based on the on the buoyancy flux
+
+(51)
+
+resulting in
+
+(52)
+
+The free convection velocity represents physically the velocity that large eddies (e.g. thermals) typically have in
+
+the convective boundary layer. It should be noted that equation (35) does not satisfy the constraint as imposed by
+
+the free convection limit. In practice however (35) fits data as accurately as expressions that tend to
+
+for large – �/. � .
+Another example of the free convection limit is the scaling relation for the variances of velocity and temperature
+
+fluctuations (see also Fig. 8 ):
+
+(53)
+
+(54)
+
+With the definitions of
+�
+
+and θ* it can be verified that � * drops out of these relations. Alternatively the same forms
+can be expressed in terms of the free convection velocity without using � *. The advantage of the expression in z/L
+is that it provides a limiting form for large �/. � . These examples clearly illustrate the strength of similarity theory.
+For the neutral and free convection limit the similarity arguments even provide the shape of the functions, experi-
+
+ments are only needed to determine the value of the constants (e.g. the Von Karman constant).
+
+� *3
+
+3 � � *
+� ′θ′( )0-------------------
+
+∂θ
+∂�------ φH
+
+��----  
+��----–  
+
+1
+3
+---
+
+∼=
+
+� *s �θv----- � ′θ′v( )0 �
+1
+3
+---
+
+=
+
+3 � � *s
+� ′θ′( )0-------------------
+
+∂θ
+∂�------ constant=
+
+� �⁄–( ) 1– 3⁄
+
+� ′2( )
+1
+2
+---
+
+� *---------------- ��4
+��----–  
+
+1
+3
+---
+
+=
+
+θ′2( )
+
+1
+2
+---
+
+θ*
+-------------- � θ ��----–  
+
+1
+3
+---–
+
+=
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 19
+
+Figure  8. Examples of free convection scaling for large – �/. � . Standard deviations of vertical velocity and
+temperature fluctuations.
+
+
+
+The parametrization of the planetary boundary layer
+
+20 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+2.2  The outer layer
+
+The outer layer of the PBL is the remaining part of the boundary layer above the surface layer. The fluxes are not
+
+constant as in the surface layer but decrease monotonically from their surface values to small values at the top of
+
+the PBL (see Fig. 9 for the convective boundary layer). The surface layer parameters are also relevant in the outer
+
+layer. Additionally, the boundary layer height - (length scale) and in the extratropics the Coriolis parameter � (in-
+verse time scale) enter the problem.
+
+Neutral PBL
+
+If the boundary layer height is not determined externally (e.g. by a capping inversion) but by the boundary layer
+
+processes themselves then the boundary layer height must be proportional to the only length scale in the problem
+
+namely ��B . � . The relevant parameters are: � *, � , and � ; the velocity profiles are usually written as differences with
+the geostrophic wind as so-called velocity defect laws:
+
+(55)
+
+(56)
+
+Figure 9. Height dependence of the kinematic heat flux in the convective boundary layer. The solid line refers to
+
+a model with entrainment; the dashed line refers to a model without entrainment.
+
+� � G–
+� *------------------- f 5
+
+� � *
+�---------  =
+
+! ! G–
+� *------------------ f C
+
+� � *
+�---------  =
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 21
+
+Figure  10. Example of mixed layer scaling for the horizontal and vertical turbulent velocity fluctuations.
+
+Convective boundary layer (mixed layer scaling)
+
+In the convective boundary layer the PBL height is determined by a capping inversion at height - which can be
+interpreted as an independent parameter. Formally also the friction velocity � * and the Coriolis parameter � play a
+role. They are often omitted because the wind turning is small in the well mixed layer and – �/. � (which is by def-
+inition larger than – 0.1 - . � ) is often large. The remaining relevant parameters are , - , and � � from which
+we define:
+
+(57)
+
+(58)
+
+The dimensionless gradients of wind temperature and specific humidity are not very interesting in this case because
+
+the gradients are very small. The turbulent exchange is so strong in the convective boundary layer that the profiles
+
+are nearly uniform (well mixed). Mixed layer scaling, however, applies to velocity and temperature fluctuations
+
+e.g. σ D  /w*, σ E  /w*, σ F  /w* and σθ /θ* are functions of �/. - (see Fig. 10  for σ DHGIEJGKF ).
+Stable boundary layer (local scaling)
+
+The same principles as used for the convective boundary layer could be applied to the stable boundary layer. How-
+
+ever, the friction velocity can not be omitted as friction is the only source of turbulence production.
+
+� ′θ′v( )0
+
+velocity scale � * �θv----- � ′θ′v( )0 -
+1
+3
+---
+
+=
+
+temperature scale θ*
+� ′θ′( )0
+� *-------------------–=
+
+
+
+The parametrization of the planetary boundary layer
+
+22 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+To limit the number of independent parameters Nieuwstadt (1984) introduced the idea of local scaling which can
+
+be made plausible in the following way. In the stable boundary layer turbulence is generated by shear production
+
+and destroyed by buoyancy and viscous dissipation. Since buoyancy is acting in the vertical component it tends to
+
+limit the vertical extent over which the mixing takes place and therefore limits the turbulence length scale. The de-
+
+coupling of turbulence from the surface suggest that the local fluxes might be more suitable as direct scaling pa-
+
+rameters. The strength of this idea lies in the fact that the resulting functions are necessarily the same as the ones
+
+for the surface layer since the local fluxes are equal to the surface fluxes when the surface is approached. Thismeans
+
+that experimental data from the surface layer and the outer layer can be combined. For models with local closure
+
+(as in the ECMWF model) it also means that the closure scheme for the surface layer and the outer layer can be the
+
+same.
+
+In the framework of local scaling the relevant parameters are: the local fluxes and ,the buoyancy pa-
+
+rameter � /θv and height � . From these we define:
+
+(59)
+
+Local scaling implies that dimensionless quantities are functions of �/. Λ instead of �/. � . Examples of local scaling
+are given in Fig. 12 ; the height dependence of momentum and heat fluxes is illustrated in Fig. 11 .
+
+For large �/. Λ the turbulence length scale is Λ and the presence of the surface should have no influence. This im-
+plies that � should drop out of the scaling relations. The consequence for the dimensionless gradient functions is
+that they become linear in �/. Λ for large �/. Λ because they have � as a length scale in their definition. The principle
+that dimensionless functions become independent of � is called � -less scaling. The consequence in Fig. 12 is that
+the empirical functions tend to a constant for large �1. Λ.
+The different scaling regimes of the boundary layer are summarized in Fig. 13 for the unstable and stable PBL.The
+
+dimensionless height �/. - and the dimensionless stability parameter - . � are used to delineate the different scaling
+regimes.
+
+2.3  Matching of surface and outer layer (drag laws)
+
+The profile functions for the neutral outer layer written in velocity defect form must be logarithmic for
+
+and must match the surface layer profiles. With the coordinate system aligned with the surface wind
+
+and neutral stability:
+
+surface layer limit for :
+
+(60)
+
+outer layer limit for :
+
+(61)
+
+(62)
+
+τ ρ⁄ � ′θ′v
+
+Λ τ ρ⁄
+3 2⁄–
+
+3 �
+θv
+----- � ′θ′v
+
+----------------------- (local Obukhov length) .=
+
+� -⁄ 0→
+� ′ � ′( )0 0=
+
+�L� 0M⁄ ∞→
+
+�
+� *-----
+
+13--- �� 0M--------- 
+ ln=
+
+� -⁄ 0→
+
+� � G–
+� *-------------------
+
+13--- � �� *------ 
+  const+ln=
+
+! 0=
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 23
+
+Figure  11. Height dependence of the kinematic heat flux and the kinematic momentum flux in the stable
+
+boundary layer (from Nieuwstadt 1984)
+
+Matching the surface and outer layer forms leads to (Tennekes, 1973):
+
+(63)
+�NM
+� *--------
+
+13--- � *� � 0M------------ 
+  O 3----–ln=
+
+
+
+The parametrization of the planetary boundary layer
+
+24 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(64)
+
+The constants O and P can be measured and express in dimensionless form the drag and the ageostrophic angle of
+the surface wind with respect to the geostrophic forcing. Such “drag-laws” can be applied directly to models that
+
+do not resolve the PBL, but are also an important diagnostic tool. In models that do resolve the boundary layer, the
+
+drag law can be computed (e.g. in one column tests) and compared with data for the steady state PBL (see Fig. 14 ).
+
+For non-neutral flow it is often assumed that O and P are functions of the stability parameter . Such
+an assumption is quite arbitrary but works fairly well in practice.
+
+Figure 12. Two examples of local scaling (a) exchange coefficient for momentum and (b) the standard deviation
+
+of vertical velocity in the stable boundary layer (from Nieuwstadt 1984).
+
+! M
+� *--------
+
+P 3----–=
+
+µ � * � �( )⁄=
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 25
+
+Figure  13. Scaling regions in the unstable (upper panel) and the stable (lower panel) PBL (from Holtslag and
+
+Nieuwstadt 1986).
+
+
+
+The parametrization of the planetary boundary layer
+
+26 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 14. Constants O and P in the geostrophic drag law according to Wangara data (Clarke and Hess 1974) in
+comparison with the ECMWF (CY34) model formulation after 9 hours of integration (as a function of stability
+
+parameter � �RQ . � ).
+
+2.4  Surface boundary conditions and surface fluxes
+
+The parametrization of the PBL introduces at the same time the need for boundary conditions at the surface. The
+
+boundary conditions are simply vanishing velocity and specified temperatures and specific humidities at the sur-
+
+face. Over sea the temperature is specified and the specific humidity is the saturation value at the sea surface tem-
+
+perature. Specification of temperature and specific humidity over land is part of the land surface parametrization
+
+scheme. In some models, however, the surface energy balance equation is used over land to eliminate the surface
+
+temperature and surface specific humidity. This is often referred to as the Penman Monteith concept (see Monteith
+
+1981), which is not discussed here.
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 27
+
+Looking more carefully at the boundary conditions, one realizes that an additional parametrization problem arises.
+
+The boundary conditions are connected to the surface roughness lengths which are extremely important to the sur-
+
+face fluxes. To illustrate this we assume that we have a model level near the surface in the constant flux layer at a
+
+specified height � 1 (in the ECMWF model m). The surface layer profiles are used to specify the boundary
+condition:
+
+(65)
+
+(66)
+
+(67)
+
+(68)
+
+The logarithmic profiles are written in a way that � , ! , θ and � have their surface values for � = 0 (a displacement
+height equal to the roughness length has been added to the vertical coordinate). The integration constants in the
+
+logarithmic profiles are called roughness lengths because they are related to the small scale surface inhomogenei-
+
+ties that determine the surface drag. In general the viscous forces play no role at all in the surface drag (except over
+
+a very smooth sea); the pressure forces on the roughness elements transfer the wind stress to the surface (form drag)
+
+and do so more efficiently than viscous forces because the height of roughness elements tends to be larger than the
+
+thickness of the viscous layer. For heat and moisture the situation is slightly different. Form drag has no equivalent
+
+for scalar quantities. The air-surface transfer is through an inter-facial sub-layer where molecular transfer dom-
+
+nates. This implies that the roughness lengths for momentum, heat and moisture are generally different.
+
+TABLE 2. TYPICAL ROUGHNESS LENGTHS S B (Wieringa 1986)
+Ground cover Roughness length (m)
+
+Water or ice (smooth)
+(over water T 0M increases
+with wind speed
+
+10-4
+
+Mown grass 10-2
+
+Long grass, rocky ground 0,05
+
+Pasture land 0.20
+
+Suburban housing 0.6
+
+Forest, cities 1–5
+
+32≈
+
+� τ > 0ρ 3 � *-------------
+� 1
+� 0M--------- 1+ 
+
+  ΨM
+� 1�-----  –ln=
+
+! τ? 0
+ρ
+3 � *-------------
+
+� 1
+� 0M--------- 1+ 
+
+  ΨM
+� 1�-----  –ln=
+
+θ θs–
+� ′θ′–( )03 � *----------------------
+
+� 1
+� 0H-------- 1+ 
+
+  ΨM
+� 1�-----  –ln=
+
+� � s– � ′ � ′–( )03 � *----------------------
+� 1
+� 0Q-------- 1+ 
+
+  ΨM
+� 1�-----  –ln=
+
+
+
+The parametrization of the planetary boundary layer
+
+28 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 15. Variation of the effective roughness length as a function of , where λ is the wavelength of
+2-dimensional sinusoidal orography with amplitude 7 . Different models are compared (Taylor et al. 1989).
+
+It is important to realize that the specification of the surface roughness lengths is an important aspect of the para-
+
+metrization since the they determine to a large extent the surface fluxes. The roughness length is a surface charac-
+
+teristic and is related to its geometry, but the only way to define it is by means of the logarithmic profile. Measuring
+
+the logarithmic profile well away from the surface is the only way of determining � 0M for a uniform terrain. For a
+large scale model with grid spacings of the order of 100 km many terrain inhomogeneities exist that affect the sur-
+
+face drag. The effects of sub-grid terrain effects and sub-grid orography are accounted for by defining and “effec-
+
+tive roughness length”, which is defined as the roughness length that gives the correct surface flux in the
+
+parametrization. The roughness lengths are often derived from land-use maps with an extra contribution from the
+
+variance of the sub-grid orography (see Table 2). A data base for land use is provide by Wilson and Henderson-
+
+Sellers (1985). A review of sub-grid averaging is provided by Mason (1988) and Taylor et al. (1989). The issue of
+
+sub-grid averaging of � 0H and � 0Q has only very recently received attention (see Wood and Mason 1991;Mason
+1991; Beljaars and Holtslag, 1991).
+
+Fig. 15 illustrates empirical data on the relation between the amplitude of not too steep sub-grid orography and the
+
+aerodynamic roughness length. Steep orography is more difficult to parametrize (see Mason, 1988 for a review).
+
+The difference between the roughness length for heat and momentum can be quite large as illustrated in Fig. 16 .
+
+Recent studies suggest that terrain inhomogeneities have a large impact on the ratio � 0H and � 0M (see Mason 1991).
+Specification of the surface roughness lengths over sea is even more important than over land particularly for heat
+
+and moisture because with the fixed boundary conditions for temperature and moisture the sea is in principle an
+
+infinite source of energy to the model. Currently the ECMWF model has equal values for momentum heat and
+
+� 0Meff λ � 0M⁄
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 29
+
+moisture all specified with help of the Charnock relation
+
+(69)
+
+(70)
+
+Figure  16. Temperature difference over the inter-facial sub-layer for short grass. By definition:
+
+. This figure illustrates the possible difference between the roughness length for
+
+momentum and for heat particularly when an “effective value” is used. (Cabauw data; Beljaars and Holtslag,
+
+1991).
+
+This parametrization does not satisfy the smooth surface limit at low wind speed where viscous forces dominate
+
+(with scaling on ν . � B ). Furthermore Smith (1988) argues in a recent review that the increase of the roughness
+length with increasing wind speed does not apply to heat and moisture. An alternative which combines the smooth
+
+surface limit with the conclusions of Smith’s review is:
+
+(71)
+
+(72)
+
+(73)
+
+� 0M max 0.018 � *
+2
+
+�----- 1.15 10
+5–× m, 
+
+ =
+
+� 0H � 0Q � 0M= =
+
+θ0 θs– θ*
+3
+
+⁄( ) � 0M � 0H⁄( )ln=
+
+� 0M 0.018 � *
+2
+
+�----- 0.11
+ν
+� *-----+=
+
+� 0 U 1.4 10 5–× 0.40 ν� *-----+=
+
+� 0Q 1.3 10 4–× 0.62 ν� *-----+=
+
+
+
+The parametrization of the planetary boundary layer
+
+30 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+The two formulations are compared with data by Large and Pond (1982) in the Figs. 17 – 19 .
+
+Figure  17. Neutral transfer coefficients for momentum between the sea surface and the 10 m level. The
+
+observations were published by Large and Pond (1982); the thick solid and dashed line represent Eqs. (69) and
+
+(71) respectively. V MN is related to � 0M by means of: V MN 3 � 1 � 0M⁄( )ln⁄{ }2=
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 31
+
+Figure  18. Neutral transfer coefficients for heat between the sea surface and the 10 m level. The observations
+
+were published by Large and Pond (1982); the thick solid and dashed line represent Eqs. (69) – (70) and (71) –
+
+(72), respectively. V HN is related to � 0M and � 0H by means of: , where
+� 1 is the 10 m level (normally the height of the lowest model level).
+
+Figure  19. Eqs. (69), (70), (71) and (73), respectively. V QN is related to � 0M and z0Q by means of:
+, where � 1 is the 10 m level (normally the height of the lowest model
+
+level.
+
+3. PBL SCHEMES FOR ATMOSPHERIC MODELS
+
+Different PBL schemes are described in this chapter ranging from very simple drag laws to formulations based on
+
+the turbulence kinetic energy equation. Since the geostrophic drag laws are becoming less and less popular, they
+
+will only be described briefly. Most attention will be paid to (vertical) grid point parametrizations with simple clo-
+
+sure for the exchange coefficient as they are the most popular ones.
+
+V HN 3 � 1 � 0M⁄( )ln⁄{ } 3 � 1 � 0H⁄( )ln⁄{ }=
+
+V QN 3 � 1 � 0M⁄( )ln⁄{ } 3 � 1 � 0Q⁄( )ln⁄{ }=
+
+
+
+The parametrization of the planetary boundary layer
+
+32 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+3.1  Geostrophic transfer laws
+
+Geostrophic transfer laws can be used to introduce some effects of surface fluxes in models that have hardly any
+
+or no levels in the boundary layer. They are based on boundary layer similarity for the steady state boundary layer.
+
+A relation is assumed between the model variables at the lowest model level and the fluxes at the surface, where
+
+the lowest model level is assumed to be at the top of the boundary layer or above the boundary layer. Such an ap-
+
+proach makes only sense in models with low resolution near the surface. The simplest form of a bulk transfer law
+
+expresses the surface fluxes of momentum, heat and moisture into the model variables � G, ! G, θG, � G above the
+boundary layer and surface values θs and � s in the following way:
+
+(74)
+
+(75)
+
+(76)
+
+(77)
+
+The index G has been used here to indicate variables above the boundary layer; for wind it can be thought of as
+
+geostrophic wind. The constants , and are chosen from field data or adjusted on the basis of model
+
+performance. Different values can be chosen for land and sea. Advantages of this scheme are: (i) the scheme is very
+
+simple and (ii) it is a first order approximation for the influence of surface fluxes. Disadvantages are: (i) the scheme
+
+does not have a diurnal cycle, (ii) there are no effects of stability, (iii) the empirical coefficients are very uncertain,
+
+(iv) there are no forecast products in the PBL and (v) the physics of the PBL is poorly represented.
+
+A second “bulk” scheme, which is very similar to the first one, introduces stability effects in the transfer coeffi-
+
+cients ,  and  in accordance with the similarity theory discussed in Section 2.3.
+
+(78)
+
+where ,  or , (79)
+
+   and , . (80)
+
+The constant O depends on stability and is the same one as in Eq. (63). Experimental data on A is shown in Fig. 14
+(Clarke and Hess 1974). This formulation is slightly more realistic than the first one but is very much limited to the
+
+simple situations, for which the transfer laws are known. However, with an appropriate land surface scheme for the
+
+surface temperature and surface moisture , this scheme allows for diurnal variation of the surface drag
+
+through the stability dependence of parameter O . The more complicated case of the unsteady PBL, cases with
+strong advection, baroclinic or inversion capped PBL’s are not expected to be well captured by bulk transfer laws.
+
+� ′ � ′( )0 V M UG � G–=
+
+� ′ � ′( )0 V M UG ! G–=
+
+� ′θ′( )0 V H UG θG θs–( )–=
+
+� ′ � ′( )0 V Q UG � G � s–( )–=
+
+V M V H V Q
+
+V M V H V Q
+
+V M V H V Q 13--- � *� � 0M------------ 
+  O 3----–ln 2–= = =
+
+O O � *� �------  = O O
+-�----  =
+
+� * � ′ � ′( )02 � ′ � ′( )02+{ }
+1
+2
+---
+
+=
+� � *3–
+
+3 �
+θv
+----- 
+
+  � ′θv′( )0
+------------------------------------=
+
+θs � s
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 33
+
+3.2  Integral models (slab, bulk models)
+
+In integral models the entire boundary layer is characterized by a limited number of parameters (e.g. PBL depth,
+
+mean velocity, mean temperature etc.). Prognostic equations are derived for these PBL characteristics rather than
+
+for the basic variables. The main advantage is that the PBL does not have to be resolved by the vertical layer struc-
+
+ture of the model.
+
+The basic assumption for integral models is that a similarity form exists for the model variables e.g. for potential
+
+temperature:
+
+, (81)
+
+where is a temperature scale and - the boundary-layer height. When the form of f is known from field experi-
+ments, Eq. (81) can be substituted in the equations of motion and integrated from the surface to � (W- . The resulting
+differential equations for  and -  describe the entire PBL without resolving it explicitly in the vertical.
+
+Figure  20. Schematic profiles of and  in a mixed layer model.
+
+This approach is illustrated with help of a slab model for the convective boundary layer (mixed layer). In the mixed
+
+layer the turbulent exchange is sufficiently strong to make the profiles of wind, potential temperature and specific
+
+θ θG–
+θ*
+
+--------------- f
+�
+----  =
+
+θ*
+
+θ*
+
+θ θ′ � ′
+
+
+
+The parametrization of the planetary boundary layer
+
+34 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+humidity approximately uniform in the bulk of the boundary layer (the simplest possible expression for f). The near
+
+surface part shows gradients, but the surface layer is relatively shallow and does therefore not contribute signifi-
+
+cantly to the budgets of the total boundary layer. Here we limit to the budget of potential temperature because it is
+
+the main quantity that feeds back to the dynamics of the mixed layer. Quantity represents the potential temper-
+
+ature in the bulk of the mixed layer and its time evolution is determined by heat fluxes at the surface and the top of
+
+the mixed layer (Fig. 20 illustrates the temperature structure of the well mixed layer; see Driedonks and Tennekes,
+
+(1984)):
+
+, (82)
+
+, (83)
+
+, (84)
+
+. (85)
+
+In these equations represents the potential temperature jump at the top of the boundary layer, the entrain-
+
+ment velocity, the large scale resolved vertical velocity at height - , and γ the stable lapse rate above the mixed
+layer. Equations (82)–(85) describe the energy budget, the height and the temperature step at the top of the mixed
+
+layer and have a simple physical interpretation. The rate of change of the energy of the mixed layer is proportional
+
+to the difference of heat flux at the surface and the top (Eq. (82)); the height change of the mixed layer with respect
+
+to the large scale ascent or descent is by definition the entrainment velocity (Eq. (83)); the temperature step at � (
+- changes due to temperature changes of the mixed layer and due a shift of the mixed layer with respect to the
+stable lapse rate (Eq. (84)); and the entrainment heat flux is the amount of air that is entrained times the temperature
+
+jump (Eq. (84)). This set of equations is not closed; it has to be supplemented by equations for the surface fluxes
+
+and by an entrainment assumption. The surface fluxes can be obtained by using surface layer formulations as dis-
+
+cussed in Section 2.4. For the heat flux, Eq. (67) can be used with �  somewhere in the mixed layer and .
+To parametrize the entrainment we consider the equation for turbulent kinetic energy:
+
+(86)
+
+This equation describes the balance between shear production (I), buoyancy production or destruction (II), trans-
+
+port by turbulent velocity and pressure fluctuations (III) and dissipation (IV). The order of magnitude of the differ-
+
+ent terms typical for the entire mixed layer depth can be expressed in terms of velocity and length scales
+
+characteristic for the mixed layer:
+
+I:
+
+II:
+
+θm
+
+- dθm
+d �--------- � ′θ′( )0 � ′θ′( )0–=
+
+d -
+d �------- � e � L+=
+
+d∆θm
+d �-------------- γ � e
+
+dθm
+d �---------–=
+
+� ′θ′( )0 � e∆θ–=
+
+∆θm � e
+� L
+
+θ θm=
+
+∂
+$
+
+∂ �------- = � ′ � ′
+∂ �
+∂�--------– � ′ � ′
+
+∂ !
+∂�-------–
+
+�
+ρ0
+----- � ′θv′+
+
+I( ) II( )
+
+∂
+∂�------
+
+$
+′ � ′ � ′ � ′
+
+ρ
+------------+ 
+
+ + ε .–
+
+III( ) IV( )
+
+� *3 -⁄
+� θv⁄( ) � ′θv′( )0 � *3 -⁄+
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 35
+
+III:
+
+IV:
+
+These estimates have been made by assuming a single length scale - as turbulence length scale and for the estima-
+tion of the derivatives and by assuming that the turbulent fluctuations have magnitude (see (57) for its defini-
+
+tion). It is important to realize here what the mechanism of entrainment is. The energy is produced by shear and
+
+buoyancy in the bulk of the mixed layer. Most of the energy is transferred to smaller and smaller scales and ulti-
+
+mately converted into heat by viscous dissipation. Some of it is diffused upwards by the turbulent motion itself (e.g.
+
+thermals) and penetrates into the inversion where it is destroyed by the negative buoyancy (Fig. 21 illustrates the
+
+energy budget of the mixed layer). So the entrainment at the top of the mixed layer is fed by upward diffusion of
+
+turbulent kinetic energy produced in the bulk of the mixed layer.
+
+Since the dominant terms are of the order of , it is to be expected that the buoyancy flux at � (X- is also
+proportional to this quantity. An obvious closure therefore is:
+
+(87)
+
+where the “entrainment” constant is determined from experimental data. The numerical value of is about
+
+0.2 (Driedonks and Tennekes 1984).
+
+The advantages of integral models are obvious: (i) they are relatively simple, (ii) they do not rely on vertical reso-
+
+lution and (iii) they are physically realistic for simple cases as the mixed layer. Disadvantages are: (i) this type of
+
+models is difficult to implement as they involve a moving boundary condition (the top of the boundary layer) for
+
+the atmosphere above the PBL, (ii) the similarity profiles are less obvious for e.g. the stable boundary layer and
+
+virtually unknown for more complicated boundary layers as e.g. the baroclinic or cloudy boundary layer and (iii)
+
+the transition between different scaling regimes (e.g. from unstable to stable) are difficult to handle. For mixed layer
+
+models in particular it has to be added that they perform very well for a well mixed quantity as potential tempera-
+
+ture, but quite poorly for less well mixed quantities as momentum and specific humidity.
+
+Because of the technical complications of having a moving lower boundary condition in a forecast model, Dear-
+
+dorff (1972) proposed to combine the integral boundary layer approach with a fixed vertical grid structure. This
+
+scheme was specially designed for GCM’s with poor vertical resolution. The diagnosed boundary layer height can
+
+be below and above the lowest model level (Fig. 22 ). The boundary layer height can be seen as an additional model
+
+level at the height where the structure of the atmosphere changes drastically. After every time step, with the PBL
+
+scheme the grid points inside the boundary layer are adjusted to the mixed-layer profile.
+
+� *3 � *3+( ) -⁄
+� *3 � *3+( ) -⁄
+
+� *
+
+� *3 -⁄
+
+� ′θv′( )0 V e � ′θv′( )0=
+
+V e V e
+
+
+
+The parametrization of the planetary boundary layer
+
+36 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 21. Normalized terms of the turbulence kinetic energy equation. The normalization is on . (Fig. 5.4
+
+from Stull 1988)
+
+Figure  22. Grid point structure in Deardorff’s (1972) PBL model.
+
+3.3  Grid point models with Y -closure
+General description
+
+A fairly simple closure for models that resolve the boundary layer explicitly, is the ' -type closure. In analogy with
+molecular diffusion, it is assumed that the fluxes are proportional to the gradients (Louis, 1979):
+
+� *3 -⁄
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 37
+
+, (88)
+
+. (89)
+
+The exchange coefficient ' is not a property of the fluid as in molecular diffusion, but depends on the flow. Surface
+layer similarity provides the formulation for '  near the surface (i.e. in the lowest model layer):
+
+, (90)
+
+where Z[( 3 � . Use of the same expression in the outer layer (above the lowest model level), would be consistent
+with the ideas of local scaling (Section 2.2) for the stable boundary layer, provided that , and are pro-
+
+portional to � for large �/. � . In this way the length scale � drops out for large � . Two problems arise from such a
+simple extension of surface layer similarity both related to the lack of an upper bound to Z : (i) the diffusion coeffi-
+cient becomes very large in neutral situations and (ii) with different from in stable situations (necessary for
+
+reasons to be explained later), local scaling breaks down and Z remains an essential part of the parametrization. To
+limit the length scale Blackadar (1962) proposed the following expression:
+
+(91)
+
+This formulation obeys surface layer similarity and is consistent with local scaling for the stable boundary layer.
+
+The only additional parameter that has been introduced is the asymptotic length scale λ, which is often the same
+for momentum and heat. The idea is that the turbulence length scale is limited by the boundary layer height. In
+
+some parametrizations λ ~ �RQ . � or λ ~ - , where - is a diagnosed boundary layer height. Since the results are not
+very sensitive to the exact value of Z , this parameter is often chosen constant.
+Expressions (90) contain φ which depends on �/. � in the surface layer and therefore on the surface fluxes. Above
+the surface layer the φ-functions depend on Z . 3 � instead of �/. � to be consistent with the ideas of local scaling.
+An inconvenient aspect of Eq. (90) is that it contains fluxes which makes the closure an implicit one. To find an
+
+explicit closure we substitute the closure assumptions in the definition of the Obukhov length and obtain:
+
+(92)
+
+This is a relation between the gradient Richardson number and Z . � which can be solved numerically when the φ-
+functions are specified. Instead of closure assumption (90) it is much more efficient to specify stability functions
+
+that depend on the Richardson number because then we have the fluxes explicitly in terms of model variables:
+
+(93)
+
+where  and , and by definition: .
+
+� ′ � ′ ' M∂ �∂�-------- ,–= � ′ � ′ ' M
+∂ !
+∂�-------–=
+
+� ′θ′ ' H∂θ∂�------ ,–= � ′ � ′ ' H
+∂ �
+∂�------=
+
+' M Z
+2
+
+φM
+2
+
+------- dU
+d�------- , ' M
+
+Z 2
+φMφH
+------------- dU
+
+d�-------= =
+
+φM φH φQ
+
+φM φH
+
+1
+Z---
+
+13 �------
+1
+λ
+---+=
+
+� * �θv-----
+dθv
+d�--------
+
+dU
+d�-------
+
+2
+------------- Z3 �------- φH
+
+φM
+2
+
+-------= =
+
+' M Z 2\ M dU
+d�------- , ' H Z
+
+2 \
+H
+
+dU
+d�------- ,==
+
+\
+M
+
+\
+M
+
+� *( )= \ H \ H � *( )= \ M φM2– , \ H φMφH( ) 1–= =
+
+
+
+The parametrization of the planetary boundary layer
+
+38 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Equation (93) is the closure as it is actually used in many models. The functions and are specified as an-
+
+alytical functions of
+� * or are tabulated. In both cases they are derived from empirical data on and which
+
+are functions of �/. � (or Z . 3 � ), so the independent variable has been transformed from �/. � (or Z . 3 � ) to � * with
+Eq. (92).
+
+Figure  23. The vertical grid structure near the surface in the ECMWF model (19-level version and 31-level
+
+version). Solid lines represent model levels; dashed lines are flux levels.
+
+The gradients as needed in the closure assumption are computed from the grid point values by means of a finite
+
+difference approximation (cf. Fig. 23 ). A staggered grid is used with flux levels between the full model levels. A
+
+simple finite difference approximation (assuming linearly interpolated profiles between model levels) is not accu-
+
+rate near the surface, where the profiles of wind temperature and moisture show pronounced non-linear behaviour
+
+particularly near the surface. To derive a finite difference form for the surface layer we assume that the flux is con-
+
+stant with height and integrate the closure assumptions from the surface to � ( � 1 where � 1 is the height of the lowest
+model level. This results in the usual surface layer profiles:
+
+(94)
+
+(95)
+
+(96)
+
+(97)
+
+\
+M
+
+\
+H
+
+φM φH
+
+� 1 τ > 0ρ 3 � *-------------
+� 1
+� 0M--------- 1+ 
+
+  ΨM
+� 1�-----  –ln=
+
+! 1 τ? 0ρ 3 � *-------------
+� 1
+� 0M--------- 1+ 
+
+  ΨM
+� 1�-----  –ln=
+
+θ1 θs–
+� ′θ′–( )03 � *----------------------
+
+� 1
+� 0H-------- 1+ 
+
+  ΨH
+� 1�-----  –ln=
+
+� 1 � s– � ′ � ′–( )03 � *----------------------
+� 1
+� 0Q-------- 1+ 
+
+  ΨH
+� 1�-----  –ln=
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 39
+
+These expressions can be interpreted as an exact finite difference representation of the lowest model layer. Unfor-
+
+tunately it is an implicit formulation as it contains . Again we can relate the “flux-stability parameter”
+
+to the bulk Richardson number :
+
+(98)
+
+(99)
+
+This equation relates
+� * b to � 1 /� , � 1/� 0H and � 1/� 0M. For computational efficiency the stability functions are usually
+
+represented in terms of the bulk Richardson number
+� * b. The surface fluxes of momentum ( and ), heat (]W^
+
+and water vapour _a`�b are expressed in model variables at the lowest model level in the following way:
+
+(100)
+
+(101)
+
+(102)
+
+(103)
+
+where
+
+(104)
+
+(105)
+
+(106)
+
+With the neutral transfer coefficients defined as:
+
+(107)
+
+� �⁄ � �⁄� * b
+� * b �θv-----
+
+� 1 θv1 θv0–( )
+U1
+
+2
+--------------------------------=
+
+� 1�-----
+� 1
+� 0H-------- 1+ 
+
+  ΨH
+� 1�-----  –ln
+
+� 1
+� 0M--------- 1+ 
+
+  ΨM
+� 1�-----  –ln
+
+2
+----------------------------------------------------------------=
+
+τ > τ?
+
+τ >
+ρ
+----- V M U1 � 1=
+
+τ?
+ρ
+----- V M U1 ! 1=
+
+]
+ρ ��---------– V H U1 θ1 θs–( )=
+
+`
+ρ
+----– V Q U1 � 1 � s–( )=
+
+V M V MN \ M � * b � 1� 0M---------
+� 1
+� 0H--------, , 
+
+ =
+
+V H V QN \ Q � * b � 1� 0M---------
+� 1
+� 0H--------, , 
+
+ =
+
+V Q V MN \ M � * b � 1� 0M---------
+� 1
+� 0H--------, , 
+
+ =
+
+V MN
+3
+� 1
+� 0M--------- 
+
+ ln
+--------------------
+
+2
+
+=
+
+
+
+The parametrization of the planetary boundary layer
+
+40 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(108)
+
+(109)
+
+The closure assumptions are hidden now in the empirical functions of the Richardson number, which are never
+
+measured directly. The reason is that they depend on the surface conditions (surface roughness lengths) which
+
+makes it difficult to determine them directly from data. Experiments, however, do provide data on the or func-
+
+tions. From there we can derive numerically the \ functions for different surface roughness lengths and make an
+empirical fit to be used in the forecast model. However the \ functions (104)–(106) depend on three different pa-
+rameters and it can be difficult to obtain simple empirical expressions that are accurate for all possible vales of the
+
+parameters. In many models the three roughness lengths are the same which reduces the number of independent
+
+parameters to 2, but the empirical functions can still be fairly inaccurate as will illustrated subsequently.
+
+The stability functions
+
+The main difficulty with ' -closure is the specification of the stability functions. Louis et al. (1982) give an over-
+view of how these function have evolved in the operational ECMWF model as the result of adjustments on the basis
+
+physical arguments and model performance. The functions that have been used since December 1981 are (Louis et
+
+al. 1982):
+
+(110)
+
+(111)
+
+(112)
+
+(113)
+
+where 9W(  5, �c(  5, and <2(  5, and
+
+V HN
+3
+� 1
+� 0H-------- 
+
+ ln
+--------------------
+
+2
+
+=
+
+V QN
+3
+� 1
+� 0Q-------- 
+
+ ln
+--------------------
+
+2
+
+=
+
+φ Ψ
+
+\
+M 1
+
+2 9 � * 0
+1 V 0 � * 0–( )1 2⁄+
+----------------------------------------- for
+
+� * 0 0<–=
+
+\
+H 1
+
+3 9 � * 0
+1 V 0 � * 0–( )1 2⁄+
+----------------------------------------- for
+
+� * 0 0<–=
+
+\
+M
+
+1
+
+1 2 9 � * 0 1 < � * 0+( ) 1 2⁄–+
+-------------------------------------------------------------- for
+
+� * 0 0>=
+
+\
+H
+
+1
+
+1 3 9 � * 0 1 < � * 0+( )1 2⁄+
+------------------------------------------------------------ for
+
+� * 0 0>=
+
+V 0 3 9/�
+3 2 1 � 1� 0M---------+ 
+
+  1 2⁄
+
+1
+� 1
+� 0M---------+ 
+
+ ln
+2
+
+------------------------------------- in the surface layer, and=
+
+V 0 Z
+2
+
+3 � 2-------- above the surface layer.=
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 41
+
+Extensive diagnostics of operational forecasts has shown that the diffusion was too strong in the middle and upper
+
+troposphere, where the jet stream was partially smeared out by the action of the vertical diffusion scheme. It was
+
+therefore decided to make a rough estimate of the boundary layer height and to switch off the scheme above the
+
+boundary layer in stable situations. This change was introduced operationally in January 1988. The poor perform-
+
+ance of the scheme above the boundary layer can be attributed to the shape of the stability function in the Richard-
+
+son number range of 0.1 to 1.
+
+An alternative form of the stability functions (the \ _ � *d^ functions) can be derived from the φ functions (34)–(35)
+in unstable situations and (39)–(40) in stable flow. We will call them the M.O. functions. The comparison of the
+
+stability functions is shown in Fig. 24 . We see that for positive Richardson numbers the functions derived from
+
+and depend on the surface roughness length. The most pronounced difference above the surface layer is
+
+that the M.O. functions give much smaller values above
+� * = 0.1 in comparison to the Louis et al. (1982) functions.
+
+It should be realized that the shape of the stability functions is subject to an ongoing debate (Hogstrom 1988). The
+
+difficulties originate from limitations in the concept of local diffusion and from uncertainties in the experimental
+
+data. An example of the first difficulty is the unstable or convective boundary layer where the diffusion is not local.
+
+The reason that a local scheme still performs reasonably well is that the coefficients become large and therefore the
+
+profiles virtually uniform irrespective of the exact magnitude of the diffusion coefficients. For quantities that are
+
+not well mixed in the convective boundary layer as e.g. moisture or wind in a baroclinic PBL, a local scheme is
+
+expected to be less appropriate. A second example of the same problem is diffusion in stably stratified flow in the
+
+intermittent regime. Local scaling works fairly well in the fully turbulent regime up to Richardson numbers of 0.2.
+
+Beyond 0.2, turbulence becomes intermittent and the diffusive characteristics are not well understood. Also wave-
+
+turbulence interaction is a relevant process in this range. The reported magnitude of the diffusion coefficients in
+
+clear-air turbulence (Richardson numbers between 0.2 and 1) varies by and order of magnitude from one study to
+
+the other (Kennedy and Shapiro 1980; Ueda et al. 1981; Kondo et al. 1978; Nieuwstadt 1984; Kim and Mahrt
+
+1991). The shape of functions and as expressed by Eqs. (39)–(40) is reasonably well documented (see Bel-
+
+jaars and Holtslag 1991) for weak and moderate stability. The ratio , however, is inspired by the idea that
+
+this ratio should become proportional
+� * for large Richardson numbers (see Eq. (92)). This particular asymptotic
+
+behaviour is much less documented, but is quit relevant to the transformation from �/. � to � * in Eq. (92). Another
+parameter that determines to a large extent the diffusion in the clear-air turbulence domain is the asymptotic length
+
+scale λ. A simple parametrization strategy is to select stability functions which are reasonably well documented
+from
+
+� * = 0 to � * = 0.2, apply physical constraints for large Richardson numbers as in Eqs. (39)–(40) and adjust
+λ to obtain reasonable diffusion coefficients in the clear air turbulence domain e.g. on the basis of data by Kennedy
+and Shapiro (1980).
+
+One column simulations
+
+To illustrate the characteristics of ' -closure, a single column version of the vertical diffusion scheme has been in-
+tegrated over 9 hours with constant geostrophic forcing and constant forcing from the surface. In this way, a nearly
+
+steady state is obtained. The selected forcing is a constant geostrophic wind of 10 m/s and a constant surface heat
+
+flux. The surface roughness length is 0.1 m. Fig. 25 shows the O and P parameters in the drag law of Eqs. (63) –
+(64) as the result of the parametrization with Louis et al. (1982) stability functions and with the M.O. stability func-
+
+tions. The comparison with empirical data shows little difference; the main difference is that the M.O scheme cov-
+
+ers a much larger dimensionless stability range than the Louis et al. scheme for the same range of surface fluxes.
+
+The difference between the two schemes is more obvious in the Figs. 26 and 27 for a downward heat flux of 20
+
+W/m. First of all we sea that the surface stress is much smaller with the M.O. scheme and that the PBL is less deep.
+
+Boundary layer heights with the M.O. scheme are much more realistic and compare much better with data as for
+
+instance expressed by the empirical equilibrium heights proposed by Zilitinkevich (1972) or observations by Nieu-
+
+wstadt (1981).
+
+φM φH
+
+φM φH
+φM φH⁄
+
+
+
+The parametrization of the planetary boundary layer
+
+42 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+With a relatively low number of grid points in the PBL, significant discretization errors can be expected. The shal-
+
+low stable boundary layer could be particularly affected as it is only resolved by two or three model levels. The
+
+effect of resolution on the structure of the stable boundary layer is shown in Fig. 28 , where a simulation with the
+
+19-level model resolution is compared to a simulation with three times as many levels. We see that the results are
+
+very similar and that the low resolution simulation is fairly accurate. The unexpected robustness of the numerical
+
+scheme is related to the treatment of the surface layer where a considerable part of the shear and temperature gra-
+
+dients are concentrated. In the surface layer the scheme uses the integral profile functions (94)–(97) as a bulk for-
+
+mulation rather than a finite difference form. It is known from other applications that the integral profile functions
+
+are quite accurate also when extrapolated outside the surface layer (VanWijk et al. 1990).
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 43
+
+Figure  24. Stability functions according to Louis et al. (1982) and derived from the universal φ-functions (M.O.
+scheme) above the surface layer and for different surface roughness lengths in the surface layer.
+
+
+
+The parametrization of the planetary boundary layer
+
+44 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 25. O and P parameters in the geostrophic drag law as simulated with the Louis et al. (1982) functions and
+the M.O. stability functions.
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 45
+
+Figure  26. Flux profiles in the stable boundary layer with Louis et al. (1982) functions (solid) and iteratively
+
+obtained functions from the M.O. φ-functions (dashed).
+
+
+
+The parametrization of the planetary boundary layer
+
+46 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  27. As Fig. 25 , but for wind and temperature profiles
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 47
+
+Figure  28. Illustration of resolution dependence of a 9-hour integration for the stable boundary layer in one
+
+column mode.
+
+Concluding remarks
+
+The advantage of ' -closure with local expressions for the diffusion coefficients is that it is fully consistent with the
+grid point formulation of the model and that the same scheme can be used for stable, unstable, baroclinic, land, sea
+
+
+
+The parametrization of the planetary boundary layer
+
+48 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+etc. A disadvantage is that a number of model levels are needed to resolve the boundary layer. On the other hand,
+
+it is quite remarkable that the scheme performs fairly well with 2 levels in a shallow stable boundary layer. The
+
+reason is that the surface layer approximation is exact in the sense that the surface layer profile between the surface
+
+and the lowest model level is represented exactly. The resolution is only needed to obtain a reasonable shear stress
+
+profile, but flux profiles are generally fairly linear as function of height and can be represented with a few points
+
+only. Proper resolution is needed however to resolve inversions. Since the position of the inversion is variable, good
+
+resolution is needed trough out the lower troposphere (Beljaars 1991). This is obviously a disadvantage compared
+
+to mixed layer models where a dedicated model variable exists to keep track of the inversion height. Another dis-
+
+advantage is that the closure is local and does not account for the “integral” aspects of e.g. the convective boundary
+
+layer. Although the physics of the convective boundary layer is not well described with local closure, this is not a
+
+real problem in practice because a well mixed layer is always produced when the exchange coefficients are suffi-
+
+ciently large. Local closure has its limitations of course as it does not describe aspects as counter-gradient fluxes,
+
+not well-mixed parameters etc. The main disadvantage of local closure is that it does not describe entrainment at
+
+the top of the mixed layer, because the non-local mechanism of entrainment is not represented at all by a local clo-
+
+sure scheme. With local closure the entrainment rate is generally zero as the local closure produces very small ex-
+
+change coefficients in stable stratification.
+
+In summary we can say the ' -type closure is very realistic for the stable PBL if the resolution is sufficient; also in
+the unstable boundary layer, well-mixed quantities are well represented, but entrainment is not modelled at all.
+
+3.4 Y -profile closures
+An interesting closure which has been proposed for low resolution models is the ' -profile closure (see Troen and
+Mahrt 1986 and Holtslag et al. 1990). The exchange coefficients are not expressed in local gradients but as integral
+
+profiles for the entire PBL. The boundary layer height and the surface fluxes are used as scaling parameters. Also
+
+counter gradient terms are included in the formulation. The exchange coefficients are prescribed as follows for the
+
+stable boundary layer and the unstable surface layer (�/. -  < 0.1):
+
+(114)
+
+(115)
+
+(116)
+
+(117)
+
+(118)
+
+(119)
+
+In the unstable outer layer the same expressions are used except that and "fe are evaluated at � = 0.1 - and that
+a counter gradient term is introduced in the heat and moisture equations:
+
+� ′ � ′ ' M∂ �∂�-------- , � ′ � ′ ' M
+∂ !
+∂�------- ,= =
+
+� ′θ′ ' H∂θ∂�------ , � ′ � ′ ' H
+∂ �
+∂�------ ,= =
+
+' M 3 � s� 1 �----–  
+2
+
+=
+
+' H 3 � s � 1 �----–  
+2"8e 1–=
+
+� s � *φM-------=
+
+"8e φH
+φM
+-------=
+
+� s
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 49
+
+(120)
+
+(121)
+
+where is evaluated at the top of the surface layer (�1. - = 0.1). If the stability functions obey free convection
+scaling, this closure will automatically provide the usual free convection velocity scale:
+
+(122)
+
+(123)
+
+This closure is again an implicit closure in the sense that the expressions for the fluxes contain the fluxes. In practice
+
+this is solved by treating the surface layer exactly as is done in the local closure scheme. After the surface fluxes
+
+have been computed on the basis of the profiles at the previous time step, the exchange coefficients are specified.
+
+The boundary layer height is an essential part of the parametrization in this scheme and has to be diagnosed. The
+
+following expression is used
+
+(124)
+
+where
+� * c is a critical Richardson number with a numerical value of about 0.5, θvs is a virtual temperature some-
+
+where in the surface layer (e.g. 10 m) and θv (h) is the virtual potential temperature at the top of the boundary layer.
+For the convective boundary layer the surface temperature is augmented with the temperature excess that the ther-
+
+mals have with respect to their surroundings:
+
+(125)
+
+One of the main advantages of this scheme is that it is extremely robust with respect to numerical stability. The
+
+explicit calculation of the diffusion coefficients in the local ' -closure can introduce stability problems even if the
+solution method of the diffusion equation is fully implicit (Kalnay and Kanamitsu 1988; Girard and Delage 1990;
+
+Beljaars 1991). The ' -profile method is much more stable as it does not allow for oscillations in the profile of ex-
+change coefficients.
+
+A second advantage is that the non-local aspects of this closure allow for the inclusion of entrainment in the
+
+scheme. However, in the formulation as proposed by Troen and Mahrt, the entrainment is highly dependent on the
+
+details of the numerical formulation and on the vertical resolution.
+
+A disadvantage of the scheme is that it may be difficult to develop generalizations for cloudy and baroclinic bound-
+
+ary layers.
+
+� ′θ′ ' H ∂θ∂�------ γ θ–   , � ′ � ′ ' H
+∂ �
+∂�------ γ g–   ,= =
+
+γ θ V � ′θ′( )0� s -------------------- , γ g V
+� ′ � ′( )0
+� s -------------------- , V 8≈= =
+
+� s
+
+� s � *3 � 1 � *3+( )1 3⁄ , V 8 ,= =
+
+� * �θv----- � ′θ′v( )0 -
+1 3⁄
+
+=
+
+-
+� * c �h-( )2 ! -( )2+{ }
+
+�
+θv
+----- 
+
+  θv -( ) θvs–{ }
+------------------------------------------------------=
+
+θvs θv V � ′θ′v( )0� s---------------------+=
+
+
+
+The parametrization of the planetary boundary layer
+
+50 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+3.5  TKE-closure
+
+The simplest “higher order” closure is the specification of the diffusion coefficients with a prognostic variable for
+
+the turbulence kinetic energy (TKE). Many different formulations have been proposed; most of them are “truncat-
+
+ed” versions of full 2nd order closure schemes. A good overview of the different approximations is given by Mellor
+
+and Mellor and Yamada (1974). Implementations in the context of forecast models are discussed by Delage (1974),
+
+Miyakoda and Sirutis (1977), Manton (1983), Thierry and Lacarrerre (1983), Smith (1984) and Dtmenil (1987).
+
+An example of such a closure is the one proposed by Thierry and Lacarrerre (1983):
+
+(126)
+
+(127)
+
+(128)
+
+(129)
+
+(130)
+
+(131)
+
+d
+$
+
+d �------- � ′ � ′
+∂ �
+∂ �--------– � ′ � ′
+
+∂ !
+∂ �-------–
+
+�
+ρ0
+----- � ′ρ′ ∂∂�------
+
+$
+′ � ′ � ′ � ′
+
+ρ
+------------+ 
+
+ – ε ,––=
+
+' M Vfi[Zji $ 1 2⁄ ,     KH αH'lk ,     K m α m�' M ,= = =
+
+ε V ε
+$ 3 2⁄
+Z ε-----------=
+
+$
+′ � ′ � ′ � ′
+
+ρ
+------------+ 'lm d
+
+$
+d�-------–=
+
+1
+Z ε----
+
+13 �------
+V LE1
+-------------
+
+13 �------
+V LE2
+-------------+   n 1 n 2–
+
+V LE5
+Z s------------+ +=
+
+n
+1 = 1 1 V LE3 -3 �------+  ⁄
+
+n
+2 = 1 1 Vfopm 4
+
+�
+-----–  ⁄ for
+
+�
+0<
+
+= 0 for
+�
+
+0>
+
+1
+Z s--- = 0 locally unstable
+
+=
+�
+θ
+--- 
+
+  ∂θ
+∂�------
+
+1 2⁄ $ 1 2⁄– locally stable
+
+V ε 0.125 , Vfi 0.5 , αH 1 , α m 1 ,= = = =
+
+V LE1 15 , V LE2 5 , V LE3 0.005 , V LE4 1 , V LE5 1.5 ,= = = = =
+
+1
+Zji-----
+
+13 �------
+V LK1
+-------------
+
+13 �------
+V LK2
+-------------+   n ′1 n ′2–
+
+V LK5
+Z s------------+ +=
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 51
+
+The purpose of using the TKE equation is to have a prognostic equation for the turbulent velocity scale. A diag-
+
+nostic equation is still needed for the length scales. More advanced models include an equation for the length scale
+
+(Mellor and Yamada 1982) or for the dissipation rate (Detering and Etling 1985, Beljaars et al. 1987, Duynkerke
+
+and Driedonks 1987). Here we limit to diagnostic length scales.
+
+The background of the closure is relatively simple: we replace the unknown terms by dimensionally correct expres-
+
+sions in known model variables. The nature of the expressions is such that they represent the physics of the con-
+
+sidered terms. Finally, adjustable constants are used to obtain a good fit with data. In the example above, the
+
+diffusion coefficients are chosen proportional to a turbulent velocity scale and a turbulent length scale. Both scales
+
+are supposed to represent the large transporting eddies, and the velocity scale is derived from the turbulent kinetic
+
+energy. The length scale is
+3 � near the surface, proportional to - (boundary layer height) in neutral and unstable
+
+PBL’s and limited by the Obukhov
+�
+
+in very stable flow. The diffusion of TKE is described in the same way as
+
+diffusion of momentum and heat i.e. down-gradient. Dissipation (transformation into heat by viscous forces) takes
+
+place at the smallest turbulent scales which are not modelled at all. The concept of energy cascade is used here
+
+which says that the energy loss at large scales is equal to the dissipation at small scales because no energy can be
+
+lost in the decay of turbulence from large scales to small scales. We therefore can model the dissipation in terms
+
+of large scale velocity and length scales. The amount of energy lost per unit of time on the cascade by the large
+
+eddies is proportional to
+$
+
+divide by the eddy turn-over-time . This explains the parametrization of ε in
+terms of large eddy characteristics.
+
+The TKE equation includes advection terms, but the turbulence terms have relatively short time scales which makes
+
+that the equation is in quasi-equilibrium most of the time. To simplify the equation, the advection terms can be ne-
+
+glected, whereas the time dependence can be retained simply as a technique to “iterate” the solution towards equi-
+
+librium. The main advantage of TKE closure is that it is the simplest closure with some non-local turbulence
+
+aspects. By means of the diffusion of turbulence from the production area in the mixed layer towards the capping
+
+inversion, this closure is capable of describing entrainment (although not necessarily quantitatively correct). Apart
+
+from this advantage it also enables the introduction of more advanced cloud parametrization schemes Smith 1984;
+
+Duynkerke and Driedonks 1987). It is disappointing, however, that experience so far at ECMWF has indicated that
+
+the scheme is more demanding on vertical resolution. From two different studies (Dtmenil 1987; Manton 1983) it
+
+was concluded that the TKE closure has hardly advantages over the simpler Louis (1979) closure with the resolu-
+
+tion that is available in the PBL with the 19 level ECMWF model. A more fundamental problem with higher order
+
+closure schemes is that these schemes do not necessarily reproduce the surface layer similarity laws. These surface
+
+layer laws are always needed to specify the surface boundary condition at the lowest model level. This may result
+
+in an inconsistency between the lowest model layer and the layers aloft.
+
+4. LIST OF SYMBOLS
+
+Transfer coefficients for momentum, heat and moisture
+
+n ′1 = 1 1 V LK3 -3 �------+  ⁄
+n ′2 = 1 1 V LK4
+
+�
+-----–  ⁄ for
+
+�
+0<
+
+= 0 for
+�
+
+0>
+
+V LK1 15 , V LK2 11 , V LK3 0.0025 , V LK4 1 , V LK5 3 .= = = = =
+
+Z $ 1 2⁄⁄
+
+V M V H V Q, ,
+
+
+
+The parametrization of the planetary boundary layer
+
+52 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Neutral transfer coefficients for momentum, heat and moisture
+
+Specific heat at constant pressure
+
+Turbulence kinetic energy
+
+Evaporation
+
+Coriolis parameter
+
+Functional dependence in general
+
+Acceleration of gravity
+
+Boundary layer height
+
+Stability functions of Richardson number
+
+Heat flux
+
+Von Karman constant
+
+Turbulent diffusion coefficients for momentum and heat
+
+Turbulence length scale
+
+Obukhov length
+
+Latent heat of vaporization
+
+Pressure
+
+Surface pressure
+
+Specific humidity of water vapour
+
+Liquid water specific humidity
+
+Total water specific humidity
+
+Gas constant for dry air
+
+Gas constant for water vapour
+
+Richardson number
+
+Bulk Richardson number
+
+Dry static energy
+
+Liquid water static energy
+
+Virtual dry static energy
+
+Temperature
+
+Resolved or mean ���q�  and �  velocities
+Horizontal vector _r�q� ! ^
+Geostrophic wind components
+
+Friction velocity
+
+Total velocities in ���s�  and �  directions
+
+V MN V HN V QN, ,
+��
+$
+
+`
+�
+f
+
+�
+-
+\
+
+M
+\
+
+H,
+
+]
+3
+
+' M ' H,
+Z
+�
+�
+
+vap
+
+�
+� 0
+�
+� l
+� t�
+�
+
+vap� *
+� * b
+�
+� l
+� v
+�
+� !t#, ,
+U
+
+� G ! G,
+� *
+� �u�, ,
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 53
+
+Turbulent parts of the ���q�  and �  velocities
+Entrainment rate
+
+Resolved vertical velocity
+
+Convective velocity scale in the surface layer
+
+Convective velocity scale in the outer layer
+
+Horizontal coordinate (usually west–east)
+
+Horizontal coordinate (usually north–south)
+
+Vertical coordinate (height above the surface)
+
+Dissipation of turbulence kinetic energy
+
+Dimensionless wind and temperature gradients
+
+Potential temperature gradient above mixed layer
+
+Dimensionless stability corrections in wind and temp. profiles
+
+Potential temperature
+
+Liquid water potential temperature
+
+Virtual potential temperature
+
+Mixed layer temperature
+
+Temperature jump at the top of the mixed layer
+
+Turbulent temperature scale
+
+Asymptotic turbulence length scale
+
+Local Obukhov length
+
+Standard deviation
+
+Turbulent stress
+
+Surface stress
+
+Horizontal components of stress
+
+Horizontal components of surface stress
+
+Kinematic viscosity of air
+
+Density
+
+REFERENCES
+
+Beljaars, A.C.M., Walmsley, J.L. and Taylor, P.A. (1987): A mixed spectral finite difference model for neutrally
+
+stratified boundary-layer flow over roughness changes and topography, Bound.-Layer Meteor., 38, 273-303.
+
+� ′ � ′ � ′,,
+� e
+� L
+� *s
+� *
+�
+�
+�
+
+ε
+
+ϕM φH,
+
+γ
+
+ΨM ΨH,
+
+θ
+
+θl
+
+θv
+
+θm
+
+∆θm
+
+θ*
+
+λ
+
+Λ
+
+σ
+
+τ
+
+τ0
+
+τ > τ?,
+τ > 0 τ? 0,
+ν
+
+ρ
+
+
+
+The parametrization of the planetary boundary layer
+
+54 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Beljaars, A.C.M. and Miller, M. (1991): The sensitivity of the ECMWF model to the parametrization of evapora-
+
+tion from the tropical oceans, ECMWF Technical Memo No. 170.
+
+Beljaars, A.C.M. (1991): Numerical schemes for parametrizations, ECMWF seminar proceedings on: Numerical
+
+methods in atmospheric models Vol II, 1-42.
+
+Beljaars, A.C.M. and Holtslag, A.A.M. (1991): On flux parametrization over land surfaces for atmospheric models,
+
+J. Appl. Meteor., 30, 327-341.
+
+Blackadar, A.K. (1962): The vertical distribution of wind and turbulent exchange in a neutral atmosphere, J. Geoph.
+
+Res., 67, 3095-3102.
+
+Brutsaert, W. (1982): Evaporation into the atmosphere, Reidel publishers.
+
+Businger, J.A., Wyngaard, J.C., Izumi, Y. and Bradley, E.F. (1971): Flux-profile relationships in the atmospheric
+
+surface layer, J. Atmos. Sci., 28, 181-189.
+
+Clarke, R.H. and Hess, G.D. (1974): Geostrophic departure and the functions A and B of Rossby-number theory,
+
+Bound.-Layer Meteor., 7, 267-287.
+
+Deardorff, J.W. (1972): Parameterization of the planetary boundary layer for use in general circulation models,
+
+Month. Weath. Rev., 2, 93-106.
+
+Delage, Y. (1974): A numerical study of the nocturnal atmospheric boundary layer, Quart. J. R. Meteor. Soc., 100,
+
+351-364.
+
+Detering, H.W. and Etling, D. (1985): Application of the E-eps turbulence closure model to the atmospheric bound-
+
+ary layer, Bound.-Layer Meteor., 33, 113-133.
+
+Driedonks, A.G.M. and Tennekes, H. (1984): Entrainment effects in the well mixed atmospheric boundary layer,
+
+Bound.-Layer Meteor., 30, 75-105.
+
+Dtmenil, L. (1987): Turbulence closure applied to the parameterization of vertical diffusion in the ECMWF model,
+
+ECMWF Technical Memo No. 132.
+
+Duynkerke, P.G. and Driedonks, A.G.M. (1987): A model for the turbulent structure of the stratocumulus-topped
+
+atmospheric boundary layer, J. Atmos. Sci., 44, 43-64.
+
+Dyer, A.J. (1974): A review of flux-profile relationships, Bound.-Layer Meteor., 7, 363-372. Haugen, D.A. (ed.
+
+1973): Workshop on micro meteorology, Am. Meteor. Soc.
+
+Garratt, J.R. and Francey, R.J. (1978): Bulk characteristics of heat transfer in the unstable, baroclinic atmospheric
+
+boundary layer, Bound.-Layer Meteor., 15, 399-421.
+
+Girard, C. and Delage, Y. (1990): Stable schemes for the vertical diffusion in atmospheric circulation models,
+
+Moth. Weath. Rev., 118, 737-746.
+
+Hicks, B.B. (1976): Wind profile relationships from the ‘Wangara’ experiments, Quart. J. Roy. Meteor. Soc., 102,
+
+535-551.
+
+Hogstrom, U. (1988): Non-dimensional wind and temperature profiles in the atmospheric surface layer: A re-eval-
+
+uation, Bound.-Layer Meteor., 42, 55-78.
+
+Holton, J.R. (1979): An introduction to dynamic meteorology, Academic Press.
+
+Holtslag, A.A.M. (1984): Estimates of diabatic wind speed profiles from near-surface weather observations,
+
+Bound.-Layer Meteor., 29, 225-250.
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 55
+
+Holtslag, A.A.M. and Nieuwstadt, F.T.M. (1986): Scaling the atmospheric boundary layer, Bound.-Layer Meteor.,
+
+36, 201-209.
+
+Holtslag, A.A.M. and De Bruin, H.A.R. (1988): Applied modeling of the night-time surface energy balance over
+
+land, J. Appl. Meteor., 27, 689-704.
+
+Holtslag, A.A.M., De Bruin, E.I.F. and Pan, H.L. (1990): A high resolution air mass transformation model for
+
+short-range weather forecasting, Month. Weath. Rev., 118, 1561-1575.
+
+Kalnay, E. and Kanamitsu, M. (1988): Time schemes for strongly nonlinear damping equations, Month. Weath.
+
+Rev., 116, 1945-1958.
+
+Kennedy, P.J. and Shapiro, M.A. (1980): Further encounters with clear air turbulence in research aircraft, J. Atmos.
+
+Sci., 37, 986-993.
+
+Kim, J. and Mahrt, L. (1991): Turbulent mixing in the stable free atmosphere and the nocturnal boundary layer,
+
+submitted to Tellus.
+
+Kondo, J., Kanechika, O. and Yasuda, N. (1978): Heat and momentum transfers under strong stability in the atmos-
+
+pheric surface layer, J.Atmos. Sci., 35, 1012-1021.
+
+Large, W.G. and Pond, S. (1982): Sensible and latent heat flux measurements over the ocean, J. Phys. Oceanogr.,
+
+12, 464-482.
+
+Louis, J.F. (1979): A parametric model of vertical eddy fluxes in the atmosphere, Bound.-Layer Meteor., 17, 187-
+
+202.
+
+Louis, J.F., Tiedtke, M. and Geleyn, J.F. (1982): A short history of the operational PBL-parameterization at EC-
+
+MWF, Workshop on boundary layer parameterization, November 1981, ECMWF, Reading, England.
+
+Manton, M.J. (1983): On the parametrization of vertical diffusion in large-scale atmospheric models, Technical
+
+Rep. No. 39, ECMWF, Reading, UK.
+
+Mason. P.J. (1985): On the parameterization of orographic drag, MET. O. 14, T.D.N. No. 177, Meteorological Of-
+
+fice, Bracknell, UK.
+
+Mason, P.J. (1988): The formation of areally-averaged roughness lengths, Quart. J. Roy. Meteor. Soc., 114, 399-
+
+420.
+
+Mason, P.J. (1991): Boundary layer parametrization in heterogeneous terrain, In: ECMWF workshop proceedings
+
+on Fine-scale modelling and the development of parametrization schemes.
+
+Mellor, G.L. and Yamada, T. (1974): A hierarchy of turbulence closure models for planetary boundary layers, J.
+
+Atmos. Sci., 31, 1791-1806.
+
+Mellor, G.L. and Yamada, T. (1982): Development of a turbulence closure model for geophysical fluid problems,
+
+Rev. Geoph. Space Phys., 20, 851-875.
+
+Miyakoda, K. and Sirutis, J. (1977): Comparative integration of global models with various parameterized proc-
+
+esses of subgrid-scale vertical transports: Description of the parameterizations, Beitr. Phys. Atmos., 50, 445-487.
+
+Monin, A.S. and Yaglom, A.M. (1971): Statistical fluid dynamics, Vol I, MIT press.
+
+Monteith, J.L. (1981): Evaporation and surface temperature, Quart. J. Roy. Meteor. Soc., 107, 1-27.
+
+Nieuwstadt, F.T.M. and Van Dop, H. (eds. 1982): Atmospheric turbulence and air pollution modelling, Reidel pub-
+
+lishers.
+
+
+
+The parametrization of the planetary boundary layer
+
+56 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Nieuwstadt, F.T.M. (1981): The steady-state height and resistance laws of the nocturnal boundary layer: Theory
+
+compared with Cabauw observations, Bound.-Layer Meteor., 20, 3-17.
+
+Nieuwstadt, F.T.M. (1984): The turbulent structure of the stable, nocturnal boundary layer, J. Atmos. Sci., 41,
+
+2202-2216.
+
+Oke, T.R. (1978): Boundary layer climates, Halsted press.
+
+Paulson, C.A. (1970): The mathematical representation of wind speed and temperature profiles in the unstable at-
+
+mospheric surface layer, J. Appl. Meteor., 9, 857-861.
+
+Smith, R.N.B. (1984): The representation of boundary layer turbulence in the mesoscale model: Part I - The scheme
+
+without changes of state, Met. Office 11, Tech. Note No. 186, Bracknell, UK.
+
+Smith, R.N.B. (1984): The representation of boundary layer turbulence in the mesoscale model: Part II - The
+
+scheme with changes of state, Met. Office 11, Tech. Note No. 187, Bracknell, UK.
+
+Smith, R.N.B. (1990): A scheme for predicting layer clouds and their water content in a general circulation model,
+
+Quart. J. Roy. Meteor. Soc., 116, 435-460.
+
+Smith, S.D. (1988): Coefficients for sea surface wind stress, heat flux, and wind profiles as a function of wind speed
+
+and temperature, J. Geoph. Res., 93, 15467-15472.
+
+Smith, S.D. (1989): Water vapor flux at the sea surface, Bound.-Layer Meteor., 47, 277-293.
+
+Stull, R.B. (1988): An introduction to boundary layer meteorology, Kluwer publishers.
+
+Taylor, P.A., Sykes, R.I. and Mason, P.J. (1989): On the parameterization of drag over small-scale topography in
+
+neutrally-stratified boundary-layer flow, Bound.-Layer Meteor., 48, 408-422.
+
+Tennekes, H. and Lumley, J.L. (1972): A first course in turbulence, MIT press.
+
+Tennekes, H. (1973): Similarity laws and scale relations in planetary boundary layers, in: Workshop on microme-
+
+teorology, ed. D.A. Haugen, AMS.
+
+Thierry, G. and Lacarrerre, P. (1983): Improving the eddy kinetic energy model for planetary boundary layer de-
+
+scription, Bound.-Layer Meteor., 25, 63-88.
+
+Troen, I. and Mahrt, L. (1986): A simple model of the atmospheric boundary layer; sensitivity to surface evapora-
+
+tion, Bound.-Layer Meteor., 37, 129-148.
+
+Ueda, H., Mitsumoto, S. and Komori, S. (1981): Buoyancy effects on the turbulent transport processes in the lower
+
+atmosphere, Quart. J. Roy.Meteor. Soc., 107, 561-578.
+
+Van Der Hoven, I. (1957): Power spectrum of horizontal wind speed in the frequency range from 0.0007 to 900
+
+cycles per hour, J. Meteor., 14, 160-164.
+
+Van Wijk, A.J.M., Beljaars, A.C.M., Holtslag, A.A.M. and Turkenburg, W.C.(1990): Diabatic wind speed profiles
+
+in coastal regions: Comparison of an internal boundary layer model with observations, Bound.-Layer Meteor., 51,
+
+49-75.
+
+Van Wijk, A.J.M., Beljaars, A.C.M., Holtslag, A.A.M. and Turkenburg, W.C. (1990): Evaluation of stability cor-
+
+rections in wind speed profiles over the North-Sea, J. Wind Engin. Ind. Aerodyn., 33, 551-566.
+
+Wieringa, J. (1986): Roughness-dependent geographical interpolation of surface wind speed averages, Quart. J.
+
+Roy. Meteor. Soc., 112, 867-889.
+
+Wilson, M.F. and Hederson-Sellers, A. (1985): A global archive of land cover and soils data for use in general cir-
+
+
+
+The parametrization of the planetary boundary layer
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 57
+
+culation models, J. Clim., 5, 119-143.
+
+Wood, N. and Mason, P.J. (1991): The influence of static stability on the effective roughness lengths for momentum
+
+and heat transfer, Quart. J. Roy. Meteor. Soc., in press.
+
+Zilitinkevich, S.S. (1972): On the determination of the height of the Ekman boundary layer, Bound.-Layer Meteor.,
+
+3, 141-145.

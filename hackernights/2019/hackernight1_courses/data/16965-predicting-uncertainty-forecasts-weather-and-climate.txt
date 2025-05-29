@@ -1,0 +1,4272 @@
+Predicting_uncertainty
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 1
+
+Predicting uncertainty in forecasts of weather
+and climate
+(Also published as ECMWF Technical Memorandum No. 294)
+
+By T.N. Palmer
+
+Research Department
+
+November 1999
+
+Abstract
+
+The predictability of weather and climate forecasts is determined by the projection of uncertainties in both initial conditions
+and model formulation onto flow-dependent instabilities of the chaotic climate attractor. Since it is essential to be able to
+estimate the impact of such uncertainties on forecast accuracy, no weather or climate prediction can be considered complete
+without a forecast of the associated flow-dependent predictability. The problem of predicting uncertainty can be posed in terms
+of the Liouville equation for the growth of initial uncertainty, or a form of Fokker-Planck equation if model uncertainties are
+also taken into account. However, in practice, the problem is approached using ensembles of integrations of comprehensive
+weather and climate prediction models, with explicit perturbations to both initial conditions and model formulation; the
+resulting ensemble of forecasts can be interpreted as a probabilistic prediction.
+
+Many of the difficulties in forecasting predictability arise from the large dimensionality of the climate system, and special
+techniques to generate ensemble perturbations have been developed. Special emphasis is placed on the use of singular-vector
+methods to determine the linearly unstable component of the initial probability density function. Methods to sample
+uncertainties in model formulation are also described. Practical ensemble prediction systems for prediction on timescales of
+days (weather forecasts), seasons (including predictions of El Niño) and decades (including climate change projections) are
+described, and examples of resulting probabilistic forecast products shown. Methods to evaluate the skill of these probabilistic
+forecasts are outlined. By using ensemble forecasts as input to a simple decision-model analysis, it is shown that probability
+forecasts of weather and climate have greater potential economic value than corresponding single deterministic forecasts with
+uncertain accuracy.
+
+Table of contents
+
+1 . Introduction
+
+1.1 Overview
+
+1.2 Scope
+
+2 . The Liouville equation
+
+3 . The probability density function of initial error
+
+4 . Representing uncertainty in model formulation
+
+5 . Error growth in the linear and nonlinear phase
+
+5.1 Singular vectors, eigenvectors and Lyapunov vectors
+
+5.2 Error dynamics and scale cascades
+
+6 . Applications of singular vectors
+
+6.1 Data assimilation
+
+6.2 Chaotic control of the observing system
+
+6.3 The response to external forcing: paleoclimate and anthropogenic climate change
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+6.4 Initialising ensemble forecasts
+
+7 . Forecasting uncertainty by ensemble prediction
+
+7.1 Global weather prediction: from 1-10 days
+
+7.2 Seasonal to interannual prediction
+
+7.3 Decadal prediction and anthropogenic climate change
+
+8 . Verifying forecasts of uncertainty
+
+8.1 The Brier score and its decomposition
+
+8.2 Relative operating characteristic
+
+9 . The economic value of predicting uncertainty
+
+10 . Concluding remarks
+
+1. INTRODUCTION
+
+1.1  Overview
+
+A desirable if not necessary characteristic of any physical model is an ability to make falsifiable predictions. Such
+
+predictions are the life blood of meteorology and climate science. Predictions from vast computer models of the
+
+atmosphere, integrating the Navier-Stokes equations for a three dimensional multi-constituent multi-phase rotating
+
+fluid, and coupled to a representation of the land surface, are continually put to the test through the daily weather
+
+forecast (e.g. Bengtsson, 1999; see also http://www.ecmwf.int). On seasonal to interannual timescales, these same
+
+models, with 2-way coupling to similar mathematical representations of the global oceans, predict the development
+
+of phenomena such as El Niño, with consequences for seasonal rainfall and temperature patterns around much of
+
+the globe (e.g. Stockdale et al., 1998; see also http://www.iges.org/ellfb). Coupled ocean-atmosphere models are
+
+also widely used to make predictions of possible changes in climate over the next century as a result of anthropo-
+
+genic influence on the composition of the atmosphere (e.g. IPCC, 1996).
+
+However, there is little sense in making predictions without having some prior sense of the accuracy of those pre-
+
+dictions (Tennekes, 1991); quantification of error is a basic tenet in experimental physics. Earth's climate is a pro-
+
+totypical chaotic system (Lorenz, 1993), implying that its evolution is sensitive to the specification of the initial
+
+state; however, an appreciation of the importance of quantifying the role that initial error plays in limiting the ac-
+
+curacy of weather predictions pre-dates the development of chaotic models (Thompson, 1957).
+
+How would one go about making an a priori assessment of the accuracy of a weather forecast, or a prediction of El
+
+Niño? Of course, a 'climatological-mean' error can be derived by verifying a past set of predictions, and averaging
+
+the resulting forecast errors. However, such a crude estimate may not be particularly useful. Chaotic dynamics im-
+
+plies not only that a forecast is sensitive to initial error, but also that the rate of growth of initial error is itself a
+
+function of the initial state (see Section 2). Weather forecasters have a practical sense of this dependence of error
+
+growth on initial state; certain types of atmospheric flow are known to be rather stable and hence predictable, others
+
+to be unstable and unpredictable. As such, a key to predicting forecast uncertainty lies in the estimation of the ef-
+
+fects of local instabilities in regions of phase space through which a forecast trajectory is likely to pass.
+
+In addition to error in initial conditions, the accuracy of weather and climate forecasts are influenced by our ability
+
+to represent computationally the full equations of that govern climate. For example, there will be inevitable errors
+
+in representing circulations on scales comparable with or smaller than a model's truncation scale. These errors can
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 3
+
+propagate upscale and influence weather and climate phenomena with characteristic size much larger than the trun-
+
+cation scale. Uncertainty in model formulation is certainly one of the most important factors which undermine con-
+
+fidence in climate forecasts - representation of cloud systems (in models which cannot resolve individual clouds)
+
+being a particular manifestation of this problem. As with initial error, uncertainties in model formulation impact
+
+on climatic circulation patterns through the projection of these uncertainties onto flow-dependent dynamical insta-
+
+bilities of the climate system.
+
+In the body of this paper, results are shown from a number of numerical models of the climate system. It is useful
+
+to consider three types of model, distinguished by their degree of complexity. The first could be thought of as 'toy'
+
+models; they are used primarily to illustrate particular paradigms. Examples are the Lorenz (1963) model and the
+
+delayed oscillator model (see Sections 2 and 7). The second type of model could be described as 'intermediate'; it
+
+certainly has prognostic value, but is based on simplified equations of motion where terms which are second order
+
+in some small parameter are ignored. For many examples discussed in this paper, the so-called Rossby number
+
+(e.g. Gill, 1982) is such a parameter. Here, , denote a typical horizontal velocity and length
+
+scale associated with a particular climatic or weather phenomenon, is the Coriolis parameter, where
+
+is the angular speed of the Earth and denotes latitude. Examples of intermediate models, are the atmospheric
+
+quasigeostrophic model (e.g. Marshall and Molteni, 1993: see Sections 3 and 7), and a simplified coupled ocean-
+
+atmosphere model of El Niño (e.g. Zebiak and Cane, 1987: see Sections 5 and 7). Intermediate models are gener-
+
+ally truncated to have O(103) or less degrees of freedom, which makes numerical integration and stability analysis
+
+extremely tractable by modern computing standards.
+
+The final type of model in the hierarchy of complexity are the comprehensive global climate and weather prediction
+
+models; these typically have O(106-107) degrees of freedom. At national (and international) meteorological and
+
+climate centres, quantitative weather and climate predictions are now almost universally based on output from these
+
+types of model. The models are formulated using finite (Galerkin) truncations of fluid-dynamic partial differential
+
+equations where (at most) only the hydrostatic assumption is applied to filter meteorologically-unimportant modes.
+
+A possible (and easily visualised) representation is in terms of grid points in physical space; a typical resolution
+
+would be about 100 km in the horizontal and 1km in the vertical (somewhat finer for weather prediction models,
+
+somewhat coarser for climate prediction models with longer integration times). These equations describe the local
+
+evolution of mass, energy, momentum and composition, with suitable source and sink terms. The most important
+
+atmospheric composition variable is water, represented in each of its different phases. Details of these equations
+
+can be found in many references (e.g. Trenberth, 1992). Such comprehensive models are integrated on supercom-
+
+puters, with (at the time of writing) typical sustained speeds of O(1011) floating point operations per second. In
+
+practice, the difference between the atmosphere component of weather and climate prediction models is not great
+
+- and in some instances there is no difference; however, weather prediction models do not generally have an inter-
+
+active ocean, whilst climate models do. An example of this third type of comprehensive model, discussed below,
+
+is the European Centre for Medium-Range Weather Forecasts (ECMWF) weather and climate prediction model
+
+(Bengtsson, 1999).
+
+In this paper, we consider two types of prediction. Following Lorenz (1975), we refer to initial value problems as
+
+'predictions of the first kind'. By contrast, forecasts which are not dependent on initial conditions, for example pre-
+
+dicting changes in the statistics of climate as a result of some prescribed imposed perturbation, would constitute a
+
+'prediction of the second kind'. A weather forecast is clearly a prediction of the first kind; so is a forecast of El Niño,
+
+referred to as a climate prediction of the first kind. By contrast, estimating the effects on climate of a prescribed
+
+volcanic emission, prescribed variations in Earth's orbit (thought to cause ice ages) or prescribed anthropogenic
+
+changes in atmospheric composition, would constitute a climate prediction of the second kind.
+
+Ro U fL⁄= U L
+f 2Ω φsin=
+
+Ω φ
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+1.2  Scope
+
+This paper deals with the problem of forecasting uncertainty in weather and climate prediction from its theoretical
+
+basis, through an outline of practical methodologies, to an analysis of validation techniques including estimates of
+
+potential economic value. The author hopes that the mathematical description of these components will be of some
+
+help to readers wishing to gain some introduction to the quantitative methods used in the subject. However, at the
+
+least, the reader will be able to deduce that the topic of weather and climate prediction is quantitative and objective.
+
+(The days are over, of hanging out the seaweed, examining the size of molehills, or studying animal entrails for
+
+portents of coming tempests - that is, unless the computers are down!) On the other hand, readers not interested in
+
+the details of the mathematics should be able to appreciate many of the results given without dwelling on the equa-
+
+tions at any length.
+
+In Section 2, we consider how to forecast uncertainty in a prediction of the first kind, assuming a perfect determin-
+
+istic forecast model. The evolution equation for the probability density function (pdf) of the climate state vector is
+
+the Liouville equation; an example of its solution is given for illustration. However, application to the real climate
+
+system is severely hampered by two fundamental problems. The first is directly associated with the dimensionality
+
+of the climate equations; as mentioned above, current numerical weather prediction models comprise O(107) indi-
+
+vidual scalar variables. The second problem (not unrelated to the first) is that, in practice, the initial pdf is not itself
+
+well known.
+
+To amplify on this last remark, a description of current (variational) meteorological data assimilation schemes is
+
+described in Section 3. These schemes are used to determine initial conditions for weather and climate forecasts,
+
+given a set of atmospheric and oceanic observations whose density is heterogeneous in both space and time. Such
+
+data assimilation schemes are based on minimising a cost function which combines these observations with a back-
+
+ground estimate of the initial state provided by a short-range model forecast from an earlier set of initial conditions.
+
+In principle, given Gaussian error statistics, the Hessian or second derivative of the cost function determines the
+
+initial pdf. In practice, there are significant shortcomings in our ability to estimate this pdf.
+
+The number of degrees of freedom in comprehensive climate and weather prediction models is not determined by
+
+any scientific constraint (there is no obvious 'gap' in the energy spectrum of atmospheric motions), but rather by
+
+the degree of complexity than can be accommodated using current computer technology. As such, there are inevi-
+
+tably processes occurring in the atmosphere and oceans which are partially resolved or unresolved and must be rep-
+
+resented by some parametrised closure approximation. Examples are associated with cloud formation and
+
+dissipation, and momentum transfer to the solid earth by topography. However, there is a fundamental indetermi-
+
+nacy in the formulation of these parametrisations since there is no meaningful scale separation between resolved
+
+and unresolved scales in the climate system. Section 4 describes two recent attempts to represent the pdf associated
+
+with this uncertainty in the computational representation of the equations of motion of climate: the multi-model
+
+ensemble, and stochastic parametrisation.
+
+A theoretical framework for describing error growth is developed in Section 5. Two common measures of pertur-
+
+bation amplification used in different branches of physics and mathematics are normal mode growth and Lyapunov
+
+exponent growth. Neither is well suited to describing error growth in the climate system. Firstly, because of the
+
+advective nonlinearity in the governing equations of motion, the linearised dynamical operators are not normal; as
+
+such, over finite times, perturbation growth need not be bounded by the fastest eigenmode growth. Also, dominant
+
+Lyapunov or eigenmode growth in a comprehensive multi-scale model may refer to fast instabilities (such as con-
+
+vective instabilities) whose spatial scales are much smaller than those describing weather or climate phenomena.
+
+To address these problems, we discuss in Section 5 a general formulation of perturbation growth in the linearised
+
+approximation, in terms of a singular value decomposition of the linearised dynamics (building on the develop-
+
+ments in Section 3). Examples of singular vectors for weather and climate prediction problems are shown, and their
+
+fundamental non-modality is discussed. Because of the nonlinearity of the underlying dynamics, the appropriate
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 5
+
+singular values vary on the attractor; this variation describes why forecast error can fluctuate for fixed initial error.
+
+The variation of singular values on the attractor is also relevant for understanding the amplification of model error
+
+by flow dependent instabilities. The relationship between singular values, eigevalues and Lyapunov exponents is
+
+discussed.
+
+Section 6 discusses some applications of the singular vector analysis. In one application ('chaotic control of the
+
+observing system') singular vectors are used to determine locations where additional 'targeted' observations might
+
+significantly improve a forecast's initial state.
+
+Section 7 describes the basis behind attempts to predict uncertainty in daily, seasonal and climate change forecasts
+
+using ensembles of atmosphere or coupled ocean-atmosphere model integrations. In practice such ensembles are
+
+interpreted in probabilistic form. If the ensemble of forecast phase-space trajectories evolve though a relatively sta-
+
+ble part of the climate attractor, then resulting probability forecasts will be relatively sharp. Conversely, if the en-
+
+semble passes through a particularly unstable part of the attractor, then the corresponding forecast probability may
+
+be little different from a long-term climatological frequency.
+
+The question of how to validate probability forecasts is discussed in Section 8. Two particular techniques are de-
+
+scribed. The first is based on a root mean square distance between the probability forecast of a dichotomous event
+
+and the corresponding verification. This measure allows one to formulate the notion of reliability of probability
+
+forecasts. The second quantity measures the so-called hit and false alarm rate of the forecast of a dichotomous
+
+event, assuming that the event is forecast if the predicted probability exceeds some prescribed probability thresh-
+
+old.
+
+A fundamental question when assessing probability forecasts is whether a useful level of skill has been attained.
+
+Obviously, different users have different criteria for judging usefulness. For some, probability forecasts might be
+
+deemed useless unless they are sharp and quasi-deterministic. For others, who might be looking to accrue benefit
+
+over a long time, forecast probabilities which are only marginally different from climatological frequencies, may
+
+be useful. To assess this issue more quantitatively, a simple cost/loss decision model is applied in Section 9 based
+
+on the hit and false alarm rates discussed in Section 8. It is shown, that the (potential) economic value of probability
+
+weather forecasts for a variety of users, is higher than the corresponding value from single, deterministic forecasts.
+
+Concluding remarks are made in Section 10.
+
+2. THE LIOUVILLE EQUATION
+
+The evolution equations in a climate or weather prediction model are conventionally treated as deterministic. These
+
+(N dimensional) equations, based on spatially-truncated momentum, energy, mass and composition conservation
+
+equations will be written schematically as
+
+(1)
+
+where describes an instantaneous state of the climate system in -dimensional phase space. Eq. (1) is funda-
+
+mentally nonlinear and deterministic in the sense that, for any initial state , the equation determines a unique
+
+forecast state . (As described in Section 3 below, information from meteorological observations are combined
+
+with a prior background state through a process called data analysis and assimilation. In meteorology, the initial
+
+state is often referred to as the initial ‘analysis’ - hence the subscript ‘a’.)
+
+The meteorological and oceanic observing network is sparse over many parts of the world, and the observations
+
+themselves are obviously subject to measurement error. The resulting uncertainty in the initial state can be repre-
+
+sented by the pdf ; given a volume of phase space, then is the probability that the true
+
+Ẋ F X[ ]=
+
+X N
+X a
+
+X f
+
+ρ X ta,( ) V ρ X ta,( ) VdV∫
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+initial state at time lies in . If is bounded by an isopleth of (i.e. co-moving in phase space), then,
+
+from the determinism of Eq. (1), the probability that lies in is time invariant. Hence, (similar to the mass
+
+continuity equation in physical space), the evolution of is given by the Liouville conservation equation (intro-
+
+duced in a meteorological context by Gleeson, 1966, and Epstein, 1969)
+
+(2)
+
+where is given by Eq. (1). In the second term of Eq. (2), there is an implied summation over all the components
+
+of .
+
+Fig. 1 illustrates schematically the evolution of an isopleth of . For simplicity we assume the initial pdf
+
+is isotropic (e.g. by applying a suitable coordinate transformation). In the early part of the forecast, the isopleth
+
+evolves in a way consistent with linearised dynamics; the N-ball at initial time has evolved to an N-ellipsoid at fore-
+
+cast time . For weather scales of 0(103) km, this linear phase lasts for about 1-2 days into the forecast. Beyond
+
+this time, the isopleth starts to deform nonlinearly. The third schematic shows the isopleth at a forecast range in
+
+which errors are growing nonlinearly. Predictability is finally lost when the forecast pdf has evolved ir-
+
+reversibly to the invariant distribution ?inv of the attractor. This is shown schematically in Fig. 1 using the Lorenz
+
+(1963) attractor - a ‘toy-model’ surrogate of the real climate attractor (Palmer, 1993a).
+
+Figure 1: Schematic evolution of an isopleth of the probability density function (pdf) of initial and forecast error
+
+in -dimensional phase space. (a) At initial time, (b) during the linearised stage of evolution. A (singular) vector
+
+pointing along the major axis of the pdf ellipsoid is shown in (b), and its pre-image at initial time is shown in (a).
+
+(c) The evolution of the isopleth during the nonlinear phase is shown in (c); there is still predictability, though the
+
+pdf is no longer Gaussian. (d) Total loss of predictability, occurring when the forecast pdf is indistinguishable
+
+from the attractor's invariant pdf.
+
+As mentioned in the introduction, the growth of the pdf through the forecast range is a function of the initial state.
+
+This can be seen by considering a small perturbation to the initial state . From Eq. (1), the evolution equa-
+
+tion for  is given by
+
+(3)
+
+where the Jacobian is defined as
+
+(4)
+
+X true ta V V ρ
+X true V
+
+ρ
+
+∂ρ
+∂t
+------
+
+∂
+∂X
+------- Ẋ ρ( ) Lρ≡–=
+
+Ẋ
+X
+
+ρ X ta,( )
+
+t1
+
+ρ X ta,( )
+
+N
+
+δx X a
+δx
+
+δ ẋ Jδx=
+
+J dF dX⁄=
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 7
+
+Since is at least quadratic in , then is at least linearly dependent on . This dependency is illustrated
+
+in Fig. 2 showing the growth of an initial isopleth of an idealised pdf at three different positions on the Lorenz
+
+(1963) attractor. In the first position, there is little growth, and hence large local predictability. In the second posi-
+
+tion there is some growth as the pdf evolves towards the lower middle half of the attractor. In the third position,
+
+initial growth is large, and the resulting predictability is correspondingly small.
+
+Figure 2: Phase-space evolution of an ensemble of initial points on the Lorenz (1963) attractor, for three different
+
+sets of initial conditions. Predictability is a function of initial state.
+
+The nonlinear phase of pdf evolution can be much longer than the linear phase. For example, Smith et al. (1999)
+
+have studied the evolution of an initial pdf on the Lorenz (1963) attractor using a Monte Carlo process. The initial
+
+pdf was obtained by adding some notional prescribed 'observation' error to points on the attractor. The initial pdf
+
+is sharp, consistent with a small 'observation' error, and initially spreads out in a way consistent with linear theory.
+
+The pdf resharpens as it enters the region of phase space where small perturbations decay with time (cf Fig. 2 ),
+
+and then bifurcates, leading to a highly non-normal distribution. The existence of such bimodal behaviour indicates
+
+that it may not be sufficient to describe forecast uncertainty in terms of a simple ‘error bar'.
+
+F X[ ] X J X
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+As shown in Ehrendorfer (1994a), the Liouville equation can be formally solved to give the value of at a given
+
+point  in phase space at forecast time . Specifically
+
+(5)
+
+where ' ' denotes the trace operation. The point in this equation corresponds to that initial point, which, under
+
+the action of Eq. (1) evolves to the given point  at time .
+
+Figure  3: An analytical solution to the Liouville equation for an initial Gaussian pdf (shown peaked on the right-
+
+hand side of the figure) evolved using the Riccati equation (see text). From Ehrendorfer (1994a).
+
+Using the identity , then Eq. (5), can be written as
+
+(6)
+
+where
+
+(7)
+
+is the so-called forward tangent propagator, mapping a perturbation , along the nonlinear trajectory from
+
+to  to
+
+(8)
+
+A simple example which illustrates this solution to the Liouville equation is given in Fig. 3 , for a 1 dimensional
+
+Riccati equation (Ehrendorfer, 1994a)
+
+(9)
+
+ρ
+X t
+
+ρ X t,( ) ρ X ′ ta,( ) tr J t′( )dt′[ ]ta
+t
+
+∫
+ 
+ 
+ 
+
+exp⁄=
+
+tr
+X t
+
+det Aexp tr exp A=
+
+ρ X t,( ) ρ X ′ ta,( ) detM t ta,( )⁄=
+
+M t ta,( ) J t′( ) t′d
+ta
+
+t
+
+∫exp=
+
+δx ta( ) X
+X′
+
+δx t( ) M t ta,( )δx ta( )–
+
+Ẋ aX 2– bX c+ +
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 9
+
+where , based on an initial Gaussian pdf. The pdf evolves away from the unstable equilibrium point at
+
+and therefore reflects the dynamical properties of Eq. (9). Within the integration period, this pdf has
+
+evolved to the nonlinear phase.
+
+The forward tangent propagator plays an important role in meteorological data assimilation systems; see Section 3
+
+below. However, even though the forward tangent propagator may exist as a piece of computer code, this does not
+
+mean that the Liouville equation can be readily solved for the weather prediction problem. Firstly, the determinant
+
+of the forward tangent propagator is determined by the product of all its singular values (see Section 5). For a com-
+
+prehensive weather prediction model, a determination of the full set of O(107) singular values is currently impos-
+
+sible. Secondly, the inversion of Eq. (1) to find an initial state , given a forecast state , is itself problematic.
+
+Even on timescales of a day or so, decaying phase-space directions (as determined by the existence of small sin-
+
+gular values of the propagator, see Section 5) will lead to the inversion being poorly conditioned (Reynolds and
+
+Palmer, 1998). Thirdly, a particular type of weather at a particular location is not related 1-1 with a state of the
+
+climate system. For example, to estimate the probability of it raining in London two days from now, we would have
+
+to apply Eq. (6) and the inversion to find , to each state on the climate attractor, for which it is raining in London.
+
+An alternative to using the solution form (6) is to integrate the partial differential equation (2) by randomly sam-
+
+pling the initial pdf, and integrating each sampled point using (1); the Monte-Carlo solution. However, the problem
+
+of dimensionality continues to be a significant issue. If phasespace is dimensional, then, even in the linear phase,
+
+O(N2) integrations will be needed to determine the forecast error covariance matrix. In the nonlinear phase, many
+
+more integrations are needed to determine the pdf, as it begins to wrap itself around the attractor. Ehrendorfer
+
+(1994b) has shown that even for a 3-dimensional dynamical system, a Monte-Carlo sampling of O(102) points can
+
+be insufficient to determine the pdf within the nonlinear range.
+
+Yet another method of solution of the Liouville equation is possible, writing Eq. (2) in terms of an infinite hierarchy
+
+of equations for the moments of , and applying some closure to this set of moments (Epstein, 1969). This method
+
+is certainly useful for evolving the pdf within the linearised phase, and indeed forms the basis of the so-called Ka-
+
+lman filter approaches to data assimilation (see Section 3 below). Ehrendorfer (1994b) has shown that in the non-
+
+linear phase, substantial errors in estimating the first and second moments of can arise from neglecting third and
+
+higher order moments. A more sophisticated approach to closure is to use arguments from turbulence theory (see
+
+Section 5) to seek scaling relations between moments (Frisch, 1995). Nicolis and Nicolis (1998) have studied an
+
+approach in which high order moments are expressed as time-independent functionals of low-order moments,
+
+based on a study of dynamical systems which showed that subsets of moments vary on a timescale given by the
+
+dominant eigenvalues of the Liouville operator , defined in Eq. (2). In general, however, this method of moment
+
+decomposition has not yet been studied in the context of realistic weather and climate systems.
+
+In conclusion, whilst a formal analytic solution can be found to the problem of predicting the forecast pdf, there
+
+are practical problems associated with the dimension of the underlying dynamical system. However, the issue of
+
+dimensionality affects the problem in other, more insidious, ways. These are discussed in the next two sections.
+
+3. THE PROBABILITY DENSITY FUNCTION OF INITIAL ERROR
+
+In order to discuss how the pdf of initial error can be estimated in weather and climate prediction, it is necessary
+
+to outline the method by which observations are used to determine the initial conditions for a deterministic weather
+
+or climate forecast.
+
+In meteorology and oceanography, data assimilation is a means of obtaining a forecast initial state which in some
+
+well-defined sense optimally combines the available observations for a particular time with an independent back-
+
+ground state (Daley, 1991). This background state is usually a short-range forecast (e.g. 6 hour) from an estimate
+
+b2 4ac>
+X 1–=
+
+X′ X
+
+X
+
+X′
+
+N
+
+ρ
+
+ρ
+
+L
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+of the initial state valid at an earlier time, and this carries forward information from observations from earlier times.
+
+A very simple example of the basic notion can be illustrated by considering two different independent estimates,
+
+and , of a scalar . Suppose that the errors associated with these two estimates are random, unbiased and
+
+normally distributed, with standard deviations and , respectively. Then the maximum-likelihood estimate of
+
+ is the state  which minimises the cost function
+
+(10)
+
+The least-squares solution
+
+(11)
+
+is easily found. The error associated with  is normally distributed with variance given by
+
+(12)
+
+The data assimilation technique used in weather prediction (e.g. at ECMWF) is a multi-dimensional generalisation
+
+of this technique (Courtier et al., 1994, 1998). The analysed state of the atmospheric state vector is found by
+
+minimising the cost function
+
+(13)
+
+where is the background state, and are covariance matrices for the pdfs of background error and obser-
+
+vation error respectively, is the so-called observation operator, and denotes the vector of available observa-
+
+tions. For example, if includes a radiance measurement taken by an infrared radiometer onboard a satellite
+
+orbiting the earth then includes an estimate of the infrared radiance that would be emitted by a model atmos-
+
+phere as represented by the state vector . Similarly, if includes a surface pressure measurement taken at some
+
+point on the earth's surface, then includes the surface pressure at given . Since is finite dimensional,
+
+the operator inevitably involves an interpolation to . Similar to Eq. (12), the Hessian of is given by (Fisher
+
+and Courtier, 1995)
+
+(14)
+
+We refer to  as the analysis error covariance matrix.
+
+In the current ECMWF operational data assimilation system, the background error covariance matrix is not de-
+
+pendent on the present state of the atmospheric circulation. This is believed to introduce considerable imprecision
+
+in the estimate of the initial pdf as given by (14). This estimate can be improved; within the linearised regime (cf.
+
+Fig. 1 ), the forecast error covariance matrix F implied by Eqs. (6) and (8) can be written
+
+(15)
+
+so sb s
+σo σb
+
+s sa
+
+J s( )
+s sb–( )
+
+2
+
+2σb
+2
+
+--------------------
+s so–( )
+
+2
+
+2σo
+2
+
+--------------------+=
+
+sa sb
+σb
+
+2
+
+σb
+2 σo
+
+2+
+------------------ so sb–[ ]+=
+
+sa
+
+∂2J
+∂s2
+--------- σb
+
+2– σo
+2–+ σa
+
+2–= =
+
+X a
+
+J X( ) 1
+2
+--- X X b–( )
+
+TB 1– X X b–( )
+1
+2
+--- HX Y–( )TO 1– HX Y–( )+=
+
+X b B O
+H Y
+
+Y
+HX
+
+X Y
+ρ HX p X X
+
+H p J
+
+∇∇J B 1– HTO 1– H A 1–≡+=
+
+A
+
+B
+
+F t( ) M t ta,( ) A ta( )M
+T ta t,( )=
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 11
+
+where is the tangent propagator along the trajectory between the initial state and the forecast state at
+
+time . Since the time between consecutive analyses (typically 6 hours) is broadly within this linearised regime,
+
+then a flow-dependent estimate of the background error covariance matrix at time can be obtained by propagat-
+
+ing the analysis error covariance matrix from the earlier analysis time , i.e.
+
+(16)
+
+The propagator , and its transpose are essential components of 4-dimensional data assimilation (Courtier
+
+et al., 1994) where observations are assimilated over a time window. Using , a perturbation can be evaluated
+
+at the same time that an observation is taken. Given the dimension of comprehensive weather prediction models,
+
+is not known in matrix form, and is represented in operator form (cf. Eq. (8)). Similarly the transpose is
+
+also represented in operator form  (see Eq. (18) below) and is known as the adjoint (tangent) propagator.
+
+However, Eq. (16) is computationally intractable for numerical weather prediction, requiring O(1014) individual
+
+linearised integrations of for a complete specification of the propagated matrix . Three possible solu-
+
+tions have been proposed. The first is essentially a Monte Carlo solution, whereby a random sampling of is
+
+evolved using (Evensen, 1994; Andersson and Fisher, 1999). The second proposal involves solving the propa-
+
+gation Eq. (16) with an intermediate complexity model (Ehrendorfer, 1999). The final proposal (the so-called re-
+
+duced-rank Kalman filter; Fisher, 1998) is to propagate explicitly only in the appropriate unstable subspace
+
+defined by the dominant flow-dependent local instabilities of the attractor. Broadly, speaking, the proposal is to
+
+have the best possible knowledge of the initial state in that part of phase space from which forecast errors are most
+
+likely to grow. At present these three different proposals are being evaluated.
+
+Since the notion of local flow-dependent instability features strongly in later sections of this paper, it is worth out-
+
+lining some more detail on how these instabilities can be estimated. First consider a Euclidean inner product <..,..>
+
+so that for any perturbations , ,
+
+(17)
+
+In terms of <..,..> the adjoint tangent propagator  is defined by
+
+(18)
+
+where
+
+(19)
+
+for an arbitrary pair of perturbations , .
+
+The analysis error covariance matrix  defines a secondary inner product
+
+(20)
+
+Here is the covariant form of an analysis error covariance metric, (Palmer et al., 1998). Hence the per-
+
+turbation , which has maximum Euclidean amplitude at and unit norm at initial time is given by
+
+(21)
+
+M X a X
+t
+
+ta
+ta 1–
+
+B ta( ) M ta ta 1–,( ) A ta 1–( )M
+T ta 1– ta,( )=
+
+M MT
+
+M δx
+
+M MT
+
+M*
+
+M MAMT
+
+A
+M
+
+A
+
+δx δy
+
+δx δy >,< δxiδ yi∑=
+
+M*
+
+δy ta( ) M* ta t,( )δy t( )=
+
+δ y Mδx >,< M*δ y δx >,<=
+
+δx ta( ) δy t( )
+
+A
+
+… …,( ) … A 1– … >,<=
+
+A 1– gA 1–
+δx t( ) t gA 1– ta
+
+max
+x ta( ) 0≠
+
+δ< x t( ) δx t( ) >,
+δ< x ta( ) A
+
+1– δx ta( ) >,
+----------------------------------------------------------- max
+
+x ta( ) 0≠
+
+δx ta( ) M*Mδx ta( ) >,<
+
+δx ta( ) A
+1– δx ta( ) >,<
+
+------------------------------------------------------------------=
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+This is equivalent to finding the dominant eigenvector of the generalised eigenvector equation
+
+(22)
+
+Formally, by taking the square root of , Eq. (22) can be transformed to a singular vector equation which can be
+
+solved using a Lanczos algorithm (Strang, 1986). More generally, Eq. (22) is solved using a generalised Davidson
+
+algorithm (Barkmeijer et al., 1998). We refer to the solutions in Eq. (22) as -singular vectors of .
+
+The set of dominant singular vectors of (with largest singular values ) defines an unstable sub-
+
+space in the tangent space at . It comprises the set of most rapidly-growing directions defined locally on phase
+
+space, relative to a basic-state trajectory between and , subject to the constraint that the initial perturbations
+
+are normalised with respect to the initial pdf. At forecast time , these singular vectors have evolved into the major
+
+axes of the forecast error ellipsoid, or, equivalently, into the eigenvectors of the forecast error covariance matrix.
+
+The first two parts of Fig. 1 show schematically a dominant singular vector at initial and forecast time. Fur-
+
+ther discussion of these singular vectors, and their relation to more familiar forms of perturbation growth (such as
+
+normal mode and Lyapunov exponent growth) are discussed in Section 5.
+
+4. REPRESENTING UNCERTAINTY IN MODEL FORMULATION
+
+So far, we have assumed the 'classical' chaotic paradigm, that loss of predictability occurs only because of inevita-
+
+ble uncertainty in initial conditions. However, there are also inevitable uncertainties in our ability to represent com-
+
+putationally the governing equations of climate. These uncertainties can contribute both to random and systematic
+
+error in model performance. In practice, as discussed below, it is not easy to separate the predictability problem
+
+into a component associated with initial error and a component associated with model error.
+
+As mentioned, weather and climate models have a resolution of O(100 km) in the horizontal. This immediately
+
+raises the problem of closure - how to represent the effect of partially resolved or unresolved processes onto the
+
+resolved state vector . The effects of topography and cloud systems are examples. In weather and climate pre-
+
+diction models, Eq. (1) is generally expressed as
+
+(23)
+
+where represents terms in the equations of motion associated directly with resolved scales, and
+
+stands for some parametrised representation of unresolved processes. Conceptually, a parametrisation is usually
+
+based on the notion of a statistical ensemble of sub-grid scale processes within a grid box, in some secular equilib-
+
+rium with the grid-box mean flow. This allows Eq. (23) to be written
+
+(24)
+
+where and represent the projection of and into the subspace associated with a single grid box in
+
+physical space. Borrowing ideas from statistical mechanics, a familiar parametrisation might involve the diffusive
+
+approximation, where would be a diffusion coefficient depending on the Richardson number at . However,
+
+whilst diffusive closures do in fact play a role for example in representing the effects of the turbulent planetary
+
+boundary in the lower kilometre of the atmosphere, they are certainly insufficient, and, in some circumstances, may
+
+be fundamentally flawed. To see this, it is enough to concentrate on one relevant process - atmospheric convection.
+
+On average, the atmosphere is stable to convective overturning. However, on local space and time scales, especially
+
+in tropical regions where incoming solar radiation strongly heats the surface of the earth, conditions exist for con-
+
+M*Mδx ta( ) λA
+1– δx ta( )=
+
+A
+
+δx ta( ) gA 1– M
+
+gA 1– M σi λi=
+ta
+
+ta t
+t
+
+gA 1–
+
+X
+
+Ẋ G X[ ] P X α X( );[ ]+=
+
+G X[ ] P X α;[ ]
+
+X j˙ G j X[ ] P X j α X j( );[ ]+=
+
+X j G j X G x j
+
+α x j
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 13
+
+vective instability (Emanuel, 1994). Often, such instability is released through overturning circulations whose hor-
+
+izontal scales are small compared with the smallest resolved scale of a global weather or climate model. One
+
+manifestation of such small-scale convective instability is the cumulus cloud beloved by glider pilots. These clouds
+
+can develop into precipitating cumulonimbus clouds; typically a few kilometres in horizontal extent, but still much
+
+smaller than the smallest resolved scale in a weather or climate model. However, at the other end of the spectrum
+
+of convectively-driven circulations is the organised mesoscale convective complex (Moncrieff, 1992), feared by
+
+aviators in general. Such complexes have horizontal scales of perhaps 50 km. They can be simulated explicitly in
+
+regional models with O(1 km) resolution, but such resolution is not practicable for global weather and climate mod-
+
+els.
+
+The form of parametrisation given in Eq. (24) is appropriate for describing cumulus and simple cumulonimbus. For
+
+example, in a contemporary convective parametrisation (e.g. Betts and Miller, 1986) if the resolved-scale vertical
+
+temperature gradient at is convectively unstable, then over some prescribed timescale (given by ) will op-
+
+erate to relax back to stability. On the other hand, the existence of organised mesoscale convective complexes
+
+poses a problem for parametrisations of this form. In particular, the basic assumption of a quasi-equilibrium of sub-
+
+gridscale convectively-forced motions (with the implication that the kinetic energy released by overturning circu-
+
+lations is dissipated on sub-grid scales, rather than injected into the large scale) cannot be fully justified.
+
+Figure  4: Four 2-day integrations of the ECMWF model from identical starting conditions but different
+
+realisations of the stochastic parametrisation scheme represented by Eq. (25) with parameter settings as given in
+
+Buizza et al. (1999). The field shown is sea-level pressure over parts of Australia and the west Pacific. The
+
+depressions in the pressure field represent potential tropical cyclones.
+
+One means of addressing the erroneous assumption of deterministic locality in Eq. (24) would be to add to Eq. (24)
+
+a stochastic energy source term . Recognising this, Buizza et al. (1999a) have proposed the simple sto-
+
+chastic form
+
+(25)
+
+where is a stochastic variable drawn from a uniform pdf with values between 0.5 and 1.5. A particular realisation
+
+of would be used over more than one model gridpoint and timestep, thus making the overall parametrisation both
+
+x j α P
+X j
+
+S X j α;( )
+
+X j˙ G j X[ ] βP X j α X j( );[ ]+=
+
+β
+β
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+stochastic and nonlocal. Stochastic representation of sub-grid processes is a technique already utilised in turbulent
+
+flow simulations (Mason and Thompson, 1992).
+
+An example of the impact of the random effect of the stochastic parametrization represented by Eq. (25) is given
+
+in Fig. 4 , which shows sea-level pressure over part of Australia and the west Pacific from four 2-day integrations
+
+of the ECMWF model. The integrations have identical starting conditions, but different realisations of the pdf rep-
+
+resented by . The figure shows two tropical cyclones. The intensity of the cyclones can be seen to be very sensi-
+
+tive to the realisation of the stochastic parametrisation. In Fig. 4 (a) the western cyclone is intense; in Fig. 4 (b) the
+
+eastern cyclone is intense; in Fig. 4 (c) they are both intense; in Fig. 4 (d) neither is intense. This rather extreme
+
+example clearly shows the difficulty in predicting tropical cyclone development, and its sensitivity to sub-grid scale
+
+parametrisation.
+
+It is possible that a systematic misrepresentation of small-scale variability (such as convectively organised mesos-
+
+cale systems) can have a systematic effect on larger-scale climatic variability. There is evidence (L. Ferranti, C.
+
+Jakob, personal communication) that the parametrisation of organised convection is fundamental in determining
+
+the strength of the so- called Madden-Julian oscillation - the dominant mode of intraseasonal variability in the trop-
+
+ics (Madden and Julian, 1994), and poorly simulated in many climate models. Furthemore, as suggested by Moore
+
+and Kleeman (1996), the (initial-time) singular vectors of El Niño (see Section 5 below), have a strong projection
+
+onto the Madden-Julian oscillation. Hence, by a series of nonlinear processes, it is possible to infer that the clima-
+
+tology of El Niño may be linked to the climatology of organised mesoscale convection in the tropical Pacific. Quan-
+
+tifying these links between the small scale and large scale is an area currently under investigation at ECMWF.
+
+The purpose of the discussion above is to point out that although current parametrisations have been enormously
+
+successful in representing subgrid processes, there are inevitable uncertainties in the representation of such proc-
+
+esses. In Section 2 we represented the evolution of the initial pdf given the deterministic Eq. (1) in terms of a Li-
+
+ouville equation. In the idealised case where model uncertainties are represented by an additive Gaussian white
+
+noise with zero mean and variance , then Eq. (2) becomes a Fokker–Planck equation (e.g. Hasselmann, 1976;
+
+Moss and McClintock, 1989).
+
+(26)
+
+However, in practice, a realistic state-dependent stochastic forcing (e.g. in Eq. (25)) would be too complex for this
+
+simple representation to be directly relevant.
+
+For ensemble forecasting (discussed in Section 7), there are two other commonly-used techniques for representing
+
+model uncertainty. The first is the multi-model ensemble (Harrison et al., 1999; Palmer et al., 2000). This can be
+
+achieved by incorporating within the ensemble a number of quasi-independent models (e.g. constructed from the
+
+stock of climate models developed by different groups around the world; Gates, 1992). In the second technique,
+
+the values of the parameters used in the deterministic Eq. (23) of one particular model, are perturbed in some
+
+stochastic manner (cf. Houtekamer et al., 1996).
+
+On the other hand, these latter techniques should be seen as conceptually distinct from the type of stochastic phys-
+
+ics scheme described schematically in Eq. (25). In multi-model ensembles, and ensembles with stochastic , the
+
+model perturbations account for the fact that the expected value of the pdf of sub-grid processes is not itself well
+
+known. (Hence, for example, there are many different atmospheric convection parametrisation schemes in use
+
+around the world; the Betts-Miller scheme described above is but one of these. The existence of this ensemble of
+
+convection schemes is an indication that the expectation value of the pdf of the effects of subgrid convection is not
+
+known with complete confidence!) By contrast, the stochastic physics scheme described in Eq. (25) is an attempt
+
+to account for the fact that in circumstances of convective organisation, the pdf of sub-grid processes is not espe-
+
+β
+
+Γ
+
+∂ρ X( )
+∂t
+
+----------------
+∂
+
+∂x
+------ F X[ ]ρ X( ) Γ
+
+2
+---∂ρ X( )
+
+∂X
+----------------–+ 0=
+
+α
+
+α
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 15
+
+cially sharp around the mean. This would argue for the combined use of multi-model ensembles and stochastic
+
+physics parametrisation.
+
+As discussed in Section 3, the initial state for a weather prediction is determined by assimilating observations onto
+
+a background field obtained from a short-range integration from an earlier initial condition. As such, model error
+
+clearly plays a role in the determination of the initial pdf. In general, it is difficult to separate cleanly the role of
+
+model error and observation error, even though information from the observations and the background state are in-
+
+put into separate terms in the cost function (13). For example, as mentioned in Section 3, local observations are
+
+assimilated by comparing with , where is an observation operator which includes an interpolation from the
+
+grid point to the observation point. This interpolation will necessarily be affected by random and systematic errors
+
+in the representation of unresolved or poorly-resolved scales.
+
+5. ERROR GROWTH IN THE LINEAR AND NONLINEAR PHASE
+
+5.1  Singular vectors, eigenvectors and Lyapunov vectors
+
+As discussed in Section 3, the initial phase-space directions which evolve into the major axes of the ellipsoid of
+
+forecast error pdf are determined by the dominant singular vectors of the forward tangent propagator .
+
+Singular vectors of have been studied extensively in weather prediction models using simpler metrics than
+
+(Lacarra and Talagrand, 1988; Molteni and Palmer, 1993; Buizza and Palmer, 1995). One simple choice
+
+is the energy metric . The singular vectors of are the dominant eigenvectors of where '*' now
+
+denotes the adjoint defined with respect to the inner product where is the total en-
+
+ergy of the perturbation . An explicit expression for  is given in Buizza and Palmer (1995).
+
+An example of a singular vector is given in Fig. 5 , calculated using the forward and adjoint tangent propagators
+
+of the ECMWF weather prediction model, optimised over a three-day period, with starting conditions on 9 January
+
+1993. The streamfunction (inverse Laplacian of vorticity) associated with the singular vector is shown at three lev-
+
+els in the atmosphere, at initial and optimisation time. The singular vector has some qualitative resemblance to an
+
+idealised baroclinically unstable eigenmode of the atmosphere (Charney, 1947; Eady, 1949); for example the dis-
+
+turbance amplifies as it propagates through the region in the west Atlantic where north-south surface temperature
+
+gradients are largest, and the disturbance shows evidence of westward tilting phase with height, consistent with a
+
+northward flux of heat (Gill, 1982).
+
+However, the singular vector also clearly illustrates non-modal characteristics. At initial time the disturbance is lo-
+
+calised over the west Atlantic, at optimisation time the disturbance has propagated downstream to Europe. At initial
+
+time, maximum disturbance amplitude is located in the lower troposphere, whilst at final time amplitude is largest
+
+in the upper troposphere at the level of maximum winds. Finally, the horizontal scale of the initial disturbance is
+
+noticeably smaller at initial time than at optimisation time.
+
+A simple way of understanding the non-modal vertical structure of the singular vector is to consider a steady zon-
+
+ally symmetric basic state flow , which is slowly varying in the vertical. In such a flow, the wave action
+
+of a small-amplitude disturbance with energy , zonal wavenumber and frequency will be
+
+conserved as it propagates vertically on the background flow (e.g. Gill, 1982). Optimal energy growth will there-
+
+fore. tend to be associated with propagation away from a region of small intrinsic frequency (near the so-called
+
+baroclinic steering level usually located in the-lower troposphere), to a region of large intrinsic frequency (such as
+
+would occur at the jet stream level in the upper troposphere).
+
+The upscale evolution is consistent with an inverse energy cascade characteristic of two dimensional turbulence
+
+(see below). At first sight it might appear paradoxical that such a nonlinear property can be emulated by a linearised
+
+HX H
+
+gA 1– M
+M
+
+gA 1–
+gE gE M M*M
+
+… E… >,< δx Eδx >,<
+δx E
+
+gE
+
+u0
+E ω ku0–( )⁄ E k ω
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+calculation. However, this non-modal characteristic of the linear perturbation is a consequence of the non-normal-
+
+ity (i.e. ) of the tangent propagator (Farrell and Ioannou, 1996). In turn non-normality derives its
+
+existence from the advective nonlinearity in Eq. (1). Hence, in some sense, the cascade properties associated with
+
+nonlinear advection in Eq. (1) are partially reflected in the non-normality of .
+
+Figure  5: Streamfunction of the dominant singular atmospheric singular vector calculated using a primitive
+
+equation numerical weather prediction model for a 3-day trajectory portion made from initial conditions of 9
+
+January 1993 at: (a) and (d) 200 hPa; (b) and (e) 700 hPa; (c) and (f) 850 hPa. The quantities in (a) - (c) are at
+
+initial time, in (d) - (f) at final time. The contour interval at optimisation time is 20 times larger than at initial time.
+
+From Buizza and Palmer (1995).
+
+The ability of singular vectors to describe upscale evolution can be illustrated in simpler ‘toy models'.
+
+Hansen (1998) has studied singular vectors of the two-scale dynamical system
+
+(27)
+
+of Lorenz (1996). Here are taken as large-scale variables, as small-scale variables. For each large-scale
+
+variable, there are  small-scale variables. Hansen maximises
+
+(28)
+
+where is the forward tangent propagator of Eqs. (27), and P projects the entire state vector onto the subspace
+
+of the large-scale variables. For particular choices of the parameters , and , the dominant singular vector
+
+which maximises amplitude in the large-scale variables at optimisation time, is comprised almost entirely of small-
+
+MM* M*M≠
+
+M
+
+ẋi = xi 2– xi 1–– xi 1– xi 1+ xi– F
+c
+b
+--- y j i,
+
+j 1=
+
+N
+
+∑–+ +
+
+ẏ j i, = cb y j 1 i,+ y j 2 i,+– cb y j 1 i,– y j 1 i,+ c y j i,–
+c
+b
+---xi+ +
+
+xi y j i,
+N
+
+ML95δx PML95δx >,<
+δx δx >,<
+
+--------------------------------------------------------------
+
+ML95
+x b c F
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 17
+
+scale components at initial time, emulating the upscale cascade exhibited in this nonlinear model.
+
+It is also possible to compute singular vectors of the tangent propagator from intermediate coupled ocean-atmos-
+
+phere models (e.g. Moore and Kleeman, 1996; Chen et al. 1997; Xue et al. 1997). As with the atmosphere-only
+
+singular vectors, the growth characteristics are extremely non-modal. The surface temperatures of the evolved sin-
+
+gular vectors at optimisation time is characteristic of the EI Niño phenomenon itself, whilst at initial time the sin-
+
+gular vector has little spatial correlation with the El Niño pattern. The singular values are strongly dependent on
+
+time of year, being largest from (boreal) spring to autumn, and weakest from (boreal) autumn to spring. As will be
+
+argued below, the seasonal cycle in these coupled ocean-atmosphere singular vectors may be vital in understanding
+
+how the climate responds to external forcing perturbations.
+
+Let us consider the relationship between singular vector growth and eigenvector growth when Eq. (1) is linearised
+
+about a stationary solution. In this case, normalised eigenvectors of with eigenvalues give rise to modal
+
+solutions .) (The propagator will also have eigenvectors but with eigenvalues
+
+.) Irrespective of normality, eigenvectors and eigenvalues of the adjoint Jacobian satisfy the
+
+biorthogonality condition
+
+(29)
+
+where ‘cc' denotes the complex conjugate.
+
+If an initial disturbance is written in terms of the eigenmodes , i.e.
+
+(30)
+
+then from Eq. (29)
+
+(31)
+
+Figure  6: This diagram illustrates schematically the crucial difference between eigenvector and singular vector
+
+growth, and the relationship between singular vectors and adjoint eigenvectors. See text for details. From Buizza
+
+and Palmer (1995).
+
+From Eq. (30), the fastest growing eigenmode will ultimately contribute most to the growth of . In order
+
+to maximise the contribution of the first eigenmode, should be as large as possible. From Eq. (31), this occurs
+
+when is parallel to (for a non self-adjoint operator, ) Hence, in order to maximise the asymptotic
+
+amplitude of , the initial perturbation should not project onto the fastest-growing eigenmode, but onto its ad-
+
+ξi J pi
+ξi µi t ta–( )[ ]exp M ξi
+
+µi t ta–( )[ ]exp η j θ j
+
+µi θi
+cc–( ) ξi ηi >,< 0=
+
+ξi
+
+x t( ) ciξi µi t ta–( ){ }exp
+i
+
+∑=
+
+ci
+ηix ta( ) ><
+ηi ξi >,<
+
+---------------------------------=
+
+ξ1 x t( )
+ci
+
+x ta( ) η1 ξi η1≠
+x t( )
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+joint.
+
+Fig. 6 illustrates schematically the crucial difference between eigenmode and singular vector growth. An idealised
+
+2D system has two very non-orthogonal decaying eigenmodes and ; we take to have the larger real ei-
+
+genvalue component. The adjoint eigenmodes and are also shown, consistent with the biorthogonality con-
+
+dition (29). A normalised vector is shown parallel to ; the sequence of vectors show the time
+
+evolution of . The projection of onto is much larger than that of a second vector which was initially
+
+normalised and aligned along .
+
+Another familiar measure of perturbation growth is given by the Lyapunov exponent. The system's Lyapunov ex-
+
+ponents can be defined as
+
+(32)
+
+where  is the eigenvalue of the -th eigenvector of the operator
+
+(33)
+
+These eigenvectors, or Lyapunov vectors, correspond to (instantaneous) realisations of evolved singular vectors,
+
+for long optimisation times.
+
+Although Lyapunov exponents are normally associated with mean growth over the attractor, local Lyapunov expo-
+
+nents can be defined as the growth rates
+
+(34)
+
+Just as singular vector growth can exceed eigenmode growth for stationary flows, so it can also exceed local Lya-
+
+punov growth for transient flows (Trevisan and Legnani, 1995).
+
+In fact in a multi-scale system, the concept of Lyapunov exponent growth is not a useful one. For example, in Eq.
+
+(27), the dominant Lyapunov exponent is determined (for ) by the growth of the small scale variables.
+
+However, if is sufficiently large, then their effect on the predictability of the variables will be small compared
+
+with the effect of initial uncertainty in the large-scale variables themselves. In the atmosphere, Lyapunov expo-
+
+nent growth would be associated with small-scale convective instability, rather than large-scale more slowly grow-
+
+ing baroclinic instability (which determines the structure of extratropical weather systems). As such, the
+
+predictability of these weather systems can be much longer than a dominant atmospheric Lyapunov timescale.
+
+One way over overcoming this problem with the Lyapunov vector is through the so-called breeding-vector modi-
+
+fication (Toth and Kalnay, 1993, 1997). A bred vector is obtained by integrating the model twice over a time ?t
+
+from initial conditions differing by a small random perturbation. The resulting difference field is rescaled to the
+
+initial perturbation amplitude, and the procedure repeated. The essential difference between a bred vector and a
+
+Lyapunov vector is that the time is chosen to be sufficiently long that instabilities on scales much smaller than
+
+weather, which would in practice determine the atmosphere's dominant Lyapunov exponent, are damped by non-
+
+linear saturation.
+
+ξ1 ξ2 ξ1
+η1 η2
+
+v0 η1 v1 …… v4,,
+v0 v4 ξ1 µ4
+
+ξ1
+
+λi lim
+t ∞→
+
+lim
+di 0( ) 0→
+
+1
+t
+---
+
+di t( )
+di 0( )
+-------------ln=
+
+di i
+
+lim
+t ∞→
+
+1
+t
+--- MMT[ ]
+
+1 2t⁄
+
+λi
+d
+dt
+----- di t( )ln=
+
+c 1> y
+b x
+
+x
+
+∆t
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 19
+
+5.2  Error dynamics and scale cascades
+
+A fundamental characteristic of error growth in climate and weather prediction is the upscale cascade of error. This
+
+characterises the essential element of the ‘butterfly effect' paradigm, as much as does amplitude growth (i.e. initial
+
+conditions are sensitive not only to small amplitude error, but also small-scale error). In this section, we briefly de-
+
+scribe estimates of predictability arising from cascade processes, using from simple scaling arguments.
+
+Let denote a characteristic wavenumber in such a system, and denote the energy kinetic energy per unit
+
+wavenumber, at wavenumber . Assume that observations cannot resolve wavenumbers higher than . Hence the
+
+initial pdf will certainly be non-zero in the phasespace sub-manifold associated with wavenumbers higher than kr.
+
+We present below a heuristic argument for determining the time it takes this component of initial error to infect the
+
+meteorological scales . Following Lorenz (1969) and Lilly (1973), let us assume that the time it takes be-
+
+fore complete uncertainty at wavenumber to strongly infect wavenumber , is proportional to the ‘eddy turn-
+
+over time' . The time taken for uncertainty to propagate from wavenumber
+
+ to wavenumber  is therefore given by
+
+(35)
+
+In the case of a two-dimensional isotropic homogeneous turbulence in the inertial subrange between some large-
+
+scale (e.g. baroclinic) forcing scale and dissipation scale, then , is independent of , and
+
+which diverges as . Hence, although uncertainty at small scales (within the inertial range) can infect the
+
+larger meteorological scale, in theory long-range predictions are possible providing the initial data has sufficient
+
+small-scale resolution. This two dimensional paradigm is appropriate to weather systems where quasi-geostrophic
+
+scaling is appropriate (Charney, 1971).
+
+By contrast, for homogeneous isotropic 3-dimensional flow and , the familiar Kolmogorov
+
+inertial range (Frisch, 1995). In this case  tends to a finite limit as , that is
+
+(36)
+
+This remarkable result says that the predictability time for a large-scale system is on the order of an eddy turn-over
+
+time, a few days. In the limit of infinite Reynolds number, this is consistent with the hypothesised lack of existence
+
+of a unique smooth solution of the Navier-Stokes equations in the Euler limit (Frisch, 1995), since it implies that
+
+uncertainty on arbitrarily small scales can destroy predictability on large scales in finite time.
+
+However, for the quasi-2D large-scale weather and climate systems discussed in this paper, this 3D paradigm does
+
+not appear to be directly relevant; for scales O(100 km) or larger, horizontal scales dominate the vertical scale (the
+
+aspect ratio is small). However, there is evidence for a spectrum on scales of km (Nastrom
+
+and Gage, 1985; Gage and Nastrom, 1986); Cho et al., 1999). This is likely to be associated with a 2D inverse
+
+energy cascade (Kraichnan, 1971) possibly forced by organised convective activity (Lilly, 1983), of the type dis-
+
+cussed in section 4. This suggests that in the atmosphere there are two sets of 2D inertial ranges, an enstrophy
+
+cascading range associated with forcing from weather systems at large scale, and a smaller-scale inverse en-
+
+ergy cascading range associated with forcing from mesoscale variability on small scales (Lilly, 1983, 1989). As
+
+such, uncertainties on these mesoscales may influence the predictability of large-scale weather systems within a
+
+few days, and reinforces the need for a stochastic representation of such effects in global weather and climate mod-
+
+els (see Section 4).
+
+k E k( )
+k kr
+
+km kr«
+2k k
+
+τ k( ) k 3 2⁄– E k( )[ ] 1 2⁄–= Ω N( )
+2Nkm km
+
+Ω N( ) τ 2nkm( )
+n 0=
+
+N 1–
+
+∑=
+
+E k( ) k 3–∼ τ k Ω N( ) N∼
+N ∞→
+
+E k( ) k 5 3⁄–∼ τ k 2 3⁄–∼
+Ω N( ) N ∞→
+
+Ω ∞( ) 2.7τ km( )
+
+k 5 3⁄– 100 800–∼
+
+k 3–
+
+k 5 3⁄–
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+20 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+6. APPLICATIONS OF SINGULAR VECTORS
+
+In this section we describe some applications of the singular vector analysis described above.
+
+6.1  Data assimilation
+
+As described in Section 3, the approximation of treating the background error covariance matrix as flow independ-
+
+ent can lead to significant imprecision in defining the initial pdf. However, the integration of Eq. (16) is currently
+
+computationally impossible using comprehensive weather prediction models. As discussed above, a reduced-rank
+
+solution has been developed (Fisher, 1998) in which the initial pdf is evolved explicitly in the space of dominant
+
+singular vectors using a  metric.
+
+6.2  Chaotic control of the observing system
+
+The second application can be thought of as an example of the principle of chaotic control. Suppose we could sup-
+
+plement the standard observing network with additional observations, and that, in principle, these observations
+
+could be made anywhere in the atmosphere, where should they be made? These observations would have the big-
+
+gest impact on forecast error if they were made in the region of the dominant singular vector (Palmer et al.,
+
+1998).
+
+Consider, for example, the singular vector calculation shown in Fig. 5 . The actual period corresponded to a time
+
+of storminess over the North Atlantic (the oil tanker Braer ran aground on the Shetland Islands, leading to fears of
+
+a major environmental disaster). As can be seen the evolved dominant singular vector is located over the north-east
+
+Atlantic. In order to improve the quality of a 3-day weather forecast over this region of the north-east Atlantic (and
+
+assuming that can be taken as a reasonable approximation for ), the location of the initial singular vector
+
+suggests that additional observations should be taken near the eastern seaboard of the US, particularly in the mid-
+
+lower troposphere.
+
+However, since singular vectors are flow dependent, a fixed-location observation at the site of this particular sin-
+
+gular vector would have been highly sub-optimal a few days later. On the other hand, new pilotless aircraft tech-
+
+nology (e.g. the aerosonde; Holland et al., 1992) enables such flow-dependent targeted observations. to be made.
+
+Essentially, the aerosonde can be programmed to fly to the principal locations of the dominant singular vectors,
+
+measure vertical profiles of wind and temperature, and transmit the data to satellite. The additional data would be
+
+assimilated in the determination of the initial state of the atmosphere. Real experiments testing this possibility are
+
+currently in the design phase.
+
+Such types of observation are not yet possible on an operational basis. However, the basic concept discussed in this
+
+sub-section was tested during the Fronts and Atlantic Storm Track Experiment (FASTEX; Joly et al., 1997), during
+
+the winter of 1997. Aircraft were flown to the locations of the dominant singular vectors over the Atlantic, and
+
+special dropsondes were released. These dropsondes measured wind and temperature profiles. Sometimes these ex-
+
+tra targeted data had a substantial impact on weather forecast quality over Europe (Montani et al., 1999). It should
+
+be noted that for such applications, the singular vectors are targeted to produce maximum growth in a region de-
+
+fined by a projection operator P (e.g. P = 1 for European grid points, P = 0 otherwise). The corresponding domi-
+
+nant singular vectors maximise
+
+(37)
+
+gA 1–
+
+gA 1–
+
+gE gA 1–
+
+gE
+
+Mδx ta( ) PMδx ta( ) >,<
+
+δx ta( ) A
+1– δx ta( ) >,<
+
+------------------------------------------------------------------
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 21
+
+6.3 The response to external forcing: paleoclimate and anthropogenic climate change
+
+The singular vector analysis described above is not only relevant in describing the system's response to initial er-
+
+rors, but also in describing the system's response to some external forcing. Consider the problem of the linearised
+
+response of the climate system to a weak imposed external forcing . As mentioned in the introduction, this
+
+forcing could also represent a prescribed perturbation e.g. radiative forcing due to orbital variations or volcanic
+
+eruption, or a doubling of atmospheric CO2. Adding  to Eq. (4) we have
+
+(38)
+
+Using the tangent propagator , the solution to (38) can be written over the finite interval  as
+
+(39)
+
+If  is time independent over , and setting ,
+
+(40)
+
+where
+
+(41)
+
+The system's response to depends on the projection of onto local phase-space instabilities. To see this more
+
+explicitly, perform a singular vector decomposition on M, so that
+
+(42)
+
+where is the matrix whose columns contain the left singular vectors of M, is the matrix whose columns
+
+contain the right singular vectors of M, and is a diagonal matrix whose real elements are the singular values
+
+of M.
+
+If we expand  as
+
+(43)
+
+then, from Eq. (40)
+
+(44)
+
+Now if is normalised, then the largest possible response is obtained if is equal to the leading right singular
+
+vector of M, so that . However, this is a rather contrived situation. If, by contrast, projects uniformly
+
+onto the so that , then the largest contribution to will come from the dominant (left) singular vec-
+
+f t( )
+
+f
+
+δ̇x Jδx f t( )+=
+
+M ta t,[ ]
+
+δx t( ) M t ta,( )δx ta( ) M t t′,( ) f t′( )dt′
+ta
+
+t
+
+∫+=
+
+f ta t,[ ] δx ta( ) 0=
+
+δx t( ) M t ta,( ) f=
+
+M M t t′,( )dt′
+ta
+
+t
+
+∫=
+
+f f
+
+M UΣV *=
+
+U ui V
+νi Σ
+
+f
+
+f αiνi
+i 1=
+
+N
+
+∑=
+
+x t( ) σiαiui
+i 1=
+
+N
+
+∑=
+
+f f
+αi δi1= f
+
+αi 1 N⁄= x t( )
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+22 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+tor . The state vector will be relatively insensitive to in regions of the attractor where , is small, and rela-
+
+tively sensitive in regions of phase space where , is large.
+
+Fig. 7 shows an example of the variable impact of a small fixed imposed forcing on the Lorenz (1963) model, with
+
+equations
+
+(45)
+
+The leading singular value (for a finite length trajectory of 0.12 non-dimensional Lorenz time units) is shown
+
+in Fig. 7 (a), clearly showing that the attractor instability is localised near to the origin (consistent with the ensem-
+
+ble integrations shown in Fig. 2 ). The scalar plotted in Fig. 7 (b) is ; it shows clearly that the
+
+Lorenz system is most sensitive to the imposed forcing in the region where the dominant singular value is large.
+
+From this it is easy to see that the response to a forcing with zero time mean, need not itself be zero (consider for
+
+example, in Eq. (45), the forcing , where is the time-average value of the variable in the un-
+
+perturbed Lorenz equations. When the state vector will be in a relatively sensitive region and the (negative)
+
+forcing will be relatively effective. By contrast, when , the state vector will be in relatively insensitive region
+
+and the positive forcing will be relatively ineffective.
+
+Figure 7: (a) The dominant singular value of the Lorenz (1963) model based on trajectory lengths of 0.12 Lorenz
+
+time units. (b) The amplitude of the local response to a weak constant forcing applied to the Lorenz model (see
+
+Eq. (45)).
+
+The importance of this variable response has been demonstrated in the context of paleoclimate simulation. Clement
+
+and Cane (1999) and Cane and Clement (1999) have studied the response of the intermediate-complexity Zebiak
+
+and Cane (1987) coupled ocean-atmosphere model of the tropical Pacific, to paleoclimatic variations in solar in-
+
+solation (due mainly to precession of the equinoxes). While the annual mean forcing from these orbital perturba-
+
+tions is close to zero in the tropics (or indeed averaged globally), the annual mean response of the system to the
+
+imposed forcing is not zero. This can be understood from the study of El Niño singular vectors of the coupled
+
+ui f σ1
+σ1
+
+Ẋ = σX– σY f+ +
+
+Ẏ = XZ– rX Y– f+ +
+
+Ż = XY BZ–
+
+σ1
+
+i 1=
+
+3∑ σi2αi2[ ]
+1 2⁄
+
+f ε Z Z–( )= Z Z
+Z 0∼
+
+Z Z>
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 23
+
+ocean-atmosphere system discussed above, where it was noted that the dominant singular value of the tangent prop-
+
+agator M of a tropical Pacific coupled ocean-atmosphere model is larger for 6 month trajectory portions starting in
+
+(boreal) spring than from trajectory portions starting in (boreal) autumn. Hence a sinusoidal forcing with
+
+, can excite an annual average response. Cane and Clement (1999) argue that to understand the
+
+fact that many observed paleoclimate changes are simultaneous in both hemispheres, the tropics must provide an
+
+important intermediary between global climate and orbital forcing. If these ideas prove correct, then this will pro-
+
+vide a fundamentally new paradigm for understanding paleoclimate variability.
+
+The same general ideas may apply when considering the atmosphere's response to anthropogenic perturbations,
+
+discussed in detail elsewhere (Palmer, 1993b, 1999). For example, it is commonly imagined that the climate re-
+
+sponse to anthropogenic forcing should be distinct from patterns of natural climate variability. On the other hand,
+
+consider Eq. (45). Largely independent of the details of the imposed forcing, the system's response to an imposed
+
+forcing f is associated with an increase in the pdf associated with one of the Lorenz regimes, and a decrease in the
+
+pdf associated with the other regime. (With in Eq. (45), the pdfs associated with the two regimes are iden-
+
+tical.) On the other hand, the phase-space locations of the regime centroids are largely unaffected by the imposed
+
+forcing. This can be understood by noting that the regime centroids are phase-space regions of relative stability;
+
+the system is sensitive to the imposed forcing in a region of the attractor between the two centroids (see Fig. 7 (b)).
+
+If this picture were applicable to the climate system, it would imply that anthropogenically-forced changes in cli-
+
+mate would project primarily onto the principal patterns of natural variability, even though such natural variability
+
+may occur predominantly on timescales much shorter than that of the imposed forcing. Corti et al. (1999) have
+
+argued that this is indeed the case based on an analysis of changes to the frequency of occurence of atmospheric
+
+circulation regimes defined from observed hemispheric circulation data for from 1949 to 1994.
+
+Hence in predicting climate change, particularly on a regional basis, it will be very important to predict changes in
+
+the frequency of occurrence of familiar circulation patterns. For example, the UK can expect milder winters if the
+
+frequency of occurence of zonal circulation regimes which bring mild maritime air over the European continent
+
+(e.g. associated with the positive phase of the North Atlantic Oscillation; Hurrell, 1995), increases. Conversely
+
+winters can be expected to be more severe if the frequency of so-called blocked regimes with persistent anticyclonic
+
+flow, increases. Results suggest that these regime frequencies are sensitive to changes in the diabatic heating fields
+
+in the tropics (Trenberth et al., 1998). From this point of view, expecting observed regional climate change to be
+
+directly predictable from perturbations to radiative forcing is a gross oversimplification of the problem.
+
+Indeed, these results indicate that predictions of anthropogenic climate change, particularly on a regional basis, re-
+
+quire models which can simulate accurately natural circulation regimes and their associated variability, even
+
+though the dominant timescale of such variability may be much shorter than the climate-change signal itself. More-
+
+over, since variability in these circulations regimes is essentially chaotic, the impact of anthropogenic forcing on
+
+the frequency of occurrence of a particular regime over a particular period of time, cannot be deduced determinis-
+
+tically; such predictions are necessarily probabilistic. The generation and verification of probability forecasts from
+
+global climate prediction models are discussed in the sections below.
+
+6.4  Initialising ensemble forecasts
+
+A third application of the singular vector technique is in providing a manageable set of initial conditions which
+
+sample the unstable subspace of the initial pdf, to provide the starting conditions for an ensemble of integrations
+
+to determine the forecast pdf into the nonlinear range. This application will be discussed in detail in the next sec-
+
+tion.
+
+ε ωtsin
+2π ω⁄ 1 year=
+
+f 0=
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+24 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+7. FORECASTING UNCERTAINTY BY ENSEMBLE PREDICTION
+
+In the discussion above, the problem of forecasting uncertainty in weather and climate prediction has been formu-
+
+lated in terms of a Liouville, or, including model uncertainty, a form of Fokker-Planck equation. In practice these
+
+equations are solved using ensemble techniques i.e. from multiple integrations of the governing equations from
+
+perturbed initial conditions, using multiple models and/or stochastic parametrizations to represent model uncer-
+
+tainty. Insofar as the perturbed initial conditions constitute a random sampling of the initial pdf, this could be de-
+
+scribed as a Monte-Carlo approach. However, the methodologies discussed below for estimating the initial
+
+perturbations do not necessarily constitute such a random sampling, for reasons to be discussed. As such, the more
+
+general term "ensemble prediction" is used.
+
+In the discussion below, it is useful to describe separately the problem of forecasting predictability on timescales
+
+of days, seasons, and beyond.
+
+7.1  Global weather prediction: from 1-10 days
+
+On timescales of 1 day or so, the extratropical weather forecast problem could be described conceptually as the
+
+prediction of the development of individual baroclinic disturbances, and their associated weather (fronts, cloud,
+
+rainfall etc). The notion that extratropical weather systems can be described qualitatively in terms of baroclinic ei-
+
+genmodes has been mentioned in Section 5 above.
+
+On the other hand, atmospheric circulations exhibit a degree of organisation on timescales of 10 days or so. From
+
+a popular perspective, the atmosphere exhibits “spells of weather”, characterised by a run of similar weather sys-
+
+tems, or an extended period marked by the absence of weather systems. More precisely there is evidence of “cir-
+
+culation regimes” characterised by persistence on timescales much longer than an individual weather system, but
+
+with transitions between regimes characterised by the faster timescale e.g. of the dominant baroclinic instability
+
+(Cheng and Wallace, 1993; Kimoto and Ghil, 1993; Mo and Ghil, 1988; Molteni et al., 1990; Vautard 1990). The
+
+prediction of persistence or changes in circulation regime could be said to be characteristic of the 10-day medium-
+
+range forecast problem.
+
+The existence of these two timescales is illustrated in the Lorenz (1963) model, whose attractor has two clear re-
+
+gimes of activity (see Fig. 2 ). For commonly-used values of the parameters in the model, a typical regime residence
+
+timescale is longer than the timescale of oscillation about a regime centroid, or of the timescale of transition be-
+
+tween regimes. In this context, the Lorenz model is a paradigmatic 'toy model' of atmospheric circulation regime
+
+behaviour. Intermediate models based on atmospheric quasi-geostrophic equations also show regime behaviour. An
+
+example (discussed further below) is the nonlinear quasi-geostrophic model of Reinhold and Pierrehumbert (1982)
+
+with two zonal and two meridional wavenumbers producing a topographically-forced planetary scale interacting
+
+with a baroclinically- unstable cyclone scale. Phase-space trajectories vacillate aperiodically between two long-
+
+lived weather regimes; results from this model are discussed below.
+
+There is evidence of similar behaviour in tropical atmospheric circulations. Consider, for example, the Asian mon-
+
+soon. Individual monsoon ‘depressions’, associated with an instability of the monsoon jet stream, develop on
+
+timescales similar to (or faster than) extratropical instabilities, and thus characterise the short-range forecast prob-
+
+lem. On the other hand, the so-called active and break phases of the monsoon (which characterise the intraseasonal
+
+fluctuations of the monsoon) appear to have distinct regime dynamics with typical residence timescales on the order
+
+of 10-20 days (Webster et al., 1998).
+
+Hence on the timescale of 10 days, it is important to be able to estimate uncertainty in predictions of persistence
+
+or change in regime type. In the last few years, ensemble forecasting on this 10-day timescale has become an es-
+
+tablished part of operational global weather prediction (Palmer et al., 1993, Toth and Kalnay, 1993, Houtekamer
+
+et al., 1996, Molteni et al., 1996). Different strategies have been proposed for determining the ensemble of starting
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 25
+
+conditions. Conceptually, the strategies can be delineated according to whether the initial perturbations merely
+
+sample observation error, or whether (given the dimension of phase space and the uncertainty in our knowledge of
+
+the initial pdf) the initial perturbations are constrained to lie in some dynamically unstable subspace. In the latter
+
+case, this dynamical subspace can be defined in different ways. Within the meteorological community, there has
+
+been a very lively debate on the merits and deficiencies of the different strategies.
+
+A recent analysis of the problem has been performed by Anderson (1997) using the Lorenz (1963) model. First,
+
+points are sampled at regular intervals on the attractor. A pdf of "observation error" is then assumed. A sampled
+
+point on the attractor is perturbed with a realisation of ; this is the "analysed state". A 2-member ensemble is
+
+then generated by perturbing about the analysed state with perturbations , where is again drawn from .
+
+The integration from the state on the attractor is taken as "truth". Based on standard measures of skill (see Section
+
+8 below), this ensemble is more skilful than any other 2-member ensemble, e.g. based on singular-vector perturba-
+
+tions of the analysed state. Similar results have been found by Hamill et al. (1999) based on an intermediate quasi-
+
+geostrophic model. This study concludes that it is enough in generating an ensemble of initial conditions to ran-
+
+domly perturb the observations  (see Section 3) consistent with the observation error covariance matrix .
+
+On the other hand, this type of experiment is rather idealised. On the basis of the discussion in section 3, a sampling
+
+of the initial pdf obtained from Eq. (13) by perturbing observations, is likely to be a gross underestimate of (for
+
+example) the second moment of the initial pdf. Unfortunately, as discussed, there are so many unquantified uncer-
+
+tainties in the actual details of the data assimilation procedure, it is not at all straightforward to quantify this under-
+
+estimation.
+
+The strategies that use dynamically-constrained perturbations, in some sense bypass the quantification of these un-
+
+certainties, and focus on perturbations that are necessarily growing, and hence are likely to contribute to significant
+
+forecast error. Two types of dynamically-constrained perturbation have been proposed: the first based on the "bred
+
+vectors" (Toth and Kalnay, 1993) and the singular vectors discussed in section 5 (Mureau et al., 1993).
+
+A study of differences between ensembles initialised using bred vectors and singular vectors has recently by Tre-
+
+visan et al. (2000) using the intermediate nonlinear quasi-geostrophic model of Reinhold and Pierrehumbert
+
+(1982) described above. A preliminary study of the predictability properties of the model was made by performing
+
+relatively large Monte Carlo simulations to each of 2,500 initial states (on the model attractor). Much smaller en-
+
+semble integrations were then constructed using the two types of dynamically constrained perturbation. The study
+
+focussed on cases of regime transition. It was found that in general, the bred-vector ensemble provided an average
+
+error distribution more similar to the Monte Carlo distribution, whilst the singular-vector ensemble provided a
+
+more reliable estimate of an upper bound on error growth. For example, a prediction of a low probability of tran-
+
+sition of weather regime was found to be much more reliable using the singular vector perturbations than using the
+
+bredvector perturbations in these dynamically-constrained ensembles.
+
+This is of some relevance for user confidence in probability forecasts. As discussed in more detail in Section 9,
+
+consider a user who could potentially suffer a catastrophic loss if an event occurs (in this case a circulation
+
+regime change bringing severe weather of some type). The user can take protective action at cost , which might
+
+itself be substantial, but can be presumed to be less than . Based on the ensemble forecast, one can estimate a
+
+probability that will occur. If is sufficiently low, then the user should be able to assume that protective
+
+action is not necessary. On these occasions of very low , the incurrence of a loss would be seen as a failure of
+
+the forecast system, and user confidence in the system would be seriously compromised. Of course, an a posteriori
+
+constant offset could be added to the forecast probability, so that very small probabilities would never be issued.
+
+But in this case, the ensemble would have no realistic value to the user as a decision tool, since the issued proba-
+
+bilities would always be sufficiently high that protective action would always be taken.
+
+O
+O
+
+p± p O
+
+Y O
+
+L E
+C
+
+L
+p E p
+
+p L
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+26 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Figure  8: An example of an operational forecast product from the 50-member ECMWF ensemble prediction
+
+system. Probability that (a) 850 hPa temperature is at least 4oC above normal, (b) 8oC above normal, based on a 6-
+
+day forecast.
+
+The implication of this analysis is that it is important, arguably paramount, to be sure that the user can be confident
+
+in a forecast where the ensemble spread is small. For this reason, it is important in an operational environment to
+
+ensure that the initial perturbations, are not conservative in the sense of not spanning phase space directions where
+
+the pdf is underestimated (due to unquantified errors in the data analysis procedures), and where forecast error
+
+growth could be large because of dynamical instability. For these reasons, the ECMWF ensemble system is based
+
+in part on initial perturbations using rapidly growing singular vectors (with approximations to the metric).
+
+Examples of the beneficial impact of singular vector perturbations over other types of perturbation are given in Mu-
+
+reau et al. (1993) and Gelaro et al. (1998).
+
+At the time of writing, the ECMWF Ensemble Prediction System (EPS) comprises 51 forecasts of the ECMWF
+
+forecast model (see Buizza et al., 1998: Buizza et al., 1999b). As above, the control forecast is run from the oper-
+
+ational ECMWF analysis. The 50 perturbed initial conditions are made by adding and subtracting linear combina-
+
+tions of the dominant 25 singular vector perturbations to the operational analysis. In addition, the 50 perturbed
+
+forecasts are also run with the stochastic parametrisation defined in Eq. (25). The EPS is run every day and basic
+
+meteorological products are disseminated to all the national meteorological services of the ECMWF Member
+
+States. These products often take the form of probability forecasts for different events E, based on the fraction of
+
+ensemble members for which E is forecasts. For example, Fig. 8 shows day 6 probability forecasts over Europe
+
+for the events , defined as: difference of lower tropospheric temperature from a long-term climatology
+
+is greater than 8oC, or 4oC, respectively.
+
+Based on the EPS, many of the European national meteorological services are providing their customers detailed
+
+probability forecasts of possible weather parameters for site-specific locations. For example, based on the EPS, the
+
+United Kingdom Meteorological Office provides forecast pdfs of surface temperature and precipitation for various
+
+specific locations in the UK. Joint probability distributions are also estimated (e.g. the probability of precipitation
+
+with surface temperature near or below freezing).
+
+As discussed above (cf. Fig. 2 ), a feature of nonlinear dynamical systems is the dependence of error growth on
+
+initial state. Fig. 9 illustrates this, based on two 10-day EPS integrations from starting dates exactly one year apart,
+
+the meteorological forecast variable being surface temperature over London. The unperturbed control forecast and
+
+verification are also shown. In the first example, the growth of the initial perturbations is relatively modest, and the
+
+associated forecast temperature pdf is relatively sharp. In the second example, the initial perturbations grow rapidly
+
+and the associated forecast temperature pdf is broad. Notice in the second example that the control integration is
+
+already very unskilful 3 days into the forecast. The large ensemble spread provides an a priori warning to the user
+
+gA 1–
+
+E 8> E 4>
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 27
+
+that decisions made from single deterministic forecasts during this period could be extremely misleading.
+
+lthough forecasters have traditionally viewed weather prediction as deterministic, a culture change towards proba-
+
+bilistic forecasting is in progress. On the other hand, it is still necessary to demonstrate to users of weather forecasts
+
+that reliable probability forecasts provide greater value than imperfect deterministic forecasts. Such a demonstra-
+
+tion will be given in Section 9 below.
+
+Figure  9: Time series of ensemble forecast integrations for surface temperature over London from starting
+
+conditions exactly 1 year apart. The unperturbed control forecast (heavy solid) and the verifying analysis (heavy
+
+dashed) are also shown. Top: a relatively predictable period. Bottom: an unpredictable period. (In these examples,
+
+the ensembles comprised 32 perturbed forecasts and the model did not include the stochastic representation as
+
+described in Eq. (25).)
+
+7.2  Seasonal to interannual prediction
+
+After the major 1997/98 El Niño, event (e.g. Webster and Palmer, 1998), the media and public alike have been
+
+fascinated by El Niño; indeed, almost every unusual weather event during that period was attributed to El Niño.
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+28 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+However, in addition to this explosion of general interest, there has, in the last few years, been a major development
+
+in our ability to predict El Niño and its global consequences. As a result, forecasts of the fluctuations of the climate
+
+system on seasonal to interannual timescales have matured to the stage of being produced routinely by operational
+
+forecast centres around the world (see http://www.iges.org/ellfb ).
+
+The term "El Niño" was coined by Peruvian fisherman to describe a seasonal warming of coastal waters, but was
+
+adopted by scientists to denote a fluctuation of the large-scale ocean atmosphere temperature and circulation field
+
+across the equatorial Pacific (Philander 1990). During normal years, equatorial Pacific sea surface temperatures
+
+(SSTs) along the equator are coldest in the east Pacific and warmest in the west Pacific. From a meteorological
+
+point of view, the release of energy from convective instability over these warmer waters drives the large-scale cir-
+
+culations in the tropical atmosphere including the surface trade winds which blow from east to west across the
+
+equatorial Pacific. From an oceanographic point of view, these westward (or "easterly") trade winds maintain the
+
+SST gradients across the. equatorial Pacific. In part, the trade winds "pile up" warm surface waters in the Western
+
+Pacific. In addition, due to the Coriolis effect, the trade winds cause an upwelling of colder subsurface water to the
+
+surface at the equator; this effect being strongest in the east Pacific (Gill 1982).
+
+From this point of view, the ocean and atmosphere are in some sort of coupled equilibrium. However, this is not a
+
+completely stable equilibrium. Consider a weakening of the trade winds locally in the central equatorial Pacific.
+
+The effect of this perturbation would be to weaken the upwelling of cold water and hence to locally increase SST.
+
+The influence of this perturbation in the ocean can propagate eastwards and westwards, through oceanic Kelvin and
+
+Rossby modes respectively (Gill 1982). The faster-propagating Kelvin wave spreads the influence of this anoma-
+
+lous downwelling perturbation to the equatorial eastern Pacific, which leads to a weakening of the overall east-west
+
+gradient of SST. As a consequence, the convergence of moisture and consequent release of convective instability
+
+over the west Pacific will also weaken. The result is a further reduction in the strength of the trade winds. The am-
+
+plification of this feedback can lead to an evolution of the ocean-atmosphere system to a state where both the trade
+
+winds and the east-west SST gradient are almost completely eliminated. This corresponds to a (major) EI Niño
+
+state.
+
+However, this EI Niño state is not in a stable equilibrium either. The westward propagating oceanic Rossby mode,
+
+forced by the relaxed trade winds, reflects off the Indonesian archipelago and returns as a Kelvin mode restoring
+
+the ocean back to its normal state, or even to a overrelaxed "La Niña" state in which the east-west SST gradients
+
+are enhanced. It is these propagating oceanic Kelvin/Rossby modes which are believed to make the EI Niño event
+
+predictable several seasons ahead. The first coupled-model predictions of El Niño were performed using interme-
+
+diate models of the Pacific ocean coupled to relatively simple atmospheric representations (Zebiak and Cane,
+
+1987).
+
+The basic dynamics and predictability of EI Niño can be qualitatively characterised by the ("toy-model") differen-
+
+tial-delay equation (Schopf and Suarez, 1988; Battisti and Hirst, 1989)
+
+(46)
+
+where denotes the SST anomaly in the eastern equatorial Pacific. The first term on the right-hand side of Eq.
+
+(46) represents the positive feedback between the strength of the trade winds and the strength of the SST gradient
+
+across the Pacific. The second term is a delayed negative feedback representing the adjustment processes in the
+
+ocean associated with wave dynamics. The delay is determined by the time it takes the Rossby wave to propagate
+
+westward across the Pacific basin, reflect off the Indonesian archipelago, and return as an eastward propagating
+
+Kelvin wave.
+
+Ṫ cT bT t τ–( )–=
+
+T
+
+τ
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 29
+
+Figure  10: Time series of ensemble seasonal forecasts of monthly mean sea surface temperature anomalies
+
+predicted for the region of the tropical Pacific where the El Niño signal is strongest. Forecasts of the ECMWF
+
+coupled model are run over 6-month periods from consecutive days. The heavy line shows the observed sea
+
+surface temperatures. From the ECMWF seasonal prediction system (see http://www.ecmwf.int/seasonal).
+
+El Niño influences atmospheric circulations around the globe. However, it is important to realise that these circu-
+
+lations are essentially chaotic. In this sense the impact of El Niño on global atmospheric circulations is not itself
+
+predictable. An analogy is provided by the Lorenz (1963) model, in which an additional prescribed forcing term is
+
+added (see Eq. (45)). With or without forcing, the timeseries of the Lorenz model state vector is chaotic. On the
+
+other hand, the probability of the state vector lying in one of the two Lorenz-attractor regimes is predictably altered
+
+by the imposed forcing. This analogy emphasises the essential point that reliable seasonal forecasts of the influence
+
+of El Niño on the global atmospheric circulation are necessarily probabilistic.
+
+The successful prediction of El Niño events by intermediate complexity coupled ocean-atmosphere models, strong-
+
+ly motivated the development of operational forecast systems using comprehensive global coupled ocean-atmos-
+
+phere models. The 1997/98 event was successfully forecast by a number of such models, including the ECMWF
+
+model (Stockdale et al., 1998) which comprised the weather forecast model described above, coupled to a global
+
+ocean model developed at the Max Planck Institute for Meteorology (Latif et al. 1994).
+
+Predicting seasonal climatic fluctuations is essentially an initial value problem; however, unlike the weather pre-
+
+diction problem, predictability arises from a memory of initial conditions primarily in the ocean. Hence, ocean data
+
+assimilation schemes, similar to that described in Section 3, are used to assimilate relevant ocean observations. (It
+
+should be noted that the land-surface can also impart seasonal-timescale predictability on the atmosphere; for ex-
+
+ample, the strength of the Indian summer monsoon is known to be influenced by snow amount accumulated over
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+30 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+the Asian continent during the previous winter; Blanford, 1884). In principle, the same techniques used for fore-
+
+casting uncertainty in weather prediction can be used for seasonal prediction. For example, at ECMWF, an analysis
+
+of the ocean and atmosphere is performed every day, and a single 6-month integration of the global coupled ocean-
+
+atmosphere model is made from each analysis (see http://www.ecmwf.int/seasonal ). Taken over a month, the set
+
+of such forecasts comprises an approximately 30-member "time-lagged" ensemble (Hoffman and Kalnay, 1983).
+
+Fig. 10 shows an example of such an ensemble of coupled model forecasts made just before the onset of the 1997/
+
+98 El Niño. The forecast variable is the mean SST anomaly in the central to eastern tropical Pacific. The ensemble
+
+shows a significant probability of the development of an El Niño event.
+
+Figure  11: Probability that seasonal-mean precipitation is above or below normal based on a 30-member
+
+ensemble of 6-month integrations of the ECMWF seasonal forecast system for the boreal winter 1997/98 starting
+
+in October 1997. Dotted shading indicates a higher than normal probability of above average precipitation, the
+
+denser the dots, the higher the probability. Solid shading indicates a higher than normal probability of below
+
+average precipitation, the deeper the shading, the higher the probability. Regions shaded white indicate that the
+
+forecast probabilities are not significantly different to climatology. From the ECMWF seasonal prediction system
+
+(see http://www.ecmwf.int/seasonal for more details).
+
+As mentioned, the effect of El Niño is global. Fig. 11 shows a probability forecast of precipitation, based on an
+
+ensemble of ECMWF seasonal integrations. The density of shading gives the probability that seasonal mean pre-
+
+cipitation (for the northern winter 1997/98) will be above (dots) or below (solid) average. In the regions shown
+
+white, the influence of the anomalous boundary forcing is small (statistically insignificant) compared with chaotic
+
+variability arising from internal atmospheric fluctuations. For example, according to the forecast in Fig. 11 , there
+
+is a high probability of relatively dry conditions over Amazonia and Indonesia, and wet conditions over California
+
+across to Florida. Such conditions actually occurred and featured extensively in media coverage of weather anom-
+
+alies during that winter.
+
+At present, it is unclear what the ultimate limit of predictability of El Niño really is. Whether this limit is controlled
+
+purely by the internal nonlinear dynamics of El Niño (e.g. as represented by the intermediate Zebiak-Cane model;
+
+e.g. Münnich et al., 1991), or by unpredictable forcing from atmospheric motions external to the coupled system
+
+(e.g. Eckert and Latif, 1997), remains to be established.
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 31
+
+7.3  Decadal prediction and anthropogenic climate change
+
+It is well known that anthropogenic increases of CO2 have the propensity to change earth's climate. Even though
+
+climate is almost certain to warm on a global scale, regional changes in climate can only be predicted using the
+
+global coupled ocean-atmosphere models discussed above. But how confident can we be in such predictions? What
+
+are the principal uncertainties?
+
+The problem of predicting climate change arising from anthropogenic perturbations has a different character to the
+
+weather or seasonal forecasts discussed above. In a general sense, anthropogenic climate-change prediction could
+
+be described as a problem of estimating how the climate attractor changes for a prescribed increase in atmospheric
+
+CO2 content. A conceptually similar problem was discussed in Section 5, how the climate responds to slow changes
+
+in the orbit of the earth about the sun. As discussed in the introduction, the climate-change prediction problem, like
+
+the paleoclimate problem, is a prediction of the second kind.
+
+In practice, this delineation is perhaps simplistic; climate-change scenario experiments are made by running cli-
+
+mate models over the coming decades with slowly increasing CO2. On these timescales there is in fact some evi-
+
+dence that natural fluctuations of the Physical climate system are partially predictable. For example, anomalies of
+
+ocean salinity and SST have been observed to propagate coherently for many years through high latitudes of the
+
+North Atlantic (Dickson et al., 1988, Belkin et al., 1998, Hansen and Bezdek, 1996; Sutton and Allen, 1997). It has
+
+been suggested that such anomalies may influence and/or be influenced by the global thermohaline circulation
+
+(Dickson et al., 1996), a circulation which affects the mean climate over Northern Europe. Ensemble integrations
+
+of coupled ocean-atmosphere models suggest that the thermohaline circulation has some predictability on decadal
+
+timescales (Griffies and Bryan, 1997). There may be other ocean- atmosphere modes with decadal predictability
+
+(Latif, 1998). In addition, the climate system may have biochemical feedbacks which are partially predictable on
+
+decadal timescales (Pielke, 1999).
+
+Figure  12: A multi-model ensemble of predictions of anthropogenic global temperature change, based on a
+
+prescribed increase in atmospheric CO2 content. From IPCC (1996).
+
+Let us suppose that such decadal predictability exists. Then, for example, it might be possible to estimate from en-
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+32 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+semble integrations initialised with current data, that there is a significant probability (e.g. significantly different
+
+than 0.5) that the thermohaline circulation will slow down in the next century as a result of natural climate varia-
+
+bility. In this situation, the anthropogenic climate change problem becomes one of knowing how anthropogenic
+
+forcing would further influence this probability. However, given our limited knowledge of the current state of the
+
+climate system (especially the deep ocean), and the limited natural predictability that may in fact exist on decadal
+
+to centennial timescales, the problem of predicting the impact of anthropogenic forcing on the thermohaline circu-
+
+lation of the 21st century will in practice be a pure prediction of the second kind (e.g. as studied by Manabe and
+
+Stouffer, 1994).
+
+A principal uncertainty in climate change prediction lies in the uncertainties in model formulation, e.g as discussed
+
+in Section 4. As discussed in Section 4, such uncertainty may necessarily imply some stochastic representation of
+
+the influence of sub-grid scale processes within the model formulation. At present, such stochastic representations
+
+have not been used in the context of climate simulation. Rather, the representation of model uncertainty in ensem-
+
+ble integrations has been based on the multi-model ensemble (cf. Section 4).
+
+Multi-model ensemble prediction of anthropogenic climate change is a central feature of climate change assess-
+
+ment by the Intergovernmental Panel on Climate Change (IPCC). (IPCC was jointly established by the World Me-
+
+teorological Organisation and the United Nations Environment Programme to assess available scientific
+
+information on climate change, to assess the environmental and socio-economic impacts of climate change, and to
+
+formulate response strategies.) For example, Fig. 12 shows a multi-model ensemble of climate change predictions,
+
+based on a 1%/year increase of atmospheric CO2 concentration from 1990 (IPCC, 1996). The ensemble suggests
+
+there is no substantial probability of global warming being less that 0.25oC, or more than 4oC, 60 years from now.
+
+On the other hand, the pdf spanned by the use of the different sets of models is ad hoc, and may not cover all of the
+
+uncertainties in model formulation. Moreover, in practice the models are not truly independent of one another;
+
+there is a tendency (possibly for pragmatic rather than scientific reasons) for groups to adopt similar sets of para-
+
+metrisations. In addition, most of the models used in IPCC (1996) suffer from similar shortcomings; for example,
+
+none had sufficient equatorial resolution to simulate correctly the dynamics of El Niño. EI Niño does have an im-
+
+pact on the largest of atmospheric scales; for example, during El Niño years, global mean temperatures are en-
+
+hanced. Hence if the frequency of EI Niño events is affected by increasing CO2, this will impact on estimates of
+
+global warming. The effects of increasing CO2 on EI Niño are now beginning to be studied in climate models (e.g.
+
+Timmermann et al., 1999), though there is still uncertainty in the overall response.
+
+Compared with weather and seasonal forecasts, where verifying data is reasonably plentiful, it is difficult to assess
+
+quantitatively the predictions of uncertainty in forecasts of climate change. Certainly, a model's ability to predict
+
+natural climate fluctuations on seasonal timescales is increasingly being taken as a prerequisite for a model to be
+
+useful for climate-change prediction. The IPCC (1990) report made this point explicitly: "Confidence in a model
+
+used for climate simulation will therefore be increased if the same model is successful when used in a forecasting
+
+mode". This idea is consistent with the paradigm for climate change discussed above (Palmer, 1993b, 1999) which
+
+emphasises the notion that anthropogenic forcing will change the pdfs of naturally-occurring regimes of climate
+
+variability. This paradigm puts a premium on a model's ability to simulate such natural variability.
+
+Hence, albeit indirectly, the validation of forecasts of natural fluctuations in the climate system is relevant to the
+
+validation of climate-change scenarios. However, as we have emphasised, such validation techniques must take into
+
+account the probabilistic nature of such prediction. The next section deals explicitly with two commonly - used
+
+probabilistic validation techniques.
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 33
+
+8. VERIFYING FORECASTS OF UNCERTAINTY
+
+As discussed, the output from an ensemble forecast can be used to construct a probabilistic prediction. In this sec-
+
+tion, we discuss two basic measures of skill for assessing a probability forecast: the Brier Score and the Relative
+
+Operating Characteristic. Both of these measures are based on the skill of probabilistic forecasts of a binary event
+
+E, as discussed in Section 7 above. For example E could be: temperatures will fall below 0oC in three days time;
+
+average rainfall for the next three months will be at least one standard deviation below normal; seasonal-mean rain-
+
+fall will be below average and temperature above average, and so on.
+
+8.1  The Brier score and its decomposition
+
+Consider an event E which, for a particular ensemble forecast, occurs a fraction of times within the ensemble.
+
+If E actually occurred then let , otherwise . Repeat this over a sample of different ensemble fore-
+
+casts, so that is the probability of E in the th ensemble forecast and or , depending on whether
+
+E occurred or not in the th verification ( ).
+
+The Brier score (Wilks, 1995) is defined by
+
+(47)
+
+From its definition , equalling zero only in the ideal limit of a perfect deterministic forecast. For a large
+
+enough sample, the Brier score can be written as
+
+(48)
+
+where is the relative frequency that E was forecast with probability between and , and
+
+gives the proportion of such cases when E actually occurred. To see the relationship between (47) and (48) note
+
+that is the Brier score for ensembles where E actually occurred, and
+
+ is the Brier score for ensembles where E did not occur.
+
+Simple algebra on (48) gives Murphy's (1973) decomposition
+
+(49)
+
+of the Brier score, where
+
+(50)
+
+is the reliability component,
+
+(51)
+
+is the resolution component
+
+(52)
+
+p
+v 1= v 0= N
+
+pi i vi 1= vi 0=
+i i 1 2…N,=
+
+b 1
+N
+----- pi vi–( )
+
+2 0 pi 1 vi 0 1,{ }∈,≤ ≤,
+i 1=
+
+N
+
+∑=
+
+0 b 1≤ ≤
+
+b p 1–[ ]2o p( )ρens p( )dp p
+2 1 o p( )–[ ]ρens p( )dp
+
+0
+
+1
+
+∫+0
+1
+
+∫=
+
+ρens p( )dp p p dp+ o p( )
+
+p 1–[ ]2o p( )ρens p( )dp0
+1∫
+
+p 0–[ ]2o p( )ρens p( )dp0
+1∫
+
+b brel bres– bunc+=
+
+brel p o p( )–[ ]
+2ρens p( )dp
+
+0
+
+1
+
+∫=
+
+bres o o p( )–[ ]
+2ρens p( )dp
+
+0
+
+1
+
+∫=
+
+bunc o 1 o–[ ]=
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+34 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+is the uncertainty component, and
+
+(53)
+
+is the (sample) climatological frequency of E.
+
+A reliability diagram (Wilks, 1995) is one in which is plotted against for some finite binning of width .
+
+In a perfectly reliable system and the graph is a straight line oriented at 45o to the axes, and .
+
+Reliability measures the mean square distance of the graph of  to the diagonal line.
+
+Resolution measures the mean square distance of the graph of to the sample climate horizontal line. A system
+
+with relatively high is one where the dispersion of about is as large as possible. Conversely, a forecast
+
+system has no resolution when, for all forecast probabilities, the event verifies a fraction  times.
+
+The term on the right-hand side of (49) ranges from 0 to 0.25. If E was either so common, or so rare, that it
+
+either always occurred or never occurred within the sample of years studied, then ; conversely if E oc-
+
+curred 50% of the time within the sample, then . Uncertainty is a function of the climatological fre-
+
+quency of E, and is not dependent on the forecasting system itself. It can be shown that the resolution of a perfect
+
+deterministic system is equal to the uncertainty.
+
+When assessing the skill of a forecast system, it is often desirable to compare it with the skill of a forecast where
+
+the climatological probability is always predicted (so ). The Brier score of such a climato-
+
+logical forecast is (using the sample climate), since, for such a climatological forecast
+
+. In terms of this, the Brier skill score, , of a given forecast system is defined by
+
+(54)
+
+ for a forecast no better than climatology, and  for a perfect deterministic forecast.
+
+Skill-score definitions can similarly be given for reliability and resolution, i.e.
+
+(55)
+
+(56)
+
+For a perfect deterministic forecast system, . Hence, from Eqs. (49) and (54)
+
+(57)
+
+Fig. 13 shows two examples of reliability diagrams for the ECMWF EPS taken over all day-6 forecasts from De-
+
+cember 1998 - February 1999 over Europe (cf. Fig. 8 ). The events are , :- lower tropospheric temper-
+
+ature being at least 4oC, 8oC greater than normal. The Brier score, Brier skill score, and Murphy decomposition are
+
+shown on the figure.
+
+o o p( )ρens p( )dp
+0
+
+1
+
+∫=
+
+o p( ) p δp
+o p( ) p= brel 0=
+
+o p( )
+
+o p( )
+bres o p( )
+
+o p( ) o=
+
+bunc
+bunc 0=
+
+bunc 0.25=
+
+o ρens p( ) δ p o–( )=
+bcli bunc=
+
+brel bres 0= = B
+
+B 1 b
+bcli
+--------–=
+
+B 0≤ B 1=
+
+Brel = 1 brel bcli⁄–
+
+Bres = bres bcli⁄
+
+Brel Bres 1= =
+
+B Bres Brel 1–+=
+
+E 4> E 8>
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 35
+
+Figure  13. Reliability diagram and related Brier score skill score and Murphy decomposition for the events: (a)
+
+850 hPa temperature is at least 4oC above normal and (b) at least 8oC above normal, based on 6-day forecasts over
+
+Europe from the 50-member ECMWF ensemble prediction system from December 1998 - February 1999. Also
+
+shown is the pdf  for the event in question.
+
+The reliability skill score is extremely high for both events. However, the reliability diagrams indicate some
+
+overconfidence in the forecasts. For example, on those occasions where was forecast with a probability be-
+
+tween 80% and 90% of occasions, the event only verified about 72% of the time. However, it should be remembered
+
+that the integrand in Eq. (50) is weighted by the pdf , shown in each reliability diagram. In both cases,
+
+forecasts where  are relatively rare and hence contribute little to .
+
+To see why probability forecasts of have higher Brier skill scores than probability forecasts of , con-
+
+sider Eq. (57). From Fig. 13 , whilst is the same for both events, is larger for than for . This
+
+can be seen by comparing the histograms of in Fig. 13 which are more highly peaked for than for
+
+; there is less dispersion of the probability forecasts of the more extreme event about its climatological fre-
+
+quency, than the equivalent probability forecasts of the more moderate event. This is hardly surprising; the more
+
+extreme event is relatively rare (its climatological frequency is ) and most of the time is forecast with
+
+probabilities which almost always lie in the first probability category ( ). In order to increase the Brier
+
+score of this relatively extreme event, one would need to increase the ensemble size so that finer probability cate-
+
+gories can be reliably defined. (For example, suppose an extreme event has a climatological probability of occur-
+
+rence of Let us suppose that we want to be able to forecast probabilities of this event which can discriminate
+
+between probability categories with a band width comparable with this climatological frequency, then the ensemble
+
+size should be .) With finer probability categories, the resolution component of the Brier score
+
+can be expected to increase. Providing reliability is not compromised, this will lead to higher overall skill scores.
+
+However, this raises a fundamental dilemma in ensemble forecasting given current computer resources. It would
+
+be meaningless to increase ensemble size by degrading the model (e.g. in terms of "physical" resolution) making
+
+it cheaper to run, if by doing so it could no longer simulate extreme weather events. Optimising computer resources
+
+that on the one hand ensemble sizes are sufficiently large to give reliable probability forecasts of extreme but rare
+
+events, and that on the other hand the basic model has sufficient complexity to be able to simulate such events, is
+
+a very difficult balance to define.
+
+The Brier score and its decomposition provide powerful objective tools for comparing the performance of different
+
+ρens p( )
+
+Brel
+E 4>
+
+ρens p( )
+p 0.4> Brel
+
+E 4> E 8>
+Brel Bres E 4> E 8>
+
+ρens p( ) E 8>
+E 4>
+
+E 8> 0.04∼
+0 δ p 0.1≤≤
+
+prare
+
+Sens >> 1 prare⁄( )
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+36 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+probabilistic forecast systems. However, the Brier score itself does not address the issue of whether a useful level
+
+of skill has been achieved by the probabilistic forecast system. In order to prepare the ground for a diagnostic of
+
+probabilistic forecast performance which determines potential economic value, we first introduce skill score orig-
+
+inally derived from signal detection theory.
+
+8.2  Relative operating characteristic
+
+The relative operating characteristic (ROC; Swets, 1973; Mason 1982; Harvey et al., 1992) is based on the forecast
+
+assumption that E will occur, providing E is forecast by at least a fraction of ensemble members, where
+
+the threshold is defined a priori by the user. As discussed below, optimal can be determined by the param-
+
+eters of a simple decision model.
+
+Consider first a deterministic forecast system. Over a sufficiently large sample of independent forecasts, we can
+
+form the forecast- model contingency matrix giving the frequency that E occurred or did not occur, given it was
+
+forecast or not forecast, i.e.
+
+Based on these values, the so-called "hit rat" (H) and "false-alarm rate" (F) for E are given by
+
+(58)
+
+Hit and false alarm rates for all ensemble forecast can be defined as follows. It is assumed that E will occur if
+
+(and will not occur if ). By varying between 0 and 1 we can define , .
+
+In terms of the pdf
+
+(59)
+
+The ROC curve is a plot of against for . A measure of skill is given by the area under the
+
+ROC curve (A). A perfect deterministic forecast has , whilst a no-skill forecast for which the hit and false
+
+alarm rates are equal, has .
+
+Relative operating characteristic curve for seasonal timescale integrations (run over the years 1979-93, run with
+
+prescribed observed SST) for the event :- the seasonal-mean (December-February) 850 hPa temperature
+
+anomaly is below normal. Solid: based on a single model 9-member ensemble. bottom: based on a multi-model 36-
+
+member ensemble (see Palmer et al., 2000) for more details. The area A under the two curves (a measure of skill)
+
+is shown.
+
+p pt=
+pt pt
+
+Occurs
+
+No Yes
+
+No α β
+Forecast
+
+Yes γ δ
+
+H δ β δ+( )⁄=
+F γ α γ+( )⁄=
+
+p pt≥ p pt< pt H H pt( )= F F pt( )=
+ρens p( )
+
+H pt( ) o p( )ρens p( )dp o⁄∫=
+
+F pt( ) 1 o p( )–{ }ρens p( )d p 1 o–( )⁄∫=
+
+H pt( ) F pt( ) 0 pt 1≤ ≤
+A 1=
+
+A 0.5=
+
+E 0<
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 37
+
+Figure 14. Relative operating characteristic curve for seasonal timescale integrations (run over the years 1979-93,
+
+run with prescribed observed SST) for the event :- the seasonal-mean (December-February) 850 hPa
+
+temperature anomaly is below normal. Solid: based on a single model 9-member ensemble. bottom: based on a
+
+multi-model 36-member ensemble (see Palmer et al., 2000) for more details. The area A under the two curves (a
+
+measure of skill) is shown.
+
+We illustrate in Fig. 14 the application of these measures of skill to a set of multi-model multi-initial condition
+
+ensemble integrations made over the seasonal timescale (Palmer et al., 2000). The event being forecast is :-
+
+the seasonal-mean (December-February) 850 hPa temperature anomaly will be below normal. The global climate
+
+models used in the ensemble are the ECMWF model, the UK Meteorological Office Unified Model, and two ver-
+
+sions of the French Arpège model; the integrations were made as part of the European Union "Prediction of Climate
+
+Variations on Seasonal to Interannual Timescales (PROVOST)". For each of these models, 9-member ensembles
+
+were run over the boreal winter season for the period 1979-1993 using observed specified SSTs. The values
+
+and have been estimated from probability bins of width 0.1. The ROC curve and corresponding A value is
+
+shown for the 9-member ECMWF model ensemble, and for the 36-member multi-model ensemble. It can be seen
+
+that in both cases, A is greater than the no-skill value of 0.5; however, the multi-model ensemble is more skilful
+
+than the ECMWF-model ensemble. Studies have shown that the higher skill of the multi-model ensemble arises
+
+mainly because of the larger ensemble size, but also because of a sampling of the pdf associated with model uncer-
+
+tainty.
+
+9. THE ECONOMIC VALUE OF PREDICTING UNCERTAINTY
+
+Although B and A (defined in Section 8) provide objective measures of skill for ensemble forecasts, they do not
+
+determine measures of usefulness for seasonal forecasts. In an attempt to define this notion objectively, we consider
+
+here a simple decision model (Murphy, 1977; Katz and Murphy, 1997) whose inputs are probabilistic forecast in-
+
+formation and whose output is potential economic value.
+
+Consider a potential forecast user who can take some specific precautionary action depending on the likelihood that
+
+E will occur. Let us take some simple examples relevant to seasonal forecasting. If the coming winter is mild (E:-
+
+seasonal-mean temperature above normal), then overwintering crops may be destroyed by aphid growth. A farmer
+
+can take precautionary action by spraying. If the growing season is particularly dry (E:- seasonal-mean rainfall at
+
+least one standard deviation below normal), then crops may be destroyed by drought. A farmer can take precau-
+
+tionary action by planting drought-resistant crops. In both cases taking precautionary action incurs a cost C irre-
+
+E 0<
+
+E 0<
+
+H pt( )
+F pt( )
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+38 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+spective of whether or not E occurs (cost of spraying, or cost associated with reduced yield and possibly with more
+
+expensive seed). However, if E occurs and no precautionary action has been taken, then a loss L is incurred (crop
+
+failure).
+
+This simple "cost-loss" analysis is also applicable to much shorter range forecast problems (Richardson, 1999). For
+
+example, if the weather event was the occurrence of freezing conditions leading to ice on roads, and the precau-
+
+tionary action was to salt the roads, then C would correspond to the cost of salting, and L would be associated with
+
+the increase in road accidents, traffic delays etc.
+
+In general, the expense associated with each combination of ac action /inaction and occurrence/non-occurrence of
+
+E is given in the decision-model contingency matrix
+
+It is presumed that the decision maker wishes wishes to maximise profits, or at least minimise overall expenses.
+
+If only the climatological frequency of E is known, there are two basic options: either always or never take pre-
+
+cautionary action. Always taking action incurs a cost C on each occasion, whilst never taking action incurs a loss
+
+L only on the proportion  of occasions when E occurs, giving an expense .
+
+If the seasonal forecast data used in Section 8 above were used by a hypothetical decision maker, would his/her
+
+expenses would be reduced beyond what could be achieved using alone? Consider first a deterministic forecast
+
+system with characteristics described by the forecast-model contingency matrix in Section 8.2. The user's expected
+
+mean expense M per unit loss is
+
+(60)
+
+This can be written in terms of the hit-rate H and the false-alarm F using (58), so that
+
+(61)
+
+For a perfect deterministic forecast  and , hence
+
+(62)
+
+To calculate the mean expense per unit loss knowing only , suppose first the decision maker always protects, then
+
+. Conversely, if the decision maker never protects then . Hence if the decision maker knows
+
+only , M can be minimised by either always or never taking precautionary action, depending on whether
+
+, or , respectively. The mean expense per unit loss associated with a knowledge of climatology
+
+only is therefore
+
+                               Occurs
+
+No Yes
+
+No 0 L
+Take action
+
+Yes C C
+
+o
+
+o oL
+
+o
+
+M βL γ β+( )C+
+L
+
+------------------------------------=
+
+M FC
+L
+---- 1 o–( ) Ho 1 C
+
+L
+----– 
+
+ – o+=
+
+H 1= F 0=
+
+Mper o
+C
+L
+----=
+
+o
+M C L⁄= M o=
+
+o
+C L o<⁄ C L⁄ o>
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 39
+
+(63)
+
+The value V of forecast information is defined as a measure of the reduction in M over Mcli, normalised by the max-
+
+imum possible reduction associated with. a perfect deterministic forecast, i.e.
+
+(64)
+
+For a forecast system which is no better than climate, ; for a perfect deterministic forecast system .
+
+As discussed in Section 8, an ensemble forecast gives hit and false-alarm rates and , as
+
+a functions of probability thresholds (see (59)). Hence V is defined for each , i.e. . Using (61),
+
+(62) and (63)
+
+(65)
+
+For given  and event E, the optimal value is
+
+(66)
+
+Figs. 15 -16 show examples of optimal value as a function of user cost/loss ratio. Fig. 15 is for the ECMWF day-
+
+6 ensemble weather prediction system and the event (as in Fig. 13 ). The solid curve is the optimal value for
+
+the ensemble system, the dashed curve shows value for a single deterministic forecast (the unperturbed "control"
+
+integration in the ensemble). Peak value tends to occur for ; for such users, it makes little difference
+
+to the climatological expense whether they always protect, or never protect. The figure also illustrates the fact
+
+that the ensemble forecast has greater "value" than a single deterministic forecast. For some cost/loss ratios (e.g.
+
+), the deterministic forecast has no value, whereas the ensemble forecast does have value. The reason
+
+for this can be understood in terms of the fact that for a probabilistic forecast, different users (with different )
+
+would take precautionary action for different forecast probability thresholds. A user who would suffer a catastroph-
+
+ic loss ( ) if E occurred, would take precautionary action even when a small probability of E was forecast.
+
+A user for whom precautionary action was expensive in comparison with any loss ( ) would take precau-
+
+tionary action only when a relatively large probability of E was forecast. The result demonstrates the value of a
+
+reliable probability forecast.
+
+Fig. 16 shows optimal value from the ECMWF seasonal integrations described in section 7. Two different events
+
+are shown based on seasonal-mean rainfall forecasts over all regions in the tropics. They are: rainfall less than nor-
+
+mal, and rainfall less than one standard deviation below normal (the latter being a possible objective definition of
+
+drought). It can be seen that the peak value for the two events occurs at different , arising because the two
+
+events have different values of . The figure also shows that the value of the forecasts of the more extreme
+
+"drought" event is more valuable than the forecasts of rainfall simply below normal. It would appear that the reason
+
+for this is that such events tend to be forecast more during El Niño years, when seasonal predictability is high, than
+
+during other years, when predictability is lower.
+
+An absolute "dollar" estimate of value can be attached to these curves, providing the user knows the "dollar" value
+
+Mcli min
+C
+L
+---- o, 
+
+ =
+
+V
+Mcli M–
+
+Mcli Mper–
+-----------------------------=
+
+V 0= V 1=
+
+H H pt( )= F F pt( )=
+pt pt V V pt( )=
+
+V pt( )
+min
+
+C
+L
+---- o, 
+
+  F pt( )
+C
+L
+---- 1 o–( )– H pt( )o 1
+
+C
+L
+----– 
+
+  o–+
+
+min
+C
+L
+---- o, 
+
+  oC
+L
+----–
+
+---------------------------------------------------------------------------------------------------------------------------=
+
+C L⁄
+
+V opt max V pt( )[ ]pt
+=
+
+E 4<
+
+C L o⁄
+Mcli
+
+C L 0.6>⁄
+C L⁄
+
+C L<<1⁄
+C L 1∼⁄
+
+C L⁄
+o
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+40 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+of their cost and loss. An attempt to do this for seasonal forecasts in southern Africa suggests, for some applica-
+
+tions, a potential value of O(109 $) (M. Harrison and N. Graham, personal communication).
+
+Figure  15: Potential economic value of the ECMWF ensemble prediction system as a function of user cost/loss
+
+ratio of day 6 weather forecasts over Europe (for the period December 1998 - February 1999) for the event :
+
+850 hPa temperature at least 4oC below normal. Solid: value of the ECMWF ensemble prediction system. Dashed:
+
+value of a single deterministic forecast (the unperturbed "control" forecast of the EPS system). From Richardson
+
+(1999).
+
+Figure 16: Potential economic value of seasonal ensembles as a function of user cost/loss ratio in the tropics, for
+
+the events : seasonal-mean rainfall below normal (solid), and : seasonal-mean rainfall at least one
+
+standard deviation below normal (dashed), based on 9-member ensembles of integrations with the ECMWF
+
+model over the years 1979-93, run with prescribed observed SST.
+
+10. CONCLUDING REMARKS
+
+Our climate is a complex nonlinear dynamical system, with spatial variability on scales ranging from individual
+
+clouds to global circulations in the atmosphere and oceans, and temporal variability ranging from hours to millenia.
+
+Climate scientists interact with society through the latter's demands for accurate and detailed environmental fore-
+
+casts: of weather, of El Niño and its impact on global rainfall patterns, and of man's effect on climate. The com-
+
+plexity of our climate system implies that quantitative predictions can only be made with comprehensive numerical
+
+models which encode the relevant laws of dynamics, thermodynamics and chemistry for a multi-constituent multi-
+
+phase fluid. Typically such models comprise some millions of scalar equations, describing the interaction of circu-
+
+E 4<
+
+E 0< E α–<
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 41
+
+lations on scales ranging from tens of kilometres to tens of thousands of kilometres; from the ocean depth to the
+
+upper stratosphere. These equations can only be solved on the world's largest supercomputers.
+
+However, a fundamental question that needs to be addressed, both by producers and users of such forecasts, is the
+
+extent to which weather and climate are predictable; after all, much of chaos theory developed from an attempt to
+
+demonstrate the limited predictability of atmospheric variations. In the past, the topic of predictability has been a
+
+somewhat theoretical and idealised one, somewhat removed from the practicalities of prediction. A famous clima-
+
+tologist remarked some years ago: "Predictability is to prediction as romance is to sex!". However, the remark is
+
+perhaps not so apposite today; the science of predictability of weather and climate is now an integral part of the
+
+practical prediction problem - the two cannot be separated. The predictability problem can be formulated e.g.
+
+through a Liouville equation; however, in practice, estimates of predictability are made from multiple (ensemble)
+
+forecasts of comprehensive weather and climate prediction models. The individual members of the ensemble differ
+
+by small perturbations to quantities that are not well known. For example, the predictability of weather is largely
+
+determined by uncertainty in a forecast's starting conditions, whilst the predictability of climate variations is also
+
+influenced by uncertainty in representing computationally the equations that govern climate (for example, how to
+
+represent the effects of convective instabilities in a model that cannot resolve individual cloud systems).
+
+Chaos theory implies that all such environmental forecasts must be expressed probabilistically; the laws of physics
+
+dictate that society cannot expect arbitrarily accurate weather and climate forecasts. These probability forecasts
+
+quantify uncertainty in weather and climate prediction. The duty of the climate scientist is to strive to estimate re-
+
+liable probabilities; not to disseminate predictions to society with a precision that cannot be justified scientifically.
+
+Examples were shown that, in practice, the economic value of a reliable probability forecast (produced from an
+
+ensemble prediction system) exceeds the value of a single deterministic forecast with uncertain accuracy.
+
+However, producing reliable probability forecasts from ensembles of climate model integrations puts enormous de-
+
+mands on computer resources. Computer power is needed to be able to resolve the details of the climate system. It
+
+has been argued that, because of the nonlinear nature of our climate system, a systematic mistreatment of small-
+
+scale phenomena (such as organised convective instabilities in the tropics) could lead to a systematic mistreatment
+
+of large-scale climate phenomena (such as EI Niño). However, there are reasons for studying small-scale phenom-
+
+ena in their own right. From a weather prediction perspective, it is necessary to be able to simulate such detail if
+
+models are to be able to forecast damaging weather events such as hurricanes and related extratropical systems
+
+(such as the one that struck Southern England in October 1987). From a climate point of view it may also be nec-
+
+essary to be able to simulate such detail in order to be able to assess the impact of anthropogenic forcing on the
+
+probability distribution of these damaging weather events. Will hurricanes or October storms become more likely
+
+or, on average, more intense in an enhanced CO2 atmosphere?
+
+However, this poses a fundamental dilemma given current computing resources. To be able to simulate extreme
+
+events requires models with considerable complexity and resolution. On the other hand, estimating reliably chang-
+
+es to the probability distributions of extreme and hence relatively rare events, requires large ensembles. One thing
+
+is certain; the more the need to provide reliable forecasts of uncertainty in our predictions of weather and climate,
+
+the more the demand for computer power exceeds availability, notwithstanding the unrelenting advance in compu-
+
+ter technology. Indeed the need for quantitative predictions of uncertainty in weather and climate science is a rel-
+
+evant consideration in the design of future generations of supercomputers; ensemble prediction is a perfect
+
+application for parallel computing! There can be little doubt that the benefits to society of reliable regional proba-
+
+bility forecasts of extreme weather events, seasonal variability and anthropogenic climate change justify such tech-
+
+nological developments.
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+42 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+ACKNOWLEDGEMENTS
+
+I would like to thank colleagues at ECMWF, Drs D. Anderson, J. Barkmeijer, C. Brankovic, R. Buizza, M. Ehren-
+
+dorfer, F. Lalaurette T. Stockdale, and D. Richardson for innumerable discussions and for help in producing many
+
+of the figures in this paper. I would also like to thank Drs K. Puri and T. Iversen in particular for help in producing
+
+Figs. 4  and 7 , respectively.
+
+REFERENCES
+
+Anderson, J. L., 1997: Impact of dynamical constraints on the selection of initial conditions for ensemble predic-
+
+tions: low-order perfect model results. Mon. Wea. Rev., 125, 2969-2983.
+
+Andersson, E. and M. Fisher, 1999: Background errors for observed quantities and their propagation in time. EC-
+
+MWF workshop on Diagnosing Data Assimilation Systems. ECMWF Shinfield Park, Reading, Berkshire RG2
+
+9AX, UK.
+
+Barkmeijer, J., M. van Gijzen and F. Bouttier, 1998: Singular vectors and estimates of the analysis error covariance
+
+metric. Q. J. R. Meteorol. Soc., 124, 1695-1713.
+
+Battisti, D. S. and A. C. Hirst , 1989. Interannual variability in a tropical atmosphere- ocean model. Influence of
+
+the basic state, ocean geometry and non-linearity. J. Atmos. Sci., 46, 1687-1712.
+
+Belkin, I. M., S. Levitus, J. Antonov, and S.-A. Malmberg, 1998: "Great Salinity Anomalies" in the North Atlantic.
+
+Progress in Oceanography, 41, 1-68.
+
+Bengtsson, L., 1999: From short-range barotropic modelling to extended-range global weather prediction: a 40-
+
+year perspective. Tellus, 51A-B, 13-32.
+
+Betts, A. K., and M. J. Miller, 1986: A new convective adjustment scheme. Part, II: single column tests using GATE
+
+wave, BOMEX, ATEX and arctic air-mass data sets. Q. J. R. Meteorol. Soc., 112, 693-709.
+
+Blanford, H. F., 1884: On the connexion of Himalayan. snowfall kind seasons of drought in India. Proc. Roy. Soc.
+
+London, 37, 3-22.
+
+Buizza, R., 1997: Potential forecast skill of ensemble prediction and spread and skill distributions of the ECMWF
+
+Ensemble Prediction System. Mon. Wea. Rev., 125, 99-119.
+
+Buizza, R. and T. N. Palmer, 1995: The singular vector structure of the atmospheric global . circulation. J. Atmos.
+
+Sci., 52, 1434-1456.
+
+Buizza, R., T. Petroliagis, T. N. Palmer, J. Barkmeijer, M. Hamrud, A. Hollingsworth, A. Simmons and N. Wedi,
+
+1998: Impact of model resolution and ensemble size on the performance of an ensemble prediction system. Q. J.
+
+R. Meteorol. Soc., 124, 1935-1960.
+
+Buizza, R., M. J. Miller and T. N. Palmer, 1999a: Stochastic simulation of model uncertainties in the ECMWF en-
+
+semble prediction system. Q. J. R. Meteorol. Soc., 125, 2887-2908.
+
+Buizza, R., A. Hollingsworth, A. Lalaurette and A. Ghelli, 1999b: Probabilistic predictions of precipitation using
+
+the ECMWF ensemble prediction system. Weather and Forecasting, 14, 168-189.
+
+Cane, M. and A. Clement 1999: A role for the tropical Pacific coupled ocean-atmosphere system on Milankovic
+
+and Millenial timescales. Part II: Global Impacts. American Geophysical Union Monograph: Mechanisms of Mil-
+
+lenial-Scale Global Climate Change.
+
+Charney, J. G., 1947: The dynamics of long waves in a baroclinic westerly current. J. Meteorol., 4, 135-163.
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 43
+
+Chen, Y. Q., D. S. Battisti, T. N. Palmer, J. Barsugli and E. S. Sarachik, 1997: A study of the predictability of trop-
+
+ical Pacific SST in a coupled atmosphere/ocean model using singular vector analysis: the role of the annual cycle
+
+and the ENSO cycle. Mon. Wea. Rev., 125, 831845.
+
+Cheng, X. and J. M. Wallace, 1993: Cluster analysis of the Northern Hemisphere wintertime 500hPa height field:
+
+spatial patterns. J. Atmos. Sci., 50, 2674-2696.
+
+Cho, J. Y. N., Y. Zhu, R. E. Newell, B. E. Anderson, J. D. Barrick, G. L. Gregory, G. W. Sachse, M. A. Carroll and
+
+G. M. Albercook, 1999: Horizontal wavenumber spectra of winds, temperature and trave gases during the Pacific
+
+Exploratory Missions: 1. Climatology. J. Geophys. Res., 104, 5697-5716.
+
+Clement, A. and M. Cane, 1999: A role for the tropical Pacific coupled ocean- atmosphere system on Milankovic
+
+and Millenial timescales. Part I: A modeling study of tropical Pacific variability. American Geophysical Union
+
+Monograph: Mechanisms of Millenial-Scale Global Climate Change.
+
+Corti, S., F. Molteni and T. N. Palmer, 1999: Signature of recent climate change in frequencies of natural atmos-
+
+pheric circulation regimes. Nature, 398, 799-802.
+
+Courtier, P., J.-N. Thépaut, and A. Hollingsworth, 1994: A strategy for operational implementation of 4D-Var using
+
+an incremental approach. Q. J. R. Meteorol. Soc., 120, 1367-1387.
+
+Courtier, P., E. Andersson, W. Heckley, R. Pailleux, D. Vasilevic, M. Hamrud, A. Hollingsworth, F. Rabier and M.
+
+Fisher, 1998: The ECMWF implementation of three dimensional variational assimilation (3D-Var). Part I: Formu-
+
+lation. Q. J. R. Meteorol. Soc., 124, 1783-1808.
+
+Daley, R., 1991: Atmospheric Data Analysis. Cambridge University Press. Cambridge, UK. pp457.
+
+Dickson, R. R., J. Meinke, S. A. Malmberg and A. A. Lee, 1988: The "Great Salinity Anomaly" in the northern
+
+North Atlantic, 1968-1982. Progress in Oceanography, 20, 103 151.
+
+Dickson, R. R., J. Lazier, J. Meincke and P. Rhines, 1996: Long-term coordinated changes in the convective activity
+
+of the North Atlantic. Progress in Oceanography, 38(3), 241-295.
+
+Eady, E.T., 1949. Long waves and cyclone waves. Tellus, 1, 33-52.
+
+Eckert, C. and M. Latif, 1997: Predictability of a stochastically-forced hybrid coupled model of El Niño. J. Clim.,
+
+10, 1488-1504.
+
+Ehrendorfer, M., 1994a: The Liouville equation and its potential usefulness for the prediction of forecast skill. Part
+
+I: theory. Mon. Wea. Rev., 122, 703-713.
+
+Ehrendorfer, M., 1994b: The Liouville equation and its potential usefulness for the prediction of forecast skill. Part
+
+II: Applications. Mon. Wea. Rev., 122, 714-728.
+
+Ehrendorfer, M., 1999: Kalman filtering and atmospheric predictability. In: Proceedings of the ECMWF workshop
+
+on diagnosis of data assimilation systems. November 1988. ECMWF, Shinfield Park, Reading RG2 9AX.
+
+Emanuel, K. A., 1994: Atmospheric Convection. Oxford University Press, New York. 588pp.
+
+Epstein, E. S., 1969: Stochastic dynamic prediction. Tellus, 21, 739-759.
+
+Evensen, G., 1994: Sequential data assimilation with a nonlinear quasi-geostrophic ocean model. J. Geophys. Res.,
+
+99 (C5), 10 143 - 10162.
+
+Farrell, B. F. and P. J. Ioannou, 1996: Generalised stability theory. Part I: Autonomous operators. J. Atmos. Sci.,
+
+53, 2025-2040.
+
+Fisher, M., 1998: Development of a simplified Kalman filter. ECMWF Technical Memorandum No 260. ECMWF
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+44 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Shinfield Park, Reading, RG2 9AX, UK.
+
+Fisher, M. and P. Courtier, 1995: Estimating the covariance matrices of analysis and forecast error in variational
+
+data assimilation. ECMWF Technical Memorandum No 220. ECMWF, Shinfield Park, Reading RG2 9AX, UK.
+
+Frisch, U., 1995: Turbulence. Cambridge University Press. Cambridge, UK.
+
+Gage, K. S. and G. D. Nastrom, 1986: Theoretical interpretation of atmospheric wavenumber spectra of wind and
+
+temperature observed by commercial aircraft during GASP. J. Atmos. Sci., 43, 729-739.
+
+Gates, W. L., 1992: AMIP: The atmospheric model intercomparison project. Bull. Am. Meteorol. Soc., 73, 1962-
+
+1970.
+
+Gelaro, R., R. Buizza, T. N. Palmer and E. Klinker, 1998: Sensitivity analysis of forecast errors and the construction
+
+of optimal perturbations using singular vectors. J. Atmos. Sci., 55, 10 12- 1037.
+
+Gill, A. E., 1982: Atmosphere-Ocean Dynamics. Academic Press Inc. London. 662pp.
+
+Gleeson, T. A., 1966: A causal relation for probabilities in synoptic meteorology. J. App. Met., 5, 365-368.
+
+Griffies, S. M. and K. Bryan, 1997: A predictability study of simulated North Atlantic multi-decadal variability.
+
+Climate Dynamics, 13, 459-487.
+
+Hamill, T. M., C. Snyder and R. E. Morse, 1999: A comparison of probabilistic forecasts from bred, singular vector
+
+and perturbed observation ensembles. Mon. Wea. Rev., In press.
+
+Hansen, D. V., and H. F. Bezdek, 1996: On the nature of decadal anomalies on North Atlantic sea surface temper-
+
+ature. J. Geophys. Res., 101(CA), 8749-8758.
+
+Hansen, J., 1998: Adaptive Observations in Spatially-extended, Nonlinear Dynamical Systems. D.Phil. thesis.
+
+Mathematical Institute, Oxford University. 207pp.
+
+Harrison, M., T. N. Palmer, D. S. Richardson and R. Buizza, 1999: Analysis and model dependencies in medium-
+
+range ensembles: two transplant cast studies. Q. J. R. Meteorol. Soc., 125, 2487-2515.
+
+Harvey, L.O., K. R. Hammond, C. M. Lusk and E. F. Mross, 1992: The application of signal detection theory to
+
+weather forecasting behaviour. Mon. Wea. Rev., 120, 863-883.
+
+Hasselmann, K., 1976: Stochastic climate models. Part I. Theory. Tellus, 28, 473 - 485.
+
+Hoffman, R. N. and E. Kalnay, 1983: Lagged average forecasting. Tellus, 35, 110-118.
+
+Holland, G. J., T. McGeer and H. Youngren, 1992: Autonomous aerosondes for economical atmospheric soundings
+
+anywhere on the globe. Bull. Am. Met. Soc., 73, 1987 - 1998.
+
+Houtekamer, P. L., L. Lefaivre, J. Derome, H. Richie, and H. L. Mitchell, 1996. A system simulation approach to
+
+ensemble prediction. Mon. Wea. Rev., 124, 1225-1242.
+
+Hurrell, J. W., 1995: Decadal trends in the North Atlantic Oscillation: Regional temperatures and precipitation. Sci-
+
+ence, 269, 676-679.
+
+IPCC, 1990: Climate Change: the IPCC Scientific Assessment, J.T. Houghton, J.G. Jenkins and J.J. Ephraums
+
+(eds). Cambridge University Press, Cambridge, UK, 365pp
+
+IPCC, 1996: Climate Change 1995: The science of climate change. Contribution of Working Group I to the Second
+
+Assessment Report of the Intergovernmental Panel on Climate Change. Cambridge University Press, Cambridge,
+
+UK, 572pp.
+
+Joly, A., and coauthors, 1997: The Fronts and Atlantic Storm-Track Experiment (FASTEX): Scientific objectives
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 45
+
+and experimental design. Bull. Am. Met. Soc., 78, 1917 - 1940.
+
+Katz, R. W. and A. H. Murphy, 1997. Forecast value: prototype decision-making models. In Economic value of
+
+weather and climate forecasts, Katz, R. W., and Murphy, A. H., Eds. Cambridge University Press, 222 pp
+
+Kimoto, M. and M. Ghil, 1993: Multiple flow regimes in the northern hemisphere winter. Part I: Methodology and
+
+hemispheric regimes. J. Atmos. Sci., 50, 2625-2643.
+
+Kraichnan, R. H., 1971: Inertial-range transfer in two-dimensional turbulence. Phys. Fluids, 10, 1417-1423.
+
+Lacarra, J.-F. and O. Talagrand, 1988: Short-range evolution of small perturbations in a barotropic model. Tellus,
+
+17, 321-333.
+
+Latif, M., T. N. Stockdale, J. WoIff, G. Burgers, E. Maier-Reimer, M. M. Junge, K. Arpe and L. Bengtsson, 1994:
+
+Climatology and variability in the ECHO coupled GCM. Tellus, 46A, 351-366.
+
+Latif, M., 1998: Dynamics of interdecadal variability in coupled ocean-atmosphere models. J. Clim., 11, 602-624.
+
+Lilly, D. K., 1973: Lectures in sub-synoptic scales of motions and two-dimensional turbulence. pp353 - 418. In
+
+Dynamical Meteorology. Edited by P. Morel. Reidel Publishing Company. Boston, USA. 622pp.
+
+Lilly, D. K., 1983: Stratified turbulence and the mesoscale variability of the atmosphere.. J. Atmos. Sci., 40, 749-
+
+761.
+
+Lilly, D. K., 1989: Two-dimensional turbulence generated by energy sources at two scales. J. Atmos. Sci., 46, 2026-
+
+2030.
+
+Lorenz, E. N., 1963: Deterministic nonperiodic flow. J. Atmos. Sci., 42, 433-471.
+
+Lorenz, E. N., 1969: The predictability of a flow which possesses many scales of motion. Tellus, 21, 289-307.
+
+Lorenz, E. N., 1975: Climate predictability. The physical basis of climate modelling. WMO, GARP Publication
+
+Series, 16, 132-136. World Meteorological Organisation. Geneva.
+
+Lorenz, E. N., 1996: Predictability - a problem partly solved. In “Predictability” 1995 ECMWF seminar proceed-
+
+ings. ECMWF Shinfield Park, Reading, Berkshire RG2 9AX, UK.
+
+Lorenz, E. N., 1993: The Essence of Chaos. University of Washington Press. Seattle, USA, 227pp.
+
+Madden, R. A. and P. R. Julian, 1994: Observations of the 40-50 day tropical oscillation - a review. Mon. Wea. Rev.,
+
+122, 814-837.
+
+Manabe, S., and R. J. Stouffer, 1994: Century-scale effects of increased atmospheric CO2 on the ocean-atmosphere
+
+system. Nature, 364, 215-218.
+
+Marshall, J. and F. Molteni, 1993: Toward a dynamical understanding of planetary flow regimes. J. Geophys. Res.,
+
+93D, 10927 - 10952.
+
+Mason, I, 1982: A model for assessment of weather forecasts. Aust. Meteorol. Mag., 30, 291-303.
+
+Mason, P. J. and D. J. Thompson, 1992: Stochastic backscatter in large-eddy boundary layers. J. Fluid. Mech., 242,
+
+51-78. simulations of
+
+Mo, K. C. and M. Ghil, 1988: Cluster analysis of multiple planetary-scale flow regimes. J. Geophys. Res., 93D,
+
+10927-10952.
+
+Molteni, F. and T. N. Palmer, 1993: Predictability and finite-time instability of the northern winter circulation. Q.
+
+J. Meteorol. Soc., 119, 269-298.
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+46 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Molteni, R, S. Tibaldi and T. N. Palmer, 1990: Regimes in the wintertime circulation over northern extratropics. I:
+
+Observational evidence. Q. J. R. Meteorol. Soc., 116, 31-67.
+
+Molteni, R, R. Buizza, and T. N. Palmer, 1996: The ECMWF ensemble prediction system: methodology and vali-
+
+dation. Q. J. R. Meteorol. Soc., 122, 73-119.
+
+Moncrieff, M. W., 1992: Organised convective systems: archetypal dynamical models, mass and momentum flux
+
+theory and parametrization. Q. J. R. Meteorol. Soc., 118, 819-850.
+
+Montani, A. A. J. Thorpe, R. Buizza and P. Unden, 1999; Forecast skill of the ECMWF model using targeted ob-
+
+servations during FASTEX. Q. J. R. Meteorol. Soc., in press.
+
+Moore, A.M. and R. Kleeman, 1996: The dynamics of error growth and predictability in a coupled model of ENSO.
+
+Q. J. R. Meteorol. Soc., 122, 1405 -1446.
+
+Moss, F. and P. V. E. McClintock, Eds., 1989: Noise in Nonlinear Dynamical Systems. Vol 1, Theory of Continuous
+
+Fokker-Planck Systems. Cambridge University Press, 353pp.
+
+Münnich, M., M. A. Cane and S. E. Zebiak, 1991: A study of self-excited oscillations of the tropical ocean-atmos-
+
+phere system. Part II: Nonlinear cases. J. Atmos.Sci., 48, 1238-1248.
+
+Mureau, R., F. Molteni and T. N. Palmer, 1993: Ensemble prediction using dynamically-conditioned perturbations.
+
+Q. J. R. Meteorol. Soc., 119, 299-323.
+
+Murphy, A. H., 1973: A new vector partition of the probability score. J. Appl. Meteorol., 12, 595-600.
+
+Murphy, A. H., 1977. The value of climatological, categorical and probabilistic forecasts in the cost-loss ratio sit-
+
+uation. Mon. Wea. Rev., 105, 803-816.
+
+Nastrom, G.D. and K. S. Gage, 1985: A climatology of atmospheric wavenumber spectra observed by commercial
+
+aircraft. J. Atmos. Sci., 42, 950-960.
+
+Nicolis, C. and G. Nicolis, 1998: Closing the hierarchy of moment equations in nonlinear dynamical systems. Phys.
+
+Rev. E, 58, 4391-4400.
+
+Palmer, T. N., 1993a: Extended-range atmospheric prediction and the Lorenz model. Bull. Am. Met. Soc., 74, 49-
+
+65.
+
+Palmer, T. N., 1993b: A nonlinear dynamical perspective on climate change. Weather, 48, 314-326.
+
+Palmer, T. N., 1999: A nonlinear dynamical perspective on climate prediction. J. Clim., 12, 575-591.
+
+Palmer, T. N., F. Molteni, R. Mureau, R. Buizza, P. Chapelet and J. Tribbia, 1993: Ensemble Prediction. 1992 EC-
+
+MWF Seminar Proceedings.
+
+Palmer, T. N., R. Gelaro, J. Barkmeijer and R. Buizza, 1998: Singular vectors, metrics and adaptive observations.
+
+J. Atmos. Sci., 55, 633-653.
+
+Palmer, T. N., C. Brankovic: and D. S. Richardson, 2000: A probability and decision model analysis of PROVOST
+
+seasonal multi-model ensemble integrations. Q. J. R. Meteorol. Soc., to appear
+
+Philander, S. G. H., 1990: El Niño, La Niña and the Southern Oscillation. Academic Press, San Diego, 293pp.
+
+Pielke, R. A., 1999: Climate prediction as an initial value problem. Bull. Am. Met. Soc., 79, 2743-2745.
+
+Reynolds, C.A. and T. N. Palmer, 1998: Decaying singular vectors and their impact on analysis and forecast cor-
+
+rection. J. Atmos. Sci., 55, 3005-3023.
+
+Reinhold, B. B. and R. T. Pierrehumbert, 1982: Dynamics of weather regimes: quasi- stationary waves and block-
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 47
+
+ing. Mon. Wea. Rev., 110, 1105-1145.
+
+Richardson, D. S., 1999: Skill and economic value of the ECMWF ensemble prediction system. Q. J. R. Meteorol.
+
+Soc.,. to appear.
+
+Schopf, P. S. and Suarez, M. J., 1988. Vacillations in a coupled ocean-atmosphere model. J. Atmos. Sci., 45, 549-
+
+566.
+
+Smith, L.A., C. Ziehmann, K. Fraedrich, 1999: Uncertainty dynamics and predictability in chaotic systems. Q. J.
+
+R. Meteorol. Soc., 125, 2855-2886.
+
+Stockdale, T. N., D. L. T. Anderson, J. O. S. Alves and M. A. Balmaseda, 1998: Global seasonal rainfall forecasts
+
+using a coupled ocean-atmosphere model. Nature, 392, 370-373.
+
+Strang, G., 1986: Introduction to applied mathematics. Wellesley-Cambridge Press. pp758.
+
+Sutton, R. T. and M. R. Allen, 1997: Decadal predictability of North Atlantic sea surface temperature and climate.
+
+Nature, 388, 563-567.
+
+Swets, J. A., 1973: The relative operating characteristic in psychology. Science, 182, 990-1000.
+
+Tennekes, H., 1991: Karl Popper and the accountability of numerical forecasting. In New developments in Predict-
+
+ability. ECMWF Workshop Proceedings, ECMWF, Shinfield Park, Reading UK, 1991.
+
+Timmermann, A., J. Oberhuber, A. Bacher, M. Esch, M. Latif and E. Roeckner, 1999: Increased El Niño frequency
+
+in a climate model forced by future greenhouse warming. Nature, 398, 694-697.
+
+Thompson, P. D., 1957: Uncertainty of initial state as a factor in the predictability of large scale atmospheric flow
+
+patterns. Tellus, 9, 275-295.
+
+Toth, Z. and E. Kalnay, 1993: Ensemble forecasting at NMC: the generation of perturbations. Bull. Am. Met. Soc.,
+
+74, 2317-2330.
+
+Toth, Z. and E. Kalnay, 1997: Ensemble forecasting at NCEP and the breeding method. Mon. Wea. Rev., 12, 3297-
+
+3319.
+
+Trenberth, K. E., 1992: Climate System Modelling. Cambridge University Press. Cambridge, UK, 788pp
+
+Trenberth, K. E., G. W. Branstator, D. Karoly, A. Kumar, N.-C. Lau and C Ropelewski, 1998: Progress during
+
+TOGA in understanding and modeling global teleconnections associated with tropical sea surface temperature. J.
+
+Geophys. Res., 103, 14291-14324.
+
+Trevisan A. and R. Legnani, 1995: Transient error growth and local predictability: a study in the Lorenz system.
+
+Tellus, 47A, 103-117.
+
+Trevisan, A., Pancotti, F. and F. Molteni, 2000: Ensemble prediction in a model with flow regimes. Q. J. R. Mete-
+
+orol. Soc., in press.
+
+Vautard, R. 1990: Multiple weather regimes over the North Atlantic. Analysis of precursors and successors. Mon.
+
+Wea. Rev., 109, 784-812.
+
+Webster, P. J. and T. N. Palmer, 1998: The past and future of El Niño. Nature, 390, 562- 564.
+
+Webster, P. J., V. O. Magana, T. N. Palmer, J. Shukla, R. A. Thomas, M. Yanai and T. Yasunari, 1998: Monsoons:
+
+Processes, predictability and the prospects for prediction. J. Geophys. Res., 103, 14451-14510.
+
+Wilks, D. S., 1995: Statistical Methods in the Atmospheric Sciences. Academic Press. 467pp
+
+Xue, Y., M. A. Cane and S. E. Zebiak, 1997: Predictability of a coupled model of ENSO using singular vector anal-
+
+
+
+Predicting uncertainty in forecasts of weather and climate
+
+48 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+ysis. Mon. Wea. Rev., 125, 2043-2056.
+
+Zebiak, S. E. and M. A. Cane,1987: A model El Niño-Southern Oscillation. Mon. Wea. Rev., 115, 2262-2278.

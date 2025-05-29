@@ -1,0 +1,2493 @@
+Surface_assimilation
+
+
+Land surface assimilation
+
+1 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Land surface assimilation
+March 2001
+
+By Jean-François Mahfouf and Pedro Viterbo
+
+Table of contents
+
+1 Introduction
+
+2 Design of land surface parametrizations
+
+2.1 General features
+
+2.2 Surface fluxes
+
+3 Introduction to land surface assimilation
+
+4 Simple land surface initialisation methods
+
+5 Soil moisture initialisation using SYNOP observations
+
+5.1 The ECMWF method
+
+5.2 Possible improvements
+
+6 Other techniques to initialise soil moisture
+
+6.1 Methods based on precipitation data
+
+6.2 On-site observations and methods based on satellite imagery
+
+7 Initialisation of other land surface quantities
+
+7.1 Snow mass
+
+7.2 Deep soil temperatures
+
+7.3 Vegetation properties
+
+8 Conclusions
+
+REFERENCES
+
+Abstract
+
+This lecture note provides a review of techniques recently developed for initialising the prognostic variables of land surface
+parametrizations in numerical weather prediction models. The importance of soil moisture initialisation is emphasized since
+the evolution of the boundary layer is very sensitive to its specification and the associated time scales are much longer than
+those of medium range forecasts. The analysis of snow mass is also described, using the ECMWF method as an illustrative
+example. Different methods and data available for the initialisation of other slowly varying components at the surface, such as
+soil temperature, vegetation fraction, leaf area index and albedo, are described at the end.
+
+1INTRODUCTION
+
+The importance of land surface processes has been recognised for a long time by the climate modelling community,
+
+in order to describe in a consistent way all the components of the water and energy cycle over long periods of time.
+
+
+
+Land surface assimilation
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+As a consequence a variety of schemes have been devised ranging from the simple bucket model of Manabe (1969)
+
+to the complex soil-vegetation SiB (Simple Biosphere) model of Sellers et al. (1986).
+
+Although a number of sensitivity studies have shown that land surface processes can also affect medium range
+
+weather forecasts (Rind 1982; Rowntree and Bolton 1983; Yeh et al. 1984; Rowell and Blondin 1990; Beljaars et
+
+al. 1996), the parametrization of the interactions between continental surfaces and the lower atmosphere is still
+
+rather crude in most numerical weather prediction models.
+
+Recent field experiments, such as HAPEX-MOBILHY 86, FIFE 87 or BOREAS 94, have enabled the development
+
+and the validation of land surface schemes describing the most important processes governing the water, heat and
+
+momentum exchanges while remaining simple enough to be included in operational weather forecasts models
+
+(Noilhan and Planton 1989; Viterbo and Beljaars 1995). Such parametrizations can improve significantly the qual-
+
+ity of the forecasts of weather elements (Bougeault et al. 1991; Lanzinger 1995). Initialisation of the prognostic
+
+soil variables at global scale is an important issue given the very different time scales of evolution between the at-
+
+mospheric and the soil systems. Realistic schemes appear to be sensitive to the specification of initial soil temper-
+
+atures and water contents (Jacquemin and Noilhan 1990; Bouttier et al. 1993a, 1993b). The increase in realism of
+
+other physical parametrizations (clouds, radiation, convection) in numerical weather prediction models has also
+
+made errors in the surface representation easier to identify. The importance of positive feedbacks between the sur-
+
+face and the atmosphere must be underlined : realistic mechanisms should be represented (which is not possible
+
+when surface boundary conditions are fixed), but spurious ones, resulting from systematic errors in the representa-
+
+tion of some components of the energy and water cycles, should be removed with an appropriate initialisation pro-
+
+cedure.
+
+In the following, we will start in Section 2 by describing the basic features common to most surface schemes. Spe-
+
+cial features of the land surface assimilation are identified in Section 3, in terms of data availability and its relation
+
+to model variables. Section 4 reviews the problems of simple surface initialization procedures. Methods for the in-
+
+itialisation of soil water in numerical models using near-surface temperature and humidity observations are de-
+
+scribed in Section 5, while Section 6 explains the drawbacks of on-site surface observations of soil moisture and
+
+discusses the need for remote sensing. Finally, Section 7 reviews the initialisation of other slowly varying land sur-
+
+face variables, such as snow mass, deep soil temperatures and vegetation characteristics.
+
+2DESIGN OF LAND SURFACE PARAMETRIZATIONS
+
+2.1  General features
+
+The aim of land surface schemes is to compute temperature and specific humidity at the lower boundary of atmos-
+
+pheric models. These two variables are required in the estimation of heat, water and momentum exchanges between
+
+the continental surfaces and the lower atmosphere.
+
+The surface temperature  is derived as the solution of the surface energy balance written as:
+
+(1)
+
+where Rn is the net radiation flux converted in latent heat flux , sensible heat flux and ground heat flux .
+
+The ground heat flux G depends upon deep soil temperatures and soil thermal properties.
+
+The surface specific humidity can be written formally as :
+
+�
+sk
+
+�
+n
+
+��� � �
++ +=
+
+��� � �
+
+
+
+Land surface assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 3
+
+(2)
+
+where represents the value of specific humidity at the lowest model layer. The quantities and (described
+
+with more details in the next paragraph) depend upon soil moisture which is obtained by solving the surface
+
+water budget :
+
+(3)
+
+where P is the precipitation flux, E the total evaporation flux and R the surface runoff.
+
+This brief description shows that a land surface scheme must manage at least two prognostic equations for the tem-
+
+perature and soil moisture in the soil. Heat and water transfers are governed by the following diffusion laws :
+
+(4)
+
+(5)
+
+The diffusivity D and conductivity K coefficients are non-linear functions of soil moisture content. The diffusion
+
+equations are generally discretized over 2 to 4 layers in order to deal with time scales ranging from days to months.
+
+2.2  Surface fluxes
+
+The link between soil and atmospheric variables is provided through the expression of the surface fluxes, usually
+
+based on Monin-Obukhov theory; the crucial variable here is the evaporation flux because its magnitude depends
+
+explicitly upon surface properties. Recent land surface schemes represent differently the grid box fractions covered
+
+by: a) bare soil, with evaporation controlled by soil moisture in a shallow top soil layer; b) vegetation, with tran-
+
+spiration controlled by soil moisture in the root zone affecting the magnitude of stomatal resistance; c) snow or
+
+interception reservoir, evaporating at the potential (maximum) rate. These two last components require the exist-
+
+ence of model prognostic equations for snow mass and interception reservoirs.
+
+Evaporation from bare soil can be written as (see Mahfouf and Noilhan 1991 for a review) :
+
+(6)
+
+The efficiency of the turbulent transfers is accounted for through the aerodynamic resistance , while the control
+
+by the surface soil moisture is represented by the surface relative humidity [ and in
+
+Equation (2)]. A typical variation of is presented on the left panel of Fig. 1 . Evaporation takes place at
+
+the potential rate above a threshold value (field capacity)  (defined from soil texture) up to the saturation .
+
+Transpiration from vegetation canopy writes similarly:
+
+(7)
+
+The analogy with Equation (2) leads to and . Water transfers from the
+
+�
+s
+
+� �
+sat×
+�
+
+sk( ) 	 � L×+=
+�
+
+L
+
+� 	
+θ
+
+dθ
+d 
+------ �
+
+�
+–
+
+�
+–=
+
+∂
+�
+
+s
+
+∂ 
+---------
+∂
+
+∂�------ ��
+∂
+�
+
+s
+
+∂�---------  –
+
+∂θ
+∂ 
+------
+
+∂
+∂�------  θ
+
+∂θ
+∂�------  
+
+∂ � θ
+∂�----------+=
+
+�
+g ρ
+
+��� �
+sat
+�
+
+sk( )
+���–�
+
+a
+---------------------------------------=
+
+�
+a
+
+θs
+���
+
+θs( )
+� ���
+
+= 	 0=���
+θs( )
+
+θfc θsat
+
+�
+tr ρ
+
+�
+sat
+
+�
+sk( )
+
+���–�
+c
+
+�
+a+
+
+--------------------------------=
+
+� �
+a
+
+�
+c
+
+�
+a+( )⁄= 	 � c � c � a+( )⁄=
+
+
+
+Land surface assimilation
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+root zone to the atmosphere depend both on biological and physical controls. Plants limit their water losses in un-
+
+favorable environmental conditions determined by soil moisture in the root zone, atmospheric water vapour deficit,
+
+solar radiation, air temperature and carbon-dioxide concentration. A typical dependency of the canopy resistance
+
+with soil moisture is shown on the right panel of Fig. 1 . Below a threshold value often defined as the permanent
+
+wilting point , it is assumed that plants are unable to pump water from the root zone to the stomatal cells,
+
+corresponding to a rapid decrease of transpiration (increase in ). As for bare soils, it if often assumed that above
+
+the field capacity the plant transpiration is not controlled by soil moisture.
+
+Figure  1Surface relative humidity hu as a function of the surface volumetric water content (left) and canopy
+
+resistance Rc as a function of the mean volumetric water content (right). (From Mahfouf 1991).
+
+3INTRODUCTION TO LAND SURFACE ASSIMILATION
+
+The major problem of land surface assimilation is the lack of routine observations of soil moisture and soil tem-
+
+perature. This is specially true in the case of soil moisture, where current methods cannot provide global coverage
+
+routinely (see Subsection 6.1 for more details). Furthermore, soil moisture observations show large variability in
+
+small spatial scales (see e.g. Wetzel and Chang 1988); not all scales are of relevance for the atmosphere, and the
+
+assimilation method has to take that into account. For soil temperature the climate network exists, with a coverage
+
+similar to the SYNOP stations and with most of the stations performing observations at least daily; unfortunately,
+
+those observations are not exchanged routinely at the time of measurement, so in practice they can only be used,
+
+in delayed mode, for verification purposes.
+
+The nature and availability of the observations imposes the use of proxy variables for soil moisture. The amount of
+
+water in the root zone impacts on the evaporative fraction, which in itself determines, for a given amount of net
+
+radiation, midday summer screen level temperature and humidity (see previous section and the review by Betts et
+
+al. 1996). On the other hand, the time evolution of soil water depends on the rainfall intensity and on its timing.
+
+Three main types of data have been used in the past to infer soil moisture: (a) Screen level atmospheric temperature
+
+and humidity; (b) Rainfall rates; and (c) Radiometric surface temperature (infrared, microwave). Note that, since
+
+those observations already represent, to a certain extent, the impact of soil moisture on the atmosphere above, they
+
+have already filtered out the smaller scales in soil water.
+
+There are two aditional difficulties in the assimilation of land surface observations. First, these observations are
+
+non-linearly related to soil moisture and soil temperature (through the equations of the land surface scheme). Sec-
+
+ondly, the statistics of forecast errors, used to spatially distribute the local increments in atmospheric analyses, are
+
+�
+c
+
+θpwp �
+c
+
+
+
+Land surface assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 5
+
+not known for soil variables.
+
+4SIMPLE LAND SURFACE INITIALISATION METHODS
+
+Due to the difficulties presented above, soil variables are initialised empirically in most operational forecasts mod-
+
+els.
+
+A first method for initialising soil variables is to set the analysed soil variables to climatological values without
+
+using any model information (through the first-guess). In practice, this is done by adding a relaxation to climatol-
+
+ogy to the prognostic equations of the land surface scheme (Blondin 1991). The underlying idea of this term is that
+
+simple surface schemes can only describe correctly the variables having a short time scale evolution, like the sur-
+
+face soil temperature, and that variables having a time scale longer than a few days must be prescribed. Problems
+
+arise from the specification of climatological soil values which are based on indirect atmospheric observations and
+
+very simplifed transfer models. These products, like the soil moisture climatology of Mintz and Serafini (1992),
+
+have a high level of uncertainty as shown by Viterbo and Beljaars (1995). Another potential problem is that with a
+
+relaxation of deep variables towards climatology, seasonal anomalies cannot be forecasted. An example of such
+
+deficiency has been shown by Beljaars et al. (1996) with two versions of the ECMWF model for the 1993 US
+
+floods.
+
+The other approach to initialise soil variables is to set the analysed values to the first-guess. In that context, an ab-
+
+solute confidence is given to the land surface scheme for evolving its prognostic variables and no control exists to
+
+prevent the land surface scheme from drifting to an unrealistic state. Such drifts can occur through positive feed-
+
+backs with the atmosphere, in situations where the scheme experiences systematic errors in the atmospheric forcing
+
+(too much radiation, too much rainfall, ...) or from a misrepresentation of some land surface processes. The second
+
+point can be checked with stand-alone simulations where the atmospheric forcing is prescribed. An example of a
+
+drift of the current ECMWF land surface scheme within the data assimilation system is described in the next sec-
+
+tion.
+
+5SOIL MOISTURE INITIALISATION USING SYNOP OBSERVATIONS
+
+5.1  The ECMWF method
+
+The land surface scheme developed by Viterbo and Beljaars (1995) was introduced operationally in August 1993
+
+and all soil prognostic variables were initialized to first-guess values. One of the main differences with respect to
+
+the previous ECMWF land surface scheme (Blondin 1991) is the absence of climatological relaxation for deep soil
+
+temperature and water content. During May-June 1994, the soil reservoirs were drying out, leading to surface air
+
+temperature errors increasingly positive, and in comparison with other models, such as the German Weather Serv-
+
+ice (constrained by climatological soil moisture), forecast skill was deteriorating (Viterbo and Courtier 1995). The
+
+downward drift of soil moisture appears to be linked to excess incoming solar radiation primarily caused by under-
+
+prediction of clouds. Furthermore, the excessive warming at the lower troposphere affected the forecast perform-
+
+ance, as shown in Fig. 2 . The 500 hPa geopotential day 2 forecast averaged over Europe is presented for April to
+
+June 1994. The ECMWF forecast (dashed line) has a positive bias from late April onwards.
+
+
+
+Land surface assimilation
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  2Bias of the 500 hPa geopotential height, averaged over Europe, for the day 2 ECMWF (dashed) and
+
+DWD (solid) forecast.
+
+Analysis increments of specific humidity at the lowest model level during May 1994 show positive values over Eu-
+
+rope with maxima reaching 2.5 g/kg. The atmospheric analysis tries to compensate for the model bias by moisten-
+
+ing and cooling the lower atmosphere. Therefore, the low level humidity increments can be used to identify areas
+
+where the soil is too dry. Knowing the analysis increment of specific humidity , the correction of soil
+
+moisture to be applied the root zone  is assumed to be proportional :
+
+(8)
+
+with ∆ t = 6 hours, and the subscripts a and f refer to analysis and forecast values, repsectively. The relaxation co-
+efficient D is constant in space and time and corresponds to a specific humidity analysis increment of 1.5 g/kg fill-
+
+ing 150 mm of water in the soil in 9 days. The fraction of vegetation in the above formula guarantees that the
+
+scheme is not active over deserts. No increments are produced in the presence of snow, and the analysed soil mois-
+
+ture contents θa are limited by the field capacity and permanent wilting point thresholds. The integrated soil water
+increments are distributed in each of the three soil layers following the model root extraction. This nudging scheme
+
+was implemented operationally in December 1994. It supplies soil moisture to maintain evaporation in areas of ex-
+
+cessive radiation at the surface, caused, among other factors, by insufficient cloud cover. Fig. 3 compares the day
+
+3 forecast errors in screen level day time temperature and humidity, averaged over Europe. Three experiments are
+
+compared: Operations, FWDC, where no initialisation of soil water is applied and the diagnostic cloud scheme is
+
+used; IWDC, initial soil water method using the technique described above, diagnostic cloud scheme, and; IWPC,
+
+initial soil water method and prognostic cloud scheme. The errors in both temperature and humidity are dramati-
+
+cally reduced when the initialization of soil water is used, and they are reduced even further when the radiation
+
+forcing at the surface is improved by the use of the prognostic cloud scheme. Note that the soil water was reset to
+
+field capacity at 3 July, in a quick effort to correct the large systematic errors in the model; this explains the much
+
+reduced operational errors after that date. The reduction of near surface warm dry bias removes the bias at the trop-
+
+ospheric geopotential, impacting favourably on the root mean square (rms) of the tropospheric geopotential over
+
+EUROPE    LAT  35.000 TO  75.000  LON  -12.500 TO   42.500
+MEAN ERROR                              FORECAST
+
+ 500hPa       GEOPOTENTIAL
+  FORECAST  VERIFICATION
+
+M’
+�
+
+MA =  5 Day     Moving Average
+�
+
+1�
+APRIL�
+
+1994�
+3� 5� 7� 9� 11 13 15 17 19 21 23 25 27 29 1�
+
+MAY� 3� 5� 7� 9� 11 13 15 17 19 21 23 25 27 29 31 2�JUNE4 6! 8" 10 12 14 16 18 20 22 24 26 28 30 2�-15
+-10
+
+-5
+
+0
+
+5
+
+10
+
+15
+
+20
+
+ECMWF 12Z T+ 48 MA
+
+OFFNB 12Z T+ 48 MA
+#
+
+∆ � � a � f–=
+∆θ θa θf–=
+
+θa θf– $ v  ∆ 
+ � a � f–( )=
+
+$ v
+
+
+
+Land surface assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 7
+
+land areas. Examples for the geopotential rms at 500 hPa over Europe and at 200 hPa over North America are
+
+shown in Fig. 4 .
+
+Figure  3Averaged European bias (model minus observations) in the 2m temperature (left) and the humidity
+
+(right) for the day 3 forecast verifying at 12 UTC. FWDC: Control; IWDC: Nudging of water; IWPC: Nudging of
+
+water and prognostic cloud scheme.
+
+Similar techniques are used operationally at Météo-France (Coiffier et al. 1987) and at the Canadian Meteorolog-
+
+ical centre Mailhot et al. 1997). Recently, Yang et al. (1994) have proposed to improve this method by using both
+
+informations of temperature and specific humidity. previous forecast errors with coefficients depending on vegeta-
+
+tion type. Unfortunately the method proposed is biased, because a correction of soil moisture is applied even if the
+
+forecast of atmospheric low level parameters is perfect; this may lead to a long term drift.
+
+Figure 4Averaged geopotential root mean square error for the 20 forecasts with initial dates between 940601 and
+
+940620, for 500 hPa Europe (top) and 200 hPa North America (bottom); experiment names as in Fig 3. For all 3
+
+experiments the root mean square is computed against the operational analysis.
+
+5.2  Possible improvements
+
+Mahfouf (1991) and Bouttier et al. (1993a, 1993b) have proposed an optimal interpolation scheme for the assimi-
+
+lation of soil moisture using information of both temperature and relative humidity at two metres, which can be
+
+formaly written:
+
+1-Jun% 11-Jun% 21-Jun% 1-Jul% 11-Jul& 21-Jul& 31-Jul& 10-Aug'-1.0
+0.0
+
+1.0
+
+2.0
+
+3.0
+
+4.0
+
+5.0
+
+(K
+)(
+
+2m Temperature   Europe)
+T + 72*
+
+FWDC
+IWDC
+IWPC
+
+1-Jun% 11-Jun% 21-Jun% 1-Jul% 11-Jul& 21-Jul& 31-Jul& 10-Aug'-2.5
+
+-1.5
+
+-0.5
+
+0.5
+
+(g
+/k
+
+g)
+
+Specific Humidity   Europe+-,
+T + 72
+
+0. 1/ 20 31 42 53 64 75 86 97 10
+Forecast Day80
+
+20
+
+40
+
+60
+
+80
+
+100
+
+120
+
+140
+
+160
+
+180
+M
+9  DATE1=940601/... DATE2=940601/... DATE3=940601/...AREA=EUROPE    TIME=12   MEAN OVER  20 CASES
+
+ROOT MEAN SQUARE ERROR                  FORECAST
+
+500 hPa GEOPOTENTIAL
+FORECAST VERIFICATION
+
+FWDC
+
+IWDC
+
+IWPC
+
+0. 1/ 20 31 42 53 64 75 86 97 10
+Forecast Day80
+
+20
+
+40
+
+60
+
+80
+
+100
+
+120
+
+140
+
+160
+
+180
+M
+9  DATE1=940601/... DATE2=940601/... DATE3=940601/...AREA=N.AMER    TIME=12   MEAN OVER  20 CASES
+
+ROOT MEAN SQUARE ERROR                  FORECAST
+
+200 hPa GEOPOTENTIAL
+FORECAST VERIFICATION
+
+FWDC
+
+IWDC
+
+IWPC
+
+
+
+Land surface assimilation
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+(9)
+
+The optimal coefficients α and β minimise the analysis variance and are related to the forecast error statistics. They
+are model dependent and the success of the method depends on their accurate estimation. Mahfouf (1991) has used
+
+a Monte-Carlo technique with a one-column model, where soil moisture is perturbed randomly in a range of pos-
+
+sible values. One conclusion of this study is that the coefficients α and β strongly depend upon the diurnal cycle
+(information on soil moisture from atmospheric parameters can be extracted more easily during day time in clear
+
+sky conditions) and upon the vegetation cover (over bare soil, corrections are applied to the superficial reservoir
+
+and when the vegetation cover is important soil corrections are applied over the whole root zone). Bouttier et al.
+
+(1993a) proposed a first parametrization of the optimum coefficients, recently generalized by Giard and Bazile
+
+(2000). In order to be used, this initialisation method requires an analysis of temperature and relative humidity at
+
+two metres (Navascues 1997); the analysis increments should be zero in those situations where parameters in the
+
+boundary layer are not informative about soil moisture, e.g. strong advection, and low radiative forcing at the sur-
+
+face.
+
+Once the optimal coefficients are derived, the sequential assimilation can easily be implemented in current opera-
+
+tional data assimilation systems; however, it assumes linear relationships between atmospheric increments and cor-
+
+rections to be applied in the soil which is not a good approximation for most of the physical parametrizations.
+
+Another option is the variational method, which seems a priori more suitable to the analysis of soil moisture due
+
+to the non-linearities of the problem and to the importance of the time distribution of observations (surface varia-
+
+bles are strongly affected by the diurnal cycle). Mahfouf (1991) and more recently Callies et al. (1998) used a 1D-
+
+Var approach to estimate the initial soil moisture of a one-column model that best fit observations of temperature
+
+and relative humidity during a diurnal cycle. The variational method was applied by Rhodin et al. (1999) to a re-
+
+gional weather forecast model over a five-day spring period. The optimal soil moisture minimises the following
+
+cost-function:
+
+(10)
+
+In the above formula , , and , represent, respectively, the screen level temperature and relative hu-
+
+midity, and their assumed observational errors, and the subscripts oi and fi represent the observation i and the fore-
+
+cast value interpolated to the point i; the summation is done over the total number of observation observation points,
+
+N. Mahfouf (1991) has validated the two methods described above with a one-column version of the Météo-France
+
+forecast model using data from the HAPEX-MOBILHY 1986 field experiment. Data from this campaign provided
+
+at various locations simultaneous information about soil moisture content and low-level atmospheric parameters,
+
+i.e. temperature, relative humidity, wind speed. When using observations of temperature and relative humidity, both
+
+the sequential and variational technique converge towards the neutron probe estimates of soil moisture, starting
+
+from arbitrary initial values of soil moisture (Fig. 5 ).
+
+θa θf– α
+�
+
+a
+
+�
+f–( ) β
+
+�:�
+a
+
+�;�
+f–( )+=
+
+<
+θ( )
+
+�
+o = � f =–
+
+σ�----------------------  
+2
+
+�;�
+o = �;� f =–
+σ >@?----------------------------------  
+
+2
+
++
+= 1=
+
+A
+∑=
+
+� �B�
+σ� σ >-?
+
+
+
+Land surface assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 9
+
+Figure  5Evolution of the surface (left panel) and root (right panel) soil moisture contents during the sequential
+
+assimilation on 4-5 July 1986. Dotted curves indicate the observed values. The site is HAPEX-MOBILHY. (From
+
+Mahfouf 1991).
+
+Mahfouf (1991) assumed that there is a priori no useful information in the first-guess which is certainly incorrect
+
+with an operational model of some skill; in realistic applications a background term should be added to the cost-
+
+function.
+
+Results show that for clear-sky situations both methods retrieve soil moisture contents close to each other and to
+
+the observations. The variational method is more efficient but non-linearities of the problem make the efficiency of
+
+the convergence dependent on the initial start of the minimisation. When the fraction of vegetation is large, soil
+
+moisture in the root zone is retrieved more accurately than surface soil moisture. The examination of the cost-func-
+
+tion (Fig. 6 ) shows the existence of a secondary minimum (corresponding to ambiguity in the response, the same
+
+surface evaporation can be obtained with totally differents water contents in the soil reservoirs) as well as a plateau
+
+where surface evaporation is not sensitive to modifications in soil moisture (above field capacity, evaporation is as-
+
+sumed to take place at a potential rate, therefore it is no more controlled by the surface).
+
+
+
+Land surface assimilation
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure  6Variations of the cost function with soil moisture for 4-5 July 1986. (A) represents the dry guess
+
+( ), (B) represents the moist guess ( ), and the square is the searched state (reference).
+
+(From Mahfouf 1991).
+
+6OTHER TECHNIQUES TO INITIALISE SOIL MOISTURE
+
+6.1  Methods based on precipitation data
+
+Two methods have been introduced to initialise soil moisture from precipitation data, both of them requiring the
+
+availability of measurements over large areas and an algorithm to perform a precipitation analysis beforehand.
+
+They have only been applied over areas with a good observational coverage like the US or the UK.
+
+The first technique is an uncoupled initialisation where a land surface scheme is forced with conventional meteor-
+
+ological observations (temperature, humidity, wind, radiation and precipitation) to provide an estimate of soil mois-
+
+ture. Feasibility studies have been undertaken in various limited area models by Smith et al. (1994), Macpherson
+
+(1996) and Mitchell (1994). The improvement of the forecasts of screen level humidity when soil water is initial-
+
+ized with such a method, using the UK Met Office water budget scheme, is shown on Fig. 7 (from MacPherson
+
+1996) for all UK stations.
+
+θ 0.30θsat= θ 0.70θsat=
+
+
+
+Land surface assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 11
+
+Figure 7Screen level relative humidity verification of forecasts from 28 June 1995 00 UTC, with different initial
+
+soil moisture: Operational (OP) with free cycling moisture, climatological (CLIM); MORECS (S) and MORECS
+
+(R) refer to a smoothed and raw version, respectively, of the soil moisture initialisation using oberved
+
+precipitation. (From MacPherson 1996).
+
+Another technique makes use of both observed precipitation rates and model first-guess. Assuming a rainfall rate
+
+increment over a 6-hour period:
+
+(11)
+
+This quantity is converted in soil moisture increment by using the tangent linear model of a soil moisture budget
+
+scheme:
+
+(12)
+
+where E is the mean evaporation rate and θ the mean soil moisture content during the 6-hour assimilation period
+(trajectory). Then, the soil moisture increment ∆ θ is added to the superficial reservoir. Studies have been under-
+taken at ECMWF by Vasiljevic (1989, personal communication) and at UKMO by Jones and Macpherson (1995).
+
+Such a method is sensitive to the specification of surface run-off and can converge slowly when biases in the root
+
+zone are large.
+
+6.2  On-site observations and methods based on satellite imagery
+
+Existing techniques for ground based observations of soil moisture (see recent reviews in Schulin et al. 1992; Wei
+
+1995) are time consuming and normally require human intervention. The representativeness error of the on-site es-
+
+timates is best avoided by deploying several instruments within a relatively small area ( 100 m2), increasing the
+
+cost of the measurements. In spite of its problems, on-site soil moisture data are very useful for regional esimates
+
+for climatic studies, essential to close the water budget in large-scale hydrologic experiments (Cuenca and Noilhan
+
+1991; Goutorbe et al. 1989; Mahfouf 1990) and to calibrate remote sense retrieval techniques (Georgakakos and
+
+Baumer 1996).
+
+There is no prospect of obtaining real-time global estimates of soil moisture based on existing technology of ground
+
+based instruments. For this reason, several algorithms have been developed to infer soil moisture from satellite ob-
+
+3
+C
+
+6
+D
+
+9
+E
+
+12 1815
+
+f
+F
+orecast time (hours)
+
+2
+G
+
+0 C
+H
+
+LIM
+
+10
+
+5
+I
+0
+J
+
+15
+
+-5
+
+-10
+
+-15
+0
+J
+
+m
+ea
+
+n 
+er
+
+ro
+r 
+
+(%
+)
+
+20
+
+f
+F
+orecast time (hours)
+
+15
+
+10
+
+5
+I
+
+0
+J
+
+3
+C
+
+6
+D
+
+9
+E
+
+12 15 18
+
+rm
+s 
+
+er
+ro
+
+r 
+(%
+
+)
+
+MORECS(S)
+MORECS(R)
+O
+K
+
+P
+
+∆� � a � f–
+∆ 
+------------------=
+
+d∆Θ
+d 
+-----------
+
+∆θ
+θ
+
+-------
+�
+
+– ∆�+=
+
+
+
+Land surface assimilation
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+servations, although none of them is currently used in an operational data assimilation system. Three types of tech-
+
+niques have been proposed (see reviews in Paloscia 1996; Schulin et al. 1992; Wei 1995) based on infrared
+
+measurements, passive microwave and, more recently, active microwave (radar) instruments.
+
+In the infrared channels, the sensitivity of the diurnal cycle of surface temperature to soil moisture has been used
+
+to define methods based on the observed changes on the infrared skin temperature (which avoid the problem of
+
+absolute calibration of the satellite sensor). For reviews of applications see Carlson (1991), Schmugge and Becker
+
+(1991), and Schulin et al. (1992). Geostationary satellites allow for a better temporal sampling (Wetzel et al. 1984
+
+; McNider et al. 1994). These methods can only be applied in clear sky conditions but provide an information about
+
+soil moisture in the root zone over vegetated areas. Bastianssen (1995) developed recently a technique to estimate
+
+regional evaporation over heterogeneous terrain, based on a separate estimate of the evaporation of unstressed pix-
+
+els, based on potential evaporation, and fully stressed pixels, based on the infrared diurnal cycle technique. The
+
+evaporation of the remaining cloud-free pixels can be obtained by interpolation between the wet pixels and the dry
+
+pixels. van den Hurk et al. (1997) has applied this technique to initialize the soil water of a limited area model over
+
+the Iberian peninsula. The model soil moisture is the linearized solution of a variational problem that minimizes
+
+the difference between model and satellite estimates of evaporative fraction ).
+
+Microwave channels can be used to infer soil moisture due to the important variations of the dielectric constant of
+
+a soil with volumetric water content for frequencies between 1 and 5 GHz (Schmugge and Jackson 1994). Passive
+
+microwave techniques use the fact that soil emissivity changes with its water content. In active microwave sensors
+
+(radar) the signal is emitted by an artificial source and the intensity of the backscattered radiation, after reflection
+
+by the surface, is measured. The reflectivity of the soil changes with its water contents, hence the intensity of the
+
+reflected signal can be related to the soil moisture. Active microwave systems allow, for the same wavelength (same
+
+maximum penetration depth), a finer horizontal resolution, because the ground can be scanned with an angularly
+
+confined beam. One of the drawbacks of microwave retrievals is that the surface emissivity/reflectivity is also sen-
+
+sitive to the surface roughness and the water contents of the vegetation canopy. Nevertheless, it appears that simple
+
+estimates of surface roughness of broad vegetation classes are sufficient to correct the soil moisture estimate (Njoku
+
+and Entekhabi 1996). On the other hand, the oppacity of the vegetation layer increases with its water content, mak-
+
+ing the corrections due to vegetation increasingly unreliable for moist soils. Perhaps the major drawback of micro-
+
+wave estimates is the depth of penetration of the signal, limited to the top layer of the soil (2 to 10 cm, depending
+
+on the wavelength). However, for specific soil hydrological and atmospheric conditions, the soil water contents of
+
+the root layer is correlated with the top soil water. Recent studies show that it is possible to infer, in a physically
+
+consistent way, the whole profile of soil water from its values at the top layer (e.g. Njoku and Entekhabi 1996; Cal-
+
+vet et al. 1997).
+
+We have shown in this section that ground-based estimates of soil moisture, although very important for calibration
+
+purposes and in intensive field efforts, cannot give a near real-time global stimate of soil moisture. Satellite esti-
+
+mates can achieve global coverage, but are limited to clear-sky conditions (infrared channels) or sense only the top
+
+few centimetres of soil (microwave channels). The future relies on physically based estimates of soil moisture from
+
+a combination of satellite measurements and model short-term forecasts, using a variational technique in order to
+
+find the soil water contents that fits best the satellite signal.
+
+7INITIALISATION OF OTHER LAND SURFACE QUANTITIES
+
+7.1  Snow mass
+
+The methods used to analyse snow mass are relatively crude when compared to analysis schemes for the atmos-
+
+pheric variables (Lorenc 1986) and could easily be improved. In this section, the ECMWF snow analysis is de-
+
+� � ���
++( )⁄
+
+
+
+Land surface assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 13
+
+scribed. The methodology used in other operational centres is very similar.
+
+Figure 8Snow depth (cm) for January (top) and April (bottom). The climatology used in the ECMWF analysis is
+
+shown on the left, differences to the US Air Force climatology is shown on the right. The linear snow density
+
+formula of Verseghy (1991), varying between 188 kg m-3 and 450 kg m-3, is used to convert the snow mass values
+
+of the analysis climatology into snow depth.
+
+Every 6 hours a snow analysis is performed in three steps:
+
+20ON
+
+40ON
+
+60
+L
+
+ON
+
+80
+M
+
+ON
+
+180O135OW
+N
+
+90
+O
+
+OW
+
+45
+P
+
+OW
+N
+
+0
+Q
+
+O
+45
+P
+
+OE
+R
+
+90
+O
+
+OE
+
+135
+OE
+
+snow depth (cm) EC AN climate   01S
+
+20ON
+
+40ON
+
+60
+L
+
+ON
+
+80
+M
+
+ON
+
+180O135OW
+N
+
+90
+O
+
+OW
+
+45
+P
+
+OW
+N
+
+0
+Q
+
+O
+45
+P
+
+OE
+R
+
+90
+O
+
+OE
+
+135
+OE
+
+snow depth (cm) (EC AN - USAF) climate   01
+
+20ON
+
+40
+P
+
+ON
+T
+
+60
+L
+
+ON
+
+80
+M
+
+ON
+T
+
+180O135OW
+N
+
+90
+O
+
+OW
+N
+
+45OW 0
+Q
+
+O
+45
+P
+
+OE
+R
+
+90
+O
+
+OE
+R
+
+135
+OE
+
+snow depth (cm) EC AN climate   04S
+
+20ON
+
+40
+P
+
+ON
+T
+
+60
+L
+
+ON
+
+80
+M
+
+ON
+T
+
+180O135OW
+N
+
+90
+O
+
+OW
+N
+
+45OW 0
+Q
+
+O
+45
+P
+
+OE
+R
+
+90
+O
+
+OE
+R
+
+135
+OE
+
+snow depth (cm) (EC AN - USAF) climate   04
+
+
+
+Land surface assimilation
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+1) Snowfall analysis: From SYNOP reports of temperature and precipitation rate, a snowfall rate is
+
+estimated at the observation points, and then a spatial interpolation is done by a successive
+
+correction method.
+
+2) Snow mass background field: A very simple snow model evolution is used to build the background
+
+from the analysed snowfall , the previous analysis of snow mass (persistence) , a snow
+
+climatological mass , and an empirical melting function M based on the 2m temperature
+
+forecast:
+
+(13)
+
+or in a discretized form:
+
+(14)
+
+3) 3) Snow mass analysis: a sucessive correction method is applied to the snow mass increments (the
+
+difference between the background field in (2) and the observations of snow depth, suitably scaled
+
+assuming a fixed snow density of 250 kg m-3).
+
+The main shortcomings are that informations from the model (first-guess) are not taken into account in the analysis
+
+process and that the snow mass climatology, towards which the analysis is relaxed and in fact the dominant term
+
+in data void regions, is rather poor. The snow climatology (Brankovic and van Maanen 1985, BvM85) has been
+
+constructed by running to equilibrium an empirical snow mass model forced by precipitation monthly climate val-
+
+ues and adjusted for melting using a temperature climatology; notice that no snow observations were used and that
+
+the spatial resolution is rather poor ( ). Fig. 8 shows BvM85 climatology for January and April, and com-
+
+pares its values with the US Air Force (USAF) climatology (Foster and Davy 1988), the latter taking into
+
+consideration an extensive collection of regional and global surveys of ground based snow depth observations. Note
+
+that, since the USAF is a climatology of snow depth, BvM85 snow mass values have to be converted using an em-
+
+pirical specification of snow density: Eq (48) of Verseghy (1991), that takes into account the packing of snow under
+
+its own weight, was used. It is clear that in January, the BvM85 values extend too far south in Asia, overestimate
+
+the snow depth in south Siberia, Mongolia and eastern Europe, northwestern and eastern Canada, and underesti-
+
+mate the snow depth in northern Siberia, Iraq, Iran, western Europe and Central Canada. BvM85 values over
+
+Greenland are much larger than USAF, partly because the USAF represents a climatology of seasonal snow depth,
+
+while BvM85 snow mass values have been assigned the arbitrarily high value of 10 m, "to avoid unrealistic melt-
+
+ing" (BvM85). In spring BvM85 overestimates the snow depth virtually everywhere, but for the european values
+
+(e.g. the Alps and Pyrenees), where a small underestimation is detected.
+
+Mean monthly January and April snow depth values of the ECMWF reanalysis are shown in Fig. 9 , together with
+
+their difference to the USAF climatology. The overall patterns in the right panels of Figs. 8 and 9 are very similar,
+
+indicating that the BvM85 climate influences strongly the reanalysis values. Nevertheless, it is also clear that the
+
+information from observations in January is effectively used (values of top panel of Fig. 9 are smaller than the
+
+corresponding values in Fig. 8 ), especially for Europe and western Asia. Substantial errors in the BvM85 clima-
+
+tology in spring lead to large anomalies of the reanalysis mean values. As a further illustration of the reanalysis
+
+information brought by the use of observations, the monthly deviations of snow mass from the BvM85 values is
+
+shown on the left panels of Fig. 10 , while the right panels show the standard deviation of the monthly mean values
+
+of analysed snow mass. Since we are dealing exclusively with snow mass values, there was no need to use the den-
+
+sity relation in this figure. The northeastern Asian values of snow in winter are similar to BvM85, and the standard
+
+deviation is small. A separate analysis (Corti et al. 2000) shows that a very large northern Asian area corresponding
+
+U
+g � s U pU
+
+c
+
+d
+U
+
+d 
+------- � s
+V
+
+–
+
+U
+c
+
+U
+–
+
+τ
+----------------+=
+
+UXW
+1 λ–( )
+
+U
+p λ
+
+U
+c ∆ 
+Y� s V–( )+ +=
+
+5° 5°×
+1° 1°×
+
+
+
+Land surface assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 15
+
+to the former Soviet Union has a data cover very inhomogeneous in time: the number of observations from 1979
+
+to 1992 are 10 to 30 times smaller than in 1993. Values for the month of May (not shown) display larger differences
+
+to the climate and larger variability in northern latitudes. This is due to interannual variability in the rates of melting
+
+implictely used in the snow analysis algorithm (Eq. (14)), and controlled by the first-guess two-metre temperature.
+
+Figure  9As Fig. 8 , but for the reanalysis mean January value (top left) and the mean April value (bottom left).
+
+Right panels show the difference between these values and the US Air Force climatology.
+
+20O
+Z
+N
+
+40O
+Z
+N
+
+60ON
+
+80O
+Z
+N
+
+180O135OW
+
+90OW
+
+45OW 0O
+45OE
+
+90OE
+
+135
+O[E
+
+snow depth (cm) EC AN climate   01\
+
+20ON
+
+40ON
+
+60ON
+
+80ON
+
+180O135OW
+
+90OW
+
+45OW 0O
+45OE
+
+90OE
+
+135
+O[E
+
+snow depth (cm) (EC AN - USAF) climate   01
+
+20ON
+
+40O
+Z
+N
+
+60O
+Z
+N
+
+80O
+Z
+N
+
+180O135OW
+
+90OW
+
+45OW 0O
+Z 45OZ E
+
+90O
+Z
+E
+
+135
+OE
+
+snow depth (cm) EC AN climate   04\
+
+20ON
+
+40ON
+
+60ON
+
+80ON
+
+180O135OW
+
+90O
+Z
+W
+
+45O
+Z
+W 0O
+
+45OE
+
+90OE
+
+135
+OE
+
+snow depth (cm) (EC AN - USAF) climate   04
+
+
+
+Land surface assimilation
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Figure 10Snow mass (mm) difference between the reanalysis mean monthly values and the analysis climatology
+
+(left), and standard deviation of the monthly mean reanalysis values (top row, January; bottom row, April).
+
+20O
+Z
+N
+
+40ON
+
+60ON
+
+80O
+Z
+N
+
+180O
+Z
+
+135O
+Z
+W
+
+90OW
+
+45OW 0O
+45OE
+
+90OE
+
+135
+O[E
+
+snow mass (mm) (ERA - EC AN) climate   01
+
+20ON
+
+40ON
+
+60ON
+
+80ON
+
+180O135OW
+
+90OW
+
+45OW 0O
+45OE
+
+90OE
+
+135
+O[E
+
+std snow mass (mm) ERA   01
+
+20ON
+
+40O
+Z
+N
+
+60O
+Z
+N
+
+80O
+Z
+N
+
+180O135OW
+
+90OW
+
+45OW 0O
+Z 45OE
+
+90OE
+
+135
+OE
+
+snow mass (mm) (ERA - EC AN) climate   04
+
+20ON
+
+40ON
+
+60ON
+
+80ON
+
+180O135OW
+
+90OW
+
+45O
+Z
+W 0O
+
+45OE
+
+90OE
+
+135
+OE
+
+std snow mass (mm) ERA   04
+
+
+
+Land surface assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 17
+
+Figure 11Daily snow mass (mm) values from 1 August 1981 to 31 July 1991 for a point over the French Alps (47
+
+N, 6 E, altitude 1100 m). The solid line represents a proxy for the truth, estimated with Martin (1996) model (see
+
+text for more details), the dashed line shows reanalysis values.
+
+The analysis algorithm has been further evaluated by Martin (1996), and results for snow mass are displayed in Fig.
+
+11 . The values of the reanalysis (labelledERA in the picture) are compared with those produced by an off-line
+
+integration of a detailed, physically based snow model, CROCUS (Brun et al. 1989; 1992), forced by ERA values
+
+of screen level temperature, wind speed and humidity, precipation, and semi-empirical derived values for incoming
+
+radiation. The picture shows daily values, from 1 August 1981 to 31 July 1991, for a point in the French Alps (47
+
+N 6 E), where the model elevation is similar to the station height (1100 m). The reanalysis snow mass values cap-
+
+ture well the interannual variability, with maximum values for the years 81/82 and 83/84, and minima for 82/83,
+
+88/89 and 89/90. However, the reanalysis values are systematically too high for the accumulation period, with ERA
+
+overshooting CROCUS values at times. The melting period comes too early, although the reanalysis melting rates
+
+are sometimes similar to values from CROCUS. The snow analysis (step 3 above) requires the specification of a
+
+snow density to convert the observed depth of snow in equivalent water depths (mass values) which are the quan-
+
+tities managed by the land surface scheme. A fixed value of 250 kg m-3 is assumed which appears to be too high
+
+for fresh snow, explaining the overestimation during the accumulation period. In the reanalysis values, the relaxa-
+
+tion coefficient towards the BvM85 climatology is λ = 0.02 which corresponds to a time scale of τ = 12.5 days.
+Poor spatial resolution over the Alps might result in lack of data and a relaxation to the underestimated climatolog-
+
+ical values (see bottom right panel of Fig. 8  over the Alps).
+
+Possible improvements of this technique could be to use an updated snow mass climatology based on direct obser-
+
+vations and available at a resolution on 1 degree compatible with the current ECMWF model resolution (Sellers et
+
+al. 1996). The land surface scheme could be improved to provide a more reliable first-guess. With the introduction
+
+of the snow density as a prognostic variable (Douville et al. 1995) it should be possible to perform an analysis in
+
+terms of snow depths, the observed ground-based variable, instead of snow water equivalent (since snowfall can
+
+Aug]
+Sep^ Oct_ Nov` Dec^ Jana Feb^ Marb Aprc May Jun] Jul]
+
+100
+
+200
+
+300
+
+(m
+m
+
+)
+
+100
+
+200
+
+300
+
+(m
+m
+
+)
+
+100
+
+200
+
+300
+
+(m
+m
+
+)
+
+100
+
+200
+
+300
+
+(m
+m
+
+)
+
+100
+
+200
+
+300
+(m
+
+m
+)
+
+Aug]
+Sep^ Oct_ Nov` Dec^ Jana Feb^ Marb Aprc May Jun] Jul]
+
+CROCUS
+ERA
+
+81/82
+d
+
+82/83
+d
+
+83/84
+d
+
+84/85
+d
+
+85/86
+d
+
+86/87
+d
+
+87/88
+d
+
+88/89
+d
+
+89/90
+d
+
+90/91
+e
+
+
+
+Land surface assimilation
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+easily be converted knowing density of fresh snow). Remotely sensed information should be used, since weekly,
+
+and more recently daily, snow cover charts are prepared by NOAA/NESDIS (Bruce Ramsay, personal communi-
+
+cation, see also Sellers et al. 1996) based on a combination of visible, infrared and microwave imagery. Microwave
+
+values could be used to obtain snow mass and snow density, using the dependency of the signal on frequency and
+
+polarization (see review in Hallikainen 1996a; 1996b); the available algorithms are more accurate for dry snow,
+
+and have problems for wet snow or when there are large variations of the roughness in the field of view. The values
+
+of ECMWF analysis of snow mass should be routinely compared with the US Air Force daily analysis of snow
+
+depth, based on ground observations and satellite imagery.
+
+7.2  Deep soil temperatures
+
+Figure  12Soil temperature profiles averaged for a number of stations over northern Germany for 10 April 1997.
+
+The solid (red) line represents the mean observed profile at 14 UTC, the dashed (blue) line represents the
+
+interpolated short-term forecast values verifying at 15 UTC.
+
+Since deep soil temperatures evolve over time scales much longer than short and medium range forecasts, the lack
+
+of initialisation for these variables can lead to potential drifts as the one observed for soil moisture in the ECMWF
+
+model. Experience at ECMWF during the winter 95/96 has shown that this problem can occur in winter, when the
+
+atmospheric forcing over the surface is weaker, and the thermal influence form the soil deeper layers is more im-
+
+portant. The combination of a misrepresentation of some physical processes in the land surface scheme (soil water
+
+freezing), excessive radiative cooling, and insufficient downwards heat transfer in very stable boundary layers led
+
+-200
+
+-190
+
+-180
+
+-170
+
+-160
+
+-150
+
+-140
+
+-130
+
+-120
+
+-110
+
+-100
+
+-90
+
+-80
+
+-70
+
+-60
+
+-50
+
+-40
+
+-30
+
+-20
+
+-10
+
+0
+
+so
+il 
+
+d
+ep
+
+th
+ [
+
+cm
+]
+
+f
+
+-200
+
+-190
+
+-180
+
+-170
+
+-160
+
+-150
+
+-140
+
+-130
+
+-120
+
+-110
+
+-100
+
+-90
+
+-80
+
+-70
+
+-60
+
+-50
+
+-40
+
+-30
+
+-20
+
+-10
+
+0
+0g 2h 4i 6j 8k 10 12 14soil temperature [C]l
+
+0g 2h 4i 6j 8k 10 12 14
+
+Germany        (10001-10999)     137 stations
+FC: 97041012 t +   3h  /  OBS: 97041014
+
+Vertical soil temperature profiles
+
+ OBS  MODEL
+
+
+
+Land surface assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 19
+
+to excessive cooling of the soil, and large negative biases in screen level temperature. Nevertheless, the problem is
+
+less critical than the summer soil moisture drift since in winter the stable structure of the boundary layer decouples
+
+the atmosphere from the surface below and prevents surface errors from propagating into the mid-troposphere.
+
+Unlike soil moisture, routine measurements of profiles of temperature in the soil are performed by most meteoro-
+
+logical offices. Unfortunately, only very few of these measurements are transmitted in the GTS, and therefore no
+
+global or even continental coverage exists in real time. A handful of european countries sends daily values to EC-
+
+MWF, and those are used regularly for validation and monitoring the model values. An example in Fig. 12 , where
+
+an average profile of soil temperature for stations in northern Germany is compared with the corresponding model
+
+values, for a recent date. The model deep temperatures show a cold bias, but it is interesting to note that the model
+
+gradient is compares well with observations. This might indicate reasonably good soil thermal properties (they de-
+
+termine the vertical gradient), but comparatively poor atmospheric forcing in the previous weeks (determining the
+
+rate of cooling of the whole soil slab). The results are consistent with the well known systematic underestimation
+
+of longwave downward surface radiation of the ECMWF model and other models (Wild et al. 1995; Garratt and
+
+Prata 1996).
+
+The only existing method for initialising soil temperature has been proposed by Coiffier et al. (1987) where ana-
+
+lysed increments at 2 m are reported directly in the soil. This sub-optimal method could be improved by an optimal
+
+interpolation following the methodology of Mahfouf (1991).
+
+7.3  Vegetation properties
+
+Xue et al. (1996) have recently shown that the specification of the seasonal variations of vegetation properties can
+
+have a significant impact on the simulation of monthly mean temperatures near the surface over the North Ameri-
+
+can continent. The sesonal evolution of the vegetation can be of importance over areas with agricultural practices
+
+(mid-latitude continents, tropical regions). Vegetation properties are currently either fixed spatially, as in the EC-
+
+MWF model (Viterbo and Beljaars 1996), or can vary from month to month according to correspondence tables
+
+(Mahfouf et al. 1995). In an operational context, the use of satellite data like Global Vegetation Indexes (GVI) (see
+
+Gutman 1994) could be a better way to capture seasonallity and inter-annual variability of the vegetation. The ma-
+
+jor difficulty is to relate satellite reflectances to input parameters of the land surface scheme (leaf area index,
+
+albedo, vegetation cover,...). However, variational techniques already used for the retrieval of atmospheric vertical
+
+profiles from satellite radiances appear promising (Eyre et al. 1993).
+
+8CONCLUSIONS
+
+During the last five years, the initialisation of prognostic and diagnostic surface variables has been recognised as
+
+an important issue for numerical weather prediction. Weaknesses of initialisations based either on first-guess only
+
+or climatology have been clearly identified. As a consequence, soil moisture is currently initialised in various op-
+
+erational weather centres using sub-optimal analysis methods and observations from SYNOP reports (ECMWF,
+
+UKMO, CMC, Météo-France, HIRLAM). These techniques could be be improved by using analysis methods al-
+
+ready tested for atmospheric variables like optimum interpolation in the sequential framework and 4D-Var (which
+
+is rather appealing by better accounting for the non-linearities of the problem as well as the temporal distribution
+
+of observations).
+
+The other land surface prognostic variables are still crudely initialised. Concerning snow mass analysis at ECMWF,
+
+the current scheme could be improved by using a more recent climatology and a more realistic observation operator
+
+if snow density can be computed by the land surface parametrization.
+
+Areas not yet explored concern the initialisation of deep soil temperatures for which the time scale of evolution is
+
+
+
+Land surface assimilation
+
+20 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+also much longer than short range forecasts, and the specification of vegetation properties having a seasonal cycle
+
+(such as the albedo, the vegetation cover or the leaf area index). Remote sense data that could be useful in that con-
+
+text include quantities such as satellite skin temperatures or the normalized difference vegetation indices (NDVI).
+
+Finally, the examples shown in the paper illustrate the fact that the initialization and parametrization methods have
+
+to be developed together. Realistic models are needed to support indirect measurements techniques, e.g., forecast
+
+snow density allows a better use of snow depth measurements to initialise snow mass. On the other hand, refine-
+
+ments in the land surface parametrization used by numerical models might be needed in order to extract from new
+
+measurement techniques its full information content.
+
+REFERENCES
+
+Bastianssen, W.G.M. 1995 Regionalization of surface flux densities and moisture indicators in composite terrain -
+
+A remote sensing approach under clear skies in Mediterranean climates. Phd Thesis, Agricultural University,
+
+Wageningen, The Netherlands, 273 pp.
+
+Beljaars, A.C.M., P. Viterbo, M.J. Miller, and A.K. Betts 1996 The anomalous sensitivity over USA during July
+
+1993: sensitivity to land surface parameterization. Mon. Wea. Rev., 124, 362–383.
+
+Betts, J.R., J.H. Ball, A.C.M. Beljaars, M.J. Miller and P. Viterbo 1996 The land surface-atmosphere interaction:
+
+A review based on observational and global modeling perspectives. J. Geophys. Res., 101D, 7209–7225.
+
+Blondin, C. 1991 Parametrization of land surface processes in numerical weather prediction. Land surface evapo-
+
+ration: Measurement and parametrization., T.J. Schmugge and J.C. André, Eds, Springer, 31–54.
+
+Bougeault, P., B. Bret, P. Lacarrère, and J. Noilhan 1991 An experiment with an advanced surface parametriza-
+
+tion in a meso-beta-scale. Part II: The 16 June 1986 simulation. Mon. Wea. Rev., 119, 2374–2392.
+
+Bouttier, F., J.-F. Mahfouf, and J. Noilhan 1993a Sequential assimilation of soil moisture from atmospheric low-
+
+level parameters. Part I: Sensitivity and calibration studies. J. Appl. Meteorol., 32, 1335–1350.
+
+Bouttier, F., J.-F. Mahfouf, and J. Noilhan 1993b Sequential assimilation of soil moisture from atmospheric low-
+
+level parameters. Part II:Implementation in a mesoscale model. J. Appl. Meteorol., 32, 1351–1364.
+
+Brankovic, C., and J. van Maanen 1985 The ECMWF climate system. ECMWF Tech. Mem. 109, ECMWF, Read-
+
+ing, UK, 51 pp. + figs.
+
+Brun, E., P. David, M. Sudul, and G. Brunot 1992 A numerical model to simulate snow -cover stratigraphy for
+
+operational avalanche forecasting. J. Glaciology, 38, 13–22.
+
+Brun, E., E. Martin, Y. Simon, C. Gendre, and C. Coleou 1989 An energy and mass model of snow cover suitable
+
+for operational avalanche forecast. J. Glaciology, 35, 333–342.
+
+Callies, U., A. Rhodin, and D.P. Eppel 1998 A case study on variational soil humidity analysis from atmospheric
+
+observations. J. Hydrol., 212–213, 95–108.
+
+Calvet, J.-C., J. Noilhan, and P. Bessemoulin 1998 Retrieving the root-zone soil moisture from surface soil mois-
+
+ture or temperature estimates: A feasibility study based on field measurements. J. Appl. Meteorol., 37, 371–386.
+
+Carlson, T.N. 1991 Recent advances in modeling the infrared temperature of vegetation canopies. Land surface
+
+evaporation: Measurement and parametrization., T.J. Schmugge and J.C. André, Eds, Springer, 349–358.
+
+Coiffier, J., Y. Ernie, J.-F. Geleyn, J. Clochard, J. Hoffman, and F. Dupont 1987 The operational hemispheric
+
+model at the French meteorological service. J. Met. Soc. Japan, Special Issue on Short and Medium Range Numer-
+
+
+
+Land surface assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 21
+
+ical Weather Prediction, 337–345.
+
+Corti, S., F. Molteni, and C. Brankovic 2000 Predictability of snow-depth anomalies over Eurasia and associated
+
+circulation patterns. Q. J. R. Meteorol. Soc., 126, 241–262.
+
+Cuenca, R.H., and J. Noilhan 1991 Use of soil moisture measurements in hydrological balance studies. Land sur-
+
+face evaporation: Measurement and parametrization., T.J. Schmugge and J.C. André, Eds, Springer, 287–299.
+
+Douville, H., J.-F. Royer, and J.-F. Mahfouf 1995 A new snow parameterization for the Météo-France climate
+
+model. Part I: validation in stand-alone experiments. Climate Dynamics, 12, 21–35.
+
+Eyre, J.R., G.A. Kelly, A.P. McNally, E. Anderson, and A. Persson 1993 Assimilation of TOVS radiance infor-
+
+mation through one-dimensional variational analysis. Q. J. R. Meteorol. Soc., 119, 1427–1463.
+
+Foster, D.J., and R.D. Davy 1988 Global snow depth climatology. USAFETAC/TN-88/006, Scott Air Force Base,
+
+Illinois, 48 pp.
+
+Garratt, J.R., and A.J. Prata 1996 Downwelling longwave fluxes at continental surfaces- A comparison of obser-
+
+vations with GCM simulations and implications for the global land-surface radiation budget. J. Climate, 9, 646–
+655.
+
+Georgakakos, K.P., and O.W. Baumer 1996 Measurement and utilization of on-site moisture data. J. Hydrol., 184,
+131–152.
+
+Giard, D., and E. Bazile 2000 Implementation of a new assimilation scheme for soil and surface variables in a glo-
+
+bal NWP model. Mon. Wea. Rev., 128, 997–1015.
+
+Goutorbe, J.-P., J. Noilhan, C. Valancogne, and R.H. Cuenca 1989 Soil moisture variations during HAPEX-MO-
+
+BILHY. Ann. Geophys., 7, 415–426.
+
+Gutman, G.G. 1994 Global data on land surface parameters from NOAA AVHRR for use in numerical climate
+
+models. J. Climate, 7, 669–680.
+
+Hallikainen, M. 1996a Physical basis for microwave remote sensing of sea ice and snow. Radiation and water in
+
+the climate system., T.J.E. Raschke, Ed, Springer, 489–525.
+
+Hallikainen, M. 1996b Retrieval of sea ice and snow parameters from microwave radiometer and radar data. Ra-
+
+diation and water in the climate system., T.J.E. Raschke, Ed, Springer, 527–549.
+
+Jacquemin, B., and J. Noilhan 1990 Sensitivity study and validation of a land surface parametrization using the
+
+HAPEX-MOBILHY data set. Bound.-Lay. Meteor., 52, 93–134.
+
+Jones, C.D., and B. Macpherson 1995 A hydrology corrections scheme for the mesoscale model using observed
+
+precipitation rates. Forecasting Research Tech. Rep. 151, Meteorological Office, Bracknell, UK.
+
+Lanzinger, A. 1995 The verification of weather parameters. Proc. Seminar ECMWF, 5-9 September 1994, EC-
+
+MWF, Reading, UK, 373–383.
+
+Lorenc, A. C. 1986 Analysis methods for numerical weather prediction. Q. J. R. Meteorol. Soc., 112, 1177–1194.
+
+Macpherson, B. 1996 Initialisation of soil moisture in the operational mesoscale model. Forecasting Research
+
+Tech. Rep. 183, Meteorological Office, Bracknell, UK.
+
+Mahfouf, J.-F. 1990 A numerical simulation of the surface water budget during HAPEX-MOBILHY. Bound.-Lay.
+
+Meteor., 53, 201–222.
+
+Mahfouf, J.-F. 1991 Analysis of soil moisture from near-surface parameters: A feasibility study. J. Appl. Meteorol.,
+
+30, 1534–1547.
+
+
+
+Land surface assimilation
+
+22 Meteorological Training Course Lecture Series
+
+ ECMWF, 2002
+
+Mahfouf, J.-F., A.O. Manzi, J. Noilhan, H. Giordani, and M. Déqué 1995 The land surface scheme ISBA within
+
+the Météo-France climate model ARPEGE. Part I: Implementation and preliminary results. J. Climate, 8, 2039–
+2057.
+
+Mahfouf, J.-F., and J. Noilhan 1991 Comparative study of various formulations of evaporation from bare soil using
+
+in-situ data. J. Appl. Meteorol., 30, 1354–1365.
+
+Mailhot, J., R. Sarrazin, B. Bilodeau, N. Brunet, and G. Pellerin 1997 Development of the 35-km version of the
+
+operational regional forecast system. Atmosphere-Ocean, 35, 1–28.
+
+Manabe, S. 1969 Climate and the ocean circulation. I. The atmospheric circulation and the hydrology of the earth’s
+
+surface. Mon. Wea. Rev., 97, 739–774.
+
+Martin , E. 1996 Validation of the ECMWF Re-analyses. Alpine validations with the snow model CROCUS.
+
+Météo-France CNRM/CEN Internal Report, 57pp.
+
+McNider, R.T., A.J. Song, D.M. Casey, P.J. Wetzel, W.L. Crosson, and T.N. Carlson 1995 Towards a dynamic-
+
+thermodynamic assimilation of satellite surface temperature in numerical atmospheric models. Mon. Wea. Rev.,
+
+122, 2784–2803.
+
+Mintz, Y., and Y.V. Serafini 1992 A global monthly climatology of soil moisture and water balance. Climate Dyn.,
+
+8 13–27.
+
+Mitchell, K.E. 1994 GCIP initiatives in operational mesoscale modeling and data assimilation at NMC. Proceed-
+
+ings of the Fifth Symp. on global change studies, Nashville, Tenn., Amer. Meteor. Soc., 192–198.
+
+Navascues, B. 1997 Analysis of 2 meter temperature and relative humidity. HIRLAM Tech. rep. 28, 26 pp. Nor-
+
+rkoping.
+
+Noilhan, J., and S. Planton 1989 A simple parameterization of land surface processes for meteorological models.
+
+Mon. Wea. Rev., 117, 536–549.
+
+Njoku, E.G., and D. Entekhabi 1996 Passive microwave sensing of soil moisture. J. Hydrol., 184, 101–129.
+
+Paloscia, S. 1996 Remote sensing of soil moisture. Radiation and water in the climate system., T.J.E. Raschke, Ed,
+
+Springer, 361–400.
+
+Rhodin, A., F. Kucharski, U. Callies, D.P. Eppel, and W. Wergen 1999 Variational soil moisture analysis from
+
+screen-level atmospheric parameters: Application to a short-range weather forecast. Q. J. R. Meteorol. Soc., 125,
+2427–2448.
+
+Rind, D. 1982 The influence of ground moisture conditions in North America on summer climate as modeled in
+
+the GISS GCM. Mon. Wea. Rev., 110, 1487–1494.
+
+Rowell, D.P., and C. Blondin 1990 The influence of soil wetness distribution on short-range rainfall forecasting in
+
+West African Sahel. Q. J. R. Meteorol. Soc., 116, 1471–1485.
+
+Rowntree, P.R., and J.A. Bolton 1983 Simulation of the atmospheric response to soil moisture anomalies over Eu-
+
+rope. Q. J. R. Meteorol. Soc., 109, 501–526.
+
+Schmugge, T.J., and F. Becker 1991 Remote sensing observations for the monitoring of land-surface fluxes and
+
+water budgets. Land surface evaporation: Measurement and parametrization., T.J. Schmugge and J.C. André, Eds,
+
+Springer, 337–347.
+
+Schmugge, T., and T.J. Jackson 1994 Mapping surface soil moisture with microwave radiometers. Meteorol. At-
+
+mos. Phys., 54, 213–223.
+
+
+
+Land surface assimilation
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2002 23
+
+Schulin, R., H. Fluhler, H.M. Selim, B. Sevruk, and P.J. Wierenga 1992 Soil moisture. Snow cover measure-
+
+ments and areal assessment of precipitation and soil moisture, B. Sevruk, Ed., Op. Hydrology Rep. No. 35, WMO
+
+No. 749, Part III, 219-283.
+
+Sellers, P.J., B.W. Meeson, J.W. Closs, J. Collatz, F.E. Corprew, D.Dazlich, F.G. Hall, Y. Kerr, R. Koster, S.
+
+Los, K. Mitchell, J.M.P. McManus, D.M. Myers, K.-J. Sun, and P. Try 1996 The ISLSCP initiative I-global data
+
+sets: Surface boundary conditions and atmopsheric forcings for land-atmosphere models. Bull. Amer. Meteor. Soc.,
+
+77, 1987–2005.
+
+Sellers, P.J., Y. Mintz, Y.C. Sud, and A. Dalcher 1986 A Simple Biosphere (SiB) model for use whin general cir-
+
+culation models. J. Atmos. Sci., 43, 505–531.
+
+Smith, C.B., M.N. Lakhtakia, W.J. Capehart, and T.N. Carlson 1994 Initialization of soil-water content in region-
+
+al-scale atmospheric prediction models. Bull. Amer. Meteor. Soc., 75, 585–593.
+
+Taconet, O., R. Bernard, and D. Vidal-Madjar 1986 Evapotranspiration over an agricultural region using a sur-
+
+face flux/temperature model based on NOAA-AVHRR data. J. Climate and Applied Meteor., 25 284–307.
+
+van den Hurk, B., W. Bastiaanssen, H. Pelgrum, and E. van Meijgaard 1997 A new methodology for assimilation
+
+of initial soil moisture fields in weather prediction models using METEOSAT and NOAA. J. Appl. Meteor. 36
+1271–1283.
+
+Verseghy, D.L. 1991 CLASS-A Canadian land surface scheme for GCMs. I. Soil model. Int. J.Climatol., 11 111–
+133.
+
+Viterbo, P., and A.C.M. Beljaars 1995 An improved land surface parametrization scheme in the ECMWF model
+
+and its validation. J. Climate, 8, 2716–2748.
+
+Viterbo, P., and P. Courtier 1995 The importance of soil water for medium-range weather forecasting. Implications
+
+for data assimilation. Worshop on Imbalance of Slowly Varying Components of Predictable Atmospheric Motions,
+
+W.M.O., Beijing, China, March 1995.
+
+Wang, J.R., 1992 An overview of measurements of soil moisture and modeling of moisture flux in FIFE. J. Geo-
+
+phys. Res., 97D, 18955–18959.
+
+Wei, M., Ed. 1984 Soil moisture: Report of a workshop held at Tiburon, California 25-27 January 1994. NASA
+
+Conference Publication 3319.
+
+Wetzel, P.J., D. Atlas, and R.H. Woodward 1984 Determining soil moisture from geosynchronous satellite infra-
+
+red data: A feasibility study. J. Appl. Meteorol., 23, 375–391.
+
+Wetzel, P.J., and J.T. Chang 1988 Evapotranspiration from nonuniform surfaces: A first approach for short-term
+
+numerical weather prediction. Mon. Wea. Rev., 116, 600–621.
+
+Wild, M., A. Ohmura, H. Gilgen, and E. Roeckner 1995 Validation of general circulation model radiative fluxes
+
+using surface observations. J. Climate, 8, 1309–1324.
+
+Xue, Y., M.J. Fennessy, and P.J. Sellers 1996 Impact of vegetation properties on U.S. summer weather prediction.
+
+J. Geophys. Res., 101D, 7419–7430.
+
+Yang, R., M.J. Fennessy, and J. Shukla 1994 The influence of initial soil wetness on medium range surface weath-
+
+er forecasts. Mon. Wea. Rev., 122 471–485
+
+Yeh, T.C., R.T. Wetherald, and S. Manabe 1984 The effect of initial soil wetness on the short-term climate and
+
+hydrology change-A numerical experiment. Mon. Wea. Rev., 112 474–490.

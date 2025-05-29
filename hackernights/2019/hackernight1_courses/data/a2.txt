@@ -1,0 +1,921 @@
+Appendix B
+
+Generalized Linear Model
+Theory
+
+We describe the generalized linear model as formulated by Nelder and Wed-
+derburn (1972), and discuss estimation of the parameters and tests of hy-
+potheses.
+
+B.1 The Model
+
+Let y1, . . . , yn denote n independent observations on a response. We treat
+yi as a realization of a random variable Yi. In the general linear model we
+assume that Yi has a normal distribution with mean µi and variance σ2
+
+Yi ∼ N(µi, σ2),
+
+and we further assume that the expected value µi is a linear function of p
+predictors that take values x′i = (xi1, . . . , xip) for the i-th case, so that
+
+µi = x′iβ,
+
+where β is a vector of unknown parameters.
+We will generalize this in two steps, dealing with the stochastic and
+
+systematic components of the model.
+
+G. Rodŕıguez. Revised November 2001
+
+
+
+2 APPENDIX B. GENERALIZED LINEAR MODEL THEORY
+
+B.1.1 The Exponential Family
+
+We will assume that the observations come from a distribution in the expo-
+nential family with probability density function
+
+f(yi) = exp{
+yiθi − b(θi)
+
+ai(φ)
++ c(yi, φ)}. (B.1)
+
+Here θi and φ are parameters and ai(φ), b(θi) and c(yi, φ) are known func-
+tions. In all models considered in these notes the function ai(φ) has the
+form
+
+ai(φ) = φ/pi,
+
+where pi is a known prior weight, usually 1.
+The parameters θi and φ are essentially location and scale parameters.
+
+It can be shown that if Yi has a distribution in the exponential family then
+it has mean and variance
+
+E(Yi) = µi = b′(θi) (B.2)
+var(Yi) = σ2i = b
+
+′′(θi)ai(φ), (B.3)
+
+where b′(θi) and b′′(θi) are the first and second derivatives of b(θi). When
+ai(φ) = φ/pi the variance has the simpler form
+
+var(Yi) = σ2i = φb
+′′(θi)/pi.
+
+The exponential family just defined includes as special cases the normal,
+binomial, Poisson, exponential, gamma and inverse Gaussian distributions.
+
+Example: The normal distribution has density
+
+f(yi) =
+1√
+
+2πσ2
+exp{−1
+
+2
+(yi − µi)2
+
+σ2
+}.
+
+Expanding the square in the exponent we get (yi − µi)2 = y2i + µ2i − 2yiµi,
+so the coefficient of yi is µi/σ2. This result identifies θi as µi and φ as σ2,
+with ai(φ) = φ. Now write
+
+f(yi) = exp{
+yiµi − 12µ
+
+2
+i
+
+σ2
+− y
+
+2
+i
+
+2σ2
+− 1
+
+2
+log(2πσ2)}.
+
+This shows that b(θi) = 12θ
+2
+i (recall that θi = µi). Let us check the mean
+
+and variance:
+
+E(Yi) = b′(θi) = θi = µi,
+var(Yi) = b′′(θi)ai(φ) = σ2.
+
+
+
+B.1. THE MODEL 3
+
+Try to generalize this result to the case where Yi has a normal distribution
+with mean µi and variance σ2/ni for known constants ni, as would be the
+case if the Yi represented sample means.2
+
+Example: In Problem Set 1 you will show that the exponential distribution
+with density
+
+f(yi) = λi exp{−λiyi}
+
+belongs to the exponential family.2
+In Sections B.4 and B.5 we verify that the binomial and Poisson distri-
+
+butions also belong to this family.
+
+B.1.2 The Link Function
+
+The second element of the generalization is that instead of modeling the
+mean, as before, we will introduce a one-to-one continuous differentiable
+transformation g(µi) and focus on
+
+ηi = g(µi). (B.4)
+
+The function g(µi) will be called the link function. Examples of link func-
+tions include the identity, log, reciprocal, logit and probit.
+
+We further assume that the transformed mean follows a linear model, so
+that
+
+ηi = x′iβ. (B.5)
+
+The quantity ηi is called the linear predictor. Note that the model for ηi
+is pleasantly simple. Since the link function is one-to-one we can invert it to
+obtain
+
+µi = g−1(x′iβ).
+
+The model for µi is usually more complicated than the model for ηi.
+Note that we do not transform the response yi, but rather its expected
+
+value µi. A model where log yi is linear on xi, for example, is not the same
+as a generalized linear model where log µi is linear on xi.
+
+Example: The standard linear model we have studied so far can be described
+as a generalized linear model with normal errors and identity link, so that
+
+ηi = µi.
+
+It also happens that µi, and therefore ηi, is the same as θi, the parameter in
+the exponential family density.2
+
+
+
+4 APPENDIX B. GENERALIZED LINEAR MODEL THEORY
+
+When the link function makes the linear predictor ηi the same as the
+canonical parameter θi, we say that we have a canonical link . The identity
+is the canonical link for the normal distribution. In later sections we will see
+that the logit is the canonical link for the binomial distribution and the log
+is the canonical link for the Poisson distribution. This leads to some natural
+pairings:
+
+Error Link
+Normal Identity
+Binomial Logit
+Poisson Log
+
+However, other combinations are also possible. An advantage of canoni-
+cal links is that a minimal sufficient statistic for β exists, i.e. all the informa-
+tion about β is contained in a function of the data of the same dimensionality
+as β.
+
+B.2 Maximum Likelihood Estimation
+
+An important practical feature of generalized linear models is that they can
+all be fit to data using the same algorithm, a form of iteratively re-weighted
+least squares. In this section we describe the algorithm.
+
+Given a trial estimate of the parameters β̂, we calculate the estimated
+linear predictor η̂i = x′iβ̂ and use that to obtain the fitted values µ̂i =
+g−1(η̂i). Using these quantities, we calculate the working dependent variable
+
+zi = η̂i + (yi − µ̂i)
+dηi
+dµi
+
+, (B.6)
+
+where the rightmost term is the derivative of the link function evaluated at
+the trial estimate.
+
+Next we calculate the iterative weights
+
+wi = pi/[b′′(θi)(
+dηi
+dµi
+
+)2], (B.7)
+
+where b′′(θi) is the second derivative of b(θi) evaluated at the trial estimate
+and we have assumed that ai(φ) has the usual form φ/pi. This weight is
+inversely proportional to the variance of the working dependent variable zi
+given the current estimates of the parameters, with proportionality factor φ.
+
+
+
+B.3. TESTS OF HYPOTHESES 5
+
+Finally, we obtain an improved estimate of β regressing the working
+dependent variable zi on the predictors xi using the weights wi, i.e. we
+calculate the weighted least-squares estimate
+
+β̂ = (X′WX)−1X′Wz, (B.8)
+
+where X is the model matrix, W is a diagonal matrix of weights with entries
+wi given by (B.7) and z is a response vector with entries zi given by (B.6).
+
+The procedure is repeated until successive estimates change by less than
+a specified small amount. McCullagh and Nelder (1989) prove that this
+algorithm is equivalent to Fisher scoring and leads to maximum likelihood
+estimates. These authors consider the case of general ai(φ) and include φ in
+their expression for the iterative weight. In other words, they use w∗i = φwi,
+where wi is the weight used here. The proportionality factor φ cancels out
+when you calculate the weighted least-squares estimates using (B.8), so the
+estimator is exactly the same. I prefer to show φ explicitly rather than
+include it in W.
+
+Example: For normal data with identity link ηi = µi, so the derivative is
+dηi/dµi = 1 and the working dependent variable is yi itself. Since in addition
+b′′(θi) = 1 and pi = 1, the weights are constant and no iteration is required.2
+
+In Sections B.4 and B.5 we derive the working dependent variable and the
+iterative weights required for binomial data with link logit and for Poisson
+data with link log. In both cases iteration will usually be necessary.
+
+Starting values may be obtained by applying the link to the data, i.e.
+we take µ̂i = yi and η̂i = g(µ̂i). Sometimes this requires a few adjustments,
+for example to avoid taking the log of zero, and we will discuss these at the
+appropriate time.
+
+B.3 Tests of Hypotheses
+
+We consider Wald tests and likelihood ratio tests, introducing the deviance
+statistic.
+
+B.3.1 Wald Tests
+
+The Wald test follows immediately from the fact that the information matrix
+for generalized linear models is given by
+
+I(β) = X′WX/φ, (B.9)
+
+
+
+6 APPENDIX B. GENERALIZED LINEAR MODEL THEORY
+
+so the large sample distribution of the maximum likelihood estimator β̂ is
+multivariate normal
+
+β̂ ∼ Np(β, (X′WX)−1φ). (B.10)
+
+with mean β and variance-covariance matrix (X′WX)−1φ.
+Tests for subsets of β are based on the corresponding marginal normal
+
+distributions.
+
+Example: In the case of normal errors with identity link we have W = I
+(where I denotes the identity matrix), φ = σ2, and the exact distribution
+of β̂ is multivariate normal with mean β and variance-covariance matrix
+(X′X)−1σ2.
+
+B.3.2 Likelihood Ratio Tests and The Deviance
+
+We will show how the likelihood ratio criterion for comparing any two nested
+models, say ω1 ⊂ ω2, can be constructed in terms of a statistic called the
+deviance and an unknown scale parameter φ.
+
+Consider first comparing a model of interest ω with a saturated model Ω
+that provides a separate parameter for each observation.
+
+Let µ̂i denote the fitted values under ω and let θ̂i denote the correspond-
+ing estimates of the canonical parameters. Similarly, let µ̃O = yi and θ̃i
+denote the corresponding estimates under Ω.
+
+The likelihood ratio criterion to compare these two models in the expo-
+nential family has the form
+
+−2 log λ = 2
+n∑
+
+i=1
+
+yi(θ̃i − θ̂i)− b(θ̃i) + b(θ̂i)
+ai(φ)
+
+.
+
+Assume as usual that ai(φ) = φ/pi for known prior weights pi. Then we
+can write the likelihood-ratio criterion as follows:
+
+−2 log λ = D(y, µ̂)
+φ
+
+. (B.11)
+
+The numerator of this expression does not depend on unknown parameters
+and is called the deviance:
+
+D(y, µ̂) = 2
+n∑
+
+i=1
+
+pi[yi(θ̃i − θ̂i)− b(θ̃i) + b(θ̂i)]. (B.12)
+
+The likelihood ratio criterion −2 log L is the deviance divided by the scale
+parameter φ, and is called the scaled deviance.
+
+
+
+B.3. TESTS OF HYPOTHESES 7
+
+Example: Recall that for the normal distribution we had θi = µi, b(θi) = 12θ
+2
+i ,
+
+and ai(φ) = σ2, so the prior weights are pi = 1. Thus, the deviance is
+
+D(y, µ̂) = 2
+∑
+{yi(yi − µ̂i)−
+
+1
+2
+y2i +
+
+1
+2
+µ̂i
+
+2}
+
+= 2
+∑
+{1
+2
+y2i − yiµ̂i2 +
+
+1
+2
+µ̂i
+
+2}
+
+=
+∑
+
+(yi − µ̂i)2
+
+our good old friend, the residual sum of squares.2
+Let us now return to the comparison of two nested models ω1, with p1
+
+parameters, and ω2, with p2 parameters, such that ω1 ∈ ω2 and p2 > p1.
+The log of the ratio of maximized likelihoods under the two models can
+
+be written as a difference of deviances, since the maximized log-likelihood
+under the saturated model cancels out. Thus, we have
+
+−2 log λ = D(ω1)−D(ω2)
+φ
+
+(B.13)
+
+The scale parameter φ is either known or estimated using the larger model
+ω2.
+
+Large sample theory tells us that the asymptotic distribution of this
+criterion under the usual regularity conditions is χ2ν with ν = p2−p1 degrees
+of freedom.
+
+Example: In the linear model with normal errors we estimate the unknown
+scale parameter φ using the residual sum of squares of the larger model, so
+the criterion becomes
+
+−2 log λ = RSS(ω1)− RSS(ω2)
+RSS(ω2)/(n− p2)
+
+.
+
+In large samples the approximate distribution of this criterion is χ2ν with
+ν = p2−p1 degrees of freedom. Under normality, however, we have an exact
+result: dividing the criterion by p2 − p1 we obtain an F with p2 − p1 and
+n − p2 degrees of freedom. Note that as n → ∞ the degrees of freedom in
+the denominator approach ∞ and the F converges to (p2 − p1)χ2, so the
+asymptotic and exact criteria become equivalent.2
+
+In Sections B.4 and B.5 we will construct likelihood ratio tests for bi-
+nomial and Poisson data. In those cases φ = 1 (unless one allows over-
+dispersion and estimates φ, but that’s another story) and the deviance is
+the same as the scaled deviance. All our tests will be based on asymptotic
+χ2 statistics.
+
+
+
+8 APPENDIX B. GENERALIZED LINEAR MODEL THEORY
+
+B.4 Binomial Errors and Link Logit
+
+We apply the theory of generalized linear models to the case of binary data,
+and in particular to logistic regression models.
+
+B.4.1 The Binomial Distribution
+
+First we verify that the binomial distribution B(ni, πi) belongs to the expo-
+nential family of Nelder and Wedderburn (1972). The binomial probability
+distribution function (p.d.f.) is
+
+fi(yi) =
+
+(
+ni
+yi
+
+)
+πyii (1− πi)
+
+ni−yi . (B.14)
+
+Taking logs we find that
+
+log fi(yi) = yi log(πi) + (ni − yi) log(1− πi) + log
+(
+
+ni
+yi
+
+)
+.
+
+Collecting terms on yi we can write
+
+log fi(yi) = yi log(
+πi
+
+1− πi
+) + ni log(1− πi) + log
+
+(
+ni
+yi
+
+)
+.
+
+This expression has the general exponential form
+
+log fi(yi) =
+yiθi − b(θi)
+
+ai(φ)
++ c(yi, φ)
+
+with the following equivalences: Looking first at the coefficient of yi we note
+that the canonical parameter is the logit of πi
+
+θi = log(
+πi
+
+1− πi
+). (B.15)
+
+Solving for πi we see that
+
+πi =
+eθi
+
+1 + eθi
+, so 1− πi =
+
+1
+1 + eθi
+
+.
+
+If we rewrite the second term in the p.d.f. as a function of θi, so log(1−πi) =
+− log(1 + eθi), we can identify the cumulant function b(θi) as
+
+b(θi) = ni log(1 + eθi).
+
+
+
+B.4. BINOMIAL ERRORS AND LINK LOGIT 9
+
+The remaining term in the p.d.f. is a function of yi but not πi, leading to
+
+c(yi, φ) = log
+
+(
+ni
+yi
+
+)
+.
+
+Note finally that we may set ai(φ) = φ and φ = 1.
+Let us verify the mean and variance. Differentiating b(θi) with respect
+
+to θi we find that
+
+µi = b′(θi) = ni
+eθi
+
+1 + eθi
+= niπi,
+
+in agreement with what we knew from elementary statistics. Differentiating
+again using the quotient rule, we find that
+
+vi = ai(φ)b′′(θi) = ni
+eθi
+
+(1 + eθi)2
+= niπi(1− πi),
+
+again in agreement with what we knew before.
+In this development I have worked with the binomial count yi, which
+
+takes values 0(1)ni. McCullagh and Nelder (1989) work with the propor-
+tion pi = yi/ni, which takes values 0(1/ni)1. This explains the differences
+between my results and their Table 2.1.
+
+B.4.2 Fisher Scoring in Logistic Regression
+
+Let us now find the working dependent variable and the iterative weight
+used in the Fisher scoring algorithm for estimating the parameters in logistic
+regression, where we model
+
+ηi = logit(πi). (B.16)
+
+It will be convenient to write the link function in terms of the mean µi, as:
+
+ηi = log(
+πi
+
+1− πi
+) = log(
+
+µi
+ni − µi
+
+),
+
+which can also be written as ηi = log(µi)− log(ni − µi).
+Differentiating with respect to µi we find that
+
+dηi
+dµi
+
+=
+1
+µi
+
++
+1
+
+ni − µi
+=
+
+ni
+µi(ni − µi)
+
+=
+1
+
+niπi(1− πi)
+.
+
+The working dependent variable, which in general is
+
+zi = ηi + (yi − µi)
+dηi
+dµi
+
+,
+
+
+
+10 APPENDIX B. GENERALIZED LINEAR MODEL THEORY
+
+turns out to be
+zi = ηi +
+
+yi − niπi
+niπi(1− πi)
+
+. (B.17)
+
+The iterative weight turns out to be
+
+wi = 1/
+[
+b′′(θi)(
+
+dηi
+dµi
+
+)2
+]
+,
+
+=
+1
+
+niπi(1− πi)
+[niπi(1− πi)]2,
+
+and simplifies to
+wi = niπi(1− πi). (B.18)
+
+Note that the weight is inversely proportional to the variance of the
+working dependent variable. The results here agree exactly with the results
+in Chapter 4 of McCullagh and Nelder (1989).
+
+Exercise: Obtain analogous results for Probit analysis, where one models
+
+ηi = Φ−1(µi),
+
+where Φ() is the standard normal cdf. Hint: To calculate the derivative of
+the link function find dµi/dηi and take reciprocals.2
+
+B.4.3 The Binomial Deviance
+
+Finally, let us figure out the binomial deviance. Let µ̂i denote the m.l.e. of
+µi under the model of interest, and let µ̃i = yi denote the m.l.e. under the
+saturated model. From first principles,
+
+D = 2
+∑
+
+[yi log(
+yi
+ni
+
+) + (ni − yi) log(
+ni − yi
+
+ni
+)
+
+−yi log(
+µ̂i
+ni
+
+)− (ni − yi) log(
+ni − µ̂i
+
+ni
+)].
+
+Note that all terms involving log(ni) cancel out. Collecting terms on yi and
+on ni − yi we find that
+
+D = 2
+∑
+
+[yi log(
+yi
+µ̂i
+
+) + (ni − yi) log(
+ni − yi
+ni − µi
+
+)]. (B.19)
+
+Alternatively, you may obtain this result from the general form of the
+deviance given in Section B.3.
+
+
+
+B.5. POISSON ERRORS AND LINK LOG 11
+
+Note that the binomial deviance has the form
+
+D = 2
+∑
+
+oi log(
+oi
+ei
+
+),
+
+where oi denotes observed, ei denotes expected (under the model of interest)
+and the sum is over both “successes” and “failures” for each i (i.e. we have
+a contribution from yi and one from ni − yi).
+
+For grouped data the deviance has an asymptotic chi-squared distribu-
+tion as ni →∞ for all i, and can be used as a goodness of fit test.
+
+More generally, the difference in deviances between nested models (i.e.
+the log of the likelihood ratio test criterion) has an asymptotic chi-squared
+distribution as the number of groups k → ∞ or the size of each group
+ni →∞, provided the number of parameters stays fixed.
+
+As a general rule of thumb due to Cochrane (1950), the asymptotic chi-
+squared distribution provides a reasonable approximation when all expected
+frequencies (both µ̂i and ni− µ̂i) under the larger model exceed one, and at
+least 80% exceed five.
+
+B.5 Poisson Errors and Link Log
+
+Let us now apply the general theory to the Poisson case, with emphasis on
+the log link function.
+
+B.5.1 The Poisson Distribution
+
+A Poisson random variable has probability distribution function
+
+fi(yi) =
+e−µiµyii
+
+yi!
+(B.20)
+
+for yi = 0, 1, 2, . . .. The moments are
+
+E(Yi) = var(Yi) = µi.
+
+Let us verify that this distribution belongs to the exponential family as
+defined by Nelder and Wedderburn (1972). Taking logs we find
+
+log fi(yi) = yi log(µi)− µi − log(yi!).
+
+Looking at the coefficient of yi we see immediately that the canonical
+parameter is
+
+θi = log(µi), (B.21)
+
+
+
+12 APPENDIX B. GENERALIZED LINEAR MODEL THEORY
+
+and therefore that the canonical link is the log. Solving for µi we obtain the
+inverse link
+
+µi = eθi ,
+
+and we see that we can write the second term in the p.d.f. as
+
+b(θi) = eθi .
+
+The last remaining term is a function of yi only, so we identify
+
+c(yi, φ) = − log(yi!).
+
+Finally, note that we can take ai(φ) = φ and φ = 1, just as we did in the
+binomial case.
+
+Let us verify the mean and variance. Differentiating the cumulant func-
+tion b(θi) we have
+
+µi = b′(θi) = eθi = µi,
+
+and differentiating again we have
+
+vi = ai(φ)b′′(θi) = eθi = µi.
+
+Note that the mean equals the variance.
+
+B.5.2 Fisher Scoring in Log-linear Models
+
+We now consider the Fisher scoring algorithm for Poisson regression models
+with canonical link, where we model
+
+ηi = log(µi). (B.22)
+
+The derivative of the link is easily seen to be
+
+dηi
+dµi
+
+=
+1
+µi
+
+.
+
+Thus, the working dependent variable has the form
+
+zi = ηi +
+yi − µi
+
+µi
+. (B.23)
+
+The iterative weight is
+
+wi = 1/
+[
+b′′(θi)(
+
+dηi
+dµi
+
+)2
+]
+
+= 1/
+
+[
+µi
+
+1
+µ2i
+
+]
+,
+
+
+
+B.5. POISSON ERRORS AND LINK LOG 13
+
+and simplifies to
+wi = µi. (B.24)
+
+Note again that the weight is inversely proportional to the variance of
+the working dependent variable.
+
+B.5.3 The Poisson Deviance
+
+Let µ̂i denote the m.l.e. of µi under the model of interest and let µ̃i =
+yi denote the m.l.e. under the saturated model. From first principles, the
+deviance is
+
+D = 2
+∑
+
+[yi log(yi)− yi − log(yi!)
+−yi log(µ̂i) + µ̂i + log(yi!)].
+
+Note that the terms on yi! cancel out. Collecting terms on yi we have
+
+D = 2
+∑
+
+[yi log(
+yi
+µ̂i
+
+)− (yi − µ̂i)]. (B.25)
+
+The similarity of the Poisson and Binomial deviances should not go un-
+noticed. Note that the first term in the Poisson deviance has the form
+
+D = 2
+∑
+
+oi log(
+oi
+ei
+
+),
+
+which is identical to the Binomial deviance. The second term is usually zero.
+To see this point, note that for a canonical link the score is
+
+∂ log L
+∂β
+
+= X′(y− µ),
+
+and setting this to zero leads to the estimating equations
+
+X′y = X′µ̂.
+
+In words, maximum likelihood estimation for Poisson log-linear models—and
+more generally for any generalized linear model with canonical link—requires
+equating certain functions of the m.l.e.’s (namely X′µ̂) to the same functions
+of the data (namely X′y). If the model has a constant, one column of X
+will consist of ones and therefore one of the estimating equations will be∑
+
+yi =
+∑
+
+µ̂i or
+∑
+
+(yi − µ̂i) = 0,
+
+
+
+14 APPENDIX B. GENERALIZED LINEAR MODEL THEORY
+
+so the last term in the Poisson deviance is zero. This result is the basis
+of an alternative algorithm for computing the m.l.e.’s known as “iterative
+proportional fitting”, see Bishop et al. (1975) for a description.
+
+The Poisson deviance has an asymptotic chi-squared distribution as n →
+∞ with the number of parameters p remaining fixed, and can be used as a
+goodness of fit test. Differences between Poisson deviances for nested models
+(i.e. the log of the likelihood ratio test criterion) have asymptotic chi-squared
+distributions under the usual regularity conditions.

@@ -1,0 +1,4586 @@
+Wave_model
+
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 1
+
+The wave model
+May 1995
+
+By Peter Janssen
+
+European Centre for Medium-Range Weather Forecasts
+
+Abstract
+
+In this set of lectures I would like to give a brief overview of the state-of-the-art of ocean wave modelling, ranging from a
+derivation of the evolution equation of the wave spectrum from the Navier–Stokes equations to the practice of wave
+forecasting. From validation studies using satellite data from Geosat and ERS-1 it appears that present-day wave models are
+reliable. In addition, it is known from experience that wave results depend in a sensitive manner on the quality of the driving
+surface winds. For these reasons ocean wave forecasting has certain benefits for atmospheric modelling. Two examples of
+these benefits are given. The program of these lectures is, therefore, as follows:
+
+1. Derivation of the energy balance equation
+1.1 Preliminaries—Dynamical equations, dispersion relation in deep and shallow-water, group velocity, energy density,
+
+Hamiltonian and Lagrangian for potential flow.  The averaged Lagrangian.
+1.2 Energy balance equation (adiabatic part)—The need for a statistical description of ocean waves: the wave spectrum.—
+
+From the averaged Lagrangian we show that the adiabatic rate of change of the wave spectrum is determined by advection
+(with the group velocity) and refraction.
+
+1.3 Energy balance equation (physics)—From now on we only consider deep water. It is shown that, in addition to
+adiabatic effects, the rate of change of the wave spectrum is determined by: (a) energy transfer from wind; (b) non-linear wave-
+wave interactions; (c) dissipation by white capping.
+
+2. The WAM model—The WAM model is the first model that solves the energy balance equation, including non-linear wave-
+wave interactions.
+
+2.1 Energy balance for wind sea—Distinction between wind sea and swell. Empirical growth curves: fetch and duration
+limitation. Energy balance for wind sea according to the WAM model. Evolution of wave spectrum. Comparison with
+observations from JONSWAP.
+
+2.2 Wave forecasting—Quality of wind field (SWADE). Validation of wind and wave analysis using ERS-1 altimeter data
+and buoy data.—Quality of wave forecast, forecast skill depends on whether sea state is dominated by wind sea or swell.
+
+3. Benefits for atmospheric modelling
+3.1 Use as a diagnostic tool—The apparent over-activity of the atmospheric model during the forecast is reflected in too
+
+high forecasted wave height.  This is shown by comparing monthly mean wave forecasts with the verifying analysis.
+3.2 Coupled wind-wave modelling—The energy transfer from atmosphere to ocean is sea state dependent. To be consistent
+
+one has to couple wind and waves to take the sea state dependent slowing down of the wind into account. Such a coupled
+wind-wave model gives an improved climate in the Northern Hemisphere. Also, the wind field in the tropics is affected, to a
+considerable extent, (e.g. in monsoon area and warm pool east of Indonesia).
+
+Table of contents
+
+1 . Derivation of the energy balance equation 1
+
+1.1 Preliminaries 3
+
+1.2 Energy balance equation (adiabatic part) 13
+
+1.3 Energy balance equation (physics) 20
+
+2 . The WAM model 33
+
+2.1 Energy balance for wind sea 33
+
+2.2 Wave forecasting 42
+
+
+
+The wave model
+
+2 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+3 . Benefits for atmospheric modelling 51
+
+3.1 Use as a diagnostic tool 51
+
+3.2 Coupled wind-wave modelling 57
+
+REFERENCES 60
+
+1. DERIVATION OF THE ENERGY BALANCE EQUATION
+
+In this chapter we shall try to derive the basic evolution equation of wave modelling, called the energy balance
+
+equation, from first principles. Our starting point is the Navier–Stokes equations for air and water and it is empha-
+
+sised that there are two small parameters in the problem namely the steepness of the waves and the ratio of air to
+
+water density. Because of these two small parameters one may distinguish two scales in the time–space domain,
+
+namely a fast scale related to the period and wave length of the waves and a much longer time and length scale
+
+related to changes due to the small effects of non-linearity and growth of waves by wind.
+
+Figure  1. The problem
+
+Using perturbation methods, an approximate evolution equation for the amplitude and phase of the gravity waves
+
+may be obtained. In lowest-order one then deals with free surface gravity waves while higher-order terms represent
+
+the effects of wind input, non-linear (four) wave interaction and dissipation.
+
+Applying this deterministic evolution equation to a practical application, such as ocean wave prediction, is not very
+
+feasible, however. First of all, we may have some information on the initial condition for the amplitude of the
+
+waves (but it should be stressed that this requires the 2-D wave spectrum), but certainly not on the phases of the
+
+waves. On the other hand, one might ask oneself whether all this detailed information regarding the phase of the
+
+waves is really needed. Perhaps we can content ourselves with knowledge about averaged quantities such as the
+
+wave spectrum , where
+
+(1)
+
+with the complex amplitude of a wave with wave number and is the complex conjugate. A statistical
+
+description seems the most promising way to proceed.
+
+a
+
+F k( )
+
+F k( ) a k( )a* k( )∼
+
+a k a*
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 3
+
+Secondly, a standard approach would be to do a Fourier analysis of the deterministic evolution equations and solve
+
+the resulting ordinary differential equations on the computer. This approach is followed by ECMWF's atmospher-
+
+ic, spectral model. For water waves, this approach is not feasible because too many scales are involved. A typical
+
+ocean wave has length scales between 1 and 250 m, while a typical ocean basis extends over 10 000 km. A way
+
+of circumventing this problem is to employ a multiple-scale approach. We assume that there are two scales, one
+
+related to the free gravity waves and a long scale related to the aforementioned physical processes, such as wind
+
+input, non-linear interactions and dissipation. Since we know the solution for the free gravity waves, we only have
+
+to consider the evolution of the wave field on the long time and space scale, thus making the wave forecasting prob-
+
+lem on a global scale a tractable problem. As a result, it turns out that the wave spectrum is a slowly varying
+
+function of space and time and its evolution equation, called the energy balance equation, will be derived in this
+
+chapter.
+
+1.1  Preliminaries
+
+Referring to Fig. 1 for the geometry, our starting point is the usual evolution equation for an incompressible, two-
+
+layer fluid, consisting of air and water. Introducing for the acceleration of gravity and denoting the interface
+
+between air and water by  we then have
+
+(2)
+
+with
+
+Velocities and forces (pressure and tangential stress) are continuous at the interface. A particle on either side of
+
+the surface will move in time from ( ) to ( ) with
+
+ and .  Thus, in the limit  one obtains the kinematic boundary condition
+
+(3)
+
+Here, is the horizontal velocity at the interface while is its vertical velocity. In order to complete the set of
+
+equations, one has to express the stress tensor in terms of the mean flow. The stress contains the viscous stress
+
+and may or may not contain the additional stress resulting from turbulent fluctuation (the Reynolds stress).
+
+For deep water, one has to specify boundary conditions at : the oscillation should vanish in these limits.
+
+However, for water of finite depth the normal component of the velocity should vanish at the bottom.
+
+In order to study the properties of pure gravity waves, we make the following approximations:
+
+(i) neglect viscosity and stresses. This gives the Euler equations. Continuity of the stress at the
+
+interface is no longer required.  The parallel velocity at the interface may now be discontinuous.
+
+(ii) We disregard the air motion altogether because . In our discussion on wave growth we
+
+retain, of course, effects of finite air-water density ratio.
+
+F
+
+g
+η x t,( )
+
+∇ u⋅ 0=
+
+∂
+∂t
+----- u ∇⋅+ 
+
+  u 1ρ
+---∇P– g ∇ τ⋅+–=
+
+ρ ρa z η>,
+ρw z η<,
+
+
+
+
+=
+
+∆t x z, η x t,( )= x ∆x z ∆z+,+ η x ∆x t ∆t+,+( )=
+∆x u∆t= ∆z w∆t= ∆t 0→
+
+∂
+∂t
+-----η u ∇η⋅+ w=
+
+u w
+τ
+
+z ∞±→
+
+ρa ρw⁄ 1«
+
+
+
+The wave model
+
+4 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+(iii) We assume that the water velocity is irrotational. This is a reasonable approximation for water
+
+waves. In fact, it can be shown (homework!) that, in the framework of the Euler equations, the
+
+vorticity remains zero when it is zero initially.
+
+We therefore introduce a velocity potential  with the property
+
+(4)
+
+and the flow is then described by Laplace's equation
+
+(5)
+
+with two conditions at the surface
+
+(6)
+
+and a condition at  (a flat bottom is assumed here)
+
+(7)
+
+i.e. no fluid penetrates the bottom.
+
+Eqs. (5)–(7) conserve the total energy of the fluid
+
+(8)
+
+Here, the first term is the potential energy of the fluid while the second term is the kinetic energy.
+
+By choosing appropriate canonical variables, Zakharov (1968), Broer (1974) and Miles (1977) independently
+
+found that  may be used as a Hamiltonian.  The proper canonical variables are
+
+(9)
+
+The boundary conditions at the interface are then equivalent to Hamilton's equations
+
+(10)
+
+where  is the functional derivative of  with respect to .
+
+Homework: Prove that (10) is equivalent to (6).
+
+The formulation (10) has certain advantages.  If one is able to solve the potential problem
+
+φ
+
+u ∇φ=
+
+∆φ ∂
+2
+
+∂z2
+--------φ+ 0 , ∆ ∂
+
+2
+
+∂x2
+-------- ∂
+
+2
+
+∂ y2
+---------+= =
+
+z η
+
+∂η
+∂t
+------ ∇φ ∇η⋅+ ∂∂z
+
+------φ=
+
+∂φ
+∂t
+------
+
+1
+2
+--- ∇φ( )2 1
+
+2
+--- ∂φ
+
+∂z
+------ 
+
+  2 gη+ + + 0 (Bernoulli)=
+
+
+
+
+
+
+
+
+=
+
+z D–=
+
+z D , ∂∂z
+------φ– 0= =
+
+E 1
+2
+---ρg xη2 1
+
+2
+---ρ dx z ∇φ( )2 ∂φ∂z
+
+------ 
+  2+d
+
+D–
+
+η
+
+∫∫+d∫=
+
+E
+
+η and ψ x t,( ) φ x z, η t,=( )=
+
+∂η
+∂t
+------
+
+δE
+δψ
+------- ,
+
+∂ψ
+∂t
+------- δE
+
+δη
+-------–= =
+
+δE δψ⁄ E ψ
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 5
+
+with boundary conditions
+
+thereby expressing in terms of the canonical variables and , then the energy can be evaluated in terms
+
+of  and  and the evolution of  and  follows at once from Hamilton's equations (10).
+
+There is also a Lagrangian formulation of the water wave problem. Luke (1967) found that the variational principle
+
+(11)
+
+with ,
+
+gives the Laplace equation as well as the boundary conditions.
+
+Intermezzo
+
+Hamilton's equations are well-known from classical mechanics. Consider a particle with momentum and posi-
+
+tion  in a potential well .  The total energy of the particle is then given by
+
+. (12)
+
+Regard  and  as canonical variables.  Then, Hamilton's equations are ( )
+
+(13a)
+
+. (13b)
+
+Eliminating momentum  we get with
+
+which we recognize as Newton's law where the Force is derived from the potential.
+
+In classical mechanics, the Hamiltonian formulation follows from the principle of "least" action. To see this, con-
+
+sider the Lagrangian
+
+.
+
+∆ϕ ∂
+2
+
+∂z2
+--------φ+ 0=
+
+φ x z, η=( ) ψ and ∂∂z
+------φ x z, D–=( ) 0= =
+
+φ η ψ E
+η ψ η ψ
+
+δ xd yd tLd∫ 0=
+
+L ρ z ∂∂t
+-----φ 1
+
+2
+--- ∇φ( )2 ∂φ∂z
+
+------ 
+  2 gz+ + +d
+
+D–
+
+η
+
+∫–=
+
+p
+q V q( )
+
+E 1
+2
+--- p
+
+2
+
+m
+------ V q( )+=
+
+p q q̇ ∂q ∂t⁄=
+
+q̇ ∂E
+∂p
+------- p
+
+m
+-----= =
+
+ṗ ∂E
+∂p
+-------–
+
+∂
+∂q
+------V–= =
+
+p v q̇=
+
+mv̇ ∂∂q
+------V– Force,= =
+
+L T V– 1
+2
+---mq̇2 V q( )– L q q̇,( )= = =
+
+
+
+The wave model
+
+6 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Newton's law then follows from the condition that the action be extremal, where
+
+(14)
+
+The action is external if  where
+
+As this should hold for arbitrary one finds that the action is extremal if satisfies the Euler–Lagrange equa-
+
+tions
+
+(15)
+
+Defining the momentum  as
+
+and regarding, from now on,  and  as independent variables, the Hamiltonian  is given by
+
+(16)
+
+Differentiating  with respect to  then gives, using (15)
+
+which is just Eq. (13b), whereas differentiating  with respect to  gives
+
+which is  just Eq. (13a).
+
+All this is, however, less straightforward to do for a continuum such as the one we are dealing with. Nevertheless,
+
+Miles (1977) was able to derive from Luke's variational principle for water waves the Hamiltonian equations (10).
+
+Homework:
+
+Derive the governing equations for surface gravity waves (5)–(7) from Luke's variational principle.
+
+Hint: regard  and  as the independent variables and consider .
+
+action dtL q q̇,( )
+t1
+
+t2
+
+∫=
+
+δ action( ) 0=
+
+δ action( ) dt L q δq q̇ δq̇+,+( ) L q q̇,( )–[ ]∫=
+
+dt δq ∂∂q
+------L δq̇ ∂
+
+∂q̇
+------L+∫=
+
+dt ∂∂q
+------L
+
+∂
+∂t
+----- ∂
+
+∂q̇
+------L– δq .∫=
+
+δq q
+
+L q
+∂
+∂t
+-----L q̇– 0 mq̇̇⇔
+
+∂
+∂q
+------V–= =
+
+p
+
+p L q̇ q̇→ q̇ p( )= =
+
+p q H H p q,( )=
+
+H p q,( ) q̇L q̇ L–
+1
+2
+--- p
+
+2
+
+m
+------ V q( )+= =
+
+H q
+
+∂H
+∂q
+-------- L q–
+
+∂
+∂t
+-----L q̇–
+
+∂
+∂t
+----- p ∂p∂t
+
+------→– ∂H
+∂q
+--------–= = = =
+
+H p
+
+∂H
+∂p
+--------
+
+∂q̇
+∂p
+------L q̇ q̇
+
+∂
+∂p
+------L q̇ L q̇
+
+∂
+∂p
+------q̇–+ q̇= =
+
+η φ δL 0=
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 7
+
+Linear theory
+
+We have now paid sufficient attention to the basics and it is now high time to derive the dispersion relation of sur-
+
+face gravity waves in the linear approximation. In linear theory, the evolution equations (5)–(7) for potential flow
+
+become
+
+(17a)
+
+with boundary conditions
+
+(17b)
+
+and
+
+(17c)
+
+In the case of water waves, the wave propagates horizontally so that the elementary sinusoidal solutions take the
+
+form
+
+.
+
+From Laplace's equation this form of  is a solution provided
+
+.
+
+For water of constant depth  the boundary condition on  requires .  Hence
+
+.
+
+Using the second equation of (17b) we thus find
+
+(18)
+
+However, we still have to satisfy the first equation of (17b). This imposes a restriction on the allowable frequency
+
+ of the wave:
+
+(19)
+
+This is the dispersion relation of surface gravity waves.
+
+We remark that the dispersion relation (19) tells us that there are, for given wave number , two oscillations; name-
+
+∆φ ∂
+2
+
+∂z2
+--------φ+ 0=
+
+z 0 ,
+
+∂η
+∂t
+------ ∂φ
+
+∂z
+------=
+
+∂φ
+∂t
+------ gη+ 0=
+
+
+
+
+
+
+=
+
+z D , ∂φ∂z
+------– 0= =
+
+η a iθ[ ] , φexp Z z( ) iθ[ ] , θexp k x⋅ ω– t= = =
+
+φ
+
+Z″ k2Z– 0 , k k kx
+2 ky
+
+2+= = =
+
+D z D–= Z′ g( ) 0=
+
+Z k z D+( )cosh∼
+
+η a iθ[ ]exp=
+
+φ igω
+-----a k z D+( )cosh
+
+kD( )cosh
+----------------------------------–=
+
+ω
+
+ω2 gk kD( )tanh=
+
+k
+
+
+
+The wave model
+
+8 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+ly, waves propagating to the right and waves propagating to the left. In addition, it is important to distinguish be-
+
+tween deep- and shallow-water waves.
+
+Deep water (2D)
+
+In deep water we have  and, therefore, (19) becomes
+
+.
+
+The phase speed of the waves, , is then given as
+
+.
+
+Therefore the high-frequency waves have the lowest phase speed. The energy of waves is advected by the group
+
+velocity .  For deep water waves the group velocity becomes
+
+hence, the group velocity is exactly half the phase speed. Furthermore, given the solution (18), it is straightforward
+
+to obtain the total energy of the waves.  Using Eq. (8) we find for the energy density
+
+.
+
+Shallow water
+
+In shallow water the depth effects are really important, thus we take the limit of small depth and therefore (19) be-
+
+comes
+
+.
+
+The most extreme example of shallow water waves are Tsunami's which are generated by earthquakes in the Gulf
+
+of Alaska. The resulting depression in the surface elevation has a large extent, thus the relevant wave length may
+
+be of the order to 500–1000 km. These waves are truly shallow water waves as the depth of the North Pacific is of
+
+the order to 5 km.
+
+The phase speed of shallow water waves is given by
+
+,
+
+which is independent of wave number, hence there is no dispersion. As a consequence, the group velocity is equal
+
+to the phase speed,
+
+.
+
+Note that in the above-mentioned example of Tsunami's the phase speed is of the order of 800 km/h!
+
+Comparing deep and shallow water we note that there is an important difference between the two cases. Deep water
+
+D ∞→
+
+ω2 gk=
+
+c ω k⁄=
+
+c g
+k
+--- g
+
+ω
+----= =
+
+∂ω ∂k⁄
+
+vg
+∂ω
+∂k
+-------
+
+1
+2
+--- g
+
+ω
+----= =
+
+ε
+
+ε 2ρgaa*=
+
+ω2 k2 gD ω→ k gD±= =
+
+c ω
+k
+---- gD= =
+
+vg
+∂ω
+∂k
+------- c gD= = =
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 9
+
+waves are highly dispersive, whereas really shallow water waves are not. Later we will see that this has important
+
+consequences for the non-linear evolution of surface waves. In fact, when waves are interacting with each other
+
+then, because of the dispersion, the interaction time will be finite. If there is no dispersion, however, the interaction
+
+time may become very long with the result that the effect of the non-linear interactions becomes very strong. We
+
+cannot deal with this in the weakly non-linear approach we are discussing here. We therefore consider only dis-
+
+persive waves, so we will not discuss the extreme shallow water limit . Our results will therefore only be
+
+valid up to .
+
+Before we proceed we mention, without proof, that on a current that varies slowly in space and time, the angular
+
+frequency of the waves has a doppler shift.  Hence, for waves on a current  we have
+
+, (20)
+
+where
+
+This result also holds for slowly varying bottom profiles, i.e. .
+
+Figure  2. Waves come in groups.
+
+Wave groups
+
+In the previous section we have discussed a single wave. In practice we know, however, that waves come in groups
+
+(cf Fig. 2 ). Everyone who has done some sunbathing at the beach and has listened to the breaking waves knows
+
+that the seventh wave is the biggest. "Sting" even devoted a song to the subject (Love is the seventh Wave on the
+
+Dream of the blue Turtles).
+
+If the wave groups are sufficiently long, we can give a reasonably accurate description by using a plane wave so-
+
+lution (cf Eq. (18)), however, with slowly varying phase and amplitude. Thus, similar to geometrical optics, wave
+
+groups may be described by,
+
+(21)
+
+where both amplitude and phase are slowly varying functions of space and time. Here, slow has a relative
+
+meaning; it refers to the basic length (and time) scale imposed by the gravity wave, namely its wave length and
+
+period.  Thus, we require
+
+Since the phase also is slowly varying, we may define a local angular frequency and wave number according to
+
+kD 0→
+kD O 1( )=
+
+U
+U x t,( )
+
+ω k U σ+⋅=
+
+σ gk kD( )tanh±=
+
+D D x t,( )=
+
+η a x t,( ) iθ x t,( )[ ] cc+exp=
+
+a θ
+
+1
+a
+---∇a<<k , 1
+
+a
+--- ∂
+
+∂t
+-----a<<ω etc.
+
+
+
+The wave model
+
+10 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+(22)
+
+Assuming that the phase function is at least twice differentiable (e.g. ), Eq. (22) implies
+
+the following consistency relation, known as the equation of conservation of the number of wave crests:
+
+(23)
+
+This equation tells us that, if the frequency of the wave depends on (because of slowly varying depth and or cur-
+
+rents), the wave number will change in time. Eq. (23), therefore, provides a key element in the energy balance equa-
+
+tion, namely refraction.
+
+The evolution of amplitude and frequency is not arbitrary either. To obtain these evolution equations one
+
+could, in principle, substitute the Ansatz (21), together with a similar Ansatz for the potential , into the basic
+
+equations (5)–(7). Then, by a straightforward but rather boring perturbation analysis the appropriate evolution
+
+equation for amplitude  and the dispersion relation for  may be obtained.
+
+We shall not follow this approach here. In its stead we prefer to give a derivation which starts from the Lagrangian
+
+(11). This approach, introduced by G B Whitham, is much more instructive. It gives a better insight into the un-
+
+derlying structure and it applies to any wave system that has a Lagrangian.
+
+To that end, we simply substitute
+
+into the Lagrangian density (11) and we average the Lagrangian over the rapidly varying phase .
+
+Neglecting wave-induced currents, the average Lagrangian
+
+becomes (dropping the brackets)
+
+(24)
+
+where
+
+In other words, we obtain an average Lagrangian which depends on ,  and
+
+where and . Hence, the appropriate evolution equations follow from the variational prin-
+
+ciple
+
+ω ∂∂t
+-----θ , k– ∇θ= =
+
+θ ∂2θ ∂x∂t⁄ ∂2θ ∂t∂x⁄=
+
+∂
+∂t
+-----k ∇ω+ 0=
+
+x
+
+a ω
+φ
+
+a ω
+
+η a iθ[ ] cc …+ +exp=
+
+θ
+
+L〈 〉 1
+2π
+------ dθ L∫=
+
+L
+1
+2
+---ε
+
+ω k U0⋅–( )
+2
+
+gkT
+------------------------------- 1–
+
+ 
+ 
+  1
+
+2
+---k
+
+2ε2
+
+ρg
+---------- 9T
+
+4 10T2– 9+
+
+8T4
+--------------------------------------
+
+ 
+ 
+ 
+
+– O ε3( )+=
+
+ε 2ρg a 2 , T kD( )tanh= =
+
+ω k a
+
+L L ω k a, ,( )=
+
+ω ∂θ ∂t⁄–= k ∇θ=
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 11
+
+(25)
+
+Variation with respect to the amplitude  then gives the dispersion relation
+
+(26a)
+
+while variation with respect to the phase (note that appears in only through derivatives) gives the evolution
+
+equation for the amplitude
+
+(26b)
+
+while a third equation follows from consistency (cf Eq. (23) )
+
+. (26c)
+
+The set of equations describes the evolution of a slowly varying wave group. Note that (26a) is quite general as it
+
+is valid for any wave system that has a Lagrangian!
+
+Before we now return to our problem of surface gravity waves, we finally introduce a transport velocity
+
+(27)
+
+so that (26b) becomes
+
+(28)
+
+This equation describes the evolution of the action density , a term which will become more plausible later.
+
+Subsequently, we apply our results to the Lagrangian (24) in the linear approximation (i.e. disregard non-linear
+
+terms in ).  The Lagrangian (24) may then be written conveniently
+
+(29)
+
+where
+
+The dispersion relation then immediately follows from Eq. (26a), or,
+
+hence, with , we have
+
+δ dx dt L ω k a, ,( )∫ 0=
+
+a
+
+∂
+∂a
+------L 0=
+
+θ θ L
+
+∂
+∂t
+-----L ω ∇ L k⋅– 0=
+
+∂
+∂t
+-----k ∇ω+ 0=
+
+u
+L k
+L ω
+-------–=
+
+∂
+∂t
+-----L ω ∇ uL ω( )⋅+ 0=
+
+L ω
+
+ε
+
+L
+1
+2
+---εD ω k,( )=
+
+D
+ω k U0⋅–( )
+
+2
+
+gkT
+------------------------------- 1–=
+
+D 0=
+
+σ gkT=
+
+
+
+The wave model
+
+12 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+which is to be compared with Eq. (20). Note that now the current and depth are allowed to be slowly varying
+
+functions of space and time.  Finally, the equation for the action density
+
+(30)
+
+becomes
+
+(31)
+
+where is the group velocity . Here, we remark that, for the (linear) group velocity, we have used the
+
+relation
+
+The importance of the action balance equation cannot be overemphasised. Eq. (31) has the form of a conservation
+
+law in which the local rate of change of a density is determined by a flux of that density. In fact, if one has zero
+
+flux at the boundaries of the ocean basin, one finds that the integral
+
+is conserved. We emphasise that, in case of slowly varying bottom and currents, it is not the wave energy
+
+ which is conserved, but it is the total action !
+
+This conclusion may come as a surprise but it should be pointed out that it is a rather common feature in e.g. clas-
+
+sical mechanics. Consider, for example, the well-know example of a pendulum in which the length is varied slowly.
+
+In that case  and frequency  change when the length is varied but the 'adiabatic' invariant
+
+is constant.
+
+In closing, we stress once more that in slowly varying circumstances the wave energy is not conserved. However,
+
+the total energy of the system which includes contributions due to currents, e.g., is certainly conserved. If waves
+
+are considered in isolation (regarded as "the" system), then the energy is not conserved because of interactions with
+
+currents.
+
+Homework "Adiabatic Invariants" Study this!
+
+Consider once more a particle in a potential well and let us introduce an externally imposed change parametrized
+
+by some parameters .  The variational principle now becomes
+
+and the variational equation is
+
+ω k U0 σ±⋅=
+
+U0 D
+
+N L ω
+ε
+σ
+---= =
+
+∂
+∂t
+-----N ∇ vgN⋅+ 0=
+
+vg ∂ω ∂k⁄
+
+vg
+Dk
+Dω
+-------–=
+
+N tot dxN∫=
+
+E dxε∫= N tot
+
+E ω
+
+A E
+ω
+----=
+
+λ t( )
+
+δ dt L q q̇ λ, ,( )∫ 0=
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 13
+
+We first calculate the average Lagrangian for period motion with fixed. If the period is ( here is
+
+the frequency), then
+
+In periodic motion ( = constant) we have conservation of energy (check this). The relation may
+
+then be used to express  as function of ( , , ) and then also the momentum  can be expressed as
+
+.
+
+For (almost) periodic motion the average Lagrangian becomes
+
+,
+
+where  is a loop integrated over one complete period of oscillation.
+
+We now allow slow variations of with consequent changes of and and we use the average variation prin-
+
+ciple
+
+.
+
+Define again  as the derivative  of a phase .  Variation with respect to  and  gives
+
+The first of these corresponds to the dispersion relation (26a) while the second corresponds to the action density
+
+equation (26b).  Thus
+
+which is just the classical results of an adiabatic invariant. As the system is modulated, and vary individually
+
+but
+
+remains constant.  The analogy between  of the oscillator and  of surface waves should be clear now.
+
+1.2  Energy balance equation (adiabatic part)
+
+In the previous section we have seen how free wave packets evolve on varying currents in basins with variable
+
+depth. The geometrical optics approach can, however, also be used in other situations. For example, one may study
+
+d
+dt
+-----L q̇ L q– 0=
+
+λ τ 2π ν⁄= ν
+
+L〈 〉 ν
+2π
+------ L dt
+
+0
+
+τ
+
+∫=
+
+λ E q̇L q̇ L–=
+q̇ q E λ p L q̇=
+
+p p q E λ, ,( )=
+
+L〈 〉 ν
+2π
+------ p q E λ, ,( )dq E–∫°=
+
+∫°
+λ ν E
+
+δ dt L ν E λ, ,( )∫ 0=
+
+ν θ̇ θ E θ
+
+L E 0 ,
+d
+dt
+-----L ν 0= =
+
+L ν
+1
+
+2π
+------ pdq∫° constant= =
+
+ν E
+
+N ν E,( ) 1
+2π
+------ pdq∫°=
+
+L ν L ω
+
+
+
+The wave model
+
+14 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+the coupled problem which takes into account the effect of wind on waves. Or, one may consider nonlinear inter-
+
+actions or dissipation. As long as the perturbations are small they can be added and the action balance equation
+
+becomes
+
+(32)
+
+In the next section we shall give examples of how to derive the rate of change of the action density due to wind and
+
+due to nonlinear interactions. In this section we discuss in some detail the adiabatic part of the action balance equa-
+
+tions.
+
+Before we do this we have to introduce the concept of the wave spectrum. As already pointed out, solving the de-
+
+terministic action balance (32) is not practical because knowledge of the phase of the waves is required as well. In
+
+order to avoid this problem we shall contend ourselves with a statistical description of the ocean surface.
+
+We introduce, therefore, the homogeneous and stationary statistical theory of random waves. In such a theory,
+
+wave components are necessarily independent (random phases). As a consequence, the probability distribution of
+
+the ocean surface is approximately Gaussian. The (near) Gaussian property of the ocean surface follows in prin-
+
+ciple from the Central Limit Theorem which tells us that if the waves have random and independent phases then
+
+the probability distribution is Gaussian. The waves are approximately independent because they have propagated
+
+into a given area of the ocean from different distant regions. And, even if initially one starts with a highly correlated
+
+state then, because of the dispersion, waves become separated, thereby decreasing the correlation (in fact, for dis-
+
+persive waves the loss of correlation is exponentially fast). In practice, therefore, one always finds that for disper-
+
+sive ocean wave the Gaussian property holds.
+
+We therefore contend ourselves with knowledge about average quantities such as the moments
+
+where the brackets denote an ensemble average. In most practical situations it turns out that we then have sufficient
+
+information about the ocean surface. Since we assume that the mean of the surface elevation vanishes, we only
+
+have to consider the two-point correlation function
+
+.
+
+In addition, we assume that the wave field is homogeneous (on the scale of the wave length, at least), i.e. the two-
+
+point correlation only depends on the distance . Introducing the distance we, therefore, have
+
+to study the two-point correlation function,
+
+(33)
+
+The (frozen) wave-number spectrum is now defined as the Fourier transform of the correlation .
+
+(34)
+
+Instead of considering a single wave, as we did in the previous section, we now take a continuum of waves. Real-
+
+izing we have two modes (a positive frequency and a negative frequency mode)  we write
+
+∂
+∂t
+-----N ∇ vgN⋅+
+
+∂N
+∂t
+
+--------
+wind
+
+∂N
+∂t
+
+--------
+nonlin
+
+∂N
+∂t
+
+--------
+dissip
+
++ +=
+
+η x1( )〈 〉 η x1( )η x2( )〈 〉 etc., ,
+
+η x1( )η x2( )〈 〉
+
+x1 x2– x1 x2– ξξ=
+
+R ξξ( ) η x ξξ+( )η x( )〈 〉=
+
+R
+
+F k( ) 1
+2π( )2
+
+------------- d ξξ i k ξξ⋅( )[ ]R ξξ( )exp∫=
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 15
+
+(35)
+
+Since  is supposed to be real we have
+
+and, therefore,
+
+(36)
+
+where we have omitted the subscript + on , and where c.c. means complex conjugate. Substituting (36) into (33),
+
+and requiring a homogeneous two-point correlation function we must have
+
+(37)
+
+and the two-point correlation formation becomes
+
+(38)
+
+In view of (34) we, therefore, find that the wave-number spectrum is given as
+
+(39)
+
+Setting  to zero in Eq. (38) and using (39) we have
+
+(40)
+
+then, as expected, the integral over the wave-number spectrum equals the wave variance . Realising that, for
+
+propagating waves, potential and kinetic energy are equal, we find that the ensemble average of the wave energy
+
+ is related to the wave-number spectrum in the following manner
+
+(41)
+
+thus the wave-number spectrum indeed gives the distribution of wave energy over wave numbers.
+
+Homework:
+
+Check using linear wave theory that the ensemble average of (of Eq. (8)) indeed satisfies relation
+
+(41).
+
+We still face a problem of a somewhat technical nature. The spectrum introduced thus far is independent of space
+
+and time. Formally we have taken, namely, a Fourier transform over the whole domain. In order to allow for spatial
+
+dependence of the wave-number spectrum we simply adopt the procedure that we take the Fourier transform over
+
+a domain with such an extent that the two-point correlation function may still be regarded as homogeneous. On
+
+η x t,( ) dkη̂+ k( ) i k x ω+t–⋅( )[ ] dkη̂– k( ) i k x ω–t–⋅( )[ ]exp
+∞–
+
+∞
+
+∫+exp
+∞–
+
+∞
+
+∫=
+
+η
+
+η̂– k( ) η̂+
+* k–( )=
+
+η x t,( ) dkη̂ k( ) i k x ωt–⋅( )[ ]exp
+∞–
+
+∞
+
+∫= c.c.+
+
+η̂
+
+η̂ k( )η̂ k′( )〈 〉 0=
+
+η̂ k( )η̂* k′( )〈 〉 η̂ k( ) 2δ k k′–( )=
+
+R ξξ( ) dk η̂ k( ) 2 ik ξξ⋅[ ] c.c.+exp∫=
+
+F k( ) 2 η̂ k( ) 2=
+
+ξξ
+
+η2〈 〉 R 0( ) dkF k( )∫= =
+
+η2〈 〉
+
+E〈 〉
+
+E〈 〉 ρg η2〈 〉 ρg dkF k( )∫= =
+
+E
+
+
+
+The wave model
+
+16 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+the other hand, the domain should be large enough that it contains a sufficient number of waves. In practice, the
+
+extent of such a domain is of the order of 10–20 km.
+
+We are now finally in the position to derive the action balance equation for a continuous spectrum. By analogy
+
+with the discrete case we can now introduce the action density spectrum  as
+
+(42)
+
+where, as before, . It is now tempting to use the action balance equation (32) for the discrete
+
+case to obtain the action balance equation for the continuous case. There is, however, one pitfall now. The evolu-
+
+tion equation for can only be a partial differential equation involving, for example, partial derivatives in time
+
+with position and wave number fixed. In other words, , and are regarded as independent. In the discrete
+
+case the wave number is a local variable which depends on position and time.
+
+The most convenient way to proceed is, therefore, to establish the following connection between the continuous
+
+action density spectrum and the discrete analog of Eq. (30). We are interested in the action density contained
+
+in modes with  between  and .  Introduce now a function  with the definition
+
+(43)
+
+The appropriate connection between the discrete and continuous spectrum is
+
+(44)
+
+So the sum is over all the modes with wave numbers contained in the above mentioned interval. We emphasise that
+
+the 'local' wave number  may depend on space  and time.
+
+The evolution equation for  is now readily obtained by starting to evaluate
+
+using (44) and the action balance equation (32).  The result is
+
+(45)
+
+Here, the term involving the partial derivative with respect to stems from the spatial and temporal dependence
+
+of the local wave number in the discrete case. It gives rise to the so-called refraction of the waves. Furthermore,
+
+ denotes just the usual dispersion relation
+
+(46)
+
+and the group velocity . Finally, the source term, is just the ensemble mean of the right-hand side
+
+of the Eq. (32).  We shall discuss these terms in more detail in the next section.
+
+N k( )
+
+N k( ) F k( )
+σ
+
+------------=
+
+σ gk kDtanh=
+
+N k( )
+k t x k
+
+E σ⁄
+k k 1 2⁄( )∆k– k 1 2⁄( )∆k+ ε k( )
+
+ε k( )
+1 if 1 2⁄( )∆k k 1 2⁄( )∆k< <–
+0 otherwise
+
+
+
+
+=
+
+N k( )∆k Nk ′ε k k′–( ) , Nk ′
+k ′
+∑
+
+2 ak ′
+2
+
+σ
+----------------= =
+
+k′ x
+
+N k( )
+
+∂N k( )
+∂t
+
+-----------------
+x k,
+
+∂
+∂t
+-----N ∇x vgN( )⋅ ∇k ∇xΩN( )⋅–+ S Swind Snonlin Sdissip+ += =
+
+k
+
+Ω
+
+Ω k U σ , σ+⋅ gk kDtanh= =
+
+vg ∂Ω ∂k⁄= S
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 17
+
+We close this section by discussing some properties of the action balance equation in the absence of sources and
+
+sinks (adiabatic effects therefore).
+
+Before we start this discussion we present a slightly more general form of the action balance equation. Let and
+
+ be the spatial coordinates and  the wave coordinates and let
+
+(47)
+
+be their combined four-dimensional vector. Then the most fundamental form of the transport equation for the ac-
+
+tion density spectrum , without the source term, can be written in the flux form
+
+(48)
+
+where denotes the propagation velocity of a wave groups in the four-dimensional phase space of and . This
+
+equation holds for any rectangular coordinate system and for any field , hence also for velocity fields which are
+
+not divergence free in four-dimensional phase space. In the special case when and represent a canonical vec-
+
+tor pair—this is the case, for example, when they are the usual vector pairs—the propagation equations for a wave
+
+group (also known as Hamilton's equations of motion) read:
+
+(49)
+
+where  denotes the dispersion relation (46).
+
+The Hamilton equations have some intriguing consequences. Firstly, the transport equation for the action density
+
+may be expressed in the advection form
+
+(50)
+
+as, because of (49), the field , for a continuous ensemble of wave groups is divergence free in four-dimensional
+
+phase space,
+
+(51)
+
+Thus, along a path in four-dimensional phase space defined by the Hamilton equations (49) the action density is
+
+conserved. This property holds only for canonical coordinates for which the flow divergence vanishes [the so-
+
+called Liouville Theorem].
+
+Secondly, the analogy between Hamilton's formalism of particles with a Hamiltonian and wave groups obeying
+
+the Hamilton equations of motion should be pointed out. Indeed, wave groups may be regarded as particles and
+
+the Hamiltonian and angular frequency play similar roles. Because of this similarity is expected to be
+
+conserved as well (under the restriction that does not depend on time). This can be verified by direct calculation
+
+of the rate of change of  following the path of a wave group in phase space,
+
+x1
+x2 k1 k2,
+
+z x1 x2 k1 k2, , ,( )=
+
+N k x t, ,( )
+
+∂
+∂t
+-----N ∂∂zi
+
+------- żiN( )+ 0=
+
+ż x k
+ż
+
+x k
+
+ẋi
+∂
+
+∂ki
+--------Ω+=
+
+k̇i
+∂
+
+∂xi
+--------Ω–=
+
+Ω
+
+∂
+∂t
+-----N ∂N
+
+∂t
+-------- żi
+
+∂
+∂zi
+-------N+ 0= =
+
+ż
+
+∂
+∂zi
+------- żi 0=
+
+H
+
+H Ω Ω
+Ω
+
+Ω
+
+
+
+The wave model
+
+18 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+(52)
+
+The vanishing of follows at once upon using the Hamilton equations (49). Note that the restriction of no
+
+time dependence of is essential for the validity of (52), just as the Hamiltonian is only conserved when it
+
+does not depend on time . Thus, (52) gives the important message that angular frequency is conserved when fol-
+
+lowing a wave group.
+
+We now turn to the important case of spherical coordinates. Since (48) holds for any rectangular coordinate system,
+
+the transport equation in spherical geometry is easily obtained. To that end let us consider the spectral action den-
+
+sity with respect to angular frequency and direction (measured clockwise relative to true
+
+north) as a function of latitude and longitude . The reason for the choice of frequency as the independent var-
+
+iable (instead of, for example, the wave number ) is that, for a fixed topography and current, the frequency is
+
+conserved when following a wave group, therefore the transport equation simplifies. In general, the conservation
+
+equation for  thus reads
+
+(53)
+
+and, since , the term involving the derivative with respect to drops out in case of time-independent
+
+current and bottom. The action density is related to the normal spectral density with respect to a local car-
+
+tesian frame  through , or
+
+(54)
+
+where  is the radius of the earth.  Substitution of (54) into (53) yields the transport equation
+
+(55)
+
+where, with  the magnitude of the group velocity,
+
+(56)
+
+represents the rates of change of the position and propagation direction of a wave packet. Here, and are
+
+the components of the current in northerly and easterly direction respectively. Eq. (55) is the basic transport equa-
+
+tion which will be used in the numerical wave-prediction model.
+
+We finally mention the following properties:
+
+(a) Great circle propagation on the globe. A wave group propagates along a great circle over the globe.
+
+The proof of this can be given but is rather tedious (cf Komen et al, 1994, pp. 210–211). This
+
+property is related to the presence of refraction on the globe, even in the absence of depth and
+
+current refraction ( ). From (56) we see that there is then a rate of change of direction
+
+according to
+
+d
+dt
+-----Ω zi˙
+
+∂
+∂zi
+-------Ω ẋi
+
+∂
+∂xi
+--------Ω k̇i
+
+∂
+∂ki
+--------Ω+ 0= = =
+
+dΩ dt⁄
+Ω H
+
+t
+
+N̂ ω θ φ λ t, , , ,( ) ω θ
+φ λ
+
+k Ω
+
+N̂
+
+d
+dt
+----- N̂ ∂∂φ
+
+------ φ̇N̂( ) ∂∂λ
+------ λ̇N̂( ) ∂∂ω
+
+------- ω̇N̂( ) ∂∂θ
+------ θ̇N̂( )+ + + + 0=
+
+ω̇ ∂Ω ∂t⁄= ω
+N̂ N
+
+x y,( ) N̂ dω dθ dφ dλ N dω dθ dx d y=
+
+N̂ N R2 φcos=
+
+R
+
+∂
+∂t
+-----N φcos( ) 1– ∂∂φ
+
+------ φ̇ φ Ncos( ) ∂∂λ
+------ λ̇N( ) ∂∂ω
+
+------- ω̇N( ) ∂∂θ
+------ θ̇N( )+ + + + 0=
+
+vg
+
+φ̇ vg θ U0–cos( ) R⁄=
+
+λ̇ vg θ V 0–sin( ) R φcos( )⁄=
+
+θ̇ vg θ φ R k̇ k×( ) k
+2⁄+⁄tansin=
+
+ω̇ ∂Ω ∂t⁄=
+
+U0 V 0
+
+k̇ 0=
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 19
+
+(57)
+
+This refraction is entirely due to the change in time of the local northward pointing vector and is,
+
+therefore, apparent because it is related only to the choice of coordinate system.
+
+(b) Shoaling. Consider now finite depth effects in the absence of currents. Shoaling of waves already
+
+occurs for wave propagation parallel to the direction of the depth gradient. In this case we ignore
+
+depth refraction, because . In addition, we take the wave direction to be zero
+
+(northerly propagation) so that the longitude is constant ( ) and . In the steady state,
+
+the transport equation becomes
+
+(58)
+
+where in this special case and the group speed only depends on latitude (since the depth
+
+profile depends on ). Hence, we immediately find conservation of the action density flux in the
+
+latitude direction, or,
+
+Now, if the depth decreases for increasing latitude, conservation of flux requires an increase of
+
+action density as the group speed decreases for decreasing depth. This phenomenon, which occurs
+
+in coastal areas, is called shoaling. Its most dramatic consequences may be seen when tidal waves,
+
+generated by earthquakes, approach the coast resulting in tsunamis.
+
+(c) Refraction. We again assume no current and no time dependence. As a general principle one can
+
+then state that wave rays (the path of the wave group in -space) will bend towards shallower water
+
+resulting in, for example, focusing phenomena and caustics. In this way a sea mountain plays a
+
+similar role for gravity waves as a lens for light waves. Furthermore, because of this general
+
+principle, close to the coast waves will always propagate towards the coast, even if far away from
+
+the coast they propagate parallel to it. All these examples of this general principle may be
+
+explained in terms of refraction. The refraction is given by the rate of change of the wave direction,
+
+.  Writing (56) in more explicit form we have
+
+(59)
+
+Consider then again as an example waves propagating north ( ) parallel to the coast. Suppose
+
+now that depth depends only on longitude such that it decreases towards the shore.  Thus
+
+since  (depth decreases), hence the wave ray will bend towards the coast.
+
+(d) Current effects. Currents may give rise to effects similar to (depth) refraction. However, the most
+
+dramatic effects may be found when the waves propagate against the current. For sufficiently large
+
+θ̇ vg θ φ R⁄tansin=
+
+k̇ k× 0= θ
+λ̇ 0= θ̇ 0=
+
+1
+φcos
+
+------------ ∂
+∂φ
+------ φ̇ φ Ncos( ) 0=
+
+φ̇ vg R⁄=
+φ
+
+vg φcos
+R
+
+-----------------N cons ttan=
+˙
+
+x
+
+θ̇
+
+θ̇
+θ ∂∂φ
+
+------Ω θcosφcos
+------------ ∂
+
+∂λ
+------Ω–sin
+
+kR
+-----------------------------------------------------=
+
+θ 0=
+
+θ̇ 1
+kR φcos
+-------------------- ∂
+
+∂λ
+------Ω 0>–=
+
+∂Ω ∂λ⁄ 0<
+
+
+
+The wave model
+
+20 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+current, wave propagation is prohibited and wave reflection occurs. The most prominent example
+
+of this is found in the Agulhas current, east of South Africa. A more detailed explanation of this
+
+effect is given in Komen et al. (1994), p. 214. Here, we just point out that it really follows from the
+
+dispersion relation which, for a simple 1-D case in case of propagation against a current reads
+
+where we took the deep water limit. Then, the group velocity vanishes for
+
+and wave propagation is not possible any more.
+
+1.3  Energy balance equation (physics)
+
+In this section we shall discuss some of the physical effects that are relevant for wave evolution. Only deep water
+
+waves are considered here, although shallow water effects can be incorporated rather straightforwardly.
+
+The physical processes we shall study are the generation of waves by wind and wave-wave interactions. The source
+
+term for dissipation is less easy to study so we will only give its form at the end of this section.
+
+Wind input and non-linear interactions have one important feature in common, namely they are both examples of
+
+a resonant interaction. Consider generation of waves by wind. We have seen that in lowest order we are dealing
+
+with pure surface gravity waves. These waves have a certain phase speed . Above the waves we have a certain
+
+non-uniform airflow and at the height where the airflow always sees the same phase of
+
+the wave. The height is called the critical height and the air around that height may enjoy a resonant interaction
+
+with the gravity wave. This example of wave mean flow interaction was given by Miles (1957). The result is ex-
+
+ponential growth of the gravity wave and therefore this mechanism is called Miles' instability. Non-linear interac-
+
+tions are another example of resonant interaction. Again we start from the pure gravity waves and we realize that
+
+non-linear terms may give contributions of the following type
+
+Now, if the sum of those phases  matches the phase of one of the linear waves (call this phase ), or
+
+then the non-linear terms may drive the linear waves resonantly, giving rise to an energy transfer between wave 1
+
+and waves 2, 3, etc. The resonance conditions on the phases boil down to the following resonance conditions for
+
+wave number  and angular frequency
+
+and Phillips (1958) discovered that for gravity waves, three-wave interactions are not possible. However, four-
+
+wave interactions do exist. Hasselmann (1962) then subsequently derived the rate of change of the action density
+
+for an ensemble of gravity waves.
+
+It should be realised that the descriptions of the physical processes we are going to present now are an idealisation
+
+of reality. Both in water and air we have, in reality, turbulent fluctuations which might upset the delicate resonant
+
+interactions.  Nevertheless, these simplified models of reality give realistic results.
+
+Ω gk kU0–=
+
+∂Ω ∂k⁄ k g 4U0
+2( )⁄=
+
+c k( )
+U z( ) zc U zc( ) c k( )=
+zc
+
+i θ2 θ3+( )[ ] , i θ2 θ3 θ4+ +( )[ ] ,          etc.expexp
+
+θi θ1
+
+θ1 θ2 θ3 , θ1+ θ2 θ3 θ4 ,          etc.+ += =
+
+k ω
+
+ω1 ω2 ω3 , k1+ k2 k3 ,          [3-wave interaction]+= =
+
+ω1 ω2 ω3 ω4 , k1+ + k2 k3 k4 ,          [4-wave interaction]+ += =
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 21
+
+Energy transfer from wind
+
+The problem of wind-wave generation is closely related to the instability of a plane parallel shear flow. We there-
+
+fore study the stability of the equilibrium solution (see Fig. 3 )
+
+(60)
+
+Figure  3. Equilibrium profiles of density and velocity.
+
+Our starting point is slightly more general than equation (2). We take an adiabatic fluid with "infinite" sound speed.
+
+Hence,
+
+(61)
+
+We shall only consider propagation in one direction (the -direction). Using Squire's theorem (Drazin and Reid,
+
+1981) results may be generalised to the 2-dimensional case. Linearisation and taking normal modes of the form
+
+, , one obtains
+
+(62)
+
+where , , and the prime denotes differentiation of an equilibrium quantity
+
+with respect to height . After some algebra one then arrives at the following Sturm–Liouville differential equa-
+
+tion for the displacement  of the streamlines
+
+U0 U0 z( )êx , g gêz–= =
+
+ρ0 ρ0 z( ) , P0 z( ) g dz ρ0 z( )∫= =
+
+z ρa U0(z)
+
+x
+
+Air
+
+Water
+
+ρw
+
+z = 0
+
+∇ u⋅ 0=
+d
+dt
+-----u
+
+1
+ρ
+---∇p– g+=
+
+d
+dt
+-----ρ 0=
+
+x
+
+ρ1 iθexp∼ θ kx ωt–=
+
+iku ∂w ∂z⁄+ 0=
+ikWu wW′+ ik p1 ρ0⁄–=
+
+ikWw ρ1 p0′ ρ0
+2⁄ ∂ p1 ∂z⁄( ) ρ0⁄–=
+
+ikWρ1 wρ0′+ 0=
+
+u1 u 0 w, ,( )= W U0 c–= c ω k⁄=
+z
+
+ψ w W⁄∼
+
+
+
+The wave model
+
+22 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+(63)
+
+which is subject to the boundary condition of vanishing displacement at infinite height or depth,
+
+(64)
+
+The boundary value problem (63)–(64) determines, in principle, the real and imaginary parts of the complex phase
+
+speed giving the growth rate of the waves. The next step is now to specify in more detail
+
+the density profile  and the velocity .
+
+In water we assume no current and a constant density. The eigenvalue problem then simplifies considerably. We
+
+have (for )
+
+(65)
+
+which gives, using the boundary condition at minus infinity, the solution
+
+(66)
+
+The boundary condition at the interface between air and water is derived from an integration of Eq. (63) from
+
+to . Note that at the density profile shows a jump so that near , , where
+
+is the Dirac delta-function. Requiring now that the displacement of the streamline be continuous across
+
+the interface, we obtain from (63)
+
+. (67)
+
+Since in the limit only the integral involving gives a contribution we obtain, using (66), the following disper-
+
+sion relation for the phase speed of the waves:
+
+(68)
+
+where, without loss of generality, we have taken the amplitude as we deal with a linear problem. In air we
+
+take a constant density so that the eigenvalue problem (63)–(64) simplifies to
+
+(69)
+
+Note that the air–water density ratio only occurs in the dispersion relation. In the absence of air ( ) we obtain
+
+the usual dispersion relation for deep water gravity waves. The effect of air on the surface waves is small as
+
+.  We, therefore, solve the dispersion relation in an approximate manner with the result
+
+d
+dz
+------ ρ0W
+
+2 d
+dz
+------ψ 
+
+  ψ k2ρ0W
+2 gρ0′+( )– 0=
+
+ψ 0 , z ∞→→
+
+c ω k⁄= γ a Im ω( )=
+ρ0 z( ) U0 z( )
+
+z 0>
+
+d2
+
+dz2
+--------ψw k
+
+2ψw=
+
+ψw A kz[ ]exp=
+
+0–
+
+0+ z 0= z 0= ρ0′ ρa ρw–( )δ z( )=
+δ z( ) ψ
+
+ρ0W
+2 d
+dz
+------ψ
+
+–0
++0 dz ψ ρ0k
+
+2W2 gρ0′+[ ]
+–0
+
++0
+
+∫=
+
+ρ0′
+
+c2 g 1 ε–( )
+k εψa′ 0( )–
+---------------------------- , ε
+
+ρa
+ρw
+------= =
+
+A 1=
+
+d
+dz
+------W2 d
+
+dz
+------ψa k
+
+2W2ψa , z 0>=
+
+ψa 0( ) 1 , c
+2 g 1 ε–( ) k εψa′ 0( )–( )⁄= =
+
+z ∞ , ψa 0→→
+
+
+
+
+
+
+
+ε 0→
+
+ε 10 3–≈
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 23
+
+(70)
+
+where  and .  As a result, the problem (69) now reduces to
+
+(71)
+
+where is now known. As is known already, the solution of the differential equation is simplified
+
+considerably.  In addition, we now have an explicit expression for the growth rate  of the waves,
+
+(72)
+
+where the Wronskian  is given as
+
+(73)
+
+Finally, before we give some interpretation of the result (72), we remark that it is rather common to use the vertical
+
+component of the wave-induced velocity instead of the displacement of the streamline . The eigenvalue
+
+problem (71) then becomes, in terms of the normalised vertical velocity ,
+
+(74)
+
+and the growth rate of the waves is given by
+
+(75)
+
+where the Wronskian  is now given by .
+
+Regarding Eq. (74) we remark that the differential equation (known as Rayleigh's equation) has a singularity at
+
+. Since defines the critical height (i.e. the height where the phase speed of the wave
+
+matches the wind speed) it is now clear that the resonance at the critical height plays a special role in the prob-
+
+lem of wind-wave generation.
+
+Furthermore, we remark that the Wronskian is related to a physical quantity, known as the wave induced stress
+
+. The result (75) is a very elegant one as it relates the growth of the waves to the wave-induced
+
+stress. In order to see this we recall that we are dealing with normal modes of the type , so
+
+that
+
+c c0 εc1 …+ +=
+
+c0 gk= c1 1 2⁄( )c0 ψa′ k 1–⁄( )=
+
+d
+dz
+------W0
+
+2 d
+dz
+------ψa k
+
+2W0
+2ψa , z 0>=
+
+ψa 0( ) 1=
+
+z ∞ , ψa 0→→
+
+
+
+
+
+
+
+W0 U0 c0–= c0
+γ a
+
+γ a
+ω0
+------ εIm
+
+c1
+c0
+---- 
+
+  ε
+2k
+------Im ψa′( )
+
+ε
+4k
+------W ψa ψa
+
+*,( )
+z 0=
+
+= = =
+
+W
+
+W ψa ψa
+*,( ) i ψa′ψa
+
+* ψaψ′a
+*–( )–=
+
+ψ w W⁄∼
+χ w w 0( )⁄=
+
+W0
+d2
+
+dz2
+-------- k2–
+
+ 
+ 
+ 
+
+χ W0″χ=
+
+χ 0( ) 1=
+z ∞ , χ 0→→
+
+
+
+
+
+
+
+
+γ a
+εω0
+---------
+
+1
+4k
+------W χ χ*,( ) z 0==
+
+W W i χ′χ* χχ′*–( )–=
+
+W0 U0 c0–= W0 0= zc
+zc
+
+W
+τw u1w1〈 〉–≡
+
+u1 u iθ[ ] c.c.+exp=
+
+τw u iθ[ ] c.c.+exp( ) w iθ[ ] c.c.+exp( )〈 〉– uw
+* c.c.+{ }–= =
+
+
+
+The wave model
+
+24 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Using  to eliminate  we thus have
+
+and this indeed corresponds to the Wronskian  of Eq. (75).
+
+The Wronskian plays a special role in the theory of second-order differential equations. (This is therefore an-
+
+other reason why the result (75) is so elegant). Namely, by means of the Rayleigh equations (74) it may be shown
+
+that the Wronskian is independent of height except at the critical height, where it may show a jump (cf Fig. 4
+
+for wave-induced stress).
+
+We can check this by calculating the derivative of  with respect to  and using Rayleigh's equation:
+
+Using Rayleigh this becomes
+
+(76)
+
+Now for we immediately find that , and hence the wave-induced stress, is independent of
+
+height. Since the wave-induced velocity vanishes for large height, we conclude that for , vanishes, but
+
+may have a finite value for . In fact, the jump at may be obtained from (76) by a proper treatment
+
+of the singularity at the critical height.
+
+Figure  4. Wave-induced stress shows a jump at critical height.
+
+To that end we consider the singular function
+
+and we take the limit for positive vanishing .  Then,
+
+∇ u⋅ 0= u
+
+τw
+i
+k
+--- w*w′ ww′*–[ ]–=
+
+W
+
+W
+
+W
+
+W z
+
+d
+dz
+------W i χ*χ″ χχ″*–( )–=
+
+d
+dz
+------W i k2 χ 2
+
+W0″
+W0
+----------- χ 2 c.c.–+ 
+
+ –=
+
+z zc W0 0≠( )≠ W
+z zc> W
+
+z zc< z zc=
+
+1
+W0
+-------- 1
+
+W0 iδ–
+-------------------→
+
+δ
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 25
+
+and (76) becomes
+
+(77)
+
+where the subscript c refers to evaluation at the critical height .
+
+Integration of (77), using the boundary condition that  vanishes for , gives
+
+(78)
+
+and therefore the growth rate of the waves (75) becomes
+
+. (79)
+
+This is Miles' classical result for the growth of surface gravity waves due to the shear flow. From Eq. (79) we obtain
+
+the well-known result that only those waves are unstable for which the curvature of the wind profile at the
+
+critical height is negative.  This is, for example, the case for a logarithmic wind profile.
+
+There is, however, an important consequence of the instability of surface waves. While the waves are growing and,
+
+therefore, receiving energy and momentum from the air flow, a slowing down of the air flow by the gravity wave
+
+will result. The waves therefore give rise to a force which is the gradient of the wave-induced stress . Since the
+
+wave-induced stress is proportional to the Wronskian , which has a step function discontinuity at the critical
+
+height, the force is a delta-function. This suggests an important limitation of linear theory because a considerable
+
+wave/mean-flow interaction may therefore occur, giving rise to a modified mean flow. We discuss more details of
+
+the wave-mean-flow interaction in a short while, after we have compared results of the linear theory with observa-
+
+tion.
+
+In order to solve the boundary wave problem (74), we finally have to specify the shape of the wind profile. Here
+
+we only consider the case of neutrally stable conditions (no density stratification by heat and moisture). In those
+
+circumstances the wind profile has a logarithmic height dependence
+
+, (80)
+
+which follows from the condition that the momentum flux in the surface layer is constant for steady conditions.
+
+This profile depends on three parameters. The von Karman constant is supposed to be universal (we take the
+
+value ), the friction velocity is a measure of the momentum flux and , the so-called roughness
+
+length, is a parameter which reflects the loss of momentum to the sea surface. In the past, the roughness length has
+
+been determined empirically.  Over sea a good choice is the one proposed by Charnock (1955)
+
+(81)
+
+with the so-called Charnock parameter. Here, for now we assume that is a constant, we take ,
+
+1
+W0
+-------- P
+
+W0
+-------- πiδ W0( )+→
+
+d
+dz
+------W 2πW0c″ χc
+
+2δ W0( )=
+
+zc W0 0=( )
+
+W z zc>
+
+z zc , W< 2π
+W0c″
+W0c′
+--------------- χc
+
+2–=
+
+γ a
+εω
+-------
+
+π
+2k
+------
+
+W0c″
+W0c′
+--------------- χc
+
+2–=
+
+U0″
+
+τw
+W
+
+U0 z( )
+u*
+κ
+----- 1 z
+
+z0
+-----+ 
+
+ ln=
+
+κ
+κ 0.41= u* z0
+
+z0 αu*
+2 g⁄=
+
+α α α 0.0144=
+
+
+
+The wave model
+
+26 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+although there are arguments that  is not a constant but depends on the sea state.
+
+Given the wind profile (80) we can no solve (74) numerically and use the result for at the critical height to eval-
+
+uate the growth rate from Eq. (79). With , the numerical results for the dimensionless growth rate
+
+are plotted as a function of in Fig. 5 (note: the growth rate of the energy of a wave is
+
+as the energy is proportional to the square of the amplitude). For comparison, we have also shown measurements
+
+of wave growth from the field (Snyder et al., 1981) and the laboratory (Plant and Wright, 1977). It is concluded
+
+that there is a fair agreement between Miles' theory and observations.
+
+We may summarise the results for wind–wave generation obtained thus far by noting that we have determined the
+
+rate of change of the amplitude of a gravity wave due to wind. The growth rate, giving in Eq. (79), is proportional
+
+to the air water density ratio and is a sensitive function of the dimensionless frequency . In fact,
+
+the short waves have the largest relative growth rate, as may be inferred from Fig. 5 .
+
+Figure  5. Wave growth versus phase speed; comparison of Miles' theory and observations.
+
+Our results may be immediately generalised to the case of a continuous spectrum. The wind input source term of
+
+the action balance equation (45) therefore becomes
+
+(82)
+
+where the growth rate  is given by Eq. (79).
+
+α
+
+χ
+f ω 2π⁄=
+
+2γ a f⁄ γ f⁄= u* c⁄ 2γ α
+
+u* c⁄ u*ω g⁄=
+
+∂N
+∂t
+
+--------
+wind
+
+2γaN=
+
+γ a
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 27
+
+Before we proceed to a discussion of the non-linear interaction source term, we would like to return to the issue of
+
+the slowing down of the air flow because of the growing gravity waves. It was mentioned that, for a single wave,
+
+the force imposed by the wave on the air flow would be a delta function in height ( )-space. In reality, one deals,
+
+however, with a continuum of ocean waves. Consequently, one deals with a continuum of critical layers and the
+
+force exerted by a continuum of ocean waves on the mean air flow is therefore a 'nice'-smooth function of height.
+
+Thus, the rate of change of the mean flow due to a spectrum of growing surface gravity waves follows
+
+from
+
+(83)
+
+where the wave-induced stress is defined as
+
+(84)
+
+and and denote the wave-induced horizontal and vertical velocities in the air. These quantities are known,
+
+even for a continuum, when the solution of Rayleigh's equation is known. The result is an equation for the mean
+
+flow  which is of the diffusion type
+
+(85)
+
+where the wave diffusion coefficient  is proportional to the action density spectrum ,
+
+(86)
+
+Here, the wave number has to be expressed as a function of height through the resonance condition .
+
+In passing, we remark that (85)–(86) is only valid for dispersive waves for which . Since the wave diffusion
+
+coefficient is positive, we immediately conclude that ocean waves give rise to a slowing down of the air flow.
+
+This slowing down depends, in a sensitive manner, on the sea state; it depends in particular on the high-wave
+
+number spectrum because these waves grow the fastest. In Fig. 6 we show the equilibrium wind speed profile for
+
+two different sea states, which are termed 'old' and 'young' wind sea. For old wind sea the ocean waves have reached
+
+an equilibrium with the wind and the high wave number part of the spectrum has a small steepness. Young wind
+
+sea, on the other hand, have just been generated by the wind and have a large steepness. As a consequence, we see
+
+that, for young waves, there is a considerable slowing down of the wind. In fact, one may obtain the Charnock
+
+parameter from Fig. 6 by searching for the intercept of the wind profile with the -axis (which is normalised height
+
+). It is then seen that the Charnock parameter for old wind sea is about 0.014 while, for young wind sea, it
+
+is 10 times as large. Consequences of the sea state dependence of the Charnock parameter on, e.g., atmospheric
+
+flow will be discussed in 3.2. This is important as atmospheric models used to assume a constant Charnock param-
+
+eter  (typically ).
+
+z
+
+U0 z t,( )
+
+∂
+∂t
+-----U0 waves
+
+∂
+∂z
+------τw z t,( )=
+
+τw δuδw〈 〉–=
+
+δu δw
+
+U0
+
+∂
+∂t
+-----U0 waves Dw
+
+∂2
+
+∂z2
+--------U0=
+
+Dw N
+
+Dw
+πc3k3 χ 2
+
+c vg–
+-----------------------N k( )=
+
+k W0 0=
+c vg≠
+
+Dw
+
+x
+gz u*
+
+2⁄
+
+α α 0.018≈
+
+
+
+The wave model
+
+28 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Figure  6. Wind speed as function of height for young and old wind sea.
+
+Non-linear transfer
+
+The study of the effects of non-linearity on deep-water gravity waves already started in the last century with the
+
+great contribution of Stokes (1849). He considered a single wave of permanent shape and was able to find the ef-
+
+fects of finite wave amplitude on the dispersion relation by means of a so-called singular perturbation technique.
+
+A century later, Lighthill (1965) discovered that a non-linear water wave is unstable to modulational perturbations,
+
+giving a transfer of energy from the basic wave to sidebands. This instability is a special case of a four wave in-
+
+teraction process, which nowadays plays a major role in the physics of ocean waves. The instability is now known
+
+as the Benjamin–Feir instability, because Benjamin and Feir were the first to give experimental evidence for its
+
+existence.
+
+These discoveries lead to a lot of excitement in the field of non-linear waves and, in particular, the contributions of
+
+the 'California' school may be mentioned. Yuen and Lake investigated the long term behaviour of the unstable wave
+
+train and they found that the wave train did not disintegrate, but instead it recurred after a finite time to its original
+
+shape (however with slightly lower frequency of the wave train).
+
+All these exciting results were obtained in the context of deterministic evolution equations. In a statistical frame-
+
+work all these phenomena seem to be less relevant. The reason for this is that such non-linear effects depend, in a
+
+sensitive manner, on the phases of the waves involved in the non-linear interaction. In a statistical approach all
+
+these effects are then washed away because of the random independent phases.
+
+We therefore only concentrate on the statistical framework, but we briefly describe how to obtain the deterministic
+
+evolution equation from the Hamiltonian for water waves. These equations are then used as a starting point for the
+
+statistical theory.
+
+In deep water the energy density of the waves is
+
+(87)
+
+and we express the potential in terms of the canonical variables and by solving the po-
+
+tential problem
+
+ε 1
+2
+---ρ dz ∇φ( )2 φz
+
+2+{ } 1
+2
+---ρgη2+
+
+∞–
+
+η
+
+∫=
+
+φ η ψ x t,( ) φ x η t, ,( )=
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 29
+
+(88)
+
+in an iterative fashion by assuming small amplitude waves with small wave steepness. This is most conveniently
+
+done by using Fourier transformation of surface elevation and . A great simplification is then achieved by
+
+introducing the complex action-variable  through
+
+(89)
+
+where  is just the dispersion law for gravity waves
+
+After having obtained the potential to any required order of wave amplitude, one may determine the energy of
+
+the wave system, thus
+
+(90)
+
+where we introduced the shorthand notation , etc and is a known function of wave number. Fur-
+
+thermore, LOT is an abbreviation for lots of other terms. We recognise the first term as being the energy for a single
+
+wave, while the cubic term represents the lowest-order non-linear effect on the energy.
+
+The introduction of the complex action variable has the additional advantage that Hamilton's equations (10),
+
+i.e.
+
+become the single equation
+
+. (91)
+
+Evaluating the functional derivative of with respect to then gives the deterministic evolution equation for
+
+(92)
+
+where  and  are known functions of wave number.
+
+The non-linear evolution equations (92) contain the effects of three and four wave interactions. To see this, we
+
+recall that (92) was obtained under the assumption of small wave steepness so that, in lowest order, we are dealing
+
+∆φ φzz+ 0=
+
+z η , φ ψ= =
+z ∞ , φz– 0= =
+
+η ψ
+a k( )
+
+η̂ k( ) 1
+2
+
+------- k
+ω
+---- 
+
+  1 2⁄ a k( ) a* k–( )+[ ]=
+
+ψ̂ k( ) i–
+2
+
+------- ω
+k
+---- 
+
+  1 2⁄ a k( ) a*– k–( )[ ]=
+
+ω k( )
+
+ω k( ) gk=
+
+φ
+
+E dxε∫ dk1ω1a1a1* dk1dk2dk3δ k1 k2– k3–( )V 1 2 3, , a1*a2a3 c.c.+[ ] LOT +O a4( )+∫+∫= =
+
+a1 a k1( )= V
+
+a k( )
+
+∂η
+∂t
+------
+
+δE
+δψ
+------- ,
+
+∂ψ
+∂t
+------- δE
+
+δη
+-------–= =
+
+∂
+∂t
+-----a k( ) i δE
+
+δa*
+---------–=
+
+E a* a
+
+∂
+∂t
+-----a1 iω1a1+ i dk2dk3V 1 2 3, , a2a3δ k1 k2– k3–( ) …+ +∫–=
+
+i dk2dk3dk4W1 2 3 4, , , δ k1 k2 k3– k4–+( )a2
+*a3a4∫–
+
+V W
+
+
+
+The wave model
+
+30 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+with a linear oscillation and the right hand side (RHS) gives small (but important) corrections to this linear oscil-
+
+lation. Now consider the quadratic terms on the RHS of (92). I have not shown all of them, but the one given ex-
+
+plicitly, oscillates with frequency , while the others that are not shown oscillate as and
+
+. If they match the oscillation frequency of the linear system, a resonant energy transfer between the
+
+modes with wave numbers , and is possible. Likewise, the cubic terms oscillate with frequency
+
+and, if this frequency equals of the linear system, a resonant interaction between four modes
+
+occurs [note, however, that the quadratic terms also contribute to four wave interaction].
+
+To summarise, the evolution equation (92) allows both three- and four-wave interactions, where for three-wave
+
+processes the resonance conditions
+
+(93)
+
+should be satisfied simultaneously, and for four wave processes the resonance conditions
+
+(94)
+
+should be satisfied. Whether these resonance conditions can actually be satisfied depends on the type of dispersion
+
+relation, . Now, gravity waves have the dispersion relation and, from a graphical construc-
+
+tion, one immediately concludes that three-wave processes are impossible.
+
+Figure  7. Three wave interaction is impossible for gravity waves.
+
+Phillips (1960) has shown, however, that four-wave interactions are permitted by the deep-water dispersion rela-
+
+tion.  The possible solutions are sketched in Fig. 8 , which has become known as Phillips figure of eight.
+
+Let us finally try to determine from Eq. (92) the statistical evolution of the action density due to four-wave proc-
+
+esses. Since the mean of the surface elevation vanishes, , our aim now is to derive an evolution equation
+
+for the second moment . Here the brackets denote, as before, an ensemble average. Owing to non-linearity,
+
+the development of the second moment is determined by the third and the fourth moment, and so on. As a result
+
+we find an infinite hierarchy of equations, and the question is how to truncate this hierarchy. A meaningful trun-
+
+cation is now obtained by making two assumptions, namely we assume that, on the scale of the wavelength, the
+
+ensemble of waves is spatially homogeneous and that the probability distribution for  is close to a Gaussian.
+
+ω2 ω3+( )– ω2– ω3+
+ω2 ω3+ ω1–
+
+k1 k2 k3
+ω2 ω3– ω3– ω1–
+
+ω1 ω2 ω3±± 0 , k1 k2 k3±± 0= =
+
+ω1 ω2 ω3– ω4–+ 0 , k1 k2+ k3 k4+= =
+
+ω ω k( )= ω gk=
+
+a1〈 〉 0=
+a1a2
+
+*〈 〉
+
+a1
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 31
+
+Figure  8. Phillips' figure of 8.
+
+We shall not give the details of how to obtain the rate of change of the action density due to non-linear interactions.
+
+We merely point out that, by means of the above assumptions, this is indeed possible. Details of its derivation may
+
+be found in Hasselmann (1962), Davidson (1972) and Komen et al. (1994).  The eventual result is
+
+(95)
+
+Here, depends on and . For gravity waves this evolution equation was first obtained by Hasselmann
+
+(1962).
+
+In the remaining part of the section we shall discuss some general properties of Eq. (95) (I personally call it the
+
+Hasselmann equation).
+
+(a)  never becomes negative
+
+The Hasselmann equation has the property that it can never give rise to negative action densities.
+
+Before a density becomes negative, it must first become zero. But for zero the second factor
+
+between curly brackets vanishes while the first factor is positive. Thus, is positive, and
+
+will become positive rather than negative.
+
+(b) Conservation laws
+
+The Hasselmann equation admits conservation of
+
+• action:
+
+• momentum:
+
+and
+
+• energy: .
+
+This means that a wave field cannot gain or lose energy through the four-wave interaction. Growth
+
+or dissipation of wave action, momentum or energy must, therefore, take place through other
+
+processes, such as wind input or white capping.
+
+∂N1
+∂t
+
+-----------
+nonlin
+
+4π dk2dk3dk4T1 2 3 4, , ,
+2 δ k2 k3 k4– k1–+( )δ ω2 ω3 ω4– ω1–+( )∫=
+
+N2N3 N1 N4+( ) N1N4 N2 N3+( )–{ }×
+
+T V W
+
+N
+
+N
+∂N ∂t⁄ N
+
+dk N k( )∫
+dk kN k( )∫
+
+dk ωN k( )∫
+
+
+
+The wave model
+
+32 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+(c) Implications for energy transfer
+
+The conservation of two scalar quantities, energy and action, implies an important general property
+
+of the energy transfer. A similar relation holds for the energy transfer in a two-dimensional
+
+turbulence spectrum in the atmosphere, which also conserves two scalar quantities, namely energy
+
+and enstrophy.
+
+The one-dimensional energy transfer must have at least three lobes of different sign (cf
+
+Fig. 9 ).
+
+It cannot have a two-lobe structure representing, for example, an energy cascade from low to high
+
+frequencies, as in three-dimensional turbulence. The ratio increases
+
+monotonically with frequency. Thus, if the net action lost in the negative low-frequency lobe
+
+balances the action gained in the high-frequency lobe, the energy loss in the low-frequency lobe
+
+must necessarily be smaller than the energy gained in the high-frequency lobe, so that energy is not
+
+conserved. Numerical computations of the non-linear energy transfer indeed give the three-lobe
+
+structure. In particular, it should be pointed out that the positive lobe at low frequencies has
+
+important consequences for the evolution of the wave spectrum as it gives rise to the shift of
+
+spectrum towards lower frequencies.
+
+Figure  9. One-dimensional energy transfer caused by 4-wave interaction.
+
+Dissipation due to wave breaking
+
+The least understood aspect of the physics of wave evolution is the dissipation source function. Waves may lose
+
+energy continuously by viscous dissipation and by the highly intermittent process of wave breaking. The continu-
+
+ous slow drain of wave energy by viscosity is well understood and easily calculated. While it is an important sink
+
+for gravity–capillary waves, with wavelengths of the order of 1 cm, it is insignificant for the longer waves.
+
+Understanding and modelling the wave breaking process is thus of critical importance in achieving an accurate rep-
+
+resentation of the principle sink function in the action balance equation. Unfortunately, there has not been much
+
+progress in obtaining a convincing model of dissipation caused by wave breaking. Nevertheless, one could hope
+
+that this goal may be achieved in the future because, although wave breaking is a truly non-linear phenomenon, it
+
+occurs only relatively rarely (say at best 5% of the waves are involved breaking). In the context of a statistical the-
+
+ory of wave evolution, dissipation due to wave breaking, therefore, should have a relatively small effect. Following
+
+this line of approach, Hasselmann (1974) obtained some general constraints on the form of the dissipation source
+
+function.  Introducing the mean frequency  and mean wave number ,
+
+dN ω( ) dt⁄
+
+energy/action ω=
+
+ω〈 〉 k〈 〉
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 33
+
+and a similar relation for , Hasselmann (1974) proposed the following dissipation source term
+
+(96)
+
+where ,  is the wave variance, and  and  are constants.
+
+It is emphasized that this dissipation source term has a quasi-linear shape. It is linear in the action density, but the
+
+proportionality constant depends on integrals over the wave spectrum. We finally remark that (96) is in agreement
+
+with one's intuition that the dissipation is larger for steeper waves since is proportional to the integral steep-
+
+ness parameter . Furthermore, the constant's and are unknown and will be used as tuning constants
+
+(cf next section).
+
+2. THE WAM MODEL
+
+The WAM model is the first model that solves the complete action density equation, including non-linear wave–
+
+wave interactions. A group of European waves modellers, who called themselves the WAM group, realised in the
+
+middle of the 1980's that it should be feasible to develop a wave model on first principles. First of all, there was a
+
+clear need for improving existing wave models at that time. Although these models performed reasonably well in
+
+many cases, it turned out that, in rapidly varying circumstances, these models simply failed to give a proper de-
+
+scription of the sea state. This followed from a comparison exercise where about 10 different models were run with
+
+the same hurricane wind field, resulting in widely varying maximum wave height (ranging from 8 to 25 m). Sec-
+
+ondly, the solution of the energy balance equation requires considerable computing power which has become avail-
+
+able in recent years. Thirdly, this coincided with the development of remote sensing techniques for measurements
+
+of the sea surface by means of microwave instruments (altimeter, scatterometer and synthetic aperture radar
+
+(SAR)). The relationship between wave-model development and satellite remote sensing is much closer than one
+
+might expect at first sight. Satellite observations can be used to validate the model and the model also gives a first
+
+check on the accuracy of the observations. Furthermore, a detailed description of the dynamics of the sea surface
+
+is important for a correct interpretation of the radar signals.
+
+At present, the WAM model is used operationally in global and regional applications to make forecasts of the sea
+
+state, which can be used for many applications such as ship routing and offshore activities, and for the validation
+
+and interpretation of satellite observations. Finally, much progress has been made on the assimilation of satellite
+
+observations into wave models. Deviations between predicted and observed waves are normally indicators of er-
+
+rors in the driving wind fields so that effective wave data assimilation procedures correct both wind and wave fields.
+
+In the next sections we will present results of the WAM model in simple situations, such as growth of waves under
+
+fetch limited circumstances, and compare results with in-situ campaigns. Subsequently, we discuss the quality of
+
+the wave analysis and wave forecast for the global area.
+
+2.1  Energy balance for wind sea
+
+Since the Second World War one has attempted to summarise knowledge of the growth of ocean waves by wind in
+
+terms of empirical growth curves. In principle, a large number of variables may control wave growth. For example,
+
+in the idealised situation of duration-limited waves (when a uniform and steady wind has been blown over an un-
+
+limited ocean for time after a sudden onset) the following variables should be considered: frequency , wind-
+
+ω〈 〉
+dk ωN∫
+dk N∫
+
+---------------------=
+
+k〈 〉
+
+Sdissip β ω〈 〉 k〈 〉
+2m0( )
+
+2
+1 δ–( )x δx2+[ ]N–=
+
+x k k〈 〉⁄= m0 η
+2〈 〉= β δ
+
+Sdissip
+k〈 〉2m0 β S
+
+t ω
+
+
+
+The wave model
+
+34 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+speed or friction velocity , acceleration of gravity , viscosity , surface tension, air and water density and
+
+coriolis parameter . In principle, is supposed to represent the wind at infinite height (the geostrophic wind).
+
+In practice,  is the speed at 10 m height and may not always be appropriate as speed scale.
+
+Under assumptions of the nature of the wave motion and the mechanism of the wave growth, the energy containing
+
+part of the spectrum is mainly determined by the variables , (or ), , . We remark that, according to
+
+theory, the friction velocity is probably the most appropriate parameter to use in scaling wave growth. How-
+
+ever, since this parameter is so difficult to measure in practice, one normally uses the wind at 10 m height.
+
+Conditions of duration-limited growth are difficult to fulfil in practice and, from the point of view of the analysis
+
+of experimental data, two other idealized cases are more important. One is the case of fully developed waves, when
+
+a uniform and steady wind has blown over an unlimited ocean long enough for the wave field to become independ-
+
+ent of time. This may occur in the Trade Winds. The other, more frequently occurring, situation is the fetch-limited
+
+case, when a uniform steady wind has blown from a straight shoreline long enough for the wave field at distance
+
+(fetch)  from the upwind shore to become independent of time.
+
+Let us now make the connection between what we have developed in the previous section and the experimental
+
+practice. We have obtained the evolution equation for the action density which is related to the wave number
+
+spectrum through
+
+.
+
+Here, the wave-number spectrum is normalised with the variance , where  is the surface elevation,
+
+.
+
+Obviously, the integral over the wave spectrum has dimension of a length square and it is then common to introduce
+
+the significant wave height  according to
+
+(97)
+
+The reason for this definition is historical. In the early days one could not measure the wave spectrum and therefore
+
+the wave height was observed visually. The measure is defined as the average height of the highest
+
+1/3 of the waves, and it can be shown that approximately . For a narrow spectrum and are
+
+exactly equal.
+
+In situ observations of the two-dimensional wavenumber spectrum are rare; it requires rather sophisticated instru-
+
+mentation to observe the spatial correlation function. Therefore, in routine operations one normally observes the
+
+frequency spectrum which just requires the analysis of time series.  The frequency spectrum is defined as
+
+thus
+
+(98)
+
+Even the directional properties of waves require expensive buoys and, for this reason, one also has introduced the
+
+one-dimensional frequency spectrum,
+
+U10 u* g
+f U10
+
+U10
+
+ω U10 u* g t
+u*
+
+X
+
+N k( )
+
+F k( ) σN k( )=
+
+η2〈 〉 η
+
+dk F k( )∫ η2〈 〉 m0= =
+
+Hs
+
+Hs 4 η
+2〈 〉=
+
+H1 3⁄ H1 3⁄
+Hs H1 3⁄= H1 3⁄ Hs
+
+F2 ω θ,( )dω dθ F k( )dk F k θ,( )k dk dθ= =
+
+F2 ω θ,( )
+k
+vg
+-----F k θ,( )=
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 35
+
+(99)
+
+As long as there is no confusion we shall use the same symbol for the various forms of the wave spectrum, namely
+
+; the distinction should be clear from their arguments, ,  and .
+
+Let us now return to the analysis of wave evolution. For fully developed waves one would therefore expect that the
+
+following relations hold
+
+(100)
+
+Here, is the total wave variance and denotes the peak of the frequency spectrum. On the other hand, in
+
+fetch-limited conditions one would expect the relation
+
+(101)
+
+In cases where measurements of the friction velocity have been performed it seems appropriate to replace
+
+by .  The above similarity laws are due to Kitaigorodskii (1962).
+
+Figs. 10 and 11 give a brief summary of results obtained by a number of field campaigns in the past. Fig. 10 shows
+
+the evolution of dimensionless wave variance and peak frequency as function of dimensionless fetch, while Fig. 11
+
+shows the evolution of the wave spectrum with fetch according to JONSWAP (1973).
+
+Before we discuss results obtained with the WAM model we have to point out the important distinction between
+
+wind sea and swell. Thus far we only considered wind sea. Loosely speaking one may define as wind sea that part
+
+of the wave spectrum that is under direct influence of the wind. All the ideal cases discussed so far are examples
+
+of wind sea. However, a storm has only a finite extent. Although ocean waves suffer from dissipation due to wave
+
+breaking, when their steepness is small enough there is hardly any dissipation. Therefore, ocean waves may prop-
+
+agate freely over large distances. A well-known example is that of Snodgrass et al. (1966) who observed waves
+
+generated in the Gulf of Alaska to propagate all the way to the Indian Ocean. Those waves that are not under the
+
+direct influence of the wind are called swell. Wind sea is usually found in the areas of large wind, such as the storm
+
+tracks. When these wind waves leave the storm track they become swell and, in practice, the sea state in the tropical
+
+oceans is dominated by swell.
+
+Let us now discuss the performance of the WAM model. To that end we first of all compare results of fetch-limited
+
+runs with the JONSWAP data.  Next, some interesting results of duration-limited cases are shown.
+
+Figs. 12 and 13 show results of the fetch-limited cases and the comparison with the JONSWAP fetch-laws. In
+
+order to show the sensitivity of wave model results to differences in wind speed, in the figure for the dimensionless
+
+growth curve we display two cases, namely and . The JONSWAP experiment was
+
+performed for an average wind speed of 8–9 m/s and, therefore, there is a fair agreement with the JONSWAP ob-
+
+servation.  The same holds for the dimensionless peak frequency.
+
+We remark that, according to the WAM model, there is no universal scaling when wave results are scaled in terms
+
+of the wind speed at 10 m height. The reason for this is easily understood. From the previous section we have seen
+
+F1 ω( ) dω F2 ω θ,( )∫=
+
+F F k( ) F ω θ,( ) F ω( )
+
+g3F ω( ) U10
+5⁄ f ωU10 g⁄( )=
+
+g2m0 U10
+4⁄ constant=
+
+ωpU10 g⁄ constant=
+
+m0 ωp
+
+g3F ω( ) U0
+5⁄ f ωU10 g⁄ gX U10
+
+2⁄,( )=
+
+g2m0 U10
+4⁄ f gX U10
+
+2⁄( )=
+
+ωpU10 g⁄ f gX U10
+2⁄( )=
+
+u* U10
+u*
+
+U10 18 m/s= U10 8 m/s=
+
+
+
+The wave model
+
+36 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+that the wind-input term scales with the friction velocity and not with the wind speed at 10 m height. For air flow
+
+over the ocean, the ratio of friction velocity to wind speed at a certain height depends on that very wind speed and,
+
+thus, it makes a difference when one uses friction velocity or wind speed. In order to show this last point, we take
+
+the opportunity to introduce the drag coefficient , defined as
+
+(102)
+
+and, by using the logarithmic wind profile (Eq. (80)), one finds
+
+(103)
+
+where is the roughness given by the Charnock relation. It is important to note that depends on the friction
+
+velocity and, therefore, (and ) depends on wind speed. The important consequence is, therefore, that,
+
+when scaling in terms of is performed, a family of growth curves is found as we have seen in Fig. 12 . It
+
+should be realised by now that it is not appropriate to scale wave results with because the 10 m height is really
+
+arbitrary and bears no relation to any length scale in the physical system. On the other hand, it should be pointed
+
+out that in the past there was no other choice because the friction velocity  was too difficult to measure.
+
+Figure  10. Examples of fetch-limited growth curves for energy and peak frequency.
+
+CD
+
+CD
+τ
+
+U10
+2
+
+--------- , τ u*
+2= =
+
+CD
+κ
+
+10 z0⁄( )ln
+-------------------------
+
+ 
+ 
+ 2
+
+=
+
+z0 z0
+CD u* U10⁄
+
+U10
+U10
+
+u*
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 37
+
+.
+
+Figure  11. Evolution of wave spectra with fetch for offshore winds (11-12 h, 15 Sept 1968).  The spectra are
+
+labelled with the fetch in kilometres.  (From Hasselmann et al., 1973).
+
+Figure 12. Fetch dependence of dimensionless energy and peak frequency for a wind speed of 8 m/s. JONSWAP
+
+fetch laws are shown as well.
+
+
+
+The wave model
+
+38 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Fig. 13 shows the comparison of modelled and observed evolution of the so-called Phillips 'constant' . As may
+
+be noted, this parameter is not really a constant. Here it is defined as the average of over the frequen-
+
+cy range between 1.3 and 2.5 times the peak frequency. The Phillips constant has played a role in discussions on
+
+wave evolution because it was thought at the time that in this frequency range the frequency spectrum has a
+
+power law. Nowadays, opinions differ on this matter, but in the high-frequency range with this certainly
+
+gives a useful description of the wave spectrum. In any event, this quantity may be regarded as a measure of steep-
+
+ness of the high-frequency waves and the agreement between the observed and modelled Phillips constants seems
+
+fair. Note that for short fetches (young wind sea) the steepness of the waves is much larger than for long fetches
+
+(old wind sea).
+
+In order to conclude this section we would like to discuss results of duration-limited cases. Thus, we consider an
+
+infinite ocean and consider the evolution in time of the waves. These results can easily be obtained by taking a
+
+single grid-point model and switching off the advection.  It is feasible to run this model on a PC.
+
+According to our results regarding the wind-input source term, the surface stress depends on the sea state, giving
+
+a much rougher flow for young wind sea than for old wind sea. For young wind waves one would, therefore, expect
+
+a slowing down of the air flow. A proper description of this deceleration of the flow may, however, only be accom-
+
+plished in a coupled atmosphere/ocean-wave model. Such tests cannot be regarded as straightforward and, since
+
+we would like to concentrate here on aspects of the wave physics, we shall make the simplifying assumption that
+
+the wind speed is constant. The wind speed was chosen to be 18 m/s, corresponding, in the absence of waves,
+
+to a friction velocity of 0.85 m/s (with Charnock parameter ). Results with a coupled atmosphere,
+
+ocean-wave model are discussed in section 3.2.
+
+The first experiment which we performed was a reference run with the wave model without any coupling between
+
+wind and waves. This was achieved by simply disregarding the effect of waves on the roughness (called ‘uncou-
+
+pled’ in the following figures). Next, we coupled the waves and the air flow as is done in the WAM model. The
+
+effect of the waves on the air flow was modelled by allowing the Charnock parameter to depend on the wave-in-
+
+duced stress . Details of this model are given in Komen et al. (1994). The results for the coupled run are labelled
+
+by ‘coupled’.
+
+We infer from Figs. 14 –17 that the coupling between wind and waves has a small impact on wave height, a some-
+
+what bigger impact on the wave-induced stress and a dramatic impact on the evolution of the drag coefficient
+
+(of course, for the control run is a constant). This shows that the drag coefficient depends on the sea state,
+
+which is caused by the sea-state dependence of the wave-induced stress. This latter feature is in turn caused by the
+
+time dependence of the Phillips' constant .
+
+Furthermore, we show the evolution in time of the frequency spectrum in Fig. 18 . In the course of time the wave
+
+spectrum shows a typical shift of the peak of the spectrum towards lower frequencies, while a considerable en-
+
+hancement of the peak of the spectrum is also noticed in the early stages of wave growth. In hindsight it may be
+
+noted that it was the peak enhancement which assured that the non-linear interactions were found to be relevant (a
+
+factor of 2 in the peak of the spectrum already gives a factor of 8 in the rate of change of the non-linear transfer).
+
+In Figs. 19 –20 we show the energy balance of young ( ) and old ( ) wind sea. Wind input and
+
+dissipation behave as expected. The non-linear transfer has a typical three-lobe structure and the first lobe causes
+
+the shift in the peak of the spectrum. We have also given the total source term, which is the sum of wind input,
+
+non-linear transfer and dissipation. While for young wind sea there are clear signs that the sea state is not in equi-
+
+librium with the wind, for old wind sea (after 96 h) the steady state is almost reached.
+
+Finally, in order to show how the two-dimensional wave spectrum evolves in time, in Fig. 21 we have shown results
+
+with the single grid point version of the WAM model for a turning wind field case. Wind speed was again 18 m/s.
+
+The arrow shows the wind direction.
+
+αp
+ω5F ω( ) g2⁄
+
+ω 5–
+
+ω 3ωp>
+
+U10
+u* α 0.0185=
+
+τw
+
+CD
+CD
+
+αp
+
+T 3 h= T 96 h=
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 39
+
+Figure  13. Fetch dependence of Phillips' parameter .  The JONSWAP fetch law is plotted as well.
+
+Figure  14. Time dependence of wave height for coupled and control run.
+
+αp
+
+
+
+The wave model
+
+40 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Figure  15. Time dependence of Phillips' parameter  for a reference run and a coupled run.
+
+Figure  16. Time dependence of wave-induced stress for a reference run and a coupled run.
+
+αp
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 41
+
+Figure  17. Time dependence of drag coefficient  for a reference run and a coupled run.
+
+Figure  18. Evolution in time of the one-dimensional frequency spectrum for the coupled run.
+
+CD
+
+
+
+The wave model
+
+42 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Figure  19. The energy balance for young duration-limited wind sea.
+
+2.2  Wave forecasting
+
+I would like to start this section with a brief discussion of the sensitivity of wave results to errors in the driving
+
+wind field by means of a single illustrative example. Next, I would like to discuss how the quality of the wave
+
+analysis is monitored by comparing the wave height field with observations from the ERS-1 altimeter and with
+
+buoy data. Of course, the surface winds are validated in a similar fashion. Finally, I will describe how we attempt
+
+to investigate the quality of the wave forecast and the forecast skill.
+
+Presently, we have two operational implementations of the WAM model here at ECMWF. One is a global model
+
+with resolution, the other is a limited-area version covering the North Atlantic and the European seas with a
+
+resolution. The spectrum is discretized in 30 frequency bins and 24 directions. The integration time step is
+
+typically 15 min. The WAM model is a fully vectorised code, which can be run in parallel mode.
+
+Figure  20. The energy balance for old wind sea.
+
+Sensitivity to wind field errors
+
+A well-known rule of thumb in wave modelling is that a considerable part of errors in the wave field is caused by
+
+errors in the wind field. It is by no means claimed that there are no errors in the wave models themselves, far from
+
+it, but the quality of the wind field is dominating the quality of the wave analysis and forecast. This is easily un-
+
+0.5°
+0.25°
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 43
+
+derstood referring to the similarity analyses of the previous section. There we found that for old wind sea the di-
+
+mensionless wave variance becomes constant.  In terms of the significant wave height we find
+
+and therefore a 10% error in wind speed gives a 20% error in wave height. This sensitive dependence on wind
+
+speed may be used in a positive sense. If one has reliable wave data, and if the wave model gives reasonable results,
+
+then observed wave heights could be utilised to provide useful information on the state of the atmosphere.
+
+Figure  21. Evolution of two-dimensional spectrum for a turning wind field.  Wind is turned after 6 h by .
+
+However, assuming that we have reliable wave data, this all relies on the quality of the wave model. Although the
+
+discussion in the previous section may have increased the confidence in the performance of the wave model, it is
+
+good to have another example, now from real life. The case in question occurred during the Surface Wave Dynam-
+
+ics Experiment (SWADE). This was an extensive experiment carried out from October 1990 until March 1991 off
+
+the east coast of the United States. The primary objectives were to understand the dynamics of the evolution of the
+
+surface wave field and to determine the effect of waves on the air/sea transfer of momentum. In order to achieve
+
+these objectives, concerted efforts were made to measure the surface meteorology with sufficient accuracy and spa-
+
+tial coverage so that the surface wind field was known sufficiently accurately. In addition, a dense array of wave
+
+buoys was employed.
+
+Hs U10
+2∼
+
+90°
+
+
+
+The wave model
+
+44 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+The main event occurred on 26 October 1990 with extreme wave heights of 8 m. This case is shown in Fig. 22 .
+
+The reason why I show this case is the following. Dotted lines show the wind speeds according to the then opera-
+
+tional ECMWF model and, in the plots for wave height, the dotted line refers to the WAM model as driven by the
+
+ECMWF winds. It is clear that, compared with the observed winds and waves, the modelled ECMWF winds and
+
+WAM wave heights are too low, especially during the extreme events. On the other hand, the full lines give a much
+
+better agreement with observations. These winds were obtained by Ocean Weather/Atmospheric Environment
+
+Service (OW/AES) and are the result of a man–machine mix procedure that takes maximum advantage of all the
+
+available tools and information: numerical modelling, the know-how of the experienced meteorologist and the
+
+measured sea state. The manual analysis makes use of all available pressure, temperature, ship and buoy data. Data
+
+are screened for inconsistencies and measured winds are adjusted for height. Anyway, in this way, high-quality
+
+wind fields were obtained and, as a result, the WAM model shows very good agreement when comparing modelled
+
+and observed wave height. The wave model is, therefore, a useful tool for quality control of the atmospheric state
+
+over the oceans.
+
+Validation of wind and wave analysis using ERS-1 and buoy data
+
+Fortunately, the quality of the ECMWF wind field is usually better than in the last example, although it should be
+
+emphasised that the wave results are usually the worst at the east coast of the USA.
+
+The quality of wind and wave forecast is monitored daily by the analysts here at ECMWF. In addition, wind and
+
+wave quality is checked daily by comparing modelled results with altimeter data from ERS-1. An example is pro-
+
+vided in Figs. 23 –24 . Every month collocations of observed and modelled wave height and wind speed are col-
+
+lected and used to produce scatter plots displayed in Figs. 25 –26 . It is emphasised that, regarding the wave height,
+
+we compare the six-hour first-guess wave height with altimeter wave height because nowadays in the wave analysis
+
+we use altimeter data to obtain an optimal analysis. Comparison with the six-hour first-guess is a fair comparison,
+
+since the satellite then probes a completely different part of the globe. Anyway, the comparison between altimeter
+
+and modelled data shows a very good agreement. The standard deviation of error for wind speed is below 2 m/s
+
+while that for wave height is about 40 cm. By comparison, it should be noted that during the Seasat period (Sep-
+
+tember, 1978) the standard deviation of error for wave height was about 1 m (Janssen et al, 1989) thus considerable
+
+progress has been achieved over the years.
+
+It must be pointed out in this context that altimeter data are not free of error. When compared with buoy data, the
+
+altimeter underestimates the wave height, especially in extreme cases. This may amount to an underestimation by
+
+as much as 10%. However, it is only fair to point out that buoys also have their problems under extreme conditions.
+
+Try to imagine how a buoy with a mast of 5 m height would behave in a 10 m wave field. In any event, it is of
+
+interest to compare wave model results with buoy data. A few examples, for March 1995, may be found in Figs.
+
+27 –28 . These examples show that, in general, the modelled wave heights underestimate the observed wave height,
+
+despite the reasonably good agreement between observed and modelled analysed winds. This may come as a sur-
+
+prise because the altimeter data comparison gave a somewhat different picture. The confusion is most likely caused
+
+by the fact that the observed buoy winds are assimilated in the ECMWF atmospheric model (for this reason there
+
+is good agreement in wind speed) but the observed winds have not been corrected for standard height. Since buoys
+
+observed the wind typically at a height of 4–5 m, this may result in a slowing down of the air flow by some 10–
+
+15%. This may explain the underprediction of wave height. On the other hand, one cannot fully exclude the pos-
+
+sibility that the altimeter underestimates the wave height.
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 45
+
+Figure 22. Comparison between the significant wave height recorded at the two positions and the corresponding
+
+values obtained using the ECMWF and OW/AES wind.
+
+
+
+The wave model
+
+46 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Figure  23. Collocation of altimeter and modelled wave height.
+
+Figure  24. Collocation of altimeter and modelled wind speed.
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 47
+
+Figure  25. Scatter plot of altimeter versus modelled wave height.
+
+Figure  26. Scatter plot of altimeter versus modelled wind speeds.
+
+
+
+The wave model
+
+48 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Figure  27. Comparison of European Centre ocean wave heights with buoy observations.
+
+Figure  28. Comparison of European Centre surface winds with buoy observations.
+
+Nevertheless, it should be evident that, when considering the standard deviation of error, there is better agreement
+
+with the altimeter data than with the buoy data. A probable reason that explains this discrepancy is related to the
+
+representativeness of the observation. In the case of the altimeter data we have an observation along the satellite
+
+track every 7 km. We obtain a superobservation from these data by averaging 30 observations. The superobserva-
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 49
+
+tion thus obtained represents the state of the wave field over a line of about 200 km length and is therefore a quantity
+
+which may be compared with the modelled wave height which represents an average over a box of .
+
+Buoy observations are less useful in this context because they usually refer to a 20 min average ( )
+
+and, therefore, represent scales which are not present in the wave model.
+
+Quality of wave forecast
+
+The quality of the forecast is usually judged by a comparison with the verifying analysis. This, of course, requires
+
+some confidence in the quality of the analysis. In the previous section we have seen that, compared with the altim-
+
+eter data, the standard deviation of error is of the order of 50 cm and is, therefore, quite small.
+
+In Figs. 29 –31 show forecast verification scores for the Northern Hemisphere, Tropics and the Southern Hemi-
+
+sphere. The left upper panel shows the mean error of forecast, the right upper panel shows the standard deviation
+
+of error of the forecast, the left lower panel shows the mean of the analysis, while the right lower panel gives the
+
+persistence error (persistence assumes that the state does not change in time and is given by the analysis at the time
+
+the forecast was started). These quantities are plotted as a function of forecast day, and we have taken the average
+
+over the three-month period from January until March 1995. Here, we concentrate on the standard deviation of er-
+
+ror and, by comparing the error of the forecast with the one for persistence, we conclude that in the Northern Hem-
+
+isphere, Tropics and Southern Hemisphere we have a useful forecast up to day 10, because the forecast error is
+
+always smaller than the persistence error. Nevertheless, it appears that the error growth is different in the storm
+
+tracks of the Southern and Northern Hemisphere (mainly wind waves!) than in the Tropics. In order to quantify
+
+this I have determined the relative rate of change of forecast error , defined as
+
+where is the average wave height over the area in question. Approximating the time derivative by the differ-
+
+ence between day 3 and analysis error for the Northern and Southern Hemisphere, I get a relative increase of 0.08
+
+per day, while for the Tropics I get 0.05 per day. The tropical area is, therefore, more predictable in this sense. A
+
+possible reason for the better predictability in the Tropics may be given by noting that the sea state in the tropics is
+
+dominated by swell that has been generated by winds from a few days before. These winds are of a better quality
+
+because they are from a shorter forecast range, or even from an analysis. This simply depends on the travel time
+
+of the swell from the generation area towards the area of interest. On the other hand, in the storm tracks the pre-
+
+dictability of the waves depends, to a larger extent, on the predictability of the surface winds because the sea state
+
+is more dominated by wind sea.
+
+Finally, it is also of interest to study the daily variations in forecast error and standard deviation of forecast error.
+
+I have displayed these in Fig. 32 for the Northern Hemisphere for the period July until September 1994. Note the
+
+start of a new season in the Northern Hemisphere in September!
+
+1.5° 1.5°×
+10 20 km–∼
+
+σ
+
+1
+Hs
+-------∂σ
+
+∂t
+------
+
+Hs
+
+
+
+The wave model
+
+50 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Figure  29. Forecast verification against analysis for Northern Hemisphere.
+
+Figure  30. Same as Fig. 29  but now for Tropics.
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 51
+
+Figure  31. Same as Fig. 29  but now for Southern Hemisphere.
+
+3. BENEFITS FOR ATMOSPHERIC MODELLING
+
+In the final section I would briefly like to point out certain benefits of wave forecasting for atmospheric modelling.
+
+First of all, a wave model may be used as a diagnostic tool to search for problems in an atmospheric model. As an
+
+example we mention our analysis of the apparent over-activity of the atmospheric model during the forecast. Sec-
+
+ondly, there are some suggestions that momentum and energy transfer from atmosphere to ocean is sea state de-
+
+pendent. In order to obtain a consistent momentum and energy balance, one has to couple wind and waves. Such
+
+a coupled wind–wave model gives an improved climate in the Northern Hemisphere.
+
+3.1  Use as a diagnostic tool
+
+Nowadays there are several examples known that show the benefits of ocean wave forecasting for atmospheric
+
+modelling. For example, by running the WAM model on surface stresses and surface winds from the ECMWF
+
+model, Zambresky (1986) found an inconsistency between the two. Typically, forcing with surface winds gave
+
+higher wave height in extreme events. This inconsistency was resolved by Janssen et al. (1992), who noted that
+
+the atmospheric model's time-split scheme, which treated physics and dynamics separately, had a time-step de-
+
+pendent equilibrium. An implicit treatment of both physics and dynamics removes this deficiency. When the semi-
+
+Lagrangian advection scheme is used, longer time steps are allowed and the use of the time-split scheme would
+
+have further enhanced the inconsistency between surface wind and stress. The new implicit integration scheme
+
+(applied to velocity, temperature and moisture) was therefore introduced with the semi-Lagrangian T213 version
+
+of the ECMWF model (Ritchie et al., 1994).
+
+Another example is the apparent over-activity of the atmospheric model during the forecast. This is very evident
+
+from a plot of the mean forecast error in wave height as function of time. Figs. 33 –34 show this for the Northern
+
+
+
+The wave model
+
+52 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+and Southern Hemisphere for the year 1994. The corresponding plots of the year 1993 showed a less severe prob-
+
+lem. In this context it is also of interest to study the mean of the forecast wave field and the comparison with the
+
+analysed wave field. Figs. 35 –39 therefore show the mean of analysis, day 1, day 3, day 5 and day 7 forecast for
+
+the month of May 1994. We point out that, in the Southern Hemisphere, there is an increase in wave height during
+
+the forecast reaching 1.5 m in certain small areas, while in the Tropics there is also a considerable increase over
+
+wide areas of about 0.5 m. Following the 2.5 m contour line during the forecast it seems that the increase in the
+
+Tropics is caused by too active a Southern Hemisphere storm track during the forecast.
+
+Finally, we remark that this problem is fortunately less severe with subsequent model changes introduced on and
+
+after 4 April 1995.
+
+Figure  32. Daily error of forecast for days 1, 3 and 7.  Period is July-September 1994.  Area is Northern
+
+Hemisphere.
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 53
+
+Figure  33. Mean forecast error for 1993 and 1994 in Northern Hemisphere.
+
+
+
+The wave model
+
+54 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Figure  34. Mean forecast error for 1993 and 1994 in Southern Hemisphere
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 55
+
+Figure  35. Monthly mean of analysis.
+
+Figure  36. Monthly mean of day 1 forecast.
+
+
+
+The wave model
+
+56 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Figure  37. Monthly mean of day 3 forecast.
+
+Figure  38. Monthly mean of day 5 forecast.
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 57
+
+Figure  39. Monthly mean of day 7 forecast.
+
+3.2  Coupled wind-wave modelling
+
+We have already pointed out, on several occasions, that ocean waves may play a role in the momentum and energy
+
+transfer at the ocean surface. We have seen that young wind sea, which has steeper waves, will result in an en-
+
+hancement of the drag coefficient by some 50%. The question now is to what extent this may have consequences
+
+for the large-scale atmospheric circulation.
+
+In order to investigate this, Pedro Viterbo and I developed a coupled atmosphere, ocean-wave model (Janssen and
+
+Viterbo, 1995). In essence, the atmospheric model runs for one time step, then the ocean wave model is run next
+
+for one time step forced by the winds provided by the atmospheric model. Because one has explicit knowledge of
+
+the wind input term of the wave model, one may determine the wave-induced stress . This then gives informa-
+
+tion on the amount of slowing down of the air flow. We parametrized this slowing down by allowing the Charnock
+
+parameter to be a function of the wave-induced stress. We took (for more details on this cf Komen et al., 1994) as
+Charnock parameter
+
+and a considerable enhancement of the Charnock parameter is found when . Note that, in a "steady" state,
+
+we always have . The final step is then that the Charnock parameter is passed on to the atmospheric model
+
+which then performs a run with the updated  for one time step and so on.
+
+Before I briefly discuss our results with climate runs it is instructive to study the impact of sea-state dependent mo-
+
+mentum transfer on a single depression. This study was performed by Doyle (1994) who performed a sensitivity
+
+experiment by studying the evolution of a single depression with and without a sea state dependent Charnock pa-
+
+rameter (called coupled and control). His results are displayed in Figs. 40 –41 and they show that the relatively
+
+young wind sea will result in a rougher surface which apparently fills up the pressure low by about 6 mb on a times-
+
+cale of 2.5 days. We remark that these results were obtained with a mesoscale model with horizontal resolution of
+
+30 km.
+
+τw
+
+α β 1
+τw
+τ
+
+-----– 
+ 
+
+1 2⁄–
+, β 0.01= =
+
+τw τ≅
+τw τ<
+
+α
+
+
+
+The wave model
+
+58 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Figure 40. Simulated sea-level pressure for b) control and c) coupled simulations for the 60th time. The isopleth
+
+interval is 4 mb.  Regions of lowest model layer wind speed in excess of 25 m/s are denoted by shading.  Tick
+
+marks are plotted along the borders every third grid point or 90 km.  (From Doyle, 1994, with permission.)
+
+Figure  41. The corresponding central pressure trace of the cyclone.
+
+Finally, I would like to present results Viterbo and myself obtained from extended-range runs. We performed
+
+15 runs of 120 days long with the T63 version of the coupled model and we compared the mean over the last 90
+
+days with results from the model in uncoupled mode (Charnock parameter ). We took the winter sea-
+
+son of 1990.
+
+α 0.0185=
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 59
+
+Fig. 42 shows the impact of waves on the atmospheric circulation in the Northern Hemisphere and the comparison
+
+with the analysed climate. We note a considerable improvement in 500 mb height field over Europe and Siberia in
+
+the coupled runs when comparing with the analysis.
+
+A large-scale impact of waves on the atmospheric circulation is also noted in the Southern Hemisphere. There is,
+
+however, no improvement when results are compared with the analysis. In this context it should be pointed out that
+
+the Southern Hemisphere analysis is biased to a large extent towards the first-guess of the atmospheric model be-
+
+cause of the lack of data. Therefore, the Southern Hemisphere analysis is more likely to resemble the climate sim-
+
+ulation of the uncoupled model.
+
+We close by remarking that we are still at the beginning of understanding the coupled ocean-wave/atmosphere
+
+model. It is expected, however, that ocean waves will play a role in future simulations of the earth climate by means
+
+of coupled atmosphere, ocean-circulation models. For one thing, waves have impact in the storm areas but, more
+
+importantly perhaps, ocean waves also affect the stress and wind field in the Tropics to a considerable extent. This
+
+is shown in the very last figure Fig. 43 where we have plotted the difference in wind field between coupled and
+
+control during the summer of 1989. As is evident, there are considerable differences in the monsoon area and in
+
+the warm pool area east of Indonesia. This will affect the temperature distribution of the ocean which, in its turn
+
+..., etc.
+
+Figure  42. Comparison of coupled and control 500 mb fields with analysis period winter 1990.
+
+
+
+The wave model
+
+60 Meteorological Training Course Lecture Series
+
+ ECMWF, 2003
+
+Figure  43. Difference in surface wind for summer 1989.
+
+REFERENCES
+
+Broer, L J F, 1974: On the Hamiltonian theory of surface waves.  Appl Sci Res, 30, 430-446.
+
+Brooke Benjamin, T and J E Feir, 1967: The disintegration of wave trains on deep water. J Fluid Mech, 27, 417-
+
+430.
+
+Charnock, H, 1955: Wind stress on a water surface.  Q J Royal Meteorol Soc, 81, 639-640.
+
+Davidson, R C, 1972: Methods in non-linear plasma theory, Academic Press.
+
+Doyle, J D, 1994: Air-sea interaction during marine cyclogenesis. Proc of the Life Cycles of Extratropical Cy-
+
+clones, Bergen.
+
+Drazin, P G and W H Reid, 1981: Hydrodynamic stability.  Cambridge University Press, Cambridge, 525 pp.
+
+Hasselmann, K, 1962: On the non-linear energy transfer in a gravity-wave spectrum, part 1: general theory. J Fluid
+
+Mech, 12, 481.
+
+Janssen, P A E M, P Lionello, M Reistad and A Hollingsworth, 1989: Hindcasts and data assimilation studies with
+
+the WAM model during the Seasat period.  J Geophys Res, C94, 973-993.
+
+Janssen, P A E M, A C M Beljaars, A Simmons and P Viterbo, 1992: On the determination of surface stresses in
+
+an atmospheric model.  Monthly Weather Review, 120, 2977-2985.
+
+Janssen, P A E M and P Viterbo, 1995: Ocean waves and the atmospheric climate, submitted.
+
+JONSWAP: K Hasselmann et 15 al, 1973: Measurements of wind-wave growth and swell decay during the Joint
+
+North Sea Wave Project (JONSWAP), Dtsch Hydrogr Z Suppl A 8(12), 95 p.
+
+Kitaigorodskii, S A, 1962: Application of the theory of similarity to the analysis of wind-generated water waves as
+
+a stochastic process, Bull Acad Sci USSR Geophys, Ser No. 1, 73 p.
+
+Komen, G J, L Cavaleri, M Donelan, K Hasselmann, S Hasselmann and P A E M Janssen, 1994: Dynamics and
+
+modelling of ocean waves, Cambridge University Press.
+
+Luke, J C, 1967: A variational principle for a fluid with a free surface.  J Fluid Mech, 27, 395-397.
+
+Lighthill, M J, 1965: Contributions to the theory of waves on non-linear dispersive systems. J Inst Math Appl, 1,
+
+
+
+The wave model
+
+Meteorological Training Course Lecture Series
+
+ ECMWF, 2003 61
+
+269-306.
+
+Miles, J W, 1957: On the generation of surface waves by shear flows.  J Fluid Mech, 3, 185-204.
+
+Miles, J W, 1977: On Hamilton's principle for surface waves.  J Fluid Mech, 83, 153.
+
+Phillips, O H, 1960: The dynamics of unsteady gravity waves of finite amplitude, part 1. J Fluid Mech, 4, 426-434.
+
+Phillips, O M, 1977: The dynamics of the upper Ocean, 2nd edn, Cambridge University Press.
+
+Plant, W J and J W Wright, 1977: Growth and equilibrium of short gravity waves in a wind-wave tank. J Fluid
+
+Mech, 82, 767-793.
+
+Ritchie, H, C Temperton, A Simmons, M Hortal, T Davies, D Dent and M Hamrud, 1995: Implementation of the
+
+semi-Lagrangian method in a high-resolution version of the ECMWF forecast model. Monthly Weather Review,
+
+123, 489-514.
+
+Snodgrass, F E, G W Groves, K Hasselmann, G R Miller, W H Munk and W M Powers, 1966: Propagation of ocean
+
+swell across the Pacific.  Philos Trans Roy Soc London, A249, 431.
+
+Snyder, R L, F W Dobson, J A Elliott and R B Long, 1981: Array measurements of atmospheric pressure fluctua-
+
+tions above surface gravity waves.  J Fluid Mech, 102, 1-59.
+
+Stokes, G G, 1847: On the theory of oscillatory waves.  Trans Camb Phil Soc, 8, 441-455.
+
+Whitham, G B, 1974: Linear and non-linear waves, Wiley.
+
+Yuen, H C and B M Lake, 1982: Nonlinear dynamics of deep water gravity waves.  Adv Appl Mech, 22, 67-229.
+
+Zakharov, V E, 1968: Stability of periodic waves of finite amplitude on the surface of a deep fluid. J Appl Mech
+
+Techn Phys, 9, 190-194.
+
+Zambresky, L, 1986: The WAMS project, study III. Unpublished Report 116 p [Available from KNMI PO Box
+
+201, 3730 AE de Bilt, The Netherlands].

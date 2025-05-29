@@ -1,0 +1,1413 @@
+Moist Processes Lecture Note Series
+
+The parametrization of cloud cover
+
+A. M. Tompkins
+
+Research Department
+
+April 18, 2005
+
+
+
+Series: ECMWF Technical Memoranda
+
+A full list of ECMWF Publications can be found on our web site under:
+http://www.ecmwf.int/publications/
+
+Contact: library@ecmwf.int
+
+c
+�
+
+Copyright 2005
+
+European Centre for Medium-Range Weather Forecasts
+Shinfield Park, Reading, RG2 9AX, England
+
+Literary and scientific copyrights belong to ECMWF and are reserved in all countries. This publication is not
+to be reprinted or translated in whole or in part without the written permission of the Director. Appropriate
+non-commercial use will normally be granted under the condition that reference is made to ECMWF.
+
+The information within this publication is given in good faith and considered to be true, but ECMWF accepts
+no liability for error, omission and for loss or damage arising from its use.
+
+http://www.ecmwf.int/publications/
+
+
+The parametrization of cloud cover
+
+1 Introduction
+
+When considering the approach to model clouds in general circulation models (GCMs), there are a number of
+zero order issues that require attention, in addition to the representation of the complex warm phase and ice
+phase microphysics processes that govern the growth and evolution of cloud and precipitation particles.
+
+Unlike cloud resolving models (CRMs) or large-eddy models (LEMs), which, having grid resolutions finer
+than O(1km), aim to resolve the motions relevant for the clouds under consideration, GCMs must additionally
+consider macroscopic geometrical effects. Claiming to resolve cloud scale motions allows CRMs and LEMs
+to make the assumption that each grid scale is completely cloudy if condensate is present. This approach is
+clearly not adequate for GCM size grid scale of O(100km) for which clouds are a subgrid-scale phenomenom,
+(although some schemes such as Ose, 1993; Fowler et al., 1996, have indeed adopted this approach).
+
+GCMs must therefore consider cloud geometrical effects. To reduce the fractal cloud to a tractable low dimen-
+sional object, GCMs usually reduce the problem to the specification of the:� horizontal fractional coverage of the gridbox by cloud,� vertical fractional coverage of the gridbox by cloud,� sub-cloud variability of cloud variables in both the horizontal and vertical, and the� overlap of the clouds in the vertical column
+The above list is far from exhaustive, and implicitly neglects interactions between adjacent GCM columns (for
+example, how cloud affects solar fluxes in adjacent columns at low sun angles), probably a safe assumption for
+grid-scales exceeding 10km or so (Di Giuseppe and Tompkins, 2003)
+
+In fact, most GCMs further simplify the above list (i) by assuming clouds fill GCM grid boxes in the verti-
+cal and (ii) by neglecting many of the consequences of sub-cloud fluctuations of cloud properties. Both of
+these are considerable simplifications. Although vertical GCM grids are much finer than the horizontal res-
+olution, the same is of course also true of cloud processes. Using O(50) levels in the vertical implies that
+some cloud systems or microphysical related processes are barely if at all resolved, such as tropical thin cirrus
+(Dessler and Yang, 2003), or the precipitation melting layer (Kitchen et al., 1994), which can have important
+implications (Tompkins and Emanuel, 2000). Likewise, many authors have highlighted the biases that can be
+introduced when sub-cloud fluctuations are neglected, due to the strong nonlinearity of cloud and radiative
+processes (Cahalan et al., 1994; Barker et al., 1999; Pincus and Klein, 2000; Pomroy and Illingworth, 2000;
+Fu et al., 2000; Rotstayn, 2000; Larson et al., 2001).
+
+Nevertheless, the zero order primary task of cloud schemes, in addition to representing the microphysics of
+clouds, is to predict the horizontal cloud coverage. It is clear that a utopian perfect microphysical model will
+render poor results if combined with an inaccurate predictor of cloud cover, due to the incorrect estimate of
+in-cloud liquid water. This lecture presents the general approaches used to date in GCMs for this task.
+
+2 Background
+
+The first thing to realize is that fractional cloud cover can only occur if there is horizontal subgrid-scale vari-
+ability in humidity and/or temperature (controlling the saturation mixing ratio, qs). If temperature and humidity
+
+Technical Memorandum No. Moist Processes Lecture Note Series 1
+
+
+
+The parametrization of cloud cover
+
+Heterogeneous
+
+distribution
+
+of T and q
+
+q
+
+x
+
+q
+
+sq
+
+Another implication of the above is that clouds must exist Figure 1: Schematic showing that partial cloud cover in a gridbox in only possible if temperature or humidity fluctuations
+exist. The blue line shoes humidity and the yellow line saturation mixing ratio across an arbitrary line representing a
+gridbox. If all supersaturation condenses as cloud then the shaded regions will be cloudy.
+
+are homogeneous, then either the whole grid box is subsaturated and clear, or supersaturated and cloudy1 .
+
+This is illustrated schematically in Fig. 1. Fluctuations in temperature and humidity may cause the humidity
+to exceed the saturated value on the subgrid scale. If it assumed that all this excess humidity is immediately
+converted to cloud water (and likewise that any cloud drops evaporate instantly in subsaturated conditions),
+then it is clear that the grid-mean relative humidity (RH, where the overline represents the gridbox average)
+must be less unity if the cloud cover is also less than unity, since within the cloudy parts of the gridbox RH � 1
+and in the clear sky RH � 1. Generally speaking, since clouds are unlikely when the atmosphere is dry, and
+since RH is identically 1 when C � 1, there is likely to be positive correlation between RH and C.
+The main point to emphasize is that, all cloud schemes that are able to diagnose non-zero cloud cover for
+RH � 1 (i.e. any scheme other than an “all-or-nothing” scheme) must make an assumption concerning the
+fluctuations of humidity and/or temperature on the subgrid-scale, as in Fig. 1. Either (i) they will explicitly
+give the nature of these fluctuations, most usually by specifying the probability density function (PDF) for the
+total water at each gridcell, or (ii) they will implicitly assume knowledge about the time-mean statistics of the
+fluctuations (i.e. the actual PDF at each grid point is maybe not known).
+
+It is important to recall, when trying to categorize the seemingly diverse approaches to cloud cover parametriza-
+tion, that this central fact ties all approaches together.
+
+3 Relative humidity schemes
+
+Relative humidity schemes are called such because they specify a diagnostic relationship between the cloud
+cover and the relative humidity.
+
+In the last section we saw that subgrid-scale fluctuations allow cloud to form when RH � 1. RH schemes
+formulize this by setting a critical RH (denoted RHcrit ) at which cloud is assumed to form, and then increase C
+
+1For simplicity, throughout this text we ignore the subtle complication of the ice phase, where supersaturations are common
+(Heymsfield et al., 1998; Gierens et al., 2000; Spichtinger et al., 2003)
+
+2 Technical Memorandum No. Moist Processes Lecture Note Series
+
+
+
+The parametrization of cloud cover
+
+according to a monotonically increasing function of RH , with C=1 identically when RH=1.
+
+One commonly used function was given by Sundqvist et al. (1989):
+
+C � 1 � 1 � RH
+1 � RHcrit (1)
+
+Thus it is apparent that RHcrit defines the magnitude of the fluctuations of humidity (the humidity variance). If
+RHcrit is small, then the subgrid humidity fluctuations must be large, since cloud can form in dry conditions.
+
+It is clear that one of the drawbacks of this type of scheme is that the link between cloud cover and local
+dynamical conditions is vague. Convection will indeed produce cloud if its local moistening effect is sufficient
+to increase RH past the critical threshold, but it is apparent that a grid cell with 80% RH undergoing deep
+convection is likely to have different cloud characteristics than a gridcell with 80% RH in a frontal stratus
+cloud. RH schemes simply state that, averaged across all conditions across the globe, a gridcell with X% RH
+will have Y% cloud cover.
+
+This lack of differentiation between different local conditions lead some authors to augment their RH schemes.
+The ECHAM4 climate model Roeckner et al. (1996) augments the cloud cover in the presence of a strong
+temperature inversion to improve the representation of stratocumulus.
+
+Other authors augment their schemes by using additional predictors to RH . The Slingo (1980, 1987) scheme
+was used operationally in ECMWF until its replacement by the Tiedtke (1993) scheme in 1995, and as of April
+2005 is still used in the Tangent linear and adjoint computations of the 4D-Var inner-loops (although the aim is
+to replace this in the future by Tompkins and Janisková, 2004). The basic form for the mid-level cloud cover
+(Cmid) is given as
+
+C �mid � � RH � RHcrit1 � RHcrit � 2 � (2)
+but Slingo modifies this according to an additional predictor, the vertical velocity at 500 hPa (ω500), thus
+
+Cmid � C �mid ω500ωcrit � (3)
+if 0 	 ω500 	 ωcrit while the cloud cover is set to zero if subsidence is occurring (ω500 	 0).
+Likewise Xu and Randall (1996) used a cloud resolving model (CRM) to derive an empirical relationship for
+cloud cover based on the two predictors of RH and cloud water content:
+
+C � RH p 
+ 1 � exp � � α0ql�
+qs � qv � γ �� � (4)
+
+where γ , α0 and p are ’tunable’ constants of the scheme, with values chosen using the CRM data. One weakness
+of such a scheme is, of course, this dependence on the reliability of the CRM’s parametrizations, in particular
+the microphysics scheme. Additionally, it is unlikely that the limited set of (convective) cases used as the
+training dataset used would encompass the full range of situations that can naturally arise, such as cloud in
+frontal systems for example.
+
+While these latter schemes use additional predictors for cloud cover, we shall still refer to them as “relative
+humidity” schemes, since the common and central predictor in all cases is RH . It is doubtful if any of the
+schemes could be reasonably simplified by replacing the RH dependence with a fixed value.
+
+Technical Memorandum No. Moist Processes Lecture Note Series 3
+
+
+
+The parametrization of cloud cover
+
+into account, and assume temperature is 
+
+tdq)
+
+Clim Dyn
+
+qt
+
+G
+(q
+
+t)
+
+qs
+
+x
+
+y
+
+C
+
+here
+
+Figure 2: Schematic showing the statistical scheme approach. Upper panel shows an idealized PDF of total water (qt).
+The vertical line represents the saturation mixing ratio qt � qs, thus all the points under the PDF to the right of this line
+are cloudy. The integral of this area translates to the cloudy portion of the gridbox, marked on the lower part of the figure,
+with darker shading schematically representing high total water values.
+
+4 Statistical schemes
+
+Instead of describing the spatial and temporal mean statistics of the humidity fluctuations such as the RH
+schemes, another group of schemes take a different approach, by specifying the underlying distribution of
+humidity (and/or temperature) variability at each grid box. This is shown schematically in Fig. 2. If the PDF
+form for total water qt is known, then the cloud cover is simply the integral over the part of the PDF for which
+qt exceeds qs:
+
+C ��� ∞
+qs
+
+G
+�
+qt � dqt � (5)
+
+Likewise, the cloud condensate is given by
+
+q̄c � � ∞
+qs
+
+�
+qt � qs � G � qt � dqt � (6)
+
+As always we are assuming that all supersaturation is immediately condensed as cloud. Here we are also
+ignoring temperature fluctuations for simplicity, but these can be included, as outlined in appendix A.
+
+The main tasks of the statistic scheme is therefore to give a suitable form for the PDF of total water fluctuations,
+and to derive its defining moments.
+
+4.1 Defining the PDF
+
+Various distributions have been used, many of which are symmetrical. Smith (1990) uses a symmetric triangu-
+lar PDF, diagnosing the variance based on a critical RH function at which cloud is determined to form, later
+modified by Cusack et al. (1999). This PDF has been subsequently adopted by Rotstayn (1997) and Nishizawa
+(2000). LeTreut and Li (1991) use a uniform distribution, setting the distribution’s variance to an arbitrarily
+
+4 Technical Memorandum No. Moist Processes Lecture Note Series
+
+
+
+The parametrization of cloud cover
+
+Table 1: PDF forms used in statistical cloud schemes. In the summary column, the key is: U=unimodal, B=Bimodal,
+S=Symmetric, Sk=Skewed.
+
+PDF Shape Summary Reference
+Double Delta U,S Ose (1993); Fowler et al. (1996)
+Uniform U,S LeTreut and Li (1991)
+Triangular U,S Smith (1990); Rotstayn (1997); Nishizawa (2000)
+Polynomial U,S Lohmann et al. (1999)
+Gaussian U,S Bougeault (1981); Ricard and Royer (1993); Bechtold et al. (1995)
+Beta U,sk Tompkins (2002)
+Log-normal U,sk Bony and Emanuel (2001)
+Exponential U,Sk Bougeault (1981); Ricard and Royer (1993); Bechtold et al. (1995)
+Double Gaussian/Normal B,Sk Lewellen and Yoh (1993); Golaz et al. (2002)
+
+defined constant. A Gaussian-like symmetrical polynomial function was used by Lohmann et al. (1999) with
+variance determined from the subgrid-scale turbulence scheme following Ricard and Royer (1993), who investi-
+gated Gaussian, exponential and skewed PDF forms. Bechtold et al. (1992) based their scheme on the Gaussian
+distribution, which was modified in Bechtold et al. (1995) to a PDF linearly interpolated between Gaussian and
+exponential distributions. Bony and Emanuel (2001) have introduced a scheme that uses a generalized Log-
+Normal distribution. Lewellen and Yoh (1993) detail a parameterization that uses a Bi-normal distribution that
+can be skewed as well as symmetrical and is bimodal, although a number of simplifying assumptions were
+necessary in order to make the scheme tractable. Likewise Golaz et al. (2002) also give a bimodal scheme.
+These forms are summarized in table 1 and drawn schematically in Fig. 3.
+
+Examples of PDFs measured in the literature are shown in Fig. 4. Although it is difficult to theoretically derive a
+PDF form, since the qt distribution is the result of a large number of interacting processes, therefore forcing the
+use of empirical methods, it is possible to use physically-based arguments to justify certain functional forms.
+For example, in the absence of other processes, large-scale dynamical mixing would tend to reduce both the
+variance and the asymmetry the distribution. Therefore, the Gamma and Lognormal distributions would be
+difficult to use since they are always positively skewed, and only tend to a symmetrical distributions as one
+of their defining parameters approaches infinity. Bony and Emanuel (2001) attempt to circumnavigate this by
+switching between Lognormal and Gaussian functions at a threshold skewness value.
+
+Another problem that distributions such as the Lognormal, Gamma, Gaussian and Exponential suffer from is
+that they are all unbounded functions. Thus, if these functional forms are used, the maximum cloud condensate
+mixing ratio approaches infinity, and part of the grid cell is always covered by cloud. Precautionary measures,
+such as the use of a truncated function, can be taken, but this increases the number of parameters required
+to describe the distribution, and again introduces undesirable discreteness. Moreover, functions such as the
+Gaussian function or the polynomial used by Lohmann et al. (1999) are also negatively unbounded, implying
+that part of the gridcell has negative water mass. The choice of function must also involve a fair degree of
+pragmatism, since in addition to providing a good fit to the available data, it must also be sufficiently simple
+and of few enough degrees of freedom to be of use in a parameterization scheme. For example, Larson et al.
+(2001) were able to provide good fits to their aircraft data using a 5-parameter double Gaussian function,
+but it is unclear how these parameters would be determined in a GCM cloud scheme. The Beta distribution
+used by Tompkins (2002) is bounded and can provide both symmetrical and skewed distributions, but has the
+disadvantage of an upper limit on the skewness when the distribution is restricted to a sensible bell-shaped
+regime, and that the form is not mathematically as simple as alternative unimodal distributions.
+
+Considering the question of whether a unimodal distribution is necessary, we refer to a number of observational
+
+Technical Memorandum No. Moist Processes Lecture Note Series 5
+
+
+
+The parametrization of cloud cover
+
+Many function forms have been used
+
+symmetrical distributions:
+
+Triangular:
+Smith QJRMS (90)
+
+s or qt
+
+s or qt
+
+Gaussian:
+Mellor JAS (77)
+
+s or qt
+
+G
+(s
+
+ o
+r 
+
+q
+t)
+
+Uniform:
+Letreut and Li (91)
+
+s or qt
+
+s4 polynomial:
+Lohmann et al. J. Clim (99)
+
+skewed distributions:
+
+s or qt
+
+G
+(s
+
+ o
+r 
+
+q
+t)
+
+Exponential:
+Sommeria and Deardorff
+
+Lognormal:
+Bony & Emanuel 
+
+JAS (01)
+
+s or qt s or qt
+
+Gamma:
+Barker et al. JAS (96)
+
+JAS (77)
+
+s or qt
+
+Beta:
+Tompkins JAS (02)
+
+s or qt
+
+Double Normal:
+Lewellen and Yoh JAS (93)
+
+One of two bimodal distributions (Golaz et al. JAS02)
+
+Figure 3: Schematic of PDF forms for G � qt � used to date, divided into symmetrical and skewed categories. The papers
+referred to are: LeTreut and Li (1991); Smith (1990); Mellor (1977); Lohmann et al. (1999); Sommeria and Deardorff
+(1977); Bony and Emanuel (2001); Barker (1996); Tompkins (2002); Lewellen and Yoh (1993). Note that Barker (1996)
+is not describing a cloud scheme, but a corrective mechanism for radiative biases that assumed this distribution for
+in-cloud water fluctuations.
+
+6 Technical Memorandum No. Moist Processes Lecture Note Series
+
+
+
+The parametrization of cloud cover
+
+Wood and field JAS 2000
+
+Aircraft observations low clouds < 2km
+
+qt
+
+G(qt)
+
+H
+e
+
+ig
+h
+
+t
+
+qt ql T
+
+Heymsfield and McFarquhar JAS 96
+
+Aircraft IWC obs during CEPEX
+
+Barker et al. JAS 1996
+
+PDF of Liquid Water Path (LWP)
+
+28km horizontal resolution -
+
+Large Cloud Cover scenes:
+
+Price QJRMS 2001
+
+Example Balloon data
+
+PBL humidity
+
+Smooth
+
+Unimodal
+
+Greater sampling possibilities
+
+Figure 4: Reproduction of LWP, ice water content and total water PDFs from various observational studies. The papers
+referred to are: Wood and Field (2000); Heymsfield and McFarquhar (1996); Price (2001); Barker et al. (1996).
+
+Technical Memorandum No. Moist Processes Lecture Note Series 7
+
+
+
+The parametrization of cloud cover
+
+Moment 1=MEAN
+
+Moment 2=VARIANCE
+
+Moment 3=SKEWNESS
+
+Moment 4=KURTOSIS
+
+Skewness Kurtosis
+
+p
+o
+
+s
+it
+
+iv
+e negative
+
+n
+e
+g
+a
+ti
+v
+e positive
+
+Figure 5: Schematic illustrating the 3rd and 4th moments; skewness and kurtosis
+
+studies. Some of the data from the following studies is shown for illustrative purposes in Fig. 4. Ek and Mahrt
+(1991) examined PBL relative humidity variability in a limited number of flight legs, and assumed a unimodal
+Gaussian fit for their distribution. Recently, Wood and Field (2000) studied flight data from both warm and cold
+clouds and reported unimodal distributions of qt , but also observing more complex distributions, giving some
+weakly and strongly bimodal examples. Davis et al. (1996) reported uni- or bi-modal skewed distributions in
+liquid water content from flight data in marine stratocumulus clouds. Larson et al. (2001) have also examined
+flight data for PBL clouds and found that mainly unimodal or bimodal distributions occurred. They reported
+that PDFs that included positive or negative skewness were able to give an improved fit the data. Price (2001)
+used tethered balloon data of PBL humidity collected during a three year period, finding that roughly half of
+the data could be classified as symmetrical or skewed unimodal. A further 25% of the data could be regarded
+as multimodal.
+
+Although many of the above studies reported a significant frequency of occurrence of distributions classed as bi-
+or multi-modal, these distributions often possessed a single principle distribution peak, as in the example given
+by Price (2001), and thus a unimodal distribution could still offer a reasonable approximation to these cases.
+This also applies to the flight data examples shown in Heymsfield and McFarquhar (1996) taken in ice clouds.
+Additionally, as stated in the introduction, the bimodal and multimodal distributions may be exaggerated in both
+flight and balloon data. Satellite data on the other hand can give a more global view at relatively high spatial
+resolutions. Two such studies have been reported by Wielicki and Parker (1994) and Barker et al. (1996) who
+used Landsat data at a resolution of 28.5 meters to examine liquid water path in a large variety of cloud cover
+situations. They reported unimodal distributions in nearly or totally overcast scenes, and exponential-type
+distributions in scenes of low cloud fraction, as expected since in these cases only the tail of the q t distribution
+is detected. Note that the analysis of LWP is likely to lead to much smoother (and thus more unimodal) PDFs
+due to the vertical integration.
+
+In summary, it appears that in the observational data available conducted over a wide variety of cloud conditions
+(although rarely in ice-clouds), approximate unimodality was fairly widespread, and that a flexible unimodal
+function can offer a reasonable approximation to the observed variability of total water. That said, a significant
+minority of cases are very likely to be better modelled using a bimodal distribution like those advocated by
+Lewellen and Yoh (1993) and Golaz et al. (2002).
+
+4.2 Setting the PDF moments
+
+The second task of statistical schemes is to define the higher order moments of the distribution. If the distri-
+bution is simple, such as the uniform distribution, then it is defined by a small number of parameters. In the
+case of the uniform distribution, one could specify the lower or upper bounds of the distribution; two param-
+eters are required. Equivalently, one could give the first two distribution moments: namely the mean and the
+
+8 Technical Memorandum No. Moist Processes Lecture Note Series
+
+
+
+The parametrization of cloud cover
+
+s or qt
+
+G
+(s
+
+ o
+r 
+
+q
+t)
+
+e.g. HOW WIDE?
+
+saturation
+
+cloud forms?
+
+Figure 6: Even if the mean total water is correct, if the incorrect distribution width is diagnosed, for example the narrow
+yellow distribution, then clear sky conditions will prevail when in fact partial cloud cover exists (pink triangle).
+
+variance. Likewise, more complicated PDFs that require 3 parameters can be uniquely defined using the first
+three moments: mean, variance and skewness; four-parameter distributions need the fourth moment of kurtosis
+(describing the PDF ’flatness’, see schematic in Fig. 5), and so on.
+
+It is clear to see why the accurate specification of the moments is important. The schematic of Fig. 6 shows
+that, even if the distribution mean is correct, diagnosing a variance that is too small (i.e. the distribution is too
+narrow) will lead to the incorrect prediction of clear sky conditions.
+
+Some schemes diagnostically fix the higher order moments of the distribution, such as the variance. However, it
+is clear that this is not an ideal approach, since by having a fixed distribution width (for example), the PDF (and
+thus cloud properties) are not able to respond to local dynamical conditions. The fixed width (and higher order
+moments) are then equivalent to the specification of the critical relative humidity at which cloud is assumed
+to form in the RH schemes. Indeed Smith (1990) actually sets the width of the triangular distribution in that
+scheme in terms of a RHcrit parameter.
+
+To illustrate this with a specific example, let us consider the uniform distribution adopted by LeTreut and Li
+(1991). The PDF for a typical partially cloudy grid box is shown in Fig. 7. Considering the humidity, it is
+assumed that no supersaturation exists as is usual, and thus in the cloudy portion, qv � qs. Thus the grid-mean
+humidity can be written as:
+
+qv � Cqs � � 1 � C � qe (7)
+where qe is the humidity in the ’environment’ of the cloud; the cloud-free part of the gridbox. From the uniform
+distribution shape, it is possible to define qe in terms of a critical RH for cloud formation RHcrit :
+
+qe � qs � 1 � � 1 � C � � 1 � RHcrit ��� � (8)
+The definition of RH is qv � qs, which substituting the definitions above gives
+
+RH � 1 � � 1 � RHcrit � � 1 � C � 2 � (9)
+which can be rearranged to give
+
+C � 1 � 1 � RH
+1 � RHcrit � (10)
+
+This is recognised to be the relative humidity scheme used by Sundqvist et al. (1989)! Thus it is seen that a so-
+called statistical scheme with fixed moments can be reduced to a RH scheme, or likewise that RH schemes do
+
+Technical Memorandum No. Moist Processes Lecture Note Series 9
+
+
+
+The parametrization of cloud cover
+
+C
+
+sq
+
+1-C
+
+tq
+
+(1-RHcrit)qs
+
+qt
+
+G
+(q
+
+t)
+
+eq
+
+))1)(1(1( CRHqq
+
+moments (e.g. Smith 1990) 
+
+which
+
+wness) are fixed, then 
+
+ can be 
+
+reduced to a RH formulation 
+
+Figure 7: Graphical aid to the derivation of the cloud cover as a function of the RH when the total water is assumed to
+be uniformly distributed. If cloud begins to form at RHcrit then the width of the distribution is 2qs � 1 � RHcrit � . See text for
+details.
+
+not need to rely on ad-hoc relationships, but can be derived consistently with an assumed underlying PDF of to-
+tal water. This point was fully appreciated by Smith (1990), whose work actually provides the RH-formulation
+associated with the triangular distribution in its appendix.
+
+The example of the Smith (1990) scheme also raises another interesting point. Since the scheme was based on
+the linear s variable (see appendix below), that aims to take temperature fluctuations into account, it is often
+claimed that the Smith scheme (and related schemes) include the effect of temperature fluctuations. However,
+there is nothing in the scheme that specifically accounts for the separate effect of temperature fluctuations and
+their correlation with humidity (see Tompkins, 2003, for more discussion). By fixing the width of the distri-
+bution, the scheme simply defines a ’net’ effect of temperature and humidity fluctuations combined. The point
+is that one could write the scheme purely in terms of humidity fluctuations, and arrive to the same relationship,
+which is witnesses by the RH derivation contained in the appendix of that paper. This in turn implies that such
+schemes are not, in fact, taking temperature into account in any meaningful way.
+
+In summary, it is important to stress that there is not a clear distinction between the so-called ’RH schemes’ and
+statistical schemes. If a time-invariant variance is used in a statistical scheme, it can be reduced to a RH-type
+formulation and we have seen how the RH scheme of Sundqvist et al. (1989) can be derived by assuming a
+uniform distribution for total water, and likewise that the Smith (1990) scheme also reduces to an equivalent
+RH formulation.
+
+4.3 Diagnostic versus Prognostic schemes
+
+At this point we pause to consider the merits or otherwise of prognostic versus diagnostic cloud schemes.
+Shakespeare summarizes the issue well in Act III of Hamlet:
+
+“To be (prognostic) or not to be (prognostic), that is the question. Whether ’tis nobler in the mind to suffer, the
+slings and arrows of outrageous closure assumptions, or to take arms against a sea of authors, (convinced that
+diagnostic cloud schemes are the best), And by opposing, end them?”
+
+Hamlet is antagonizing over the issue of whether to implement a diagnostic or a prognostic approach in his
+
+10 Technical Memorandum No. Moist Processes Lecture Note Series
+
+
+
+The parametrization of cloud cover
+
+cloud scheme. By this, we mean whether or not to include a prognostic equation for the central parameters
+of the scheme in question. In the case of the statistical schemes this is likely (but not necessarily) to imply a
+memory (a prognostic equation) for the higher order moments such as variance, where as in the Tiedtke Scheme
+approach outlined below the prognostic variable is the cloud cover itself.
+
+Irrespective of the variable in question, the underlying question is always whether the variable has a
+fast equilibrating timescale relative to the timestep of the model. Let us take the case of turbulence
+(Lenderink and Siebesma, 2000). The prognostic equation for variance is:
+
+dσ 2
+�
+qt �
+
+dt
+��� 2w � q �t dqtdz � σ 2 � qt �τ (11)
+
+The two terms on the RHS represent the creation of variance due to a turbulent flux of humidity occurring in the
+presence of a humidity gradient, and a dissipation term modelled by a Newtonian relaxation back to isotropy
+with a timescale of τ . This equation is highly simplified by the neglect of both turbulent and large-scale flow
+transport of variance, and also the horizontal gradient terms, but it serves its illustrative purpose.
+
+It would be possible to introduce a prognostic predictive equation for total water variance along these lines.
+However, if the dissipative timescale τ is very short compared to the model timestep, then a very good approx-
+imation could be obtained by assuming dσ
+
+2 � qt �
+dt � 0, giving
+
+σ 2
+�
+qt � ��� 2τw � q �t dqtdz � (12)
+
+A diagnostic approach has the advantage that it simplifies implementation, and saves computational cost and
+memory. The simplification does not imply that the local cloud properties are independent of the local dynam-
+ics; a scheme based on eqn. 12 can not be reduced to a RH scheme, since the variance in each gridbox is related
+to the local turbulent flux. Note also that now, with such an approach, one can sensibly include the contribution
+of temperature fluctuations due to turbulence, as done by Ricard and Royer (1993).
+
+For examples of this kind of approach, examine the diagnostic schemes in the literature that are de-
+scribed by Bougeault (1982); Ricard and Royer (1993); Bechtold et al. (1995); Lohmann et al. (1999);
+Chaboureau and Bechtold (2002). These schemes mostly restrict their concern diagnostic relationships for
+variance to the influence of turbulence. For example, above the boundary layer, Lohmann et al. (1999) imposed
+a fixed width distribution to compensate for the lack of consideration of other processes.
+
+It is thus apparent that for generalized cloud situations, that include the evolution of clouds such as large-scale
+cirrus, which may evolve over many hours or even days, it will normally be necessary to resort to implementing
+a prognostic approach.
+
+4.4 A prognostic statistical scheme
+
+The first attempt to implement a fully prognostic statistical scheme into a GCM was made by Tompkins (2002).
+This modelled the total water fluctuations using a Beta distribution,
+
+G
+�
+t � � 1B � p � q � � t � a � p � 1 � b � t � q � 1� b � a � p � q � 1 � a  t  b � (13)
+
+Technical Memorandum No. Moist Processes Lecture Note Series 11
+
+
+
+The parametrization of cloud cover
+
+SKEWNESS POSSIBLE, also 
+
+ustified from use of CRM data 
+
+emperature variations are 
+
+qtqt0 qt1
+
+G
+(q
+
+t)
+
+nsta
+nt
+
+Figure 8: Examples of the Beta distribution for various shape parameters.
+
+where a and b are the distribution limits and p and q are shape parameters (Fig. 8)2 and the symbol B represents
+the Beta function, and can be defined in terms of the Gamma function, Γ, as follows:
+
+B
+�
+p
+�
+q � � Γ � p � Γ � q �Γ � p � q � � (14)
+
+The skewness (ς ) of the distribution is related to the difference between the two shapes parameters p and q,
+
+ς � 2 � q � p �
+p � q � 2 ! p � q � 1pq � (15)
+
+and thus if p � q the distribution is symmetrical, but also both positive and negatively skewed distributions are
+possible. As p and q tend to infinity the curve approaches the Normal distribution. The standard deviation of
+the distribution is given by
+
+σ
+�
+t � � b � ap � q ! pqp � q � 1 (16)
+
+Although this distribution is a 4-parameter function, using a simplification such as imposing
+�
+p � 1 � � q �
+
+1 � � constant can reduce it to a three parameter distribution (Tompkins used the less satisfying p=constant
+closure, which unnecessarily restricted to distribution to positive skewness regimes), specified uniquely by the
+mean, variance and skewness of total water.
+
+Tompkins (2002) attempted to introduce two additional prognostic equations to predict the evolution of the
+PDF shape. Once the distribution shape is known, (i.e. distribution limits a and b and the shape parameters p
+and q) the cloud cover can be obtained from
+
+C � 1 � I qs " a
+b " a � p � q � � (17)
+
+2the original notation is repeated, but please note that the shape parameter q is not to be confused with mixing ratio, qv.
+
+12 Technical Memorandum No. Moist Processes Lecture Note Series
+
+
+
+The parametrization of cloud cover
+
+qv ql+i
+
+qsat
+
+Cloud
+
+qsatqt
+
+Cloud
+
+Variance
+
+Figure 9: Schematic of the two ways of specifying the triangular distribution. Left Panel: The distribution mean and
+variance is given. Right Panel: The mean vapour and cloud water (ice+liquid) are given. In both cases the distribution
+is uniquely specified and the cloud cover can be diagnosed.
+
+where Ix is the incomplete Beta function ratio defined as
+
+Ix
+�
+p
+�
+q � � 1B � p � q � � x0 t p � 1 � 1 � t � q � 1dt � (18)
+
+subject to the limits I0
+�
+p
+�
+q � � 0 and I1 � p � q � � 1.
+
+Tompkins (2002) then attempted to parametrize the sources and sinks of variance and skewness separately from
+physical processes such as convection, turbulence, microphysics and so on. However, there is one complication
+that requires consideration, and is summarized by the following equation for cloud water qc:
+
+q̄c � � b � a � pp � q � 1 � I # qs " a $# b " a $ � p � 1 � q ���%� � a � qs � � 1 � I # qs " a $# b " a $ � p � q ��� � (19)
+This is simply eqn. 6, with the Beta distribution substituted for G
+
+�
+qt � . This tells us that if the distribution
+
+moments are known, then the cloud water is uniquely defined. Why is this a cause for concern? The reason
+is that most cloud schemes already implement a separate prognostic equation for cloud liquid/ice water. In
+other words, in partially cloudy conditions, if distribution moments and the cloud liquid water are given from
+the respective prognostic equations, then the problem is potentially over-specified. To clarify this we can
+re-examine the simple 2-parameter triangular distribution in Fig. 9. The figure shows that the 2-parameter
+distribution can be uniquely defined by giving either the mean and variance, or the mass mixing ratios of
+vapour and cloud water separately.
+
+Thus a decision must be reached concerning the prognostic equation set to be used. The first option is to use
+water vapour and cloud water separately to implicitly derive the variance (right panel of Fig. 9). The advantage
+of this approach is that one does not need to explicitly derive complex variance source/sink terms, such as the
+impact of microphysics on variance. If, over a timestep, the microphysics reduces the cloud water (for example
+by autoconversion to snow, or by settling out of the gridbox) then this implicitly renders a narrowing of the
+distribution. Additionally it is much easier to ensure conservation of cloud water (presuming the numerics em-
+ployed are designed to ensure conservation of prognostic quantities). The disadvantage is that the information
+is only available in partially cloudy conditions. In clear sky conditions one only knows the distribution mean,
+since qc � 0 identically (see schematic of Fig. 10). Likewise in overcast conditions, where qv � qs. In these
+situations, the loss of information requires supplementary ad-hoc assumptions to be made, to close the system.
+For example, one could resort to assuming a fixed distribution width in clear-sky conditions, thus returning to
+
+Technical Memorandum No. Moist Processes Lecture Note Series 13
+
+
+
+The parametrization of cloud cover
+
+qsat
+
+qv qv+ql+i
+
+(…conv
+
+microphysics)
+
+(al la Tiedtke)
+
+But problems arise in
+
+Clear sky 
+
+conditions
+
+(turbulence)
+
+Figure 10: Schematic of the problem that arises if distribution width is derived from separate prognostic equations for
+vapour and cloud water. The curve is not uniquely defined for overcast (blue PDF) or clear sky (green PDF) conditions.
+For example, for the clear-sky case, there are any number of possible variances (width) of the distribution that give
+the correct mean water vapour and zero cloud water. Two examples are marked: a wider distribution (dot-dashed) or
+narrower (dotted).
+
+cloud formation at a specified (RHcrit ). We will see below that this issue arises once again in the Tiedtke (1993)
+scheme, which resorts to such a solution.
+
+The second approach is to abandon the separate cloud water prognostic variable in favour of a prognostic vari-
+ance equation. This has the advantage that the distribution is always known, even in clear sky or overcast condi-
+tions. The disadvantage is that all sources and sinks must now be parametrized in terms of variance sources and
+sinks. For turbulence (Deardorff, 1974), and perhaps convective sources and sinks(Lenderink and Siebesma,
+2000; Klein et al., 2005), this is relatively straight-forward. However, for the microphysical processes the prob-
+lem quickly becomes complicated. For simple autoconversion terms A (the rate of conversion from liquid to
+rain), it is possible to derive the sink of variance3
+
+dσ 2
+�
+qt �
+
+dt
+� A � q �t �&� A � � qt � q �t G � qt � dqt � (20)
+
+which analytically tractable for simple forms of A and G
+�
+qt � . Nevertheless, we can imagine more complicated
+
+scenarios, such as ice settling handled by a semi-Lagrangian advection scheme, allowing settling from any
+particular gridbox to other all levels below it. Trying to parametrize this equivalently in terms of variance
+sources and sinks is difficult. Moreover, by abandoning the prognostic equation for ice, any inaccuracies in the
+handling of such a process via a variance equation are likely to manifest themselves in a (potentially severe)
+compromising of the cloud mass conservation.
+
+Tompkins (2002) tried to provide a solution for this dilemma by implementing a hybrid scheme. In partially
+cloudy conditions variance is derived directly from the cloud water and vapour prognostic equations. In clear
+sky and overcast conditions, the variance is prognosed using a subset of source and sinks terms, including
+turbulence, dissipation, and a highly simplified sink term due to microphysics, which is necessary in overcast
+conditions. The reader is referred to Tompkins (2002) for details of these source and sinks terms, although
+
+3Note once again the care that must be taken with regard to the numerics with long timesteps. Since autoconversion terms tend to
+be nonlinear they usually reduce the variance. Even if this equation is integrated implicitly for stability, the limit for long timesteps
+will be zero, which is unrealistic for partially cloudy conditions since the precipitation process does not affect the clear sky part of the
+domain. Thus instead one should integrate this term implicitly for the cloudy portion [cld] of the gridcell and then combine the result
+with the clear sky [clr] variance thus: σ 2 ' qt (*) C ' q2s + σ2 ' qt (-, cld . ( + ' 1 / C ( ' q2v , clr . + σ2 ' qt (-, clr . ( / q2t
+14 Technical Memorandum No. Moist Processes Lecture Note Series
+
+
+
+The parametrization of cloud cover
+
+Figure 11: Figure taken from Tompkins (2002) showing evolution of the boundary layer at a gridpoint subject to stra-
+tocumulus cloud. The upper panel shows the cloud cover, while the lower shows the total water distribution minimum (a),
+maximum (b) in addition to qs (marked rs in the plot, according the notation used in that paper). In the earlier period,
+the scene is overcast and the whole of the PDF is moister than qs. In this case the increase in variance from turbulence
+breaks up the cloud deck intermittently. In the latter period instead the gridbox is relatively dry, and turbulence instead
+creates small cloud coverage; representing the cloud capped thermals known as ’fair weather cumulus’.
+
+it should be noted that some of these, in particular the skewness budget terms from microphysics and deep
+convection, have been justifiably criticized by Klein et al. (2005) for their ad hoc nature. Nevertheless, the
+inclusion of even a reduced set of variance sources/sinks, especially from turbulence, is able to reproduce
+the observations of turbulence increasing or decreasing variance according the mean humidity gradients, and
+coincidently creating cloud or breaking-up an overcast cloud deck (Fig. 11).
+
+5 The ECMWF prognostic cloud cover scheme
+
+The aim here is not to describe the Tiedtke (1993) scheme in full; since this information is adequately covered
+by other course notes, the online documentation, and the publications of Tiedtke (1993); Gregory et al. (2000);
+Jakob (2000). Instead this section briefly places the Tiedtke scheme into the context of the cloud scheme family,
+in particular the statistical schemes.
+
+The Tiedtke scheme chooses a different set of prognostic equations for cloud scheme, namely: water vapour,
+cloud water and cloud cover. We saw in the last section how the former two, vapour and cloud could be used to
+
+Technical Memorandum No. Moist Processes Lecture Note Series 15
+
+
+
+The parametrization of cloud cover
+
+equivalently specify the mean and variance of total water, in partially cloudy conditions. The Tiedtke scheme
+takes this approach a step further by adding a third predicted equation, giving a memory for the cloud cover.
+
+We also learned in the previous section that such an approach has some advantages, since it greatly simplifies
+some of the source and sink derivations. A good example is the link to the convection scheme. The convection
+scheme provides a mass of detrained cloudy air, which is then simply added directly to the respectively cloud
+water and cover equations, without recourse to distribution functions.
+
+This is not to say that the Tiedtke scheme does not use assumptions concerning the underlying distributions to
+derive some of the sources and sinks of the prognostic equations. For example, the source of cloud water and
+cloud cover from a gridbox cooling is derived assuming the clear sky humidity observes a uniform distribution
+(note that an error in the original derivation of Tiedtke (1993) was corrected by Jakob (2000)). The assumption
+leads to a cloud fraction source of
+
+∂C
+∂qs
+
+��� � 1 � C � 2
+2
+�
+qs � qv � (21)
+
+This direct translation of PDF moment sources and sinks into consistent cloud cover and water sources and
+sinks is discussed in far greater detail in Wang and Wang (1999); Gregory et al. (2002); Larson (2004). Note
+that the Tiedtke (1993) scheme does not parametrize all sources and sinks consistently with an underlying
+distribution. For example, the horizontal subgrid-scale eddies act to homogenize the total water field and will
+reduce the width of the distribution. Thus if qt � qs then the cloud cover will reduce as a result, while with
+qt 	 qs dissipation will increase cloud cover. The Tiedtke scheme instead always reduces cloud cover, in conflict
+with any possible humidity distributions.
+
+For the most part, if the Tiedtke scheme uses an underlying distribution assumption, it is usually that the clear
+sky humidity fluctuations are distributed uniformly, while the cloudy portion is homogeneous (described by a
+delta function). It is thus clear that the scheme is not reversible. If a gridbox is subjected to an equal magnitude
+cooling followed by warmed over two consecutive timesteps, and all other processes (e.g. precipitation) are
+neglected, there is a net creation of cloud, as illustrated in Fig. 12.
+
+This issue is important since it implies that such a scheme could be more sensitive to increases in model horizon-
+tal resolution. While the time-mean statistics of vertical velocity (which cool or warm a gridbox adiabatically)
+could be resolution invariant, it is likely that temporal variability will increase with higher model resolutions
+which resolve a greater portion of the velocity spectrum. If the cloud scheme contains aspects such as outlined
+here, where the passing of a wave leads to net cloud creation, then a high resolution model may be expected to
+have higher mean cloud cover, and other associated changes to the mean climate.
+
+While the Tiedtke scheme has many merits and has proved to be very effective in its prediction of cloud
+characteristics despite its simplicity (e.g. Hogan et al., 2001), we should point out some potential drawbacks of
+the approach. One issue concerns self-consistency. With a pure statistical scheme approach, where the PDF
+moments are predicted, the cloud water and cover are constrained to be consistent with each other, since they
+are both derived from the same distribution4 . This is not true for the Tiedtke scheme, and it is not unusual for
+cloud water and cover to be inconsistent, with only one of the two fields non-zero for instance.
+
+Another point relates to the earlier statistical scheme discussion concerning the choice of prognostic variables.
+Since the cloud cover and cloud mass only describe integrated statistics of the PDF, we are again faced with
+the loss-of-information dilemma in clear and overcast gridboxes. Once again in clear skies, the Tiedtke scheme
+only provides the mean humidity, and no information concerning the humidity variability is available. This
+
+4note that we have not touched on the issue of representing ice-phase processes with such schemes, in which significant and long
+lasting supersaturations are permitted. In this case it is likely that a separate ice variable is mandatory, in which case the self-consistency
+argument may no longer be valid.
+
+16 Technical Memorandum No. Moist Processes Lecture Note Series
+
+
+
+The parametrization of cloud cover
+
+1-C
+
+qt
+
+G
+(q
+
+t)
+C
+
+)(tqs)( ttqs 01
+
+1-C
+
+qt
+
+G
+(q
+
+t)
+
+C
+
+)(tqs )( ttqs 01
+Figure 12: Schematic showing one reversibility issue with Tiedtke scheme. The upper panel shows the impact of a cooling
+applied to a partially cloudy gridbox. The cooling reduces qs and thus condenses cloud water, increasing the cloud
+fraction by the area contained between the dotted and dashed lines. It is assumed no rain is produced and over the
+subsequent timestep the gridbox is subjected to an equal and opposite warming. One would expect the gridbox should
+return to the original state, but due to the assumption that the cloud is well mixed and homogeneous, this is not the case
+(lower panel). The non-reversibility is not necessarily a problem per se; it is consistent with the assumption that the in-
+cloud homogenization occurs on fast timescales compared to the model timestep. If this were true in the atmosphere then
+the non-reversibility of the scheme would be realistic. Observations indicate that clouds are far from the homogeneous
+entities that the Tiedtke cloud scheme and the bulk mass flux convection schemes assume!
+
+is the reason why, despite its ’prognostic’ credentials, the Tiedtke scheme again is forced to resort to the
+implementation of a fixed critical relative humidity for cloud formation; the variance is clear sky regions is
+fixed.
+
+6 Summary
+
+In summary, this lecture has tried to summarize the various approaches to diagnosing the proportion of a grid
+box covered by cloud in global models. The main point is that partial coverage can occur if and only if subgrid-
+scale fluctuations of humidity and temperature exist. All cloud schemes that predict partial cloud cover therefore
+implicitly or explicitly make assumptions concerning the magnitude and distribution of these fluctuations; the
+total water probability density function (PDF).
+
+We discussed simple diagnostic schemes that use RH as their main or only predictor for cloud cover. We
+then discussed statistical schemes that explicitly specify the humidity PDF. We showed that if the moments of
+such schemes are time-space invariant, then the cloud cover deriving from statistical schemes can be written as
+
+Technical Memorandum No. Moist Processes Lecture Note Series 17
+
+
+
+The parametrization of cloud cover
+
+diagnostic RH form. In other words, rather than using ad hoc relationships, one can derive a RH-scheme to be
+consistent with an underlying PDF.
+
+It was pointed out that knowing the PDF for humidity and cloud fluctuations gives vital extra information
+that can be used to correct biases in nonlinear processes such as precipitation generation or interaction with
+radiation.
+
+More complex statistical schemes were then discussed which attempt to predict the sources and sinks of the
+distribution moments, so that the PDF can realistically respond to the various relevant atmospheric processes.
+The lecture dwelled on the choice of the prognostic variables, in particular whether it is preferable to predict the
+PDF moments themselves, or instead to predict integrated and direct cloud quantities such as the cloud liquid
+water. Advantages and potential drawbacks of each approach were discussed; which were essentially that by di-
+rectly predicting the cloud variables, one ensures their conservation, and processes such as microphysics are far
+easier to handle, but that in clear sky or overcast conditions there is lack of information so that diagnostic/fixed
+assumptions have to be made concerning the subgrid distribution in these situations. These assumptions may
+also lead to a lack of “reversibility” in this approach.
+
+It was pointed out that the Tiedtke scheme is essentially a manifestation of the second approach, where both
+cloud water and cloud cover are predicted, and where often an underlying assumption concerning the humidity
+and cloud distribution is made to derive the sources and sinks of these prognostic variables. We highlighted that,
+while proven successful in NWP, the scheme suffers from the same drawback of requiring the implementation
+of a fixed (independent of local dynamical conditions) RHcrit for cloud formation and a lack of reversibility.
+
+A Appendix: Temperature variability
+
+In this document fluctuations of temperature were explicitly ignored. Since water vapor perturbations can
+be correlated with temperature perturbations, which alter the local saturation vapor pressure, it may also be
+necessary to consider temperature variability.
+
+To this end, it has been useful to form a variable, s, defined as5
+
+s � al � q �t � αlT �l � (22)
+where q �t is the fluctuation of the total water mixing ratio, qt , equal to the sum of the vapor (qv), cloud ice
+(qi) and liquid cloud water (ql ) mixing ratios, and T �l is the liquid water temperature fluctuation (T � LCp ql), an
+analogue to moist static energy. The fluctuations are defined about the mean thermodynamic state, T̄l , and the
+
+constants are defined as αl � ∂qs∂T � T̄l � and al �32 1 � Lcp αl 4 � 1, where qs is the saturation vapor mixing ratio, L is
+the latent heat of vaporization and cp is the specific heat of dry air. Physically, s describes the distance between
+the thermodynamic state to the linearized saturation vapor mixing ratio curve, as illustrated in Fig. 13.
+
+Defining ss � al � qs � q̄t � the cloud condensate mass qc ( � ql � qi) is given by qc � s � ss, providing s 	 ss.
+Assuming that any supersaturation efficiently condenses to cloud, it is possible to express the cloud fraction C
+as
+
+C � � ∞
+ss
+
+G
+�
+s � ds (23)
+
+where G
+�
+s � is the PDF of s.
+
+5Once again, the commonly used notation is repeated here, but this variable is not to be confused with the more common use for s,
+which is the dry static energy
+
+18 Technical Memorandum No. Moist Processes Lecture Note Series
+
+
+
+The parametrization of cloud cover
+
+variability into account, which affects 
+
+)( LtL Tqas 5657 8
+qs
+
+T
+
+qt
+
+LT
+
+S
+
+Cloud mass if T
+
+variation is 
+
+neglected
+
+Figure 13: Schematic showing the definition of s, in terms of qt . See text for details.
+
+The variance of s, and therefore the associated liquid water and cloud cover, depends on the correlation between
+Tl and qt perturbations in addition to their respective magnitudes:
+
+σ 2
+�
+s � � a2l � q �t 2 � αlT �l 2 � 2αlq �t T �l � � (24)
+
+This aspect was disregarded by many previous statistical schemes, which were formulated in terms of s, but
+simply set the variance to a fixed or arbitrary value. In such schemes it is not known whether cloud is a result of
+temperature perturbations, water perturbations, or a combination of the two, as was discussed in the main text.
+Instead, some parametrizations such as Ricard and Royer (1993) have calculated temperature perturbations
+separately that result from turbulence, since the turbulence scheme can provide the various correlations (q � 2t � T � 2l
+and q �t T �l ) separately.
+Temperature fluctuations are likely to be smaller in magnitude than total water fluctuations, especially
+in the tropics where gravity waves remove lateral fluctuations of virtual temperature on fast timescales
+(Bretherton and Smolarkiewicz, 1989). The recent observational studies of Price and Wood (2002); Tompkins
+(2003) also seem to confirm that temperature fluctuations, while significant, are less important than humidity
+fluctuations, even in the lower troposphere in midlatitudes.
+
+References
+
+Barker, H. W., 1996: A parameterization for computing grid-averaged solar fluxes for inhomogeneous marine
+boundary layer clouds. Part I: Methodology and homogeneous biases, J. Atmos. Sci., 53, 2289–2303.
+
+Barker, H. W., G. L. Stephens, and Q. Fu, 1999: The sensitivity of domain-averaged solar fluxes to assumptions
+about cloud geometry, Q. J. R. Meteorol. Soc., 125, 2127–2152.
+
+Barker, H. W., B. A. Wielicki, and L. Parker, 1996: A parameterization for computing grid-averaged solar
+fluxes for inhomogeneous marine boundary layer clouds. Part II: Validation using satellite data, J. Atmos.
+Sci., 53, 2304–2316.
+
+Bechtold, P., J. W. M. Cuijpers, P. Mascart, and P. Trouilhet, 1995: Modeling of trade-wind cumuli with a
+low-order turbulence model - toward a unified description of Cu and Sc clouds in meteorological models, J.
+Atmos. Sci., 52, 455–463.
+
+Technical Memorandum No. Moist Processes Lecture Note Series 19
+
+
+
+The parametrization of cloud cover
+
+Bechtold, P., C. Fravalo, and J. P. Pinty, 1992: A model of marine boundary-layer cloudiness for mesoscale
+applications, J. Atmos. Sci., 49, 1723–1744.
+
+Bony, S. and K. A. Emanuel, 2001: A parameterization of the cloudiness associated with cumulus convection;
+Evaluation using TOGA COARE data, J. Atmos. Sci, 58, 3158–3183.
+
+Bougeault, P., 1981: Modeling the trade-wind cumulus boundary-layer. Part I: Testing the ensemble cloud
+relations against numerical data, J. Atmos. Sci., 38, 2414–2428.
+
+Bougeault, P., 1982: Cloud ensemble relations based on the Gamma probability distribution for the high-order
+models of the planetary boundary layer, J. Atmos. Sci., 39, 2691–2700.
+
+Bretherton, C. S. and P. K. Smolarkiewicz, 1989: Gravity waves, compensating subsidence and detrainment
+around cumulus clouds, J. Atmos. Sci., 46, 740–759.
+
+Cahalan, R. F., W. Ridgway, and W. J. Wiscombe, 1994: Independent pixel and Monte Carlo estimate of
+stratocumulus albedo, J. Atmos. Sci., 51, 3776–3790.
+
+Chaboureau, J. P. and P. Bechtold, 2002: A simple cloud parameterization derived from cloud resolving model
+data: Diagnostic and prognostic applications, J. Atmos. Sci., 59, 2362–2372.
+
+Cusack, S., J. M. Edwards, and R. Kershaw, 1999: Estimating the subgrid variance of saturation, and its
+parametrization for use in a GCM cloud scheme, Q. J. R. Meteorol. Soc., 125, 3057–3076.
+
+Davis, A., A. Marshak, W. Wiscombe, and R. Cahalan, 1996: Scale invariance of liquid water distributions in
+marine stratocumulus. Part I: Spectral properties and stationarity issues, J. Atmos. Sci., 53, 1538–1558.
+
+Deardorff, J. W., 1974: Three dimensional numerical study of a heated planetary boundary layer, Bound.-Layer
+Meteor., 7, 81–106.
+
+Dessler, A. E. and P. Yang, 2003: The distribution of tropical thin cirrus clouds inferred from terra MODIS
+data, J. Climate, 16, 1241–1247.
+
+Di Giuseppe, F. and A. M. Tompkins, 2003: Effect of spatial organisation on solar radiative transfer in three-
+dimensional idealized stratocumulus cloud fields, J. Atmos. Sci., 60, 1774–1794.
+
+Ek, M. and L. Mahrt, 1991: A formulation for boundary-layer cloud cover, Ann. Geophysicae, 9, 716–724.
+
+Fowler, L. D., D. A. Randall, and S. A. Rutledge, 1996: Liquid and ice cloud microphysics in the CSU general
+circulation model. Part I: Model description and simulated cloud microphysical processes, J. Climate, 9,
+489–529.
+
+Fu, Q., B. Carlin, and G. Mace, 2000: Cirrus horizontal inhomogeneity and OLR bias, Geophys. Res. lett., 27,
+3341–3344.
+
+Gierens, K., U. Schumann, M. Helten, H. Smit, and P. H. Wang, 2000: Ice-supersaturated regions and subvisible
+cirrus in the northern midlatitude upper troposphere, J. Geophys. Res., 105, 22743–22753.
+
+Golaz, J., V. E. Larson, and W. R. Cotton, 2002: A PDF-based parameterization for boundary layer clouds. Part
+I: Method and model description, J. Atmos. Sci., 59, 3540–3551.
+
+Gregory, D., J.-J. Morcrette, C. Jakob, A. C. M. Beljaars, and T. Stockdale, 2000: Revision of convection,
+radiation and cloud schemes in the ECMWF Integrated Forecasting System, Q. J. R. Meteorol. Soc., 126,
+1685–1710.
+
+20 Technical Memorandum No. Moist Processes Lecture Note Series
+
+
+
+The parametrization of cloud cover
+
+Gregory, D., D. Wilson, and A. Bushell, 2002: Insights into cloud parametrization provided by a prognostic
+approach, Q. J. R. Meteorol. Soc., 128, 1485–1504.
+
+Heymsfield, A. J., R. P. Lawson, and G. W. Sachse, 1998: Growth of ice crystals in a precipitating contrail,
+Geophys. Res. lett., 25, 1335–1338.
+
+Heymsfield, A. J. and G. M. McFarquhar, 1996: High albedos of cirrus in the Tropical Pacific Warm Pool:
+Microphysical interpretations from CEPEX and from Kwajalein, Marshall Islands, J. Atmos. Sci., 53, 2424–
+2451.
+
+Hogan, R. J., C. Jakob, and A. J. Illingworth, 2001: Comparison of ECMWF winter-season cloud fraction with
+radar-derived values, J. Appl. Meteor., 40, 513–525.
+
+Jakob, C., 2000: The representation of cloud cover in atmospheric general circulation models, Ph.D. thesis,
+University of Munich, Germany, available from ECMWF, Shinfield Park, Reading RG2 9AX, UK.
+
+Kitchen, M., R. Brown, and A. G. Davies, 1994: Real-time correction of weather radar data for the effects of
+bright band, range and orographic growth in widespread precipitation, Q. J. R. Meteorol. Soc., 120, 1231–
+1254.
+
+Klein, S. A., R. Pincus, C. Hannay, and K.-M. Xu, 2005: Coupling a statistical scheme to a mass flux scheme,
+J. Geophys. Res., p. in press.
+
+Larson, V. E., 2004: Prognostic equations for cloud fraction and liquid water, and their relation to filtered
+density functions, J. Atmos. Sci., 61, 338–351.
+
+Larson, V. E., R. Wood, P. R. Field, J. Golaz, T. H. VonderHaar, and W. R. Cotton, 2001: Small-scale and
+mesoscale variability of scalars in cloudy boundary layers: One dimensional probability density functions,
+J. Atmos. Sci., 58, 1978–1994.
+
+Lenderink, G. and A. P. Siebesma, 2000: Combining the massflux approach with a statistical cloud scheme, in
+Proc. 14th Symp. on Boundary Layers and Turbulence, Amer. Meteor. Soc., Aspen, CO, USA, pp. 66–69.
+
+LeTreut, H. and Z. X. Li, 1991: Sensitivity of an atmospheric general circulation model to prescribed SST
+changes: Feedback effects associated with the simulation of cloud optical properties, Clim. Dyn., 5, 175–
+187.
+
+Lewellen, W. S. and S. Yoh, 1993: Binormal model of ensemble partial cloudiness, J. Atmos. Sci., 50, 1228–
+1237.
+
+Lohmann, U., N. McFarlane, L. Levkov, K. Abdella, and F. Albers, 1999: Comparing different cloud schemes
+of a single column model by using mesoscale forcing and nudging technique, J. Climate, 12, 438–461.
+
+Mellor, G. L., 1977: Gaussian cloud model relations, J. Atmos. Sci., 34, 356–358.
+
+Nishizawa, K., 2000: Parameterization of nonconvective condensation for low-resolution climate models:
+Comparison of diagnostic schemes for fractional cloud cover and cloud water content, J. Meteor. Soc. Japan,
+78, 1–12.
+
+Ose, T., 1993: An examination of the effects of explicit cloud water in the UCLA GCM, J. Meteor. Soc. Japan,
+71, 93–109.
+
+Pincus, R. and S. A. Klein, 2000: Unresolved spatial variability and microphysical process rates in large-scale
+models, J. Geophy. Res., 105, 27059–27065.
+
+Technical Memorandum No. Moist Processes Lecture Note Series 21
+
+
+
+The parametrization of cloud cover
+
+Pomroy, H. R. and A. J. Illingworth, 2000: Ice cloud inhomogeneity: Quantifying bias in emissivity from radar
+observations, Geophys. Res. Lett., 27, 2101–2104.
+
+Price, J. D., 2001: A study on boundary layer humidity distributions and errors in parameterised cloud fraction,
+Q. J. R. Meteorol. Soc., 127, 739–759.
+
+Price, J. D. and R. Wood, 2002: Comparison of probability density functions for total specific humidity and
+saturation deficit humidity, and consequences for cloud parametrization, Q. J. R. Meteorol. Soc., 128, 2059–
+2072.
+
+Ricard, J. L. and J. F. Royer, 1993: A statistical cloud scheme for use in an AGCM, Ann. Geophysicae, 11,
+1095–1115.
+
+Roeckner, E., K. Arpe, L. Bengtsson, M. Christoph, M. Claussen, L. Dümenil, M. Esch, M. Giorgetta,
+U. Schlese, and U. Schulzweida, 1996: The atmospheric general circulation model ECHAM4: Model de-
+scription and simulation of present-day climate, Technical Report 218, Max Planck Institute for Meteorology,
+Bundesstrasse 55, 20146 Hamburg, Germany.
+
+Rotstayn, L. D., 1997: A physically based scheme for the treatment of stratiform precipitation in large-scale
+models. I: Description and evaluation of the microphysical processes, Q. J. R. Meteorol. Soc., 123, 1227–
+1282.
+
+Rotstayn, L. D., 2000: On the ”tuning” of autoconversion parameterizations in climate models, J. Geophy. Res.,
+105, 15495–15507.
+
+Slingo, J. M., 1980: A cloud parametrization scheme derived from GATE data for use with a numerical-model,
+Q. J. R. Meteorol. Soc., 106, 747–770.
+
+Slingo, J. M., 1987: The development and verification of a cloud prediction scheme for the ECMWF model, Q.
+J. R. Meteorol. Soc., 113, 899–927.
+
+Smith, R. N. B., 1990: A scheme for predicting layer clouds and their water-content in a general-circulation
+model, Q. J. R. Meteorol. Soc., 116, 435–460.
+
+Sommeria, G. and J. W. Deardorff, 1977: Subgrid-scale condensation in models of nonprecipitating clouds, J.
+Atmos. Sci., 34, 344–355.
+
+Spichtinger, P., K. Gierens, and W. Read, 2003: The global distribution of ice-supersaturated regions as seen
+by the Microwave Limb Sounder, Q. J. R. Meteorol. Soc., 129, 3391–3410.
+
+Sundqvist, H., E. Berge, and J. E. Kristjansson, 1989: Condensation and cloud parameterization studies with a
+mesoscale numerical weather prediction model, Mon. Wea. Rev., 117, 1641–1657.
+
+Tiedtke, M., 1993: Representation of clouds in large-scale models, Mon. Wea. Rev., 121, 3040–3061.
+
+Tompkins, A. M., 2002: A prognostic parameterization for the subgrid-scale variability of water vapor and
+clouds in large-scale models and its use to diagnose cloud cover, J. Atmos. Sci., 59, 1917–1942.
+
+Tompkins, A. M., 2003: Impact of temperature and total water variability on cloud cover assessed using aircraft
+data, Q. J. R. Meteorol. Soc., 129, 2151–2170.
+
+Tompkins, A. M. and K. A. Emanuel, 2000: The vertical resolution sensitivity of simulated equilibrium tem-
+perature and water vapour profiles, Q. J. R. Meteorol. Soc., 126, 1219–1238.
+
+22 Technical Memorandum No. Moist Processes Lecture Note Series
+
+
+
+The parametrization of cloud cover
+
+Tompkins, A. M. and M. Janisková, 2004: A cloud scheme for data assimiliation: Description and initial tests,
+Q. J. R. Meteorol. Soc., 130, 2495–2518.
+
+Wang, S. and Q. Wang, 1999: On Condensation and Evaporation in Turbulence Cloud Parameterizations, J.
+Atmos. Sci., 56, 3338–3344.
+
+Wielicki, B. A. and L. Parker, 1994: Frequency distributions of cloud liquid water path in oceanic boundary
+layer cloud as a function of regional cloud fraction, in Proc. Eighth Conference on Atmospheric Radiation,
+Amer. Meteor. Soc., Nashville, TN, USA, pp. 415–417.
+
+Wood, R. and P. R. Field, 2000: Relationship between total water, condensed water, and cloud fraction in
+stratiform clouds examined using aircraft data, J. Atmos. Sci., 57, 1888–1905.
+
+Xu, K.-M. and D. A. Randall, 1996: A semiempirical cloudiness parameterization for use in climate models, J.
+Atmos. Sci., 53, 3084–3102.
+
+Technical Memorandum No. Moist Processes Lecture Note Series 23
+
+
+	1 Introduction
+	2 Background
+	3 Relative humidity schemes
+	4 Statistical schemes
+	4.1 Defining the PDF
+	4.2 Setting the PDF moments
+	4.3 Diagnostic versus Prognostic schemes
+	4.4 A prognostic statistical scheme
+
+	5 The ECMWF prognostic cloud cover scheme
+	6 Summary
+	A Appendix: Temperature variability
